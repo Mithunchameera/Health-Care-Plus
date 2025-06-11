@@ -65,7 +65,7 @@ function initializeNavigation() {
                 navbar.style.background = 'var(--nav-bg)';
                 navbar.style.backdropFilter = 'blur(10px)';
             } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.background = 'var(--nav-bg)';
                 navbar.style.backdropFilter = 'blur(5px)';
             }
         }
