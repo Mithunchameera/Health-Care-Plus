@@ -358,29 +358,38 @@ class MockDataStorage {
     
     public function createSession($userId) {
         $sessionId = bin2hex(random_bytes(32));
-        $this->sessions[$sessionId] = [
+        $sessionData = [
             'user_id' => $userId,
             'created_at' => time(),
             'expires_at' => time() + SESSION_LIFETIME
         ];
+        
+        // Store session in file for persistence
+        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        file_put_contents($sessionFile, json_encode($sessionData));
+        
         return $sessionId;
     }
     
     public function getSession($sessionId) {
-        if (isset($this->sessions[$sessionId])) {
-            $session = $this->sessions[$sessionId];
-            if ($session['expires_at'] > time()) {
-                return $session;
+        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        
+        if (file_exists($sessionFile)) {
+            $sessionData = json_decode(file_get_contents($sessionFile), true);
+            if ($sessionData && $sessionData['expires_at'] > time()) {
+                return $sessionData;
             } else {
-                unset($this->sessions[$sessionId]);
+                // Session expired, clean up
+                unlink($sessionFile);
             }
         }
         return null;
     }
     
     public function destroySession($sessionId) {
-        if (isset($this->sessions[$sessionId])) {
-            unset($this->sessions[$sessionId]);
+        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        if (file_exists($sessionFile)) {
+            unlink($sessionFile);
             return true;
         }
         return false;
@@ -435,6 +444,27 @@ function logError($message, $context = []) {
         $logMessage .= " - Context: " . json_encode($context);
     }
     error_log($logMessage);
+}
+
+// Global authentication function
+function checkUserAuth($allowedRoles = []) {
+    $sessionId = $_COOKIE['session_id'] ?? '';
+    
+    if (empty($sessionId)) {
+        return null;
+    }
+    
+    $mockStorage = MockDataStorage::getInstance();
+    $session = $mockStorage->getSession($sessionId);
+    
+    if ($session) {
+        $user = $mockStorage->getUserById($session['user_id']);
+        if ($user && (empty($allowedRoles) || in_array($user['role'], $allowedRoles))) {
+            return $user;
+        }
+    }
+    
+    return null;
 }
 
 // Initialize mock data storage (static demo mode)

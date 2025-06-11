@@ -5,7 +5,6 @@
  */
 
 require_once 'config.php';
-require_once 'session-auth.php';
 
 setCORSHeaders();
 
@@ -14,8 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-// Require admin/staff authentication
-$currentUser = requireAuth(['admin', 'staff']);
+$currentUser = checkUserAuth(['admin', 'staff']);
+if (!$currentUser) {
+    sendResponse(['error' => 'Authentication required'], 401);
+}
 
 class AdminAPI {
     private $mockStorage;

@@ -78,7 +78,7 @@
 
                 <div class="auth-footer">
                     <p>Don't have an account? <a href="register.html">Sign up here</a></p>
-                    <div class="demo-credentials" style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-color); border-radius: 8px; font-size: 0.875rem;">
+                    <div id="demo-credentials" class="demo-credentials" style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-color); border-radius: 8px; font-size: 0.875rem;">
                         <h4 style="margin-bottom: 1rem; color: var(--primary-color);">Demo Login Credentials:</h4>
                         <div style="display: grid; gap: 0.5rem;">
                             <div><strong>Patient:</strong> patient1 / password123</div>
@@ -109,6 +109,39 @@
     <script src="js/theme-manager.js"></script>
     <script src="js/main.js"></script>
     <script>
+        // Check authentication on page load and redirect if already logged in
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('php/session-handler.php');
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    // Hide demo credentials for authenticated users
+                    const demoCredentials = document.getElementById('demo-credentials');
+                    if (demoCredentials) {
+                        demoCredentials.style.display = 'none';
+                    }
+                    
+                    // Redirect authenticated users to their dashboard
+                    let dashboardUrl = 'dashboard-patient.html';
+                    switch(data.user.role) {
+                        case 'doctor':
+                            dashboardUrl = 'dashboard-doctor.html';
+                            break;
+                        case 'admin':
+                        case 'staff':
+                            dashboardUrl = 'dashboard-admin.html';
+                            break;
+                        default:
+                            dashboardUrl = 'dashboard-patient.html';
+                    }
+                    window.location.href = dashboardUrl;
+                }
+            } catch (error) {
+                console.log('Auth check failed:', error);
+            }
+        });
+
         // Form validation and submission
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
