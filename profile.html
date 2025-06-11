@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="doctors.html" class="nav-link">Doctors</a>
+                <a href="booking.html" class="nav-link">Book Appointment</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Doctor Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="profile-container" id="profileContainer">
+                <!-- Doctor profile will be loaded here -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading doctor profile...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <p>Modern healthcare management platform connecting patients with qualified medical professionals.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="doctors.html">Find Doctors</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@healthcareplus.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Medical Center Dr.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 HealthCare+. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Load doctor profile on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctorProfile();
+        });
+
+        async function loadDoctorProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const doctorId = urlParams.get('doctor');
+            
+            if (!doctorId) {
+                showError('Doctor ID not specified');
+                return;
+            }
+
+            try {
+                const response = await fetch(`php/doctors.php?id=${doctorId}`);
+                const doctor = await response.json();
+                
+                if (doctor.error) {
+                    showError(doctor.error);
+                    return;
+                }
+                
+                displayDoctorProfile(doctor);
+            } catch (error) {
+                console.error('Error loading doctor profile:', error);
+                showError('Failed to load doctor profile');
+            }
+        }
+
+        function displayDoctorProfile(doctor) {
+            const container = document.getElementById('profileContainer');
+            
+            container.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-image">
+                        <div class="doctor-avatar large">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="availability-badge ${doctor.available ? 'available' : 'busy'}">
+                            ${doctor.available ? 'Available Today' : 'Currently Busy'}
+                        </div>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h1>Dr. ${doctor.name}</h1>
+                        <p class="specialty">${doctor.specialty}</p>
+                        <div class="rating-info">
+                            <div class="stars">
+                                ${generateStars(doctor.rating)}
+                            </div>
+                            <span>${doctor.rating} (${doctor.reviews} reviews)</span>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-number">${doctor.experience}</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">${doctor.patients || 'N/A'}</span>
+                                <span class="stat-label">Patients Treated</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$${doctor.fee}</span>
+                                <span class="stat-label">Consultation Fee</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" onclick="bookAppointment(${doctor.id})" 
+                                ${!doctor.available ? 'disabled' : ''}>
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareProfile()">
+                            <i class="fas fa-share"></i> Share Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-main">
+                        <div class="section">
+                            <h3>About Dr. ${doctor.name}</h3>
+                            <p>${doctor.about || 'Dr. ' + doctor.name + ' is a dedicated healthcare professional specializing in ' + doctor.specialty + '. With ' + doctor.experience + ' years of experience, they are committed to providing excellent patient care and staying current with the latest medical advances.'}</p>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Education & Qualifications</h3>
+                            <div class="education-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <div>
+                                    <h4>${doctor.education}</h4>
+                                    <p>Medical Degree</p>
+                                </div>
+                            </div>
+                            ${doctor.certifications ? doctor.certifications.map(cert => `
+                                <div class="education-item">
+                                    <i class="fas fa-certificate"></i>
+                                    <div>
+                                        <h4>${cert}</h4>
+                                        <p>Professional Certification</p>
+                                    </div>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Specializations</h3>
+                            <div class="specializations">
+                                <span class="specialization-tag">${doctor.specialty}</span>
+                                ${doctor.subspecialties ? doctor.subspecialties.map(sub => 
+                                    `<span class="specialization-tag">${sub}</span>`
+                                ).join('') : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Services Offered</h3>
+                            <ul class="services-list">
+                                ${(doctor.services || [
+                                    'General Consultation',
+                                    'Diagnostic Services',
+                                    'Treatment Planning',
+                                    'Follow-up Care',
+                                    'Health Counseling'
+                                ]).map(service => `<li><i class="fas fa-check"></i> ${service}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-sidebar">
+                        <div class="info-card">
+                            <h4>Contact Information</h4>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <strong>Location</strong>
+                                    <p>${doctor.location}</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <strong>Phone</strong>
+                                    <p>${doctor.phone || '+1 (555) 123-4567'}</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <strong>Email</strong>
+                                    <p>${doctor.email || 'contact@healthcareplus.com'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h4>Working Hours</h4>
+                            <div class="working-hours">
+                                <div class="hours-item">
+                                    <span>Monday - Friday</span>
+                                    <span>9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="hours-item">
+                                    <span>Saturday</span>
+                                    <span>9:00 AM - 2:00 PM</span>
+                                </div>
+                                <div class="hours-item">
+                                    <span>Sunday</span>
+                                    <span>Closed</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h4>Languages Spoken</h4>
+                            <div class="languages">
+                                ${(doctor.languages || ['English', 'Spanish']).map(lang => 
+                                    `<span class="language-tag">${lang}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reviews-section">
+                    <h3>Patient Reviews</h3>
+                    <div class="reviews-summary">
+                        <div class="rating-breakdown">
+                            <div class="overall-rating">
+                                <span class="rating-number">${doctor.rating}</span>
+                                <div class="stars">${generateStars(doctor.rating)}</div>
+                                <span class="reviews-count">${doctor.reviews} reviews</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reviews-list">
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <strong>Sarah M.</strong>
+                                    <div class="stars small">${generateStars(5)}</div>
+                                </div>
+                                <span class="review-date">2 days ago</span>
+                            </div>
+                            <p class="review-text">Excellent doctor! Very professional and took time to explain everything clearly. Highly recommend.</p>
+                        </div>
+                        
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <strong>John D.</strong>
+                                    <div class="stars small">${generateStars(4)}</div>
+                                </div>
+                                <span class="review-date">1 week ago</span>
+                            </div>
+                            <p class="review-text">Great experience overall. The appointment was on time and the doctor was very knowledgeable.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 !== 0;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            if (halfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        function bookAppointment(doctorId) {
+            window.location.href = `booking.html?doctor=${doctorId}`;
+        }
+
+        function shareProfile() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Doctor Profile - HealthCare+',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                showNotification('Profile link copied to clipboard!', 'success');
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('profileContainer');
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Error Loading Profile</h3>
+                    <p>${message}</p>
+                    <a href="doctors.html" class="btn btn-primary">Back to Doctors</a>
+                </div>
+            `;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

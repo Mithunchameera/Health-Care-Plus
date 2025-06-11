@@ -1,0 +1,296 @@
+/* Theme Variables */
+:root {
+    /* Light Theme (Default) */
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --primary-light: rgba(0, 123, 255, 0.1);
+    --secondary-color: #6c757d;
+    --secondary-light: rgba(108, 117, 125, 0.1);
+    --success-color: #28a745;
+    --success-hover: #218838;
+    --success-light: rgba(40, 167, 69, 0.1);
+    --error-color: #dc3545;
+    --error-light: rgba(220, 53, 69, 0.1);
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    
+    /* Background Colors */
+    --bg-color: #ffffff;
+    --card-bg: #f8f9fa;
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --footer-bg: #343a40;
+    
+    /* Text Colors */
+    --text-color: #212529;
+    --text-secondary: #6c757d;
+    --footer-text: #ffffff;
+    --footer-text-secondary: rgba(255, 255, 255, 0.7);
+    
+    /* Border and Shadow */
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    
+    /* Healthcare specific colors */
+    --medical-blue: #007bff;
+    --medical-green: #28a745;
+    --medical-red: #dc3545;
+    --medical-orange: #fd7e14;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --primary-color: #4dabf7;
+    --primary-hover: #339af0;
+    --primary-light: rgba(77, 171, 247, 0.15);
+    --secondary-color: #adb5bd;
+    --secondary-light: rgba(173, 181, 189, 0.15);
+    --success-color: #51cf66;
+    --success-hover: #40c057;
+    --success-light: rgba(81, 207, 102, 0.15);
+    --error-color: #ff6b6b;
+    --error-light: rgba(255, 107, 107, 0.15);
+    --warning-color: #ffd43b;
+    --info-color: #22d3ee;
+    
+    /* Background Colors */
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --nav-bg: rgba(18, 18, 18, 0.95);
+    --footer-bg: #0d1117;
+    
+    /* Text Colors */
+    --text-color: #e9ecef;
+    --text-secondary: #adb5bd;
+    --footer-text: #e9ecef;
+    --footer-text-secondary: rgba(233, 236, 239, 0.7);
+    
+    /* Border and Shadow */
+    --border-color: #343a40;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    
+    /* Healthcare specific colors for dark theme */
+    --medical-blue: #4dabf7;
+    --medical-green: #51cf66;
+    --medical-red: #ff6b6b;
+    --medical-orange: #ffa94d;
+}
+
+/* Auto Theme (based on system preference) */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --primary-color: #4dabf7;
+        --primary-hover: #339af0;
+        --primary-light: rgba(77, 171, 247, 0.15);
+        --secondary-color: #adb5bd;
+        --secondary-light: rgba(173, 181, 189, 0.15);
+        --success-color: #51cf66;
+        --success-hover: #40c057;
+        --success-light: rgba(81, 207, 102, 0.15);
+        --error-color: #ff6b6b;
+        --error-light: rgba(255, 107, 107, 0.15);
+        --warning-color: #ffd43b;
+        --info-color: #22d3ee;
+        
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --nav-bg: rgba(18, 18, 18, 0.95);
+        --footer-bg: #0d1117;
+        
+        --text-color: #e9ecef;
+        --text-secondary: #adb5bd;
+        --footer-text: #e9ecef;
+        --footer-text-secondary: rgba(233, 236, 239, 0.7);
+        
+        --border-color: #343a40;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        
+        --medical-blue: #4dabf7;
+        --medical-green: #51cf66;
+        --medical-red: #ff6b6b;
+        --medical-orange: #ffa94d;
+    }
+}
+
+/* Theme transition animations */
+* {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Special theme-aware components */
+
+/* Scrollbar styling for dark theme */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--card-bg);
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Light theme scrollbar */
+:root:not([data-theme="dark"]) ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+:root:not([data-theme="dark"]) ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+:root:not([data-theme="dark"]) ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+:root:not([data-theme="dark"]) ::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* Theme-specific enhancements */
+
+/* Glassmorphism effect for cards in dark theme */
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .doctor-card,
+[data-theme="dark"] .auth-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced shadows for light theme */
+:root:not([data-theme="dark"]) .feature-card:hover,
+:root:not([data-theme="dark"]) .doctor-card:hover,
+:root:not([data-theme="dark"]) .auth-card {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Theme toggle button animations */
+.theme-toggle {
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--primary-color), transparent);
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.theme-toggle:hover::before {
+    width: 100px;
+    height: 100px;
+    opacity: 0.1;
+}
+
+/* Special effects for hero section based on theme */
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, 
+                var(--bg-color) 0%, 
+                rgba(77, 171, 247, 0.05) 50%,
+                var(--card-bg) 100%);
+}
+
+/* Time-based theme classes */
+.theme-morning {
+    --primary-color: #ff9500; /* Orange for morning */
+    --secondary-color: #ffcc02;
+}
+
+.theme-afternoon {
+    --primary-color: #007bff; /* Blue for afternoon */
+    --secondary-color: #17a2b8;
+}
+
+.theme-evening {
+    --primary-color: #6f42c1; /* Purple for evening */
+    --secondary-color: #e83e8c;
+}
+
+.theme-night {
+    --primary-color: #4dabf7; /* Light blue for night */
+    --secondary-color: #adb5bd;
+}
+
+/* Smooth theme transitions */
+.theme-transition * {
+    transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Custom properties for theme-aware animations */
+@keyframes fadeInTheme {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.theme-fade-in {
+    animation: fadeInTheme 0.6s ease-out;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000000;
+        --text-secondary: #000000;
+    }
+    
+    [data-theme="dark"] {
+        --border-color: #ffffff;
+        --text-secondary: #ffffff;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    :root {
+        --bg-color: #ffffff;
+        --text-color: #000000;
+        --card-bg: #ffffff;
+        --border-color: #000000;
+    }
+    
+    .theme-toggle,
+    .nav-toggle,
+    button {
+        display: none !important;
+    }
+}

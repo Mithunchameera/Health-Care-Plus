@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="doctors.html" class="nav-link">Doctors</a>
+                <a href="booking.html" class="nav-link active">Book Appointment</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Book Your Appointment</h1>
+            <p>Schedule a consultation with your preferred doctor</p>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="booking-section">
+        <div class="container">
+            <div class="booking-container">
+                <!-- Step Indicator -->
+                <div class="booking-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Select Doctor</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Choose Date & Time</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Patient Details</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Confirmation</div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <form id="bookingForm" class="booking-form">
+                    <!-- Step 1: Select Doctor -->
+                    <div class="booking-step" id="step1" style="display: block;">
+                        <h3>Select a Doctor</h3>
+                        <div class="doctor-selection">
+                            <div class="search-doctor">
+                                <input type="text" id="doctorSearchInput" placeholder="Search doctors by name or specialty...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="selected-doctor" id="selectedDoctor" style="display: none;">
+                                <!-- Selected doctor details will appear here -->
+                            </div>
+                            <div class="doctor-list" id="doctorList">
+                                <!-- Doctor list will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Date & Time Selection -->
+                    <div class="booking-step" id="step2" style="display: none;">
+                        <h3>Choose Date & Time</h3>
+                        <div class="datetime-selection">
+                            <div class="date-picker">
+                                <h4>Select Date</h4>
+                                <div class="calendar-container">
+                                    <div class="calendar-header">
+                                        <button type="button" id="prevMonth">&lt;</button>
+                                        <span id="currentMonth"></span>
+                                        <button type="button" id="nextMonth">&gt;</button>
+                                    </div>
+                                    <div class="calendar-grid" id="calendarGrid">
+                                        <!-- Calendar will be generated here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="time-picker">
+                                <h4>Available Time Slots</h4>
+                                <div class="time-slots" id="timeSlots">
+                                    <!-- Time slots will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Patient Details -->
+                    <div class="booking-step" id="step3" style="display: none;">
+                        <h3>Patient Information</h3>
+                        <div class="patient-details">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="patientName">Full Name</label>
+                                    <input type="text" id="patientName" name="patientName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientAge">Age</label>
+                                    <input type="number" id="patientAge" name="patientAge" min="1" max="120" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="patientGender">Gender</label>
+                                    <select id="patientGender" name="patientGender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientPhone">Phone Number</label>
+                                    <input type="tel" id="patientPhone" name="patientPhone" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patientEmail">Email Address</label>
+                                <input type="email" id="patientEmail" name="patientEmail" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="symptoms">Symptoms/Reason for Visit</label>
+                                <textarea id="symptoms" name="symptoms" rows="4" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="medicalHistory">Medical History (Optional)</label>
+                                <textarea id="medicalHistory" name="medicalHistory" rows="3" placeholder="Any relevant medical history, allergies, current medications..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Confirmation -->
+                    <div class="booking-step" id="step4" style="display: none;">
+                        <h3>Appointment Confirmation</h3>
+                        <div class="appointment-summary">
+                            <div class="summary-card">
+                                <h4>Appointment Details</h4>
+                                <div class="summary-item">
+                                    <span class="label">Doctor:</span>
+                                    <span class="value" id="summaryDoctor"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Specialty:</span>
+                                    <span class="value" id="summarySpecialty"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Date:</span>
+                                    <span class="value" id="summaryDate"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Time:</span>
+                                    <span class="value" id="summaryTime"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Patient:</span>
+                                    <span class="value" id="summaryPatient"></span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Fee:</span>
+                                    <span class="value" id="summaryFee"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="booking-navigation">
+                        <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+                        <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
+                        <button type="submit" id="confirmBtn" class="btn btn-success" style="display: none;">Confirm Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <p>Modern healthcare management platform connecting patients with qualified medical professionals.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="doctors.html">Find Doctors</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@healthcareplus.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Medical Center Dr.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 HealthCare+. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>
