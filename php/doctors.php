@@ -14,10 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 class DoctorsHandler {
-    private $db;
+    private $mockStorage;
     
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $this->mockStorage = MockDataStorage::getInstance();
     }
     
     public function handleRequest() {
@@ -63,78 +63,51 @@ class DoctorsHandler {
             $specialty = $_GET['specialty'] ?? '';
             $search = $_GET['search'] ?? '';
             $available = $_GET['available'] ?? '';
-            $limit = min((int)($_GET['limit'] ?? 50), 100); // Max 100 results
+            $limit = min((int)($_GET['limit'] ?? 50), 100);
             $offset = max((int)($_GET['offset'] ?? 0), 0);
             
-            // Build query
-            $sql = "SELECT * FROM doctors WHERE 1=1";
-            $params = [];
+            $doctors = $this->mockStorage->getDoctors();
+            $filteredDoctors = [];
             
-            // Filter by specialty
-            if (!empty($specialty)) {
-                $sql .= " AND LOWER(specialty) = LOWER(?)";
-                $params[] = $specialty;
+            foreach ($doctors as $doctor) {
+                // Filter by specialty
+                if (!empty($specialty) && strcasecmp($doctor['specialty'], $specialty) !== 0) {
+                    continue;
+                }
+                
+                // Search in name or specialty
+                if (!empty($search)) {
+                    $searchLower = strtolower($search);
+                    if (strpos(strtolower($doctor['name']), $searchLower) === false && 
+                        strpos(strtolower($doctor['specialty']), $searchLower) === false) {
+                        continue;
+                    }
+                }
+                
+                // Filter by availability
+                if ($available !== '' && $doctor['available'] != (bool)$available) {
+                    continue;
+                }
+                
+                $filteredDoctors[] = $this->processDoctorData($doctor);
             }
             
-            // Search in name or specialty
-            if (!empty($search)) {
-                $sql .= " AND (LOWER(name) LIKE LOWER(?) OR LOWER(specialty) LIKE LOWER(?))";
-                $searchParam = "%{$search}%";
-                $params[] = $searchParam;
-                $params[] = $searchParam;
-            }
+            // Sort by rating desc, then name asc
+            usort($filteredDoctors, function($a, $b) {
+                if ($a['rating'] == $b['rating']) {
+                    return strcmp($a['name'], $b['name']);
+                }
+                return $b['rating'] <=> $a['rating'];
+            });
             
-            // Filter by availability
-            if ($available !== '') {
-                $sql .= " AND available = ?";
-                $params[] = (bool)$available;
-            }
-            
-            // Add ordering
-            $sql .= " ORDER BY rating DESC, name ASC";
-            
-            // Add pagination
-            $sql .= " LIMIT ? OFFSET ?";
-            $params[] = $limit;
-            $params[] = $offset;
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $doctors = $stmt->fetchAll();
-            
-            // Process doctors data
-            $processedDoctors = array_map([$this, 'processDoctorData'], $doctors);
-            
-            // Get total count for pagination
-            $countSql = "SELECT COUNT(*) FROM doctors WHERE 1=1";
-            $countParams = [];
-            
-            if (!empty($specialty)) {
-                $countSql .= " AND LOWER(specialty) = LOWER(?)";
-                $countParams[] = $specialty;
-            }
-            
-            if (!empty($search)) {
-                $countSql .= " AND (LOWER(name) LIKE LOWER(?) OR LOWER(specialty) LIKE LOWER(?))";
-                $searchParam = "%{$search}%";
-                $countParams[] = $searchParam;
-                $countParams[] = $searchParam;
-            }
-            
-            if ($available !== '') {
-                $countSql .= " AND available = ?";
-                $countParams[] = (bool)$available;
-            }
-            
-            $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($countParams);
-            $totalCount = $countStmt->fetchColumn();
+            $totalCount = count($filteredDoctors);
+            $paginatedDoctors = array_slice($filteredDoctors, $offset, $limit);
             
             sendResponse([
                 'success' => true,
-                'doctors' => $processedDoctors,
+                'doctors' => $paginatedDoctors,
                 'pagination' => [
-                    'total' => (int)$totalCount,
+                    'total' => $totalCount,
                     'limit' => $limit,
                     'offset' => $offset,
                     'hasMore' => ($offset + $limit) < $totalCount
@@ -155,37 +128,22 @@ class DoctorsHandler {
                 sendResponse(['error' => 'Invalid doctor ID'], 400);
             }
             
-            $stmt = $this->db->prepare("SELECT * FROM doctors WHERE id = ?");
-            $stmt->execute([$doctorId]);
-            $doctor = $stmt->fetch();
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
             
             if (!$doctor) {
                 sendResponse(['error' => 'Doctor not found'], 404);
             }
             
-            // Process doctor data
             $processedDoctor = $this->processDoctorData($doctor);
             
-            // Get recent appointments count
-            $stmt = $this->db->prepare("
-                SELECT COUNT(*) as appointment_count 
-                FROM appointments 
-                WHERE doctor_id = ? AND status = 'completed'
-            ");
-            $stmt->execute([$doctorId]);
-            $appointmentData = $stmt->fetch();
-            $processedDoctor['appointmentsCompleted'] = (int)$appointmentData['appointment_count'];
+            // Add mock additional data
+            $processedDoctor['appointmentsCompleted'] = rand(50, 500);
             
-            // Get available dates (next 30 days with available slots)
-            $stmt = $this->db->prepare("
-                SELECT DISTINCT date 
-                FROM time_slots 
-                WHERE doctor_id = ? AND date >= CURRENT_DATE AND date <= CURRENT_DATE + INTERVAL '30 days' 
-                AND is_available = TRUE 
-                ORDER BY date LIMIT 10
-            ");
-            $stmt->execute([$doctorId]);
-            $availableDates = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            // Generate available dates (next 7 days)
+            $availableDates = [];
+            for ($i = 1; $i <= 7; $i++) {
+                $availableDates[] = date('Y-m-d', strtotime("+{$i} days"));
+            }
             $processedDoctor['availableDates'] = $availableDates;
             
             sendResponse($processedDoctor);
@@ -205,63 +163,73 @@ class DoctorsHandler {
                 sendResponse(['error' => 'Search query is required'], 400);
             }
             
-            $sql = "
-                SELECT *, 
-                CASE 
-                    WHEN LOWER(name) LIKE LOWER(?) THEN 3
-                    WHEN LOWER(specialty) LIKE LOWER(?) THEN 2
-                    WHEN LOWER(about) LIKE LOWER(?) THEN 1
-                    ELSE 0
-                END as relevance_score
-                FROM doctors 
-                WHERE (
-                    LOWER(name) LIKE LOWER(?) OR 
-                    LOWER(specialty) LIKE LOWER(?) OR 
-                    LOWER(about) LIKE LOWER(?) OR
-                    LOWER(subspecialties::text) LIKE LOWER(?) OR
-                    LOWER(services::text) LIKE LOWER(?)
-                )
-            ";
+            $doctors = $this->mockStorage->getDoctors();
+            $results = [];
             
-            $searchParam = "%{$query}%";
-            $params = array_fill(0, 8, $searchParam);
-            
-            // Apply filters
-            if (isset($filters['specialty']) && !empty($filters['specialty'])) {
-                $sql .= " AND LOWER(specialty) = LOWER(?)";
-                $params[] = $filters['specialty'];
+            foreach ($doctors as $doctor) {
+                $relevanceScore = 0;
+                $queryLower = strtolower($query);
+                
+                // Calculate relevance score
+                if (strpos(strtolower($doctor['name']), $queryLower) !== false) {
+                    $relevanceScore += 3;
+                }
+                if (strpos(strtolower($doctor['specialty']), $queryLower) !== false) {
+                    $relevanceScore += 2;
+                }
+                if (strpos(strtolower($doctor['about']), $queryLower) !== false) {
+                    $relevanceScore += 1;
+                }
+                
+                if ($relevanceScore > 0) {
+                    $doctor['relevance_score'] = $relevanceScore;
+                    
+                    // Apply filters
+                    $matchesFilters = true;
+                    
+                    if (!empty($filters['specialty']) && strcasecmp($doctor['specialty'], $filters['specialty']) !== 0) {
+                        $matchesFilters = false;
+                    }
+                    
+                    if (!empty($filters['experience'])) {
+                        $minExperience = (int)str_replace('+', '', $filters['experience']);
+                        if ($doctor['experience'] < $minExperience) {
+                            $matchesFilters = false;
+                        }
+                    }
+                    
+                    if (!empty($filters['rating'])) {
+                        $minRating = (float)str_replace('+', '', $filters['rating']);
+                        if ($doctor['rating'] < $minRating) {
+                            $matchesFilters = false;
+                        }
+                    }
+                    
+                    if (isset($filters['available']) && $filters['available'] !== '' && $doctor['available'] != (bool)$filters['available']) {
+                        $matchesFilters = false;
+                    }
+                    
+                    if ($matchesFilters) {
+                        $results[] = $this->processDoctorData($doctor);
+                    }
+                }
             }
             
-            if (isset($filters['experience']) && !empty($filters['experience'])) {
-                $minExperience = (int)str_replace('+', '', $filters['experience']);
-                $sql .= " AND experience >= ?";
-                $params[] = $minExperience;
-            }
+            // Sort by relevance score, then rating
+            usort($results, function($a, $b) {
+                if ($a['relevance_score'] == $b['relevance_score']) {
+                    return $b['rating'] <=> $a['rating'];
+                }
+                return $b['relevance_score'] <=> $a['relevance_score'];
+            });
             
-            if (isset($filters['rating']) && !empty($filters['rating'])) {
-                $minRating = (float)str_replace('+', '', $filters['rating']);
-                $sql .= " AND rating >= ?";
-                $params[] = $minRating;
-            }
-            
-            if (isset($filters['available']) && $filters['available'] !== '') {
-                $sql .= " AND available = ?";
-                $params[] = (bool)$filters['available'];
-            }
-            
-            $sql .= " ORDER BY relevance_score DESC, rating DESC, name ASC LIMIT 20";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $doctors = $stmt->fetchAll();
-            
-            $processedDoctors = array_map([$this, 'processDoctorData'], $doctors);
+            $results = array_slice($results, 0, 20);
             
             sendResponse([
                 'success' => true,
                 'query' => $query,
-                'results' => $processedDoctors,
-                'count' => count($processedDoctors)
+                'results' => $results,
+                'count' => count($results)
             ]);
             
         } catch (Exception $e) {
@@ -274,65 +242,84 @@ class DoctorsHandler {
         try {
             $filters = $_POST['filters'] ?? [];
             
-            $sql = "SELECT * FROM doctors WHERE 1=1";
-            $params = [];
+            $doctors = $this->mockStorage->getDoctors();
+            $results = [];
             
-            foreach ($filters as $key => $value) {
-                if (empty($value)) continue;
+            foreach ($doctors as $doctor) {
+                $matchesFilters = true;
                 
-                switch ($key) {
-                    case 'specialty':
-                        $sql .= " AND LOWER(specialty) = LOWER(?)";
-                        $params[] = $value;
-                        break;
-                        
-                    case 'experience':
-                        $minExperience = (int)str_replace('+', '', $value);
-                        $sql .= " AND experience >= ?";
-                        $params[] = $minExperience;
-                        break;
-                        
-                    case 'rating':
-                        $minRating = (float)str_replace('+', '', $value);
-                        $sql .= " AND rating >= ?";
-                        $params[] = $minRating;
-                        break;
-                        
-                    case 'location':
-                        $sql .= " AND LOWER(location) LIKE LOWER(?)";
-                        $params[] = "%{$value}%";
-                        break;
-                        
-                    case 'available':
-                        $sql .= " AND available = ?";
-                        $params[] = (bool)$value;
-                        break;
-                        
-                    case 'fee_max':
-                        $sql .= " AND fee <= ?";
-                        $params[] = (float)$value;
-                        break;
-                        
-                    case 'fee_min':
-                        $sql .= " AND fee >= ?";
-                        $params[] = (float)$value;
-                        break;
+                foreach ($filters as $key => $value) {
+                    if (empty($value)) continue;
+                    
+                    switch ($key) {
+                        case 'specialty':
+                            if (strcasecmp($doctor['specialty'], $value) !== 0) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'experience':
+                            $minExperience = (int)str_replace('+', '', $value);
+                            if ($doctor['experience'] < $minExperience) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'rating':
+                            $minRating = (float)str_replace('+', '', $value);
+                            if ($doctor['rating'] < $minRating) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'location':
+                            if (strpos(strtolower($doctor['location']), strtolower($value)) === false) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'available':
+                            if ($doctor['available'] != (bool)$value) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'fee_max':
+                            if ($doctor['fee'] > (float)$value) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                            
+                        case 'fee_min':
+                            if ($doctor['fee'] < (float)$value) {
+                                $matchesFilters = false;
+                            }
+                            break;
+                    }
+                    
+                    if (!$matchesFilters) break;
+                }
+                
+                if ($matchesFilters) {
+                    $results[] = $this->processDoctorData($doctor);
                 }
             }
             
-            $sql .= " ORDER BY rating DESC, name ASC LIMIT 50";
+            // Sort by rating desc, then name asc
+            usort($results, function($a, $b) {
+                if ($a['rating'] == $b['rating']) {
+                    return strcmp($a['name'], $b['name']);
+                }
+                return $b['rating'] <=> $a['rating'];
+            });
             
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $doctors = $stmt->fetchAll();
-            
-            $processedDoctors = array_map([$this, 'processDoctorData'], $doctors);
+            $results = array_slice($results, 0, 50);
             
             sendResponse([
                 'success' => true,
                 'filters' => $filters,
-                'results' => $processedDoctors,
-                'count' => count($processedDoctors)
+                'results' => $results,
+                'count' => count($results)
             ]);
             
         } catch (Exception $e) {
@@ -342,13 +329,6 @@ class DoctorsHandler {
     }
     
     private function processDoctorData($doctor) {
-        // Decode JSON fields
-        $doctor['subspecialties'] = json_decode($doctor['subspecialties'] ?? '[]', true) ?: [];
-        $doctor['services'] = json_decode($doctor['services'] ?? '[]', true) ?: [];
-        $doctor['certifications'] = json_decode($doctor['certifications'] ?? '[]', true) ?: [];
-        $doctor['languages'] = json_decode($doctor['languages'] ?? '[]', true) ?: [];
-        $doctor['working_hours'] = json_decode($doctor['working_hours'] ?? '[]', true) ?: [];
-        
         // Convert numeric fields
         $doctor['id'] = (int)$doctor['id'];
         $doctor['experience'] = (int)$doctor['experience'];
@@ -374,35 +354,10 @@ class DoctorsHandler {
     }
     
     public function getSpecialties() {
-        try {
-            $stmt = $this->db->query("SELECT DISTINCT specialty FROM doctors ORDER BY specialty");
-            $specialties = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            
-            return $specialties;
-        } catch (Exception $e) {
-            logError("Error getting specialties: " . $e->getMessage());
-            return [];
-        }
-    }
-    
-    public function getDoctorStats($doctorId) {
-        try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_appointments,
-                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_appointments,
-                    COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_appointments,
-                    AVG(CASE WHEN status = 'completed' THEN 5 END) as avg_rating
-                FROM appointments 
-                WHERE doctor_id = ?
-            ");
-            $stmt->execute([$doctorId]);
-            
-            return $stmt->fetch();
-        } catch (Exception $e) {
-            logError("Error getting doctor stats: " . $e->getMessage());
-            return null;
-        }
+        $doctors = $this->mockStorage->getDoctors();
+        $specialties = array_unique(array_column($doctors, 'specialty'));
+        sort($specialties);
+        return $specialties;
     }
 }
 

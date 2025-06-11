@@ -8,13 +8,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Database Configuration
-define('DB_HOST', $_ENV['PGHOST'] ?? 'localhost');
-define('DB_NAME', $_ENV['PGDATABASE'] ?? 'healthcare_plus');
-define('DB_USER', $_ENV['PGUSER'] ?? 'postgres');
-define('DB_PASS', $_ENV['PGPASSWORD'] ?? '');
-define('DB_PORT', $_ENV['PGPORT'] ?? '5432');
-define('DB_CHARSET', 'utf8');
+// Database Configuration - Disabled for static demo
+// define('DB_HOST', $_ENV['PGHOST'] ?? 'localhost');
+// define('DB_NAME', $_ENV['PGDATABASE'] ?? 'healthcare_plus');
+// define('DB_USER', $_ENV['PGUSER'] ?? 'postgres');
+// define('DB_PASS', $_ENV['PGPASSWORD'] ?? '');
+// define('DB_PORT', $_ENV['PGPORT'] ?? '5432');
+// define('DB_CHARSET', 'utf8');
 
 // Application Configuration
 define('APP_NAME', 'HealthCare+');
@@ -50,27 +50,16 @@ function setCORSHeaders() {
     header("Content-Type: application/json");
 }
 
-// Database Connection Class
-class Database {
+// Mock Data Storage Class (Static Demo Mode)
+class MockDataStorage {
     private static $instance = null;
-    private $connection;
+    private $doctors = [];
+    private $appointments = [];
+    private $users = [];
+    private $sessions = [];
     
     private function __construct() {
-        try {
-            $this->connection = new PDO(
-                "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME,
-                DB_USER,
-                DB_PASS,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false
-                ]
-            );
-        } catch (PDOException $e) {
-            error_log("Database connection failed: " . $e->getMessage());
-            die(json_encode(['error' => 'Database connection failed']));
-        }
+        $this->initializeMockData();
     }
     
     public static function getInstance() {
@@ -80,131 +69,13 @@ class Database {
         return self::$instance;
     }
     
-    public function getConnection() {
-        return $this->connection;
-    }
-    
-    // Initialize database tables
-    public function initializeTables() {
-        
-        try {
-            // Create enums first (if they don't exist)
-            $this->connection->exec("CREATE TYPE gender_enum AS ENUM ('male', 'female', 'other')");
-        } catch (PDOException $e) {
-            // Enum might already exist, continue
-        }
-        
-        try {
-            $this->connection->exec("CREATE TYPE appointment_status_enum AS ENUM ('pending', 'confirmed', 'completed', 'cancelled')");
-        } catch (PDOException $e) {
-            // Enum might already exist, continue
-        }
-        
-        try {
-            // Create tables
-            $statements = [
-                "CREATE TABLE IF NOT EXISTS users (
-                    id SERIAL PRIMARY KEY,
-                    first_name VARCHAR(50) NOT NULL,
-                    last_name VARCHAR(50) NOT NULL,
-                    email VARCHAR(100) UNIQUE NOT NULL,
-                    phone VARCHAR(20) NOT NULL,
-                    date_of_birth DATE NOT NULL,
-                    gender gender_enum NOT NULL,
-                    password_hash VARCHAR(255) NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    is_active BOOLEAN DEFAULT TRUE,
-                    login_attempts INT DEFAULT 0,
-                    last_login_attempt TIMESTAMP NULL,
-                    locked_until TIMESTAMP NULL
-                )",
-                
-                "CREATE TABLE IF NOT EXISTS doctors (
-                    id SERIAL PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    specialty VARCHAR(100) NOT NULL,
-                    subspecialties JSONB,
-                    education VARCHAR(200) NOT NULL,
-                    experience INT NOT NULL,
-                    location VARCHAR(200) NOT NULL,
-                    phone VARCHAR(20),
-                    email VARCHAR(100),
-                    fee DECIMAL(10,2) NOT NULL,
-                    rating DECIMAL(3,2) DEFAULT 0.00,
-                    reviews INT DEFAULT 0,
-                    about TEXT,
-                    services JSONB,
-                    certifications JSONB,
-                    languages JSONB,
-                    working_hours JSONB,
-                    available BOOLEAN DEFAULT TRUE,
-                    patients_treated INT DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )",
-                
-                "CREATE TABLE IF NOT EXISTS appointments (
-                    id SERIAL PRIMARY KEY,
-                    booking_id VARCHAR(50) UNIQUE NOT NULL,
-                    user_id INT REFERENCES users(id) ON DELETE SET NULL,
-                    doctor_id INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
-                    appointment_date DATE NOT NULL,
-                    appointment_time TIME NOT NULL,
-                    patient_name VARCHAR(100) NOT NULL,
-                    patient_age INT NOT NULL,
-                    patient_gender gender_enum NOT NULL,
-                    patient_phone VARCHAR(20) NOT NULL,
-                    patient_email VARCHAR(100) NOT NULL,
-                    symptoms TEXT,
-                    medical_history TEXT,
-                    status appointment_status_enum DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )",
-                
-                "CREATE TABLE IF NOT EXISTS time_slots (
-                    id SERIAL PRIMARY KEY,
-                    doctor_id INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
-                    date DATE NOT NULL,
-                    time TIME NOT NULL,
-                    is_available BOOLEAN DEFAULT TRUE,
-                    appointment_id INT REFERENCES appointments(id) ON DELETE SET NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(doctor_id, date, time)
-                )",
-                
-                "CREATE TABLE IF NOT EXISTS sessions (
-                    id VARCHAR(128) PRIMARY KEY,
-                    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    data TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    expires_at TIMESTAMP NOT NULL
-                )",
-                
-                "CREATE INDEX IF NOT EXISTS idx_appointment_date ON appointments(appointment_date)",
-                "CREATE INDEX IF NOT EXISTS idx_doctor_date ON appointments(doctor_id, appointment_date)",
-                "CREATE INDEX IF NOT EXISTS idx_expires ON sessions(expires_at)"
-            ];
-            
-            foreach ($statements as $statement) {
-                $this->connection->exec($statement);
-            }
-            
-            return true;
-        } catch (PDOException $e) {
-            error_log("Error creating tables: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    // Insert sample doctors data
-    public function insertSampleDoctors() {
-        $doctors = [
+    private function initializeMockData() {
+        $this->doctors = [
             [
+                'id' => 1,
                 'name' => 'Sarah Johnson',
                 'specialty' => 'Cardiology',
-                'subspecialties' => json_encode(['Interventional Cardiology', 'Heart Failure']),
+                'subspecialties' => ['Interventional Cardiology', 'Heart Failure'],
                 'education' => 'Harvard Medical School',
                 'experience' => 15,
                 'location' => 'Medical Center, Downtown',
@@ -214,16 +85,17 @@ class Database {
                 'rating' => 4.8,
                 'reviews' => 156,
                 'about' => 'Dr. Johnson is a board-certified cardiologist with extensive experience in treating heart conditions.',
-                'services' => json_encode(['Cardiac Consultation', 'ECG', 'Stress Testing', 'Heart Surgery']),
-                'certifications' => json_encode(['Board Certified Cardiologist', 'Advanced Cardiac Life Support']),
-                'languages' => json_encode(['English', 'Spanish']),
+                'services' => ['Cardiac Consultation', 'ECG', 'Stress Testing', 'Heart Surgery'],
+                'certifications' => ['Board Certified Cardiologist', 'Advanced Cardiac Life Support'],
+                'languages' => ['English', 'Spanish'],
                 'available' => true,
                 'patients_treated' => 2500
             ],
             [
+                'id' => 2,
                 'name' => 'Michael Chen',
                 'specialty' => 'Neurology',
-                'subspecialties' => json_encode(['Stroke Medicine', 'Epilepsy']),
+                'subspecialties' => ['Stroke Medicine', 'Epilepsy'],
                 'education' => 'Johns Hopkins Medical School',
                 'experience' => 12,
                 'location' => 'Neurological Institute, Uptown',
@@ -233,16 +105,17 @@ class Database {
                 'rating' => 4.9,
                 'reviews' => 203,
                 'about' => 'Dr. Chen specializes in neurological disorders with a focus on stroke prevention and treatment.',
-                'services' => json_encode(['Neurological Consultation', 'EEG', 'Brain Imaging', 'Stroke Treatment']),
-                'certifications' => json_encode(['Board Certified Neurologist', 'Stroke Specialist']),
-                'languages' => json_encode(['English', 'Mandarin']),
+                'services' => ['Neurological Consultation', 'EEG', 'Brain Imaging', 'Stroke Treatment'],
+                'certifications' => ['Board Certified Neurologist', 'Stroke Specialist'],
+                'languages' => ['English', 'Mandarin'],
                 'available' => true,
                 'patients_treated' => 1800
             ],
             [
+                'id' => 3,
                 'name' => 'Emily Rodriguez',
                 'specialty' => 'Pediatrics',
-                'subspecialties' => json_encode(['Pediatric Emergency Medicine', 'Child Development']),
+                'subspecialties' => ['Pediatric Emergency Medicine', 'Child Development'],
                 'education' => 'Stanford Medical School',
                 'experience' => 8,
                 'location' => 'Children\'s Hospital, Westside',
@@ -252,16 +125,17 @@ class Database {
                 'rating' => 4.7,
                 'reviews' => 89,
                 'about' => 'Dr. Rodriguez is dedicated to providing comprehensive pediatric care for children of all ages.',
-                'services' => json_encode(['Child Health Checkups', 'Vaccinations', 'Developmental Assessment']),
-                'certifications' => json_encode(['Board Certified Pediatrician', 'Pediatric Advanced Life Support']),
-                'languages' => json_encode(['English', 'Spanish']),
+                'services' => ['Child Health Checkups', 'Vaccinations', 'Developmental Assessment'],
+                'certifications' => ['Board Certified Pediatrician', 'Pediatric Advanced Life Support'],
+                'languages' => ['English', 'Spanish'],
                 'available' => true,
                 'patients_treated' => 1200
             ],
             [
+                'id' => 4,
                 'name' => 'David Thompson',
                 'specialty' => 'Orthopedics',
-                'subspecialties' => json_encode(['Sports Medicine', 'Joint Replacement']),
+                'subspecialties' => ['Sports Medicine', 'Joint Replacement'],
                 'education' => 'Mayo Clinic Medical School',
                 'experience' => 20,
                 'location' => 'Orthopedic Center, Central',
@@ -271,16 +145,17 @@ class Database {
                 'rating' => 4.6,
                 'reviews' => 134,
                 'about' => 'Dr. Thompson is an experienced orthopedic surgeon specializing in sports injuries and joint replacement.',
-                'services' => json_encode(['Joint Surgery', 'Sports Injury Treatment', 'Physical Therapy']),
-                'certifications' => json_encode(['Board Certified Orthopedic Surgeon', 'Sports Medicine Specialist']),
-                'languages' => json_encode(['English']),
+                'services' => ['Joint Surgery', 'Sports Injury Treatment', 'Physical Therapy'],
+                'certifications' => ['Board Certified Orthopedic Surgeon', 'Sports Medicine Specialist'],
+                'languages' => ['English'],
                 'available' => false,
                 'patients_treated' => 3200
             ],
             [
+                'id' => 5,
                 'name' => 'Lisa Park',
                 'specialty' => 'Dermatology',
-                'subspecialties' => json_encode(['Cosmetic Dermatology', 'Skin Cancer']),
+                'subspecialties' => ['Cosmetic Dermatology', 'Skin Cancer'],
                 'education' => 'Yale Medical School',
                 'experience' => 10,
                 'location' => 'Dermatology Clinic, Eastside',
@@ -290,73 +165,51 @@ class Database {
                 'rating' => 4.5,
                 'reviews' => 76,
                 'about' => 'Dr. Park provides comprehensive dermatological care including cosmetic and medical treatments.',
-                'services' => json_encode(['Skin Examination', 'Acne Treatment', 'Cosmetic Procedures']),
-                'certifications' => json_encode(['Board Certified Dermatologist', 'Cosmetic Surgery Certified']),
-                'languages' => json_encode(['English', 'Korean']),
+                'services' => ['Skin Examination', 'Acne Treatment', 'Cosmetic Procedures'],
+                'certifications' => ['Board Certified Dermatologist', 'Cosmetic Surgery Certified'],
+                'languages' => ['English', 'Korean'],
                 'available' => true,
                 'patients_treated' => 950
             ]
         ];
-        
-        $stmt = $this->connection->prepare("
-            INSERT INTO doctors (name, specialty, subspecialties, education, experience, location, 
-            phone, email, fee, rating, reviews, about, services, certifications, languages, 
-            available, patients_treated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        
-        foreach ($doctors as $doctor) {
-            try {
-                $stmt->execute([
-                    $doctor['name'], $doctor['specialty'], $doctor['subspecialties'],
-                    $doctor['education'], $doctor['experience'], $doctor['location'],
-                    $doctor['phone'], $doctor['email'], $doctor['fee'], $doctor['rating'],
-                    $doctor['reviews'], $doctor['about'], $doctor['services'],
-                    $doctor['certifications'], $doctor['languages'], $doctor['available'],
-                    $doctor['patients_treated']
-                ]);
-            } catch (PDOException $e) {
-                // Doctor might already exist, continue
-                continue;
+    }
+    
+    public function getDoctors() {
+        return $this->doctors;
+    }
+    
+    public function getDoctorById($id) {
+        foreach ($this->doctors as $doctor) {
+            if ($doctor['id'] == $id) {
+                return $doctor;
             }
         }
+        return null;
     }
     
-    // Generate time slots for all doctors
-    public function generateTimeSlots() {
-        $doctors = $this->connection->query("SELECT id FROM doctors")->fetchAll();
-        
-        foreach ($doctors as $doctor) {
-            $this->generateDoctorTimeSlots($doctor['id']);
-        }
-    }
-    
-    private function generateDoctorTimeSlots($doctorId) {
-        $startDate = new DateTime();
-        $endDate = new DateTime('+30 days'); // Generate slots for next 30 days
-        
+    public function getAvailableTimeSlots($doctorId, $date) {
         $workingHours = [
-            '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00',
-            '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00',
-            '17:00:00', '17:30:00'
+            '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+            '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+            '17:00', '17:30'
         ];
         
-        $stmt = $this->connection->prepare("
-            INSERT INTO time_slots (doctor_id, date, time, is_available) 
-            VALUES (?, ?, ?, TRUE)
-            ON CONFLICT (doctor_id, date, time) DO NOTHING
-        ");
-        
-        $current = clone $startDate;
-        while ($current <= $endDate) {
-            // Skip weekends for some doctors (simplified logic)
-            if ($current->format('N') < 6) { // Monday to Friday
-                foreach ($workingHours as $time) {
-                    $stmt->execute([$doctorId, $current->format('Y-m-d'), $time]);
-                }
-            }
-            $current->add(new DateInterval('P1D'));
-        }
+        return $workingHours;
     }
+    
+    public function saveAppointment($data) {
+        $bookingId = 'BK' . date('Ymd') . sprintf('%06d', rand(100000, 999999));
+        $appointment = array_merge($data, [
+            'id' => count($this->appointments) + 1,
+            'booking_id' => $bookingId,
+            'status' => 'pending',
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+        
+        $this->appointments[] = $appointment;
+        return $appointment;
+    }
+
 }
 
 // Utility Functions
@@ -392,19 +245,10 @@ function logError($message, $context = []) {
     error_log($logMessage);
 }
 
-// Initialize database and create tables if they don't exist
+// Initialize mock data storage (static demo mode)
 try {
-    $db = Database::getInstance();
-    $db->initializeTables();
-    
-    // Insert sample data if tables are empty
-    $result = $db->getConnection()->query("SELECT COUNT(*) FROM doctors");
-    $doctorCount = $result ? $result->fetchColumn() : 0;
-    if ($doctorCount == 0) {
-        $db->insertSampleDoctors();
-        $db->generateTimeSlots();
-    }
+    $mockStorage = MockDataStorage::getInstance();
 } catch (Exception $e) {
-    logError("Database initialization failed: " . $e->getMessage());
+    logError("Mock storage initialization failed: " . $e->getMessage());
 }
 ?>
