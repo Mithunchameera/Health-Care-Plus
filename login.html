@@ -33,75 +33,133 @@
         </div>
     </nav>
 
-    <!-- Login Section -->
-    <section class="auth-section">
-        <div class="auth-container">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to your HealthCare+ account</p>
+    <!-- Modern Login Section -->
+    <section class="modern-auth-section">
+        <div class="auth-background">
+            <div class="auth-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+        
+        <div class="modern-auth-container">
+            <div class="modern-auth-card">
+                <!-- Header -->
+                <div class="modern-auth-header">
+                    <div class="brand-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <h1>Welcome Back</h1>
+                    <p>Please sign in to your account</p>
                 </div>
-                
-                <form id="loginForm" class="auth-form" method="POST" action="php/auth.php">
+
+                <!-- Login Form -->
+                <form id="loginForm" class="modern-auth-form" method="POST" action="php/auth.php">
                     <input type="hidden" name="action" value="login">
                     
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="username" name="username" required>
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="text" id="username" name="username" class="floating-input" placeholder=" " required>
+                            <label for="username" class="floating-label">
+                                <i class="fas fa-user"></i>
+                                Username
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="password" id="password" name="password" class="floating-input" placeholder=" " required>
+                            <label for="password" class="floating-label">
+                                <i class="fas fa-lock"></i>
+                                Password
+                            </label>
+                            <button type="button" class="modern-password-toggle" onclick="togglePassword('password')">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="form-options">
-                        <label class="checkbox-label">
+                    <div class="modern-form-options">
+                        <label class="modern-checkbox">
                             <input type="checkbox" name="remember">
-                            <span class="checkmark"></span>
-                            Remember me
+                            <span class="checkmark">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="checkbox-text">Remember me</span>
                         </label>
-                        <a href="#" class="forgot-link">Forgot Password?</a>
+                        <a href="#" class="modern-forgot-link">Forgot password?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                    <button type="submit" class="modern-btn modern-btn-primary">
+                        <span>Sign In</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </form>
 
-                <div class="auth-footer">
-                    <p>Don't have an account? <a href="register.html">Sign up here</a></p>
-                    <div id="demo-credentials" class="demo-credentials" style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-color); border-radius: 8px; font-size: 0.875rem;">
-                        <h4 style="margin-bottom: 1rem; color: var(--primary-color);">Demo Login Credentials:</h4>
-                        <div style="display: grid; gap: 0.5rem;">
-                            <div><strong>Patient:</strong> patient1 / password123</div>
-                            <div><strong>Doctor:</strong> dr.johnson / doctor123</div>
-                            <div><strong>Admin:</strong> admin / admin123</div>
+                <!-- Footer -->
+                <div class="modern-auth-footer">
+                    <p>Don't have an account? <a href="register.html">Create one</a></p>
+                </div>
+
+                <!-- Demo Credentials -->
+                <div id="demo-credentials" class="modern-demo-credentials">
+                    <div class="demo-toggle">
+                        <i class="fas fa-flask"></i>
+                        <span>Try Demo</span>
+                        <i class="fas fa-chevron-down demo-arrow"></i>
+                    </div>
+                    <div class="demo-content">
+                        <div class="demo-tabs">
+                            <button class="demo-tab active" data-role="patient">
+                                <i class="fas fa-user"></i>
+                                Patient
+                            </button>
+                            <button class="demo-tab" data-role="doctor">
+                                <i class="fas fa-user-md"></i>
+                                Doctor
+                            </button>
+                            <button class="demo-tab" data-role="admin">
+                                <i class="fas fa-user-shield"></i>
+                                Admin
+                            </button>
+                        </div>
+                        <div class="demo-credentials-display">
+                            <div class="demo-cred active" data-role="patient">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">patient1</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">password123</span>
+                                </div>
+                            </div>
+                            <div class="demo-cred" data-role="doctor">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">dr.johnson</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">doctor123</span>
+                                </div>
+                            </div>
+                            <div class="demo-cred" data-role="admin">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">admin</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">admin123</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="auth-image">
-                <svg width="300" height="400" viewBox="0 0 300 400" class="auth-svg">
-                    <defs>
-                        <linearGradient id="authGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:var(--primary-color);stop-opacity:0.8" />
-                            <stop offset="100%" style="stop-color:var(--secondary-color);stop-opacity:0.6" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="150" cy="200" r="100" fill="url(#authGradient)" opacity="0.3"/>
-                    <rect x="100" y="150" width="100" height="80" rx="10" fill="var(--primary-color)" opacity="0.7"/>
-                    <circle cx="150" cy="190" r="20" fill="white"/>
-                    <path d="M140 190 L145 195 L160 180" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                </svg>
             </div>
         </div>
     </section>
@@ -204,6 +262,68 @@
                 notification.remove();
             }, 3000);
         }
+
+        // Modern demo credentials functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoCredentials = document.getElementById('demo-credentials');
+            const demoToggle = demoCredentials.querySelector('.demo-toggle');
+            const demoTabs = demoCredentials.querySelectorAll('.demo-tab');
+            const demoCreds = demoCredentials.querySelectorAll('.demo-cred');
+
+            // Toggle demo section
+            demoToggle.addEventListener('click', function() {
+                demoCredentials.classList.toggle('active');
+            });
+
+            // Tab switching
+            demoTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    
+                    // Update active tab
+                    demoTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update active credentials
+                    demoCreds.forEach(cred => {
+                        cred.classList.remove('active');
+                        if (cred.dataset.role === role) {
+                            cred.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Auto-fill demo credentials when clicked
+            demoCreds.forEach(credSection => {
+                credSection.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    const usernameInput = document.getElementById('username');
+                    const passwordInput = document.getElementById('password');
+                    
+                    switch(role) {
+                        case 'patient':
+                            usernameInput.value = 'patient1';
+                            passwordInput.value = 'password123';
+                            break;
+                        case 'doctor':
+                            usernameInput.value = 'dr.johnson';
+                            passwordInput.value = 'doctor123';
+                            break;
+                        case 'admin':
+                            usernameInput.value = 'admin';
+                            passwordInput.value = 'admin123';
+                            break;
+                    }
+                    
+                    // Trigger floating label animation
+                    usernameInput.dispatchEvent(new Event('input'));
+                    passwordInput.dispatchEvent(new Event('input'));
+                    
+                    showNotification(`Demo ${role} credentials filled`, 'success');
+                });
+            });
+        });
     </script>
 </body>
 </html>

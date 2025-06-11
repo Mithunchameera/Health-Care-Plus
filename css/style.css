@@ -378,57 +378,230 @@ body {
     opacity: 0.9;
 }
 
-/* Auth Section */
-.auth-section {
-    padding: 120px 0 80px;
+/* Modern Auth Section */
+.modern-auth-section {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, var(--bg-color), var(--card-bg));
+    justify-content: center;
+    padding: 80px 20px 40px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, 
+        var(--bg-color) 0%, 
+        rgba(59, 130, 246, 0.02) 25%, 
+        rgba(147, 51, 234, 0.02) 75%, 
+        var(--bg-color) 100%);
 }
 
-.auth-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    max-width: 1000px;
+.auth-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.auth-shapes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    opacity: 0.05;
+    animation: float 20s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 15%;
+    animation-delay: -7s;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: -14s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(120deg); }
+    66% { transform: translateY(10px) rotate(240deg); }
+}
+
+.modern-auth-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
     margin: 0 auto;
-    padding: 0 20px;
 }
 
-.auth-card {
+.modern-auth-card {
     background: var(--card-bg);
-    padding: 3rem;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 32px;
+    padding: 3rem 2.5rem;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.1),
+        0 8px 25px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, 
+        var(--primary-color) 0%, 
+        var(--secondary-color) 50%, 
+        var(--primary-color) 100%);
+    border-radius: 32px 32px 0 0;
+}
+
+.modern-auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.brand-logo i {
+    font-size: 1.8rem;
+}
+
+.modern-auth-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.modern-auth-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
+    text-align: left;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
 }
 
 .auth-header h2 {
-    font-size: 2rem;
+    font-size: 2.25rem;
+    font-weight: 700;
     color: var(--text-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
 .auth-header p {
     color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.5;
 }
 
-.auth-form .form-group {
+/* Modern Form Styles */
+.modern-auth-form {
+    margin-bottom: 2rem;
+}
+
+.modern-form-group {
     margin-bottom: 1.5rem;
 }
 
-.auth-form label {
-    display: block;
-    margin-bottom: 0.5rem;
+.floating-label-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.floating-input {
+    width: 100%;
+    padding: 1.25rem 1rem 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--bg-color);
     color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 400;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.floating-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.1),
+        0 8px 25px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.floating-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bg-color);
+    color: var(--text-secondary);
+    font-size: 1rem;
     font-weight: 500;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    border-radius: 8px;
+}
+
+.floating-input:focus + .floating-label,
+.floating-input:not(:placeholder-shown) + .floating-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    background: var(--card-bg);
+}
+
+.floating-label i {
+    font-size: 0.9rem;
 }
 
 .input-group {
@@ -439,37 +612,74 @@ body {
 
 .input-group i {
     position: absolute;
-    left: 1rem;
+    left: 1.5rem;
     color: var(--text-secondary);
     z-index: 2;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
 }
 
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 3rem;
+    padding: 1rem 3.5rem 1rem 4rem;
     border: 2px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--bg-color);
     color: var(--text-color);
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.input-group input:not([type="password"]) {
+    padding-right: 1.25rem;
 }
 
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
 }
 
-.password-toggle {
+.input-group input:focus + i {
+    color: var(--primary-color);
+}
+
+.modern-password-toggle {
     position: absolute;
     right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    z-index: 2;
+    z-index: 3;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-password-toggle:hover {
+    color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.modern-password-toggle i {
+    font-size: 1rem;
+}
+
+.floating-input[type="password"] {
+    padding-right: 3rem;
 }
 
 .form-row {
@@ -478,51 +688,154 @@ body {
     gap: 1rem;
 }
 
-.form-options {
+/* Modern Form Options */
+.modern-form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.checkbox-label {
+.modern-checkbox {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     cursor: pointer;
     font-size: 0.9rem;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.checkbox-label input[type="checkbox"] {
-    width: auto;
-    margin: 0;
+.modern-checkbox input[type="checkbox"] {
+    display: none;
 }
 
-.forgot-link {
+.modern-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.modern-checkbox .checkmark i {
+    font-size: 0.75rem;
+    color: white;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s ease;
+}
+
+.modern-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.modern-checkbox input[type="checkbox"]:checked + .checkmark i {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modern-checkbox:hover .checkmark {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.checkbox-text {
+    user-select: none;
+}
+
+.modern-forgot-link {
     color: var(--primary-color);
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.forgot-link:hover {
-    text-decoration: underline;
+.modern-forgot-link:hover {
+    color: var(--secondary-color);
+    background: rgba(59, 130, 246, 0.05);
 }
 
-.auth-footer {
+/* Modern Button */
+.modern-btn {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+}
+
+.modern-btn-primary:active {
+    transform: translateY(0);
+}
+
+.modern-btn i {
+    transition: transform 0.3s ease;
+}
+
+.modern-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* Modern Auth Footer */
+.modern-auth-footer {
     text-align: center;
     margin-top: 2rem;
-    padding-top: 2rem;
+    padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
 }
 
-.auth-footer a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
+.modern-auth-footer p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0;
 }
 
-.auth-footer a:hover {
-    text-decoration: underline;
+.modern-auth-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modern-auth-footer a:hover {
+    color: var(--secondary-color);
+    background: rgba(59, 130, 246, 0.05);
 }
 
 .auth-image {
@@ -535,6 +848,148 @@ body {
     max-width: 100%;
     height: auto;
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1));
+}
+
+/* Modern Demo Credentials */
+.modern-demo-credentials {
+    margin-top: 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.demo-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.demo-toggle:hover {
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.demo-toggle i:first-child {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.demo-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.modern-demo-credentials.active .demo-arrow {
+    transform: rotate(180deg);
+}
+
+.demo-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.modern-demo-credentials.active .demo-content {
+    max-height: 300px;
+}
+
+.demo-tabs {
+    display: flex;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.demo-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.demo-tab.active {
+    color: var(--primary-color);
+    background: var(--card-bg);
+}
+
+.demo-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-color);
+}
+
+.demo-tab:hover:not(.active) {
+    color: var(--text-color);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.demo-tab i {
+    font-size: 0.8rem;
+}
+
+.demo-credentials-display {
+    padding: 1.5rem;
+}
+
+.demo-cred {
+    display: none;
+}
+
+.demo-cred.active {
+    display: block;
+}
+
+.cred-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+}
+
+.cred-item:last-child {
+    margin-bottom: 0;
+}
+
+.cred-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.cred-value {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    background: var(--card-bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
 }
 
 /* Password Strength */
@@ -1620,13 +2075,58 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .auth-container {
-        grid-template-columns: 1fr;
-        gap: 2rem;
+    .modern-auth-container {
+        max-width: 90%;
+        padding: 0 1rem;
     }
 
-    .auth-image {
-        order: -1;
+    .modern-auth-card {
+        padding: 2.5rem 2rem;
+        border-radius: 24px;
+    }
+
+    .modern-auth-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .floating-input {
+        padding: 1.1rem 1rem 0.7rem;
+        border-radius: 12px;
+    }
+
+    .floating-label {
+        font-size: 0.9rem;
+    }
+
+    .modern-form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .demo-tabs {
+        flex-direction: column;
+    }
+
+    .demo-tab {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .demo-tab:last-child {
+        border-bottom: none;
+    }
+
+    .cred-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .cred-value {
+        width: 100%;
+        text-align: center;
     }
 
     .form-row {
@@ -1694,8 +2194,61 @@ body {
         flex-direction: column;
     }
 
-    .auth-card {
+    .modern-auth-container {
+        max-width: 95%;
+        padding: 0 0.75rem;
+    }
+
+    .modern-auth-card {
         padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+
+    .modern-auth-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .modern-auth-header p {
+        font-size: 0.9rem;
+    }
+
+    .floating-input {
+        padding: 1rem 1rem 0.6rem;
+        font-size: 0.95rem;
+        border-radius: 12px;
+    }
+
+    .floating-input[type="password"] {
+        padding-right: 2.5rem;
+    }
+
+    .floating-label {
+        font-size: 0.85rem;
+        left: 0.75rem;
+    }
+
+    .floating-input:focus + .floating-label,
+    .floating-input:not(:placeholder-shown) + .floating-label {
+        font-size: 0.75rem;
+    }
+
+    .modern-password-toggle {
+        right: 0.75rem;
+        padding: 0.4rem;
+    }
+
+    .modern-form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .modern-demo-credentials {
+        border-radius: 16px;
+    }
+
+    .demo-credentials-display {
+        padding: 1rem;
     }
 
     .booking-container {
