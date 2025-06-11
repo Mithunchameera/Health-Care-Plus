@@ -20,7 +20,7 @@ class AuthHandler {
     
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
-        $this->sessionHandler = new SessionHandler();
+        $this->sessionHandler = new CustomSessionHandler();
     }
     
     public function handleRequest() {

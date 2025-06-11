@@ -9,11 +9,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'healthcare_plus');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+define('DB_HOST', $_ENV['PGHOST'] ?? 'localhost');
+define('DB_NAME', $_ENV['PGDATABASE'] ?? 'healthcare_plus');
+define('DB_USER', $_ENV['PGUSER'] ?? 'postgres');
+define('DB_PASS', $_ENV['PGPASSWORD'] ?? '');
+define('DB_PORT', $_ENV['PGPORT'] ?? '5432');
+define('DB_CHARSET', 'utf8');
 
 // Application Configuration
 define('APP_NAME', 'HealthCare+');
@@ -57,7 +58,7 @@ class Database {
     private function __construct() {
         try {
             $this->connection = new PDO(
-                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET,
+                "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME,
                 DB_USER,
                 DB_PASS,
                 [
@@ -85,97 +86,111 @@ class Database {
     
     // Initialize database tables
     public function initializeTables() {
-        $sql = "
-        CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            first_name VARCHAR(50) NOT NULL,
-            last_name VARCHAR(50) NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            phone VARCHAR(20) NOT NULL,
-            date_of_birth DATE NOT NULL,
-            gender ENUM('male', 'female', 'other') NOT NULL,
-            password_hash VARCHAR(255) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            is_active BOOLEAN DEFAULT TRUE,
-            login_attempts INT DEFAULT 0,
-            last_login_attempt TIMESTAMP NULL,
-            locked_until TIMESTAMP NULL
-        );
-        
-        CREATE TABLE IF NOT EXISTS doctors (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            specialty VARCHAR(100) NOT NULL,
-            subspecialties JSON,
-            education VARCHAR(200) NOT NULL,
-            experience INT NOT NULL,
-            location VARCHAR(200) NOT NULL,
-            phone VARCHAR(20),
-            email VARCHAR(100),
-            fee DECIMAL(10,2) NOT NULL,
-            rating DECIMAL(3,2) DEFAULT 0.00,
-            reviews INT DEFAULT 0,
-            about TEXT,
-            services JSON,
-            certifications JSON,
-            languages JSON,
-            working_hours JSON,
-            available BOOLEAN DEFAULT TRUE,
-            patients_treated INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
-        
-        CREATE TABLE IF NOT EXISTS appointments (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            booking_id VARCHAR(50) UNIQUE NOT NULL,
-            user_id INT,
-            doctor_id INT NOT NULL,
-            appointment_date DATE NOT NULL,
-            appointment_time TIME NOT NULL,
-            patient_name VARCHAR(100) NOT NULL,
-            patient_age INT NOT NULL,
-            patient_gender ENUM('male', 'female', 'other') NOT NULL,
-            patient_phone VARCHAR(20) NOT NULL,
-            patient_email VARCHAR(100) NOT NULL,
-            symptoms TEXT,
-            medical_history TEXT,
-            status ENUM('pending', 'confirmed', 'completed', 'cancelled') DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE,
-            INDEX idx_appointment_date (appointment_date),
-            INDEX idx_doctor_date (doctor_id, appointment_date)
-        );
-        
-        CREATE TABLE IF NOT EXISTS time_slots (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            doctor_id INT NOT NULL,
-            date DATE NOT NULL,
-            time TIME NOT NULL,
-            is_available BOOLEAN DEFAULT TRUE,
-            appointment_id INT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE,
-            FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE SET NULL,
-            UNIQUE KEY unique_slot (doctor_id, date, time)
-        );
-        
-        CREATE TABLE IF NOT EXISTS sessions (
-            id VARCHAR(128) PRIMARY KEY,
-            user_id INT NOT NULL,
-            data TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            expires_at TIMESTAMP NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            INDEX idx_expires (expires_at)
-        );
-        ";
         
         try {
-            $this->connection->exec($sql);
+            // Create enums first (if they don't exist)
+            $this->connection->exec("CREATE TYPE gender_enum AS ENUM ('male', 'female', 'other')");
+        } catch (PDOException $e) {
+            // Enum might already exist, continue
+        }
+        
+        try {
+            $this->connection->exec("CREATE TYPE appointment_status_enum AS ENUM ('pending', 'confirmed', 'completed', 'cancelled')");
+        } catch (PDOException $e) {
+            // Enum might already exist, continue
+        }
+        
+        try {
+            // Create tables
+            $statements = [
+                "CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    first_name VARCHAR(50) NOT NULL,
+                    last_name VARCHAR(50) NOT NULL,
+                    email VARCHAR(100) UNIQUE NOT NULL,
+                    phone VARCHAR(20) NOT NULL,
+                    date_of_birth DATE NOT NULL,
+                    gender gender_enum NOT NULL,
+                    password_hash VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    login_attempts INT DEFAULT 0,
+                    last_login_attempt TIMESTAMP NULL,
+                    locked_until TIMESTAMP NULL
+                )",
+                
+                "CREATE TABLE IF NOT EXISTS doctors (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL,
+                    specialty VARCHAR(100) NOT NULL,
+                    subspecialties JSONB,
+                    education VARCHAR(200) NOT NULL,
+                    experience INT NOT NULL,
+                    location VARCHAR(200) NOT NULL,
+                    phone VARCHAR(20),
+                    email VARCHAR(100),
+                    fee DECIMAL(10,2) NOT NULL,
+                    rating DECIMAL(3,2) DEFAULT 0.00,
+                    reviews INT DEFAULT 0,
+                    about TEXT,
+                    services JSONB,
+                    certifications JSONB,
+                    languages JSONB,
+                    working_hours JSONB,
+                    available BOOLEAN DEFAULT TRUE,
+                    patients_treated INT DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )",
+                
+                "CREATE TABLE IF NOT EXISTS appointments (
+                    id SERIAL PRIMARY KEY,
+                    booking_id VARCHAR(50) UNIQUE NOT NULL,
+                    user_id INT REFERENCES users(id) ON DELETE SET NULL,
+                    doctor_id INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
+                    appointment_date DATE NOT NULL,
+                    appointment_time TIME NOT NULL,
+                    patient_name VARCHAR(100) NOT NULL,
+                    patient_age INT NOT NULL,
+                    patient_gender gender_enum NOT NULL,
+                    patient_phone VARCHAR(20) NOT NULL,
+                    patient_email VARCHAR(100) NOT NULL,
+                    symptoms TEXT,
+                    medical_history TEXT,
+                    status appointment_status_enum DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )",
+                
+                "CREATE TABLE IF NOT EXISTS time_slots (
+                    id SERIAL PRIMARY KEY,
+                    doctor_id INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
+                    date DATE NOT NULL,
+                    time TIME NOT NULL,
+                    is_available BOOLEAN DEFAULT TRUE,
+                    appointment_id INT REFERENCES appointments(id) ON DELETE SET NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(doctor_id, date, time)
+                )",
+                
+                "CREATE TABLE IF NOT EXISTS sessions (
+                    id VARCHAR(128) PRIMARY KEY,
+                    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    data TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    expires_at TIMESTAMP NOT NULL
+                )",
+                
+                "CREATE INDEX IF NOT EXISTS idx_appointment_date ON appointments(appointment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_doctor_date ON appointments(doctor_id, appointment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_expires ON sessions(expires_at)"
+            ];
+            
+            foreach ($statements as $statement) {
+                $this->connection->exec($statement);
+            }
+            
             return true;
         } catch (PDOException $e) {
             error_log("Error creating tables: " . $e->getMessage());
@@ -326,8 +341,9 @@ class Database {
         ];
         
         $stmt = $this->connection->prepare("
-            INSERT IGNORE INTO time_slots (doctor_id, date, time, is_available) 
+            INSERT INTO time_slots (doctor_id, date, time, is_available) 
             VALUES (?, ?, ?, TRUE)
+            ON CONFLICT (doctor_id, date, time) DO NOTHING
         ");
         
         $current = clone $startDate;
@@ -382,7 +398,8 @@ try {
     $db->initializeTables();
     
     // Insert sample data if tables are empty
-    $doctorCount = $db->getConnection()->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
+    $result = $db->getConnection()->query("SELECT COUNT(*) FROM doctors");
+    $doctorCount = $result ? $result->fetchColumn() : 0;
     if ($doctorCount == 0) {
         $db->insertSampleDoctors();
         $db->generateTimeSlots();

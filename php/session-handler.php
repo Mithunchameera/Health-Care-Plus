@@ -6,7 +6,7 @@
 
 require_once 'config.php';
 
-class SessionHandler {
+class CustomSessionHandler {
     private $db;
     private $sessionLifetime;
     
@@ -40,7 +40,7 @@ class SessionHandler {
             
             $stmt = $this->db->prepare("
                 INSERT INTO sessions (id, user_id, data, created_at, expires_at) 
-                VALUES (?, ?, ?, NOW(), ?)
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)
             ");
             
             $stmt->execute([

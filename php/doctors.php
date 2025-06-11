@@ -180,7 +180,7 @@ class DoctorsHandler {
             $stmt = $this->db->prepare("
                 SELECT DISTINCT date 
                 FROM time_slots 
-                WHERE doctor_id = ? AND date >= CURDATE() AND date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) 
+                WHERE doctor_id = ? AND date >= CURRENT_DATE AND date <= CURRENT_DATE + INTERVAL '30 days' 
                 AND is_available = TRUE 
                 ORDER BY date LIMIT 10
             ");
@@ -218,8 +218,8 @@ class DoctorsHandler {
                     LOWER(name) LIKE LOWER(?) OR 
                     LOWER(specialty) LIKE LOWER(?) OR 
                     LOWER(about) LIKE LOWER(?) OR
-                    JSON_SEARCH(LOWER(subspecialties), 'one', LOWER(?)) IS NOT NULL OR
-                    JSON_SEARCH(LOWER(services), 'one', LOWER(?)) IS NOT NULL
+                    LOWER(subspecialties::text) LIKE LOWER(?) OR
+                    LOWER(services::text) LIKE LOWER(?)
                 )
             ";
             

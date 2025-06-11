@@ -20,7 +20,7 @@ class BookingHandler {
     
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
-        $this->sessionHandler = new SessionHandler();
+        $this->sessionHandler = new CustomSessionHandler();
     }
     
     public function handleRequest() {
@@ -149,8 +149,9 @@ class BookingHandler {
         ];
         
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO time_slots (doctor_id, date, time, is_available) 
+            INSERT INTO time_slots (doctor_id, date, time, is_available) 
             VALUES (?, ?, ?, TRUE)
+            ON CONFLICT (doctor_id, date, time) DO NOTHING
         ");
         
         foreach ($workingHours as $time) {
@@ -377,6 +378,96 @@ class BookingHandler {
         }
     }
     
+    private function updateBooking($data) {
+        try {
+            $bookingId = sanitizeInput($data['bookingId'] ?? '');
+            $newDate = $data['newDate'] ?? '';
+            $newTime = $data['newTime'] ?? '';
+            
+            if (empty($bookingId) || empty($newDate) || empty($newTime)) {
+                sendResponse(['error' => 'Booking ID, new date, and new time are required'], 400);
+            }
+            
+            // Start transaction
+            $this->db->beginTransaction();
+            
+            try {
+                // Get current appointment
+                $stmt = $this->db->prepare("
+                    SELECT id, doctor_id, appointment_date, appointment_time, status 
+                    FROM appointments WHERE booking_id = ?
+                ");
+                $stmt->execute([$bookingId]);
+                $appointment = $stmt->fetch();
+                
+                if (!$appointment) {
+                    throw new Exception('Appointment not found');
+                }
+                
+                if ($appointment['status'] === 'cancelled') {
+                    throw new Exception('Cannot update cancelled appointment');
+                }
+                
+                if ($appointment['status'] === 'completed') {
+                    throw new Exception('Cannot update completed appointment');
+                }
+                
+                // Check if new slot is available
+                $stmt = $this->db->prepare("
+                    SELECT id FROM time_slots 
+                    WHERE doctor_id = ? AND date = ? AND time = ? AND appointment_id IS NULL
+                ");
+                $stmt->execute([$appointment['doctor_id'], $newDate, $newTime]);
+                $newSlot = $stmt->fetch();
+                
+                if (!$newSlot) {
+                    throw new Exception('Selected time slot is not available');
+                }
+                
+                // Free up old slot
+                $stmt = $this->db->prepare("
+                    UPDATE time_slots SET appointment_id = NULL, is_available = TRUE 
+                    WHERE doctor_id = ? AND date = ? AND time = ? AND appointment_id = ?
+                ");
+                $stmt->execute([
+                    $appointment['doctor_id'],
+                    $appointment['appointment_date'],
+                    $appointment['appointment_time'],
+                    $appointment['id']
+                ]);
+                
+                // Reserve new slot
+                $stmt = $this->db->prepare("
+                    UPDATE time_slots SET appointment_id = ?, is_available = FALSE 
+                    WHERE id = ?
+                ");
+                $stmt->execute([$appointment['id'], $newSlot['id']]);
+                
+                // Update appointment
+                $stmt = $this->db->prepare("
+                    UPDATE appointments SET appointment_date = ?, appointment_time = ? 
+                    WHERE id = ?
+                ");
+                $stmt->execute([$newDate, $newTime, $appointment['id']]);
+                
+                $this->db->commit();
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => 'Appointment updated successfully'
+                ]);
+                
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+            
+        } catch (Exception $e) {
+            logError("Booking update error: " . $e->getMessage());
+            sendResponse(['error' => $e->getMessage()], 400);
+        }
+    }
+    
     private function getUserAppointments() {
         try {
             // Get current user
@@ -432,7 +523,7 @@ class BookingHandler {
                 SELECT a.*, d.name as doctor_name, d.specialty 
                 FROM appointments a 
                 JOIN doctors d ON a.doctor_id = d.id 
-                WHERE a.appointment_date >= CURDATE() AND a.status != 'cancelled'
+                WHERE a.appointment_date >= CURRENT_DATE AND a.status != 'cancelled'
             ";
             
             $params = [];
