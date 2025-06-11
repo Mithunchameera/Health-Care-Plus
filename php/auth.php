@@ -44,48 +44,59 @@ class AuthHandler {
     
     private function login() {
         try {
-            $email = sanitizeInput($_POST['email'] ?? '');
+            $username = sanitizeInput($_POST['username'] ?? '');
             $password = $_POST['password'] ?? '';
             
-            if (empty($email) || empty($password)) {
-                sendResponse(['error' => 'Email and password are required'], 400);
+            if (empty($username) || empty($password)) {
+                sendResponse(['error' => 'Username and password are required'], 400);
             }
             
-            if (!validateEmail($email)) {
-                sendResponse(['error' => 'Invalid email format'], 400);
+            $mockStorage = MockDataStorage::getInstance();
+            $user = $mockStorage->authenticateUser($username, $password);
+            
+            if (!$user) {
+                sendResponse(['error' => 'Invalid username or password'], 401);
             }
             
-            // For demo purposes, accept any valid email/password combination
-            if (strlen($password) >= 6) {
-                // Create a demo session
-                $sessionId = bin2hex(random_bytes(32));
-                
-                // Set session cookie
-                setcookie('session_id', $sessionId, [
-                    'expires' => time() + 3600,
-                    'path' => '/',
-                    'secure' => false,
-                    'httponly' => true,
-                    'samesite' => 'Lax'
-                ]);
-                
-                sendResponse([
-                    'success' => true,
-                    'message' => 'Login successful',
-                    'user' => [
-                        'id' => 1,
-                        'firstName' => 'Demo',
-                        'lastName' => 'User',
-                        'email' => $email
-                    ]
-                ]);
-            } else {
-                sendResponse(['error' => 'Password must be at least 6 characters'], 400);
-            }
+            // Create session
+            $sessionId = $mockStorage->createSession($user['id']);
+            
+            // Set session cookie
+            setcookie('session_id', $sessionId, [
+                'expires' => time() + SESSION_LIFETIME,
+                'path' => '/',
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+            
+            // Remove password from response
+            unset($user['password']);
+            
+            sendResponse([
+                'success' => true,
+                'message' => 'Login successful',
+                'user' => $user,
+                'redirect' => $this->getDashboardUrl($user['role'])
+            ]);
             
         } catch (Exception $e) {
             logError("Login error: " . $e->getMessage());
             sendResponse(['error' => 'Login failed'], 500);
+        }
+    }
+    
+    private function getDashboardUrl($role) {
+        switch ($role) {
+            case 'patient':
+                return 'dashboard-patient.html';
+            case 'doctor':
+                return 'dashboard-doctor.html';
+            case 'admin':
+            case 'staff':
+                return 'dashboard-admin.html';
+            default:
+                return 'index.html';
         }
     }
     

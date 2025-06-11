@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .schedule-day {
+            background: var(--card-bg);
+            padding: 1rem;
+            min-height: 150px;
+        }
+        
+        .schedule-day-header {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .schedule-slot {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
+        
+        .schedule-slot.booked {
+            background: var(--secondary-color);
+        }
+        
+        .schedule-slot.available {
+            background: #28a745;
+        }
+        
+        .appointment-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+        
+        .appointment-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .appointment-time {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .appointment-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .patient-detail {
+            display: flex;
+            align-items: center;
+        }
+        
+        .patient-detail i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background: var(--bg-color);
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .time-slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .time-slot {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .time-slot.available {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+        
+        .time-slot.booked {
+            border-color: #dc3545;
+            background: #fff5f5;
+            cursor: not-allowed;
+        }
+        
+        .time-slot.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <span class="nav-link" id="user-name">Doctor Dashboard</span>
+                <button id="logout-btn" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="sidebar-menu">
+                    <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="#schedule" class="sidebar-link" data-section="schedule">
+                        <i class="fas fa-calendar"></i> My Schedule
+                    </a></li>
+                    <li><a href="#appointments" class="sidebar-link" data-section="appointments">
+                        <i class="fas fa-calendar-check"></i> Appointments
+                    </a></li>
+                    <li><a href="#patients" class="sidebar-link" data-section="patients">
+                        <i class="fas fa-users"></i> Patients
+                    </a></li>
+                    <li><a href="#availability" class="sidebar-link" data-section="availability">
+                        <i class="fas fa-clock"></i> Set Availability
+                    </a></li>
+                    <li><a href="#profile" class="sidebar-link" data-section="profile">
+                        <i class="fas fa-user"></i> My Profile
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="dashboard-header">
+                    <h1>Welcome, <span id="doctor-name">Dr. Sarah Johnson</span>!</h1>
+                    <p>Here's your practice overview for today.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-day"></i>
+                        <div class="stat-number" id="today-appointments">8</div>
+                        <div class="stat-label">Today's Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-number" id="total-patients">156</div>
+                        <div class="stat-label">Total Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-number" id="upcoming-count">3</div>
+                        <div class="stat-label">Upcoming Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-number" id="doctor-rating">4.8</div>
+                        <div class="stat-label">Patient Rating</div>
+                    </div>
+                </div>
+
+                <!-- Today's Appointments -->
+                <div class="content-section">
+                    <h2>Today's Appointments</h2>
+                    <div id="today-appointments-list">
+                        <div class="appointment-card">
+                            <div class="appointment-header">
+                                <div class="appointment-time">10:30 AM</div>
+                                <div class="appointment-status status-confirmed">Confirmed</div>
+                            </div>
+                            <div class="patient-info">
+                                <div class="patient-detail">
+                                    <i class="fas fa-user"></i>
+                                    <span>John Doe</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-phone"></i>
+                                    <span>+1 (555) 111-1111</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>john.doe@email.com</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-notes-medical"></i>
+                                    <span>Routine Checkup</span>
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary btn-sm" onclick="startConsultation(1)">
+                                    <i class="fas fa-play"></i> Start Consultation
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="viewPatientHistory(1)">
+                                    <i class="fas fa-history"></i> View History
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="appointment-card">
+                            <div class="appointment-header">
+                                <div class="appointment-time">2:00 PM</div>
+                                <div class="appointment-status status-pending">Pending</div>
+                            </div>
+                            <div class="patient-info">
+                                <div class="patient-detail">
+                                    <i class="fas fa-user"></i>
+                                    <span>Maria Garcia</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-phone"></i>
+                                    <span>+1 (555) 222-2222</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>maria.garcia@email.com</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-notes-medical"></i>
+                                    <span>Follow-up Consultation</span>
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary btn-sm" onclick="confirmAppointment(2)">
+                                    <i class="fas fa-check"></i> Confirm
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="viewPatientHistory(2)">
+                                    <i class="fas fa-history"></i> View History
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Schedule Section -->
+            <section id="schedule-section" class="content-section" style="display: none;">
+                <h2>Weekly Schedule</h2>
+                <div class="schedule-controls" style="margin-bottom: 2rem;">
+                    <button class="btn btn-secondary" onclick="previousWeek()">
+                        <i class="fas fa-chevron-left"></i> Previous Week
+                    </button>
+                    <span id="current-week" style="margin: 0 2rem; font-weight: bold;">June 9-15, 2025</span>
+                    <button class="btn btn-secondary" onclick="nextWeek()">
+                        Next Week <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="schedule-grid" id="schedule-grid">
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Monday</div>
+                        <div class="schedule-slot booked">9:00 AM</div>
+                        <div class="schedule-slot available">10:30 AM</div>
+                        <div class="schedule-slot booked">2:00 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Tuesday</div>
+                        <div class="schedule-slot available">9:00 AM</div>
+                        <div class="schedule-slot booked">11:00 AM</div>
+                        <div class="schedule-slot available">3:00 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Wednesday</div>
+                        <div class="schedule-slot booked">10:00 AM</div>
+                        <div class="schedule-slot available">1:00 PM</div>
+                        <div class="schedule-slot booked">4:00 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Thursday</div>
+                        <div class="schedule-slot available">9:30 AM</div>
+                        <div class="schedule-slot booked">2:30 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Friday</div>
+                        <div class="schedule-slot booked">8:00 AM</div>
+                        <div class="schedule-slot available">11:30 AM</div>
+                        <div class="schedule-slot available">3:30 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Saturday</div>
+                        <div class="schedule-slot available">10:00 AM</div>
+                        <div class="schedule-slot available">2:00 PM</div>
+                    </div>
+                    <div class="schedule-day">
+                        <div class="schedule-day-header">Sunday</div>
+                        <div style="text-align: center; color: #999; padding-top: 2rem;">Off Day</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section" style="display: none;">
+                <h2>All Appointments</h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Patient</th>
+                                <th>Contact</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body">
+                            <tr>
+                                <td>June 15, 2025 10:30 AM</td>
+                                <td>John Doe</td>
+                                <td>+1 (555) 111-1111</td>
+                                <td>Routine Checkup</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="startConsultation(1)">Start</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="viewPatientHistory(1)">History</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patients Section -->
+            <section id="patients-section" class="content-section" style="display: none;">
+                <h2>My Patients</h2>
+                <div class="search-bar" style="margin-bottom: 2rem;">
+                    <input type="text" id="patient-search" placeholder="Search patients..." class="form-control">
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Last Visit</th>
+                                <th>Total Visits</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-table-body">
+                            <tr>
+                                <td>John Doe</td>
+                                <td>
+                                    <div>+1 (555) 111-1111</div>
+                                    <div style="font-size: 0.875rem; color: #666;">john.doe@email.com</div>
+                                </td>
+                                <td>June 10, 2025</td>
+                                <td>5</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewPatientHistory(1)">View History</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Availability Section -->
+            <section id="availability-section" class="content-section" style="display: none;">
+                <h2>Set Availability</h2>
+                <form id="availability-form">
+                    <div class="form-group">
+                        <label for="availability-date">Select Date</label>
+                        <input type="date" id="availability-date" class="form-control" required>
+                    </div>
+                    
+                    <h3>Available Time Slots</h3>
+                    <div class="time-slot-grid" id="time-slots-grid">
+                        <div class="time-slot available" data-time="09:00">9:00 AM</div>
+                        <div class="time-slot available" data-time="09:30">9:30 AM</div>
+                        <div class="time-slot available" data-time="10:00">10:00 AM</div>
+                        <div class="time-slot available" data-time="10:30">10:30 AM</div>
+                        <div class="time-slot available" data-time="11:00">11:00 AM</div>
+                        <div class="time-slot available" data-time="11:30">11:30 AM</div>
+                        <div class="time-slot available" data-time="14:00">2:00 PM</div>
+                        <div class="time-slot available" data-time="14:30">2:30 PM</div>
+                        <div class="time-slot available" data-time="15:00">3:00 PM</div>
+                        <div class="time-slot available" data-time="15:30">3:30 PM</div>
+                        <div class="time-slot available" data-time="16:00">4:00 PM</div>
+                        <div class="time-slot available" data-time="16:30">4:30 PM</div>
+                    </div>
+                    
+                    <div class="btn-group" style="margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Availability
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearAllSlots()">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section" style="display: none;">
+                <h2>Doctor Profile</h2>
+                <form id="doctor-profile-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="doctor-full-name">Full Name</label>
+                        <input type="text" id="doctor-full-name" value="Dr. Sarah Johnson" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-email">Email</label>
+                        <input type="email" id="doctor-email" value="dr.johnson@healthcareplus.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-phone">Phone</label>
+                        <input type="tel" id="doctor-phone" value="+1 (555) 123-4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-specialty">Specialty</label>
+                        <input type="text" id="doctor-specialty" value="Cardiology" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-license">License Number</label>
+                        <input type="text" id="doctor-license" value="MD123456" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-experience">Experience (Years)</label>
+                        <input type="number" id="doctor-experience" value="15" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="doctor-about">About</label>
+                        <textarea id="doctor-about" rows="4" required>Dr. Johnson is a board-certified cardiologist with extensive experience in treating heart conditions.</textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/doctor-dashboard.js"></script>
+</body>
+</html>

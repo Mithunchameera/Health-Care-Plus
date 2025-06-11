@@ -60,6 +60,7 @@ class MockDataStorage {
     
     private function __construct() {
         $this->initializeMockData();
+        $this->initializeUsers();
     }
     
     public static function getInstance() {
@@ -174,6 +175,112 @@ class MockDataStorage {
         ];
     }
     
+    private function initializeUsers() {
+        $this->users = [
+            // Patients
+            [
+                'id' => 1,
+                'username' => 'patient1',
+                'email' => 'john.doe@email.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'patient',
+                'full_name' => 'John Doe',
+                'phone' => '+1 (555) 111-1111',
+                'date_of_birth' => '1990-05-15',
+                'address' => '123 Main St, New York, NY 10001',
+                'emergency_contact' => '+1 (555) 111-2222',
+                'insurance_number' => 'INS123456789',
+                'created_at' => '2024-01-15 10:30:00',
+                'last_login' => '2025-06-10 14:20:00'
+            ],
+            [
+                'id' => 2,
+                'username' => 'patient2',
+                'email' => 'maria.garcia@email.com',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
+                'role' => 'patient',
+                'full_name' => 'Maria Garcia',
+                'phone' => '+1 (555) 222-2222',
+                'date_of_birth' => '1985-08-20',
+                'address' => '456 Oak Ave, Los Angeles, CA 90210',
+                'emergency_contact' => '+1 (555) 222-3333',
+                'insurance_number' => 'INS987654321',
+                'created_at' => '2024-02-20 09:15:00',
+                'last_login' => '2025-06-09 16:45:00'
+            ],
+            // Doctors
+            [
+                'id' => 3,
+                'username' => 'dr.johnson',
+                'email' => 'dr.johnson@healthcareplus.com',
+                'password' => password_hash('doctor123', PASSWORD_DEFAULT),
+                'role' => 'doctor',
+                'full_name' => 'Dr. Sarah Johnson',
+                'phone' => '+1 (555) 123-4567',
+                'doctor_id' => 1,
+                'license_number' => 'MD123456',
+                'department' => 'Cardiology',
+                'created_at' => '2023-06-01 08:00:00',
+                'last_login' => '2025-06-11 07:30:00'
+            ],
+            [
+                'id' => 4,
+                'username' => 'dr.chen',
+                'email' => 'dr.chen@healthcareplus.com',
+                'password' => password_hash('doctor123', PASSWORD_DEFAULT),
+                'role' => 'doctor',
+                'full_name' => 'Dr. Michael Chen',
+                'phone' => '+1 (555) 234-5678',
+                'doctor_id' => 2,
+                'license_number' => 'MD234567',
+                'department' => 'Neurology',
+                'created_at' => '2023-07-15 08:00:00',
+                'last_login' => '2025-06-10 18:20:00'
+            ],
+            [
+                'id' => 5,
+                'username' => 'dr.rodriguez',
+                'email' => 'dr.rodriguez@healthcareplus.com',
+                'password' => password_hash('doctor123', PASSWORD_DEFAULT),
+                'role' => 'doctor',
+                'full_name' => 'Dr. Emily Rodriguez',
+                'phone' => '+1 (555) 345-6789',
+                'doctor_id' => 3,
+                'license_number' => 'MD345678',
+                'department' => 'Pediatrics',
+                'created_at' => '2023-08-20 08:00:00',
+                'last_login' => '2025-06-11 09:15:00'
+            ],
+            // Admin/Hospital Staff
+            [
+                'id' => 6,
+                'username' => 'admin',
+                'email' => 'admin@healthcareplus.com',
+                'password' => password_hash('admin123', PASSWORD_DEFAULT),
+                'role' => 'admin',
+                'full_name' => 'Hospital Administrator',
+                'phone' => '+1 (555) 999-0000',
+                'department' => 'Administration',
+                'permissions' => ['manage_doctors', 'manage_appointments', 'view_reports', 'manage_users'],
+                'created_at' => '2023-01-01 00:00:00',
+                'last_login' => '2025-06-11 08:00:00'
+            ],
+            [
+                'id' => 7,
+                'username' => 'staff1',
+                'email' => 'reception@healthcareplus.com',
+                'password' => password_hash('staff123', PASSWORD_DEFAULT),
+                'role' => 'staff',
+                'full_name' => 'Reception Staff',
+                'phone' => '+1 (555) 888-0000',
+                'department' => 'Reception',
+                'permissions' => ['manage_appointments', 'view_patients'],
+                'created_at' => '2023-03-15 09:00:00',
+                'last_login' => '2025-06-10 17:30:00'
+            ]
+        ];
+    }
+    
     public function getDoctors() {
         return $this->doctors;
     }
@@ -208,6 +315,91 @@ class MockDataStorage {
         
         $this->appointments[] = $appointment;
         return $appointment;
+    }
+    
+    public function getUsers() {
+        return $this->users;
+    }
+    
+    public function getUserByUsername($username) {
+        foreach ($this->users as $user) {
+            if ($user['username'] === $username) {
+                return $user;
+            }
+        }
+        return null;
+    }
+    
+    public function getUserByEmail($email) {
+        foreach ($this->users as $user) {
+            if ($user['email'] === $email) {
+                return $user;
+            }
+        }
+        return null;
+    }
+    
+    public function getUserById($id) {
+        foreach ($this->users as $user) {
+            if ($user['id'] == $id) {
+                return $user;
+            }
+        }
+        return null;
+    }
+    
+    public function authenticateUser($username, $password) {
+        $user = $this->getUserByUsername($username);
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        return false;
+    }
+    
+    public function createSession($userId) {
+        $sessionId = bin2hex(random_bytes(32));
+        $this->sessions[$sessionId] = [
+            'user_id' => $userId,
+            'created_at' => time(),
+            'expires_at' => time() + SESSION_LIFETIME
+        ];
+        return $sessionId;
+    }
+    
+    public function getSession($sessionId) {
+        if (isset($this->sessions[$sessionId])) {
+            $session = $this->sessions[$sessionId];
+            if ($session['expires_at'] > time()) {
+                return $session;
+            } else {
+                unset($this->sessions[$sessionId]);
+            }
+        }
+        return null;
+    }
+    
+    public function destroySession($sessionId) {
+        if (isset($this->sessions[$sessionId])) {
+            unset($this->sessions[$sessionId]);
+            return true;
+        }
+        return false;
+    }
+    
+    public function getAppointments() {
+        return $this->appointments;
+    }
+    
+    public function getAppointmentsByPatient($patientId) {
+        return array_filter($this->appointments, function($appointment) use ($patientId) {
+            return $appointment['patient_id'] == $patientId;
+        });
+    }
+    
+    public function getAppointmentsByDoctor($doctorId) {
+        return array_filter($this->appointments, function($appointment) use ($doctorId) {
+            return $appointment['doctor_id'] == $doctorId;
+        });
     }
 
 }

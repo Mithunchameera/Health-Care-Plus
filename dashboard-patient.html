@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .appointment-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        
+        .appointment-date {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .appointment-doctor {
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .appointment-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .action-btn i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background: var(--bg-color);
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <span class="nav-link" id="user-name">Patient Dashboard</span>
+                <button id="logout-btn" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="sidebar-menu">
+                    <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="#book-appointment" class="sidebar-link" data-section="book-appointment">
+                        <i class="fas fa-calendar-plus"></i> Book Appointment
+                    </a></li>
+                    <li><a href="#appointments" class="sidebar-link" data-section="appointments">
+                        <i class="fas fa-calendar-check"></i> My Appointments
+                    </a></li>
+                    <li><a href="#doctors" class="sidebar-link" data-section="doctors">
+                        <i class="fas fa-user-md"></i> Find Doctors
+                    </a></li>
+                    <li><a href="#payments" class="sidebar-link" data-section="payments">
+                        <i class="fas fa-credit-card"></i> Payments
+                    </a></li>
+                    <li><a href="#profile" class="sidebar-link" data-section="profile">
+                        <i class="fas fa-user"></i> My Profile
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="dashboard-header">
+                    <h1>Welcome back, <span id="patient-name">John Doe</span>!</h1>
+                    <p>Here's your health summary and upcoming appointments.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-number" id="total-appointments">12</div>
+                        <div class="stat-label">Total Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-number" id="upcoming-appointments">3</div>
+                        <div class="stat-label">Upcoming</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-md"></i>
+                        <div class="stat-number" id="doctors-visited">5</div>
+                        <div class="stat-label">Doctors Visited</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-pills"></i>
+                        <div class="stat-number" id="prescriptions">8</div>
+                        <div class="stat-label">Prescriptions</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Appointments -->
+                <div class="content-section">
+                    <h2>Upcoming Appointments</h2>
+                    <div id="upcoming-appointments-list">
+                        <div class="appointment-card">
+                            <div class="appointment-date">June 15, 2025 - 10:30 AM</div>
+                            <div class="appointment-doctor">Dr. Sarah Johnson - Cardiology</div>
+                            <div class="appointment-status">Confirmed</div>
+                        </div>
+                        <div class="appointment-card">
+                            <div class="appointment-date">June 18, 2025 - 2:00 PM</div>
+                            <div class="appointment-doctor">Dr. Michael Chen - Neurology</div>
+                            <div class="appointment-status">Pending</div>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#book-appointment" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Book New Appointment
+                        </a>
+                        <a href="#appointments" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> View All Appointments
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="#book-appointment" class="action-btn">
+                        <i class="fas fa-calendar-plus"></i>
+                        Book Appointment
+                    </a>
+                    <a href="#doctors" class="action-btn">
+                        <i class="fas fa-search"></i>
+                        Find Doctors
+                    </a>
+                    <a href="#payments" class="action-btn">
+                        <i class="fas fa-credit-card"></i>
+                        Make Payment
+                    </a>
+                    <a href="#profile" class="action-btn">
+                        <i class="fas fa-user-edit"></i>
+                        Update Profile
+                    </a>
+                </div>
+            </section>
+
+            <!-- Book Appointment Section -->
+            <section id="book-appointment-section" class="content-section" style="display: none;">
+                <h2>Book New Appointment</h2>
+                <div id="booking-widget">
+                    <iframe src="booking.html" style="width: 100%; height: 800px; border: none; border-radius: 12px;"></iframe>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section" style="display: none;">
+                <h2>My Appointments</h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Doctor</th>
+                                <th>Specialty</th>
+                                <th>Status</th>
+                                <th>Fee</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body">
+                            <tr>
+                                <td>June 15, 2025 10:30 AM</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>Cardiology</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>$250.00</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewAppointment(1)">View</button>
+                                    <button class="btn btn-sm btn-danger" onclick="cancelAppointment(1)">Cancel</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>June 18, 2025 2:00 PM</td>
+                                <td>Dr. Michael Chen</td>
+                                <td>Neurology</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>$300.00</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewAppointment(2)">View</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="payAppointment(2)">Pay Now</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors-section" class="content-section" style="display: none;">
+                <h2>Find Doctors</h2>
+                <div id="doctors-widget">
+                    <iframe src="doctors.html" style="width: 100%; height: 800px; border: none; border-radius: 12px;"></iframe>
+                </div>
+            </section>
+
+            <!-- Payments Section -->
+            <section id="payments-section" class="content-section" style="display: none;">
+                <h2>Payment History</h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Appointment</th>
+                                <th>Doctor</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>June 10, 2025</td>
+                                <td>Cardiology Consultation</td>
+                                <td>Dr. Sarah Johnson</td>
+                                <td>$250.00</td>
+                                <td>Credit Card</td>
+                                <td><span class="status-badge status-completed">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>May 28, 2025</td>
+                                <td>Pediatric Checkup</td>
+                                <td>Dr. Emily Rodriguez</td>
+                                <td>$180.00</td>
+                                <td>Insurance</td>
+                                <td><span class="status-badge status-completed">Paid</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section" style="display: none;">
+                <h2>My Profile</h2>
+                <form id="profile-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="profile-name">Full Name</label>
+                        <input type="text" id="profile-name" value="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" value="john.doe@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-phone">Phone</label>
+                        <input type="tel" id="profile-phone" value="+1 (555) 111-1111" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-dob">Date of Birth</label>
+                        <input type="date" id="profile-dob" value="1990-05-15" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-address">Address</label>
+                        <textarea id="profile-address" rows="3" required>123 Main St, New York, NY 10001</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-emergency">Emergency Contact</label>
+                        <input type="tel" id="profile-emergency" value="+1 (555) 111-2222" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-insurance">Insurance Number</label>
+                        <input type="text" id="profile-insurance" value="INS123456789" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/patient-dashboard.js"></script>
+</body>
+</html>

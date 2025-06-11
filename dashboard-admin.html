@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background: var(--bg-color);
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <span class="nav-link" id="user-name">Admin Dashboard</span>
+                <button id="logout-btn" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="sidebar-menu">
+                    <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="#doctors" class="sidebar-link" data-section="doctors">
+                        <i class="fas fa-user-md"></i> Manage Doctors
+                    </a></li>
+                    <li><a href="#appointments" class="sidebar-link" data-section="appointments">
+                        <i class="fas fa-calendar-check"></i> Appointments
+                    </a></li>
+                    <li><a href="#patients" class="sidebar-link" data-section="patients">
+                        <i class="fas fa-users"></i> Patients
+                    </a></li>
+                    <li><a href="#staff" class="sidebar-link" data-section="staff">
+                        <i class="fas fa-user-tie"></i> Staff Management
+                    </a></li>
+                    <li><a href="#reports" class="sidebar-link" data-section="reports">
+                        <i class="fas fa-chart-bar"></i> Reports & Analytics
+                    </a></li>
+                    <li><a href="#settings" class="sidebar-link" data-section="settings">
+                        <i class="fas fa-cog"></i> System Settings
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="dashboard-header">
+                    <h1>System Overview</h1>
+                    <p>Hospital administration and management dashboard</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-user-md"></i>
+                        <div class="stat-number" id="total-doctors">25</div>
+                        <div class="stat-label">Active Doctors</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-number" id="total-patients">1,250</div>
+                        <div class="stat-label">Registered Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-number" id="today-appointments">45</div>
+                        <div class="stat-label">Today's Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="stat-number" id="monthly-revenue">$125K</div>
+                        <div class="stat-label">Monthly Revenue</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="content-section">
+                    <h2>Recent Activity</h2>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Activity</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table-body">
+                                <tr>
+                                    <td>11:30 AM</td>
+                                    <td>New appointment booked</td>
+                                    <td>John Doe</td>
+                                    <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>11:15 AM</td>
+                                    <td>Doctor schedule updated</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td><span class="status-badge status-active">Updated</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:45 AM</td>
+                                    <td>Payment processed</td>
+                                    <td>Maria Garcia</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors-section" class="content-section" style="display: none;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Manage Doctors</h2>
+                    <button class="btn btn-primary" onclick="openAddDoctorModal()">
+                        <i class="fas fa-plus"></i> Add Doctor
+                    </button>
+                </div>
+
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>Specialty</label>
+                        <select id="specialty-filter" class="form-control">
+                            <option value="">All Specialties</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="neurology">Neurology</option>
+                            <option value="pediatrics">Pediatrics</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="dermatology">Dermatology</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="status-filter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Search</label>
+                        <input type="text" id="doctor-search" placeholder="Search doctors..." class="form-control">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialty</th>
+                                <th>Experience</th>
+                                <th>Patients</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctors-table-body">
+                            <tr>
+                                <td>
+                                    <div>Dr. Sarah Johnson</div>
+                                    <div style="font-size: 0.875rem; color: #666;">dr.johnson@healthcareplus.com</div>
+                                </td>
+                                <td>Cardiology</td>
+                                <td>15 years</td>
+                                <td>2,500</td>
+                                <td>4.8/5</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-primary" onclick="editDoctor(1)">Edit</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="viewDoctorSchedule(1)">Schedule</button>
+                                        <button class="btn btn-sm btn-danger" onclick="toggleDoctorStatus(1)">Deactivate</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section" style="display: none;">
+                <h2>Appointment Management</h2>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>Date Range</label>
+                        <input type="date" id="start-date" class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <input type="date" id="end-date" class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label>Doctor</label>
+                        <select id="appointment-doctor-filter" class="form-control">
+                            <option value="">All Doctors</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="appointment-status-filter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Type</th>
+                                <th>Fee</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body">
+                            <!-- Appointments will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patients Section -->
+            <section id="patients-section" class="content-section" style="display: none;">
+                <h2>Patient Management</h2>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>Search</label>
+                        <input type="text" id="patient-search" placeholder="Search patients..." class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label>Registration Date</label>
+                        <select id="registration-filter" class="form-control">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Age</th>
+                                <th>Last Visit</th>
+                                <th>Total Visits</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-table-body">
+                            <!-- Patients will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Staff Section -->
+            <section id="staff-section" class="content-section" style="display: none;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Staff Management</h2>
+                    <button class="btn btn-primary" onclick="openAddStaffModal()">
+                        <i class="fas fa-plus"></i> Add Staff
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-table-body">
+                            <tr>
+                                <td>Reception Staff</td>
+                                <td>Staff</td>
+                                <td>Reception</td>
+                                <td>+1 (555) 888-0000</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-primary" onclick="editStaff(1)">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="toggleStaffStatus(1)">Deactivate</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports-section" class="content-section" style="display: none;">
+                <h2>Reports & Analytics</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="stat-number">+15%</div>
+                        <div class="stat-label">Monthly Growth</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div class="stat-number">$380K</div>
+                        <div class="stat-label">Quarterly Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-plus"></i>
+                        <div class="stat-number">142</div>
+                        <div class="stat-label">New Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-percentage"></i>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Appointment Trends</h3>
+                    <p>Chart visualization would be displayed here using a charting library like Chart.js</p>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Revenue Analysis</h3>
+                    <p>Revenue trends and analytics would be displayed here</p>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section" style="display: none;">
+                <h2>System Settings</h2>
+                
+                <form id="settings-form" class="form-grid">
+                    <div class="form-group">
+                        <label for="hospital-name">Hospital Name</label>
+                        <input type="text" id="hospital-name" value="HealthCare+" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospital-address">Address</label>
+                        <textarea id="hospital-address" rows="3" required>123 Medical Center Drive, Healthcare City, HC 12345</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospital-phone">Contact Phone</label>
+                        <input type="tel" id="hospital-phone" value="+1 (555) 999-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospital-email">Contact Email</label>
+                        <input type="email" id="hospital-email" value="info@healthcareplus.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-fee">Default Consultation Fee</label>
+                        <input type="number" id="appointment-fee" value="150" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-advance">Booking Advance Days</label>
+                        <input type="number" id="booking-advance" value="30" min="1" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="addDoctorModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addDoctorModal')">&times;</span>
+            <h2>Add New Doctor</h2>
+            <form id="add-doctor-form" class="form-grid">
+                <div class="form-group">
+                    <label for="new-doctor-name">Full Name</label>
+                    <input type="text" id="new-doctor-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-doctor-email">Email</label>
+                    <input type="email" id="new-doctor-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-doctor-phone">Phone</label>
+                    <input type="tel" id="new-doctor-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-doctor-specialty">Specialty</label>
+                    <select id="new-doctor-specialty" required>
+                        <option value="">Select Specialty</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="neurology">Neurology</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="orthopedics">Orthopedics</option>
+                        <option value="dermatology">Dermatology</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-doctor-experience">Experience (Years)</label>
+                    <input type="number" id="new-doctor-experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-doctor-fee">Consultation Fee</label>
+                    <input type="number" id="new-doctor-fee" min="0" step="0.01" required>
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Add Doctor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 100px auto 2rem;
+            padding: 0 1rem;
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .payment-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-summary {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .payment-form {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .appointment-details {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .detail-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .total-amount {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .payment-methods {
+            margin-bottom: 2rem;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover,
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background: rgba(var(--primary-color-rgb), 0.05);
+        }
+        
+        .payment-method input[type="radio"] {
+            margin-right: 1rem;
+        }
+        
+        .payment-method-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .payment-method-info {
+            flex: 1;
+        }
+        
+        .payment-method-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-method-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .card-details {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .card-details.active {
+            display: block;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .security-info {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .security-info i {
+            color: #4caf50;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .security-text {
+            font-size: 0.875rem;
+            color: #2e7d32;
+        }
+        
+        .payment-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .payment-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard-patient.html" class="nav-link">Dashboard</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Complete Payment</h1>
+            <p>Secure payment for your medical appointment</p>
+        </div>
+
+        <div class="payment-grid">
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <h3>Appointment Summary</h3>
+                <div class="appointment-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Doctor:</span>
+                        <span class="detail-value" id="doctor-name">Dr. Sarah Johnson</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Specialty:</span>
+                        <span class="detail-value" id="specialty">Cardiology</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value" id="appointment-date">June 15, 2025</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value" id="appointment-time">10:30 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Patient:</span>
+                        <span class="detail-value" id="patient-name">John Doe</span>
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Consultation Fee:</span>
+                    <span class="detail-value" id="consultation-fee">$250.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Fee:</span>
+                    <span class="detail-value">$5.00</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tax:</span>
+                    <span class="detail-value">$20.40</span>
+                </div>
+                
+                <hr style="margin: 1rem 0;">
+                
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span class="total-amount" id="total-amount">$275.40</span>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="payment-form">
+                <h3>Payment Method</h3>
+                <form id="payment-form">
+                    <div class="payment-methods">
+                        <div class="payment-method selected" onclick="selectPaymentMethod('card')">
+                            <input type="radio" name="payment_method" value="card" checked>
+                            <div class="payment-method-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">Credit/Debit Card</div>
+                                <div class="payment-method-desc">Visa, MasterCard, American Express</div>
+                            </div>
+                        </div>
+
+                        <div class="payment-method" onclick="selectPaymentMethod('insurance')">
+                            <input type="radio" name="payment_method" value="insurance">
+                            <div class="payment-method-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">Insurance</div>
+                                <div class="payment-method-desc">Use your health insurance coverage</div>
+                            </div>
+                        </div>
+
+                        <div class="payment-method" onclick="selectPaymentMethod('paypal')">
+                            <input type="radio" name="payment_method" value="paypal">
+                            <div class="payment-method-icon">
+                                <i class="fab fa-paypal"></i>
+                            </div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">PayPal</div>
+                                <div class="payment-method-desc">Pay with your PayPal account</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div id="card-details" class="card-details active">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry-date">Expiry Date</label>
+                                <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="123" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cardholder-name">Cardholder Name</label>
+                            <input type="text" id="cardholder-name" placeholder="John Doe" required>
+                        </div>
+                    </div>
+
+                    <!-- Insurance Details -->
+                    <div id="insurance-details" class="card-details">
+                        <div class="form-group">
+                            <label for="insurance-provider">Insurance Provider</label>
+                            <select id="insurance-provider" required>
+                                <option value="">Select Provider</option>
+                                <option value="aetna">Aetna</option>
+                                <option value="blue-cross">Blue Cross Blue Shield</option>
+                                <option value="cigna">Cigna</option>
+                                <option value="humana">Humana</option>
+                                <option value="united">UnitedHealth</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="policy-number">Policy Number</label>
+                            <input type="text" id="policy-number" placeholder="Enter your policy number" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group-number">Group Number</label>
+                            <input type="text" id="group-number" placeholder="Enter your group number" required>
+                        </div>
+                    </div>
+
+                    <!-- PayPal Details -->
+                    <div id="paypal-details" class="card-details">
+                        <p>You will be redirected to PayPal to complete your payment securely.</p>
+                    </div>
+
+                    <div class="security-info">
+                        <i class="fas fa-lock"></i>
+                        <div class="security-text">
+                            Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data.
+                        </div>
+                    </div>
+
+                    <div class="payment-actions">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-credit-card"></i> Pay Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script>
+        let selectedMethod = 'card';
+
+        function selectPaymentMethod(method) {
+            selectedMethod = method;
+            
+            // Update radio buttons
+            document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+                radio.checked = radio.value === method;
+            });
+            
+            // Update selected visual state
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide details sections
+            document.querySelectorAll('.card-details').forEach(details => {
+                details.classList.remove('active');
+            });
+            
+            const detailsSection = document.getElementById(`${method}-details`);
+            if (detailsSection) {
+                detailsSection.classList.add('active');
+            }
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        // Load appointment data from URL parameters
+        function loadAppointmentData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const appointmentId = urlParams.get('appointment');
+            
+            if (appointmentId) {
+                // In a real application, you would fetch appointment details from the API
+                // For now, we'll use the existing mock data
+                console.log('Loading appointment:', appointmentId);
+            }
+        }
+
+        // Format card number input
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Format expiry date input
+        document.getElementById('expiry-date').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Limit CVV input
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+
+        // Handle form submission
+        document.getElementById('payment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Show success message
+                showNotification('Payment processed successfully!', 'success');
+                
+                // Redirect to success page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'payment-success.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Payment failed:', error);
+                showNotification('Payment failed. Please try again.', 'error');
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize
+        loadAppointmentData();
+    </script>
+</body>
+</html>
