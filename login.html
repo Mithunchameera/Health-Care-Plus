@@ -18,8 +18,8 @@
             </div>
             <div class="nav-menu">
                 <a href="index.html" class="nav-link">Home</a>
-                <a href="doctors.html" class="nav-link">Doctors</a>
-                <a href="booking.html" class="nav-link">Book Appointment</a>
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="contact.html" class="nav-link">Contact Us</a>
                 <a href="login.html" class="nav-link active">Login</a>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
                     <i class="fas fa-moon"></i>
@@ -110,20 +110,41 @@
     <script src="js/main.js"></script>
     <script>
         // Form validation and submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const email = document.getElementById('email').value;
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            if (!email || !password) {
-                e.preventDefault();
+            if (!username || !password) {
                 showNotification('Please fill in all fields', 'error');
                 return;
             }
             
-            if (!isValidEmail(email)) {
-                e.preventDefault();
-                showNotification('Please enter a valid email address', 'error');
-                return;
+            try {
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('php/auth.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showNotification(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Login failed. Please try again.', 'error');
             }
         });
 
@@ -138,11 +159,6 @@
                 input.type = 'password';
                 icon.className = 'fas fa-eye';
             }
-        }
-
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
         }
 
         function showNotification(message, type) {

@@ -34,10 +34,10 @@ class BookingManager {
     async preselectDoctor(doctorId) {
         try {
             const response = await fetch(`php/doctors.php?id=${doctorId}`);
-            const doctor = await response.json();
+            const data = await response.json();
             
-            if (!doctor.error) {
-                this.selectDoctor(doctor);
+            if (!data.error && data.id) {
+                this.selectDoctor(data);
                 this.nextStep();
             }
         } catch (error) {
@@ -66,15 +66,15 @@ class BookingManager {
     async loadDoctors() {
         try {
             const response = await fetch('php/doctors.php');
-            const doctors = await response.json();
+            const data = await response.json();
             
-            if (doctors.error) {
-                this.showError('Failed to load doctors: ' + doctors.error);
+            if (data.error) {
+                this.showError('Failed to load doctors: ' + data.error);
                 return;
             }
             
-            this.doctors = doctors;
-            this.displayDoctorList(doctors);
+            this.doctors = data.doctors || data;
+            this.displayDoctorList(this.doctors);
         } catch (error) {
             console.error('Error loading doctors:', error);
             this.showError('Failed to load doctors. Please try again.');
