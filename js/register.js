@@ -75,6 +75,35 @@ class RegistrationFormManager {
         }
     }
 
+    smoothScrollToStep() {
+        const currentStepElement = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
+        if (currentStepElement) {
+            // Add transition effect
+            currentStepElement.style.opacity = '0';
+            currentStepElement.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                currentStepElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // Animate in the new step
+                currentStepElement.style.transition = 'all 0.5s ease-in-out';
+                currentStepElement.style.opacity = '1';
+                currentStepElement.style.transform = 'translateY(0)';
+                
+                // Focus on first input
+                const firstInput = currentStepElement.querySelector('input, select');
+                if (firstInput) {
+                    setTimeout(() => {
+                        firstInput.focus();
+                    }, 600);
+                }
+            }, 200);
+        }
+    }
+
     prevStep() {
         if (this.currentStep > 1) {
             this.currentStep--;

@@ -102,6 +102,14 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 13, 2025: Enhanced auto-scroll and page transitions across all pages
+  - Smooth auto-scroll functionality when selecting dropdown options and form fields
+  - Enhanced step-by-step navigation with fade and slide animations
+  - Improved dashboard section transitions with opacity and transform effects
+  - Added CSS keyframe animations for highlight focus and smooth transitions
+  - Enhanced form field focus states with scaling and shadow effects
+  - Professional navigation with hover and active state animations
+
 - June 13, 2025: Added profile picture upload and store location functionality
   - Interactive profile picture with hover overlay and click-to-upload
   - File validation for image types and size limits (5MB max)

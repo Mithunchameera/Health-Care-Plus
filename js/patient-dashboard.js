@@ -174,15 +174,38 @@ class PatientDashboard {
     }
 
     showSection(sectionName) {
-        // Hide all sections
+        // Hide all sections with fade out
         document.querySelectorAll('.content-section').forEach(section => {
-            section.style.display = 'none';
+            if (section.style.display !== 'none') {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    section.style.display = 'none';
+                }, 200);
+            }
         });
         
-        // Show selected section
+        // Show selected section with fade in
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
-            targetSection.style.display = 'block';
+            setTimeout(() => {
+                targetSection.style.display = 'block';
+                targetSection.style.opacity = '0';
+                targetSection.style.transform = 'translateY(20px)';
+                
+                // Smooth scroll to section
+                targetSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // Animate in
+                setTimeout(() => {
+                    targetSection.style.transition = 'all 0.4s ease-out';
+                    targetSection.style.opacity = '1';
+                    targetSection.style.transform = 'translateY(0)';
+                }, 100);
+            }, 250);
         }
         
         // Load section-specific data
@@ -289,7 +312,14 @@ class PatientDashboard {
 
     async loadAppointments() {
         try {
-            const response = await fetch('php/patient-api.php?action=get_appointments');
+            // Get user email from session or localStorage
+            const userEmail = this.getCurrentUserEmail();
+            if (!userEmail) {
+                console.log('No user email found, using demo data');
+                return;
+            }
+            
+            const response = await fetch(`php/appointments-api.php?action=get_patient_appointments&patient_email=${encodeURIComponent(userEmail)}`);
             const data = await response.json();
             
             if (data.success) {
@@ -300,21 +330,35 @@ class PatientDashboard {
         }
     }
 
+    getCurrentUserEmail() {
+        // Try to get from session storage or localStorage
+        return sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || 'patient@demo.com';
+    }
+
     displayAppointmentsTable(appointments) {
         const tbody = document.getElementById('appointments-table-body');
         if (!tbody) return;
         
+        if (appointments.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">No appointments found. <a href="booking.html">Book your first appointment</a></td>
+                </tr>
+            `;
+            return;
+        }
+        
         tbody.innerHTML = appointments.map(apt => `
             <tr>
-                <td>${this.formatAppointmentDate(apt.date, apt.time)}</td>
-                <td>${apt.doctor_name}</td>
+                <td>${this.formatAppointmentDate(apt.appointment_date, apt.appointment_time)}</td>
+                <td>Dr. ${apt.doctor_first_name} ${apt.doctor_last_name}</td>
                 <td>${apt.specialty}</td>
                 <td><span class="status-badge status-${apt.status}">${this.capitalizeFirst(apt.status)}</span></td>
-                <td>$${apt.fee}</td>
+                <td>$${apt.consultation_fee}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" onclick="patientDashboard.viewAppointment(${apt.id})">View</button>
-                    ${apt.status === 'pending' ? `<button class="btn btn-sm btn-secondary" onclick="patientDashboard.payAppointment(${apt.id})">Pay Now</button>` : ''}
-                    ${apt.status !== 'completed' ? `<button class="btn btn-sm btn-danger" onclick="patientDashboard.cancelAppointment(${apt.id})">Cancel</button>` : ''}
+                    ${apt.status === 'scheduled' ? `<button class="btn btn-sm btn-secondary" onclick="patientDashboard.payAppointment(${apt.id})">Pay Now</button>` : ''}
+                    ${apt.status !== 'completed' && apt.status !== 'cancelled' ? `<button class="btn btn-sm btn-danger" onclick="patientDashboard.cancelAppointment(${apt.id})">Cancel</button>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -406,12 +450,14 @@ class PatientDashboard {
         }
         
         try {
-            const response = await fetch('php/patient-api.php', {
+            const response = await fetch('php/appointments-api.php?action=cancel_appointment', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: `action=cancel_appointment&id=${appointmentId}`
+                body: JSON.stringify({
+                    appointment_id: appointmentId
+                })
             });
             
             const data = await response.json();

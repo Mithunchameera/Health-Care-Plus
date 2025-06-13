@@ -205,9 +205,12 @@
     <script src="js/theme-manager.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // Contact form handling
+        // Enhanced Contact form handling with auto-clear and animations
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
             
             // Basic form validation
             const name = document.getElementById('name').value;
@@ -220,12 +223,112 @@
                 return;
             }
             
-            // Show success message
-            showNotification('Thank you for your message. We will get back to you within 24 hours.', 'success');
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             
-            // Reset form
-            this.reset();
+            // Simulate sending delay for better UX
+            setTimeout(() => {
+                // Show success message
+                showNotification('Thank you for your message. We will get back to you within 24 hours.', 'success');
+                
+                // Auto-clear form with smooth animation
+                clearFormWithAnimation(form);
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Send Message';
+                
+                // Auto scroll to top of form
+                form.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+            }, 1500);
         });
+        
+        function clearFormWithAnimation(form) {
+            // Fade out form fields
+            const formFields = form.querySelectorAll('input, select, textarea');
+            
+            formFields.forEach((field, index) => {
+                setTimeout(() => {
+                    field.style.transition = 'all 0.3s ease';
+                    field.style.opacity = '0.5';
+                    field.style.transform = 'scale(0.98)';
+                    
+                    setTimeout(() => {
+                        field.value = '';
+                        field.style.opacity = '1';
+                        field.style.transform = 'scale(1)';
+                        
+                        // Add highlight effect to show field is cleared
+                        field.style.borderColor = 'var(--success-color)';
+                        setTimeout(() => {
+                            field.style.borderColor = '';
+                        }, 1000);
+                        
+                    }, 200);
+                }, index * 100);
+            });
+            
+            // Reset select dropdown to default
+            setTimeout(() => {
+                const selectField = form.querySelector('select');
+                if (selectField) {
+                    selectField.selectedIndex = 0;
+                }
+            }, 500);
+        }
+        
+        // Enhanced field interactions with auto-scroll
+        document.querySelectorAll('#contactForm input, #contactForm select, #contactForm textarea').forEach(field => {
+            field.addEventListener('blur', function() {
+                if (this.value && validateField(this)) {
+                    // Auto scroll to next field
+                    const formGroup = this.closest('.form-group');
+                    const nextFormGroup = formGroup.nextElementSibling;
+                    
+                    if (nextFormGroup) {
+                        setTimeout(() => {
+                            nextFormGroup.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                            
+                            const nextField = nextFormGroup.querySelector('input, select, textarea');
+                            if (nextField) {
+                                setTimeout(() => {
+                                    nextField.focus();
+                                }, 500);
+                            }
+                        }, 300);
+                    } else {
+                        // Focus on submit button if last field
+                        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
+                        setTimeout(() => {
+                            submitBtn.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                            submitBtn.focus();
+                        }, 300);
+                    }
+                }
+            });
+        });
+        
+        function validateField(field) {
+            if (field.type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(field.value);
+            }
+            if (field.hasAttribute('required')) {
+                return field.value.trim() !== '';
+            }
+            return true;
+        }
     </script>
 </body>
 </html>

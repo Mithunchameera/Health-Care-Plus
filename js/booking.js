@@ -380,10 +380,46 @@ class BookingManager {
             this.currentStep++;
             this.updateStepDisplay();
             this.updateStepIndicator();
+            this.smoothScrollToStep();
             
             if (this.currentStep === 4) {
                 this.updateSummary();
             }
+        }
+    }
+
+    smoothScrollToStep() {
+        const currentStepElement = document.querySelector(`.booking-step[data-step="${this.currentStep}"]`);
+        if (currentStepElement) {
+            // Add transition effect
+            currentStepElement.style.opacity = '0';
+            currentStepElement.style.transform = 'translateX(30px)';
+            
+            setTimeout(() => {
+                currentStepElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // Animate in the new step
+                currentStepElement.style.transition = 'all 0.6s ease-out';
+                currentStepElement.style.opacity = '1';
+                currentStepElement.style.transform = 'translateX(0)';
+                
+                // Focus on interactive elements
+                const focusElement = currentStepElement.querySelector('input, select, .doctor-card, .time-slot, .btn-primary');
+                if (focusElement) {
+                    setTimeout(() => {
+                        focusElement.focus();
+                        if (focusElement.scrollIntoView) {
+                            focusElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                        }
+                    }, 700);
+                }
+            }, 200);
         }
     }
     
@@ -532,21 +568,30 @@ class BookingManager {
         try {
             const bookingData = this.collectBookingData();
             
-            const response = await fetch('php/booking-handler.php', {
+            // Prepare API request data
+            const appointmentData = {
+                doctor_id: this.selectedDoctor.id,
+                appointment_date: this.selectedDate.toISOString().split('T')[0],
+                appointment_time: this.selectedTime,
+                patient_name: bookingData.patientName,
+                patient_email: bookingData.patientEmail,
+                patient_phone: bookingData.patientPhone,
+                reason_for_visit: bookingData.symptoms || 'General consultation'
+            };
+            
+            // Call the appointment booking API
+            const response = await fetch('php/appointments-api.php?action=book_appointment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    action: 'createBooking',
-                    ...bookingData
-                })
+                body: JSON.stringify(appointmentData)
             });
             
             const result = await response.json();
             
             if (result.success) {
-                this.showSuccessMessage(result.bookingId);
+                this.showSuccessMessage(result.booking_reference, result.appointment);
             } else {
                 this.showError(result.error || 'Failed to book appointment');
             }
@@ -572,7 +617,7 @@ class BookingManager {
         };
     }
     
-    showSuccessMessage(bookingId) {
+    showSuccessMessage(bookingReference, appointment) {
         const container = document.querySelector('.booking-container');
         container.innerHTML = `
             <div class="booking-success">
@@ -580,16 +625,18 @@ class BookingManager {
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h2>Appointment Confirmed!</h2>
-                <p>Your appointment has been successfully booked.</p>
+                <p>Your appointment has been successfully booked and saved to your appointments.</p>
                 <div class="booking-details">
-                    <p><strong>Booking ID:</strong> #${bookingId}</p>
+                    <p><strong>Booking Reference:</strong> ${bookingReference}</p>
                     <p><strong>Doctor:</strong> Dr. ${this.selectedDoctor.name}</p>
                     <p><strong>Date:</strong> ${this.selectedDate.toLocaleDateString()}</p>
                     <p><strong>Time:</strong> ${this.selectedTime}</p>
+                    <p><strong>Consultation Fee:</strong> $${appointment.consultation_fee}</p>
                 </div>
                 <div class="success-actions">
-                    <a href="index.html" class="btn btn-primary">Back to Home</a>
-                    <a href="doctors.html" class="btn btn-secondary">Book Another</a>
+                    <a href="dashboard-patient.html" class="btn btn-primary">View My Appointments</a>
+                    <a href="booking.html" class="btn btn-secondary">Book Another</a>
+                    <a href="index.html" class="btn btn-outline">Back to Home</a>
                 </div>
             </div>
         `;

@@ -134,13 +134,38 @@ class DoctorDashboard {
     }
 
     showSection(sectionName) {
+        // Hide all sections with fade out
         document.querySelectorAll('.content-section').forEach(section => {
-            section.style.display = 'none';
+            if (section.style.display !== 'none') {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    section.style.display = 'none';
+                }, 200);
+            }
         });
         
+        // Show selected section with fade in
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
-            targetSection.style.display = 'block';
+            setTimeout(() => {
+                targetSection.style.display = 'block';
+                targetSection.style.opacity = '0';
+                targetSection.style.transform = 'translateY(20px)';
+                
+                // Smooth scroll to section
+                targetSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // Animate in
+                setTimeout(() => {
+                    targetSection.style.transition = 'all 0.4s ease-out';
+                    targetSection.style.opacity = '1';
+                    targetSection.style.transform = 'translateY(0)';
+                }, 100);
+            }, 250);
         }
         
         this.loadSectionData(sectionName);

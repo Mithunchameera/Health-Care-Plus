@@ -559,6 +559,7 @@ function autoScrollToNext(currentElement) {
     const nextElement = findNextScrollTarget(currentElement);
     
     if (nextElement) {
+        // Enhanced smooth scroll with better timing
         nextElement.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
@@ -571,10 +572,25 @@ function autoScrollToNext(currentElement) {
         if (nextInput && !nextInput.disabled && nextInput.type !== 'hidden') {
             setTimeout(() => {
                 nextInput.focus();
-                if (nextInput.type === 'text' || nextInput.type === 'email') {
+                if (nextInput.type === 'text' || nextInput.type === 'email' || nextInput.type === 'tel') {
                     nextInput.select();
                 }
-            }, 600);
+            }, 800);
+        }
+    } else {
+        // Check if we need to go to next step/page
+        const currentStep = currentElement.closest('.form-step, .booking-step');
+        if (currentStep) {
+            const nextButton = currentStep.querySelector('.btn-next, .next-step, [onclick*="nextStep"]');
+            if (nextButton && !nextButton.disabled) {
+                setTimeout(() => {
+                    nextButton.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    addScrollHighlight(nextButton);
+                }, 500);
+            }
         }
     }
 }
