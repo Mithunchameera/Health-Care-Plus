@@ -61,6 +61,9 @@ class PatientAPI {
             case 'get_doctors':
                 $this->getDoctors();
                 break;
+            case 'get_timeslots':
+                $this->getTimeSlots();
+                break;
             case 'update_profile':
                 $this->updateProfile();
                 break;
@@ -259,6 +262,104 @@ class PatientAPI {
         }
     }
     
+    private function getTimeSlots() {
+        try {
+            $doctorId = $_GET['doctor_id'] ?? 0;
+            $date = $_GET['date'] ?? '';
+            
+            if (!$doctorId || !$date) {
+                sendResponse(['error' => 'Doctor ID and date are required'], 400);
+                return;
+            }
+            
+            // Validate date format
+            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
+            if (!$dateObj || $dateObj->format('Y-m-d') !== $date) {
+                sendResponse(['error' => 'Invalid date format'], 400);
+                return;
+            }
+            
+            // Check if date is in the past
+            if ($dateObj < new DateTime('today')) {
+                sendResponse(['error' => 'Cannot book appointments for past dates'], 400);
+                return;
+            }
+            
+            // Check if doctor exists
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Check if doctor is available
+            if (!$doctor['available']) {
+                sendResponse(['error' => 'Doctor is currently unavailable'], 400);
+                return;
+            }
+            
+            // Generate time slots based on doctor's specialty and working hours
+            $timeSlots = $this->generateTimeSlots($doctorId, $date);
+            
+            sendResponse([
+                'success' => true,
+                'timeslots' => $timeSlots,
+                'doctor_name' => $doctor['name'],
+                'date' => $date
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get time slots error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load time slots'], 500);
+        }
+    }
+    
+    private function generateTimeSlots($doctorId, $date) {
+        // Get existing appointments for this doctor on this date
+        $existingAppointments = $this->mockStorage->getAppointmentsByDoctorAndDate($doctorId, $date);
+        $bookedTimes = array_column($existingAppointments, 'time');
+        
+        // Define working hours (9 AM to 5 PM)
+        $startHour = 9;
+        $endHour = 17;
+        $slotDuration = 30; // 30 minutes per slot
+        
+        $timeSlots = [];
+        $dayOfWeek = date('N', strtotime($date)); // 1 = Monday, 7 = Sunday
+        
+        // Skip Sundays
+        if ($dayOfWeek == 7) {
+            return $timeSlots;
+        }
+        
+        // Saturday has reduced hours (9 AM to 1 PM)
+        if ($dayOfWeek == 6) {
+            $endHour = 13;
+        }
+        
+        for ($hour = $startHour; $hour < $endHour; $hour++) {
+            for ($minute = 0; $minute < 60; $minute += $slotDuration) {
+                $time = sprintf('%02d:%02d', $hour, $minute);
+                
+                // Skip lunch break (12:00 - 13:00)
+                if ($hour == 12) {
+                    continue;
+                }
+                
+                // Check if slot is not already booked
+                if (!in_array($time, $bookedTimes)) {
+                    $timeSlots[] = [
+                        'time' => $time,
+                        'available' => true,
+                        'formatted' => date('g:i A', strtotime($time))
+                    ];
+                }
+            }
+        }
+        
+        return $timeSlots;
+    }
+
     private function updateProfile() {
         try {
             $updateData = [

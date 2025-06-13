@@ -876,33 +876,32 @@ class PatientDashboard {
         const timesContainer = document.getElementById('available-times');
         if (!timesContainer) return;
 
-        // Get available times from server
+        if (!this.selectedDoctor) {
+            timesContainer.innerHTML = '<p class="text-muted">Please select a doctor first</p>';
+            return;
+        }
+
+        // Show loading state
+        timesContainer.innerHTML = '<p class="text-muted">Loading available times...</p>';
+
         try {
             const response = await fetch(`php/patient-api.php?action=get_timeslots&doctor_id=${this.selectedDoctor.id}&date=${date}`);
             const data = await response.json();
             
-            const availableTimes = data.success ? data.timeslots : [
-                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-                '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
-            ];
-
-            const timesHTML = availableTimes.map(time => `
-                <div class="timeslot" onclick="window.patientDashboard.selectTime('${time}')">
-                    ${this.formatTime(time)}
-                </div>
-            `).join('');
-
-            timesContainer.innerHTML = timesHTML;
+            if (data.success && data.timeslots && data.timeslots.length > 0) {
+                const timesHTML = data.timeslots.map(slot => `
+                    <div class="timeslot" onclick="window.patientDashboard.selectTime('${slot.time}')">
+                        ${slot.formatted || this.formatTime(slot.time)}
+                    </div>
+                `).join('');
+                timesContainer.innerHTML = timesHTML;
+            } else {
+                const message = data.error || 'No available times for the selected date';
+                timesContainer.innerHTML = `<p class="text-muted">${message}</p>`;
+            }
         } catch (error) {
             console.error('Error loading time slots:', error);
-            // Fallback to default times
-            const defaultTimes = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
-            const timesHTML = defaultTimes.map(time => `
-                <div class="timeslot" onclick="window.patientDashboard.selectTime('${time}')">
-                    ${this.formatTime(time)}
-                </div>
-            `).join('');
-            timesContainer.innerHTML = timesHTML;
+            timesContainer.innerHTML = '<p class="text-muted">Error loading available times. Please try again.</p>';
         }
     }
 
@@ -973,12 +972,18 @@ class PatientDashboard {
             const data = await response.json();
             
             if (data.success) {
-                this.showNotification('Appointment booked successfully!', 'success');
-                // Reset booking form
-                this.resetBooking();
-                // Switch to appointments section
-                this.showSection('appointments');
-                this.loadAppointments();
+                // Store booking data in session storage for payment page
+                sessionStorage.setItem('pendingBooking', JSON.stringify({
+                    bookingId: data.booking_id,
+                    doctor: this.selectedDoctor,
+                    date: this.selectedDate,
+                    time: this.selectedTime,
+                    reason: visitReason,
+                    fee: this.selectedDoctor.fee
+                }));
+                
+                // Redirect to payment page
+                window.location.href = 'payment.html';
             } else {
                 this.showNotification(data.error || 'Booking failed', 'error');
             }
@@ -1024,6 +1029,15 @@ class PatientDashboard {
             month: 'long', 
             day: 'numeric' 
         });
+    }
+
+    formatTime(timeStr) {
+        if (!timeStr) return '';
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${ampm}`;
     }
 }
 

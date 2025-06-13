@@ -612,6 +612,12 @@ class MockDataStorage {
             return $appointment['doctor_id'] == $doctorId;
         });
     }
+    
+    public function getAppointmentsByDoctorAndDate($doctorId, $date) {
+        return array_filter($this->appointments, function($appointment) use ($doctorId, $date) {
+            return $appointment['doctor_id'] == $doctorId && $appointment['date'] === $date;
+        });
+    }
 
 }
 
