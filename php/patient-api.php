@@ -13,16 +13,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-$currentUser = checkUserAuth(['patient']);
-if (!$currentUser) {
-    sendResponse(['error' => 'Authentication required'], 401);
+// Check if this is a doctors request (which should be public for booking)
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+if ($action === 'get_doctors') {
+    // Allow public access to doctors list for booking purposes
+    $currentUser = null;
+} else {
+    // Require authentication for other patient actions
+    $currentUser = checkUserAuth(['patient']);
+    if (!$currentUser) {
+        sendResponse(['error' => 'Authentication required'], 401);
+    }
 }
 
 class PatientAPI {
     private $mockStorage;
     private $currentUser;
     
-    public function __construct($user) {
+    public function __construct($user = null) {
         $this->mockStorage = MockDataStorage::getInstance();
         $this->currentUser = $user;
     }

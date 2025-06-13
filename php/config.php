@@ -19,7 +19,7 @@ ini_set('display_errors', 1);
 // Application Configuration
 define('APP_NAME', 'HealthCare+');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost:5000');
+define('APP_URL', isset($_SERVER['HTTP_HOST']) ? 'https://' . $_SERVER['HTTP_HOST'] : 'http://0.0.0.0:5000');
 
 // Security Configuration
 define('SESSION_LIFETIME', 3600); // 1 hour
@@ -42,11 +42,26 @@ define('UPLOAD_DIR', 'uploads/');
 // Timezone Configuration
 date_default_timezone_set('America/New_York');
 
-// CORS Headers for API requests
+// CORS Headers for API requests - Secure configuration
 function setCORSHeaders() {
-    header("Access-Control-Allow-Origin: *");
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $allowed_origins = [
+        'http://localhost:5000',
+        'http://0.0.0.0:5000'
+    ];
+    
+    // Allow Replit domains
+    if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], '.replit.dev') !== false) {
+        $allowed_origins[] = 'https://' . $_SERVER['HTTP_HOST'];
+    }
+    
+    if (in_array($origin, $allowed_origins) || empty($origin)) {
+        header("Access-Control-Allow-Origin: " . ($origin ?: "*"));
+    }
+    
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Allow-Credentials: true");
     header("Content-Type: application/json");
 }
 
@@ -54,7 +69,13 @@ function setCORSHeaders() {
 function initializeSessionConfig() {
     // Configure session settings for better compatibility
     ini_set('session.cookie_httponly', 1);
-    ini_set('session.cookie_secure', 0); // Allow HTTP for local development
+    
+    // Use secure cookies for HTTPS, non-secure for HTTP
+    $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+                (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+    ini_set('session.cookie_secure', $isSecure ? 1 : 0);
+    
     ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', 1);
     ini_set('session.cookie_lifetime', SESSION_LIFETIME);
@@ -184,6 +205,146 @@ class MockDataStorage {
                 'languages' => ['English', 'Korean'],
                 'available' => true,
                 'patients_treated' => 950
+            ],
+            [
+                'id' => 6,
+                'name' => 'Robert Williams',
+                'specialty' => 'Internal Medicine',
+                'subspecialties' => ['Diabetes Management', 'Hypertension'],
+                'education' => 'University of Pennsylvania Medical School',
+                'experience' => 18,
+                'location' => 'Primary Care Center, Midtown',
+                'phone' => '+1 (555) 678-9012',
+                'email' => 'dr.williams@healthcareplus.com',
+                'fee' => 200.00,
+                'rating' => 4.7,
+                'reviews' => 242,
+                'about' => 'Dr. Williams specializes in comprehensive internal medicine with focus on chronic disease management.',
+                'services' => ['Annual Physical', 'Diabetes Care', 'Blood Pressure Management', 'Preventive Care'],
+                'certifications' => ['Board Certified Internal Medicine', 'Diabetes Educator'],
+                'languages' => ['English'],
+                'available' => true,
+                'patients_treated' => 3800
+            ],
+            [
+                'id' => 7,
+                'name' => 'Amanda Foster',
+                'specialty' => 'Obstetrics & Gynecology',
+                'subspecialties' => ['High-Risk Pregnancy', 'Reproductive Health'],
+                'education' => 'Duke University Medical School',
+                'experience' => 14,
+                'location' => 'Women\'s Health Center, Northside',
+                'phone' => '+1 (555) 789-0123',
+                'email' => 'dr.foster@healthcareplus.com',
+                'fee' => 280.00,
+                'rating' => 4.9,
+                'reviews' => 187,
+                'about' => 'Dr. Foster provides comprehensive women\'s healthcare including pregnancy care and gynecological services.',
+                'services' => ['Prenatal Care', 'Annual Exams', 'Family Planning', 'Ultrasound'],
+                'certifications' => ['Board Certified OB/GYN', 'Maternal-Fetal Medicine'],
+                'languages' => ['English', 'French'],
+                'available' => true,
+                'patients_treated' => 2200
+            ],
+            [
+                'id' => 8,
+                'name' => 'James Martinez',
+                'specialty' => 'Psychiatry',
+                'subspecialties' => ['Anxiety Disorders', 'Depression Treatment'],
+                'education' => 'Columbia University Medical School',
+                'experience' => 11,
+                'location' => 'Mental Health Center, Downtown',
+                'phone' => '+1 (555) 890-1234',
+                'email' => 'dr.martinez@healthcareplus.com',
+                'fee' => 350.00,
+                'rating' => 4.8,
+                'reviews' => 156,
+                'about' => 'Dr. Martinez specializes in mental health treatment with a focus on anxiety and mood disorders.',
+                'services' => ['Individual Therapy', 'Medication Management', 'Cognitive Behavioral Therapy'],
+                'certifications' => ['Board Certified Psychiatrist', 'CBT Certified'],
+                'languages' => ['English', 'Spanish'],
+                'available' => true,
+                'patients_treated' => 1450
+            ],
+            [
+                'id' => 9,
+                'name' => 'Helen Chang',
+                'specialty' => 'Ophthalmology',
+                'subspecialties' => ['Cataract Surgery', 'Retinal Disorders'],
+                'education' => 'University of California Medical School',
+                'experience' => 16,
+                'location' => 'Eye Care Center, Westside',
+                'phone' => '+1 (555) 901-2345',
+                'email' => 'dr.chang@healthcareplus.com',
+                'fee' => 320.00,
+                'rating' => 4.6,
+                'reviews' => 198,
+                'about' => 'Dr. Chang is an experienced ophthalmologist specializing in comprehensive eye care and surgery.',
+                'services' => ['Eye Exams', 'Cataract Surgery', 'Glaucoma Treatment', 'LASIK'],
+                'certifications' => ['Board Certified Ophthalmologist', 'Retina Specialist'],
+                'languages' => ['English', 'Mandarin'],
+                'available' => true,
+                'patients_treated' => 2800
+            ],
+            [
+                'id' => 10,
+                'name' => 'Thomas Anderson',
+                'specialty' => 'Gastroenterology',
+                'subspecialties' => ['Inflammatory Bowel Disease', 'Liver Disease'],
+                'education' => 'Northwestern University Medical School',
+                'experience' => 13,
+                'location' => 'Digestive Health Center, Central',
+                'phone' => '+1 (555) 012-3456',
+                'email' => 'dr.anderson@healthcareplus.com',
+                'fee' => 290.00,
+                'rating' => 4.7,
+                'reviews' => 134,
+                'about' => 'Dr. Anderson specializes in digestive health and liver diseases with advanced endoscopic procedures.',
+                'services' => ['Colonoscopy', 'Endoscopy', 'Liver Biopsy', 'IBD Treatment'],
+                'certifications' => ['Board Certified Gastroenterologist', 'Advanced Endoscopy'],
+                'languages' => ['English'],
+                'available' => true,
+                'patients_treated' => 1900
+            ],
+            [
+                'id' => 11,
+                'name' => 'Maria Gonzalez',
+                'specialty' => 'Endocrinology',
+                'subspecialties' => ['Thyroid Disorders', 'Hormone Therapy'],
+                'education' => 'Baylor College of Medicine',
+                'experience' => 9,
+                'location' => 'Hormone Health Clinic, Southside',
+                'phone' => '+1 (555) 123-4567',
+                'email' => 'dr.gonzalez@healthcareplus.com',
+                'fee' => 260.00,
+                'rating' => 4.8,
+                'reviews' => 112,
+                'about' => 'Dr. Gonzalez specializes in endocrine disorders and hormone-related conditions.',
+                'services' => ['Diabetes Management', 'Thyroid Treatment', 'Hormone Replacement', 'Metabolic Disorders'],
+                'certifications' => ['Board Certified Endocrinologist', 'Diabetes Specialist'],
+                'languages' => ['English', 'Spanish'],
+                'available' => true,
+                'patients_treated' => 1300
+            ],
+            [
+                'id' => 12,
+                'name' => 'Kevin Lee',
+                'specialty' => 'Urology',
+                'subspecialties' => ['Kidney Stones', 'Prostate Health'],
+                'education' => 'Washington University Medical School',
+                'experience' => 17,
+                'location' => 'Urology Associates, Eastside',
+                'phone' => '+1 (555) 234-5678',
+                'email' => 'dr.lee@healthcareplus.com',
+                'fee' => 310.00,
+                'rating' => 4.5,
+                'reviews' => 167,
+                'about' => 'Dr. Lee provides comprehensive urological care for both men and women.',
+                'services' => ['Prostate Screening', 'Kidney Stone Treatment', 'Bladder Conditions', 'Male Health'],
+                'certifications' => ['Board Certified Urologist', 'Minimally Invasive Surgery'],
+                'languages' => ['English', 'Korean'],
+                'available' => false,
+                'patients_treated' => 2600
             ]
         ];
     }

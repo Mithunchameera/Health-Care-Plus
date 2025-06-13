@@ -6,13 +6,8 @@
 
 require_once 'config.php';
 
-// Initialize session configuration for better cross-environment compatibility
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 0); // Allow HTTP for local development
-ini_set('session.cookie_samesite', 'Lax');
-ini_set('session.use_strict_mode', 1);
-ini_set('session.cookie_lifetime', SESSION_LIFETIME);
-ini_set('session.cookie_domain', '');
+// Initialize session configuration using the secure function
+initializeSessionConfig();
 
 setCORSHeaders();
 

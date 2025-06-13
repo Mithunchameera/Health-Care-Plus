@@ -150,6 +150,9 @@ class PatientDashboard {
             case 'payments':
                 await this.loadPaymentHistory();
                 break;
+            case 'book-appointment':
+                this.initializeBooking();
+                break;
         }
     }
 
