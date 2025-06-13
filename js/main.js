@@ -104,20 +104,20 @@ function initializeAnimations() {
 
 // Animate number counters
 function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    const speed = 200; // Animation speed
+    const counters = document.querySelectorAll('.stat-number[data-target]');
+    const speed = 100; // Animation speed
     
     counters.forEach(counter => {
         const animate = () => {
-            const value = +counter.getAttribute('data-target') || parseInt(counter.innerText.replace(/\D/g, ''));
-            const data = +counter.innerText.replace(/\D/g, '') || 0;
-            const time = value / speed;
+            const target = +counter.getAttribute('data-target');
+            const current = +counter.innerText || 0;
+            const increment = target / speed;
             
-            if (data < value) {
-                counter.innerText = counter.innerText.replace(/\d+/, Math.ceil(data + time));
-                setTimeout(animate, 1);
+            if (current < target) {
+                counter.innerText = Math.ceil(current + increment);
+                setTimeout(animate, 20);
             } else {
-                counter.innerText = counter.innerText.replace(/\d+/, value);
+                counter.innerText = target;
             }
         };
         
@@ -127,6 +127,8 @@ function animateCounters() {
                 animate();
                 observer.disconnect();
             }
+        }, {
+            threshold: 0.5
         });
         
         observer.observe(counter);
