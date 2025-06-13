@@ -34,135 +34,321 @@
     </nav>
 
     <!-- Register Section -->
-    <section class="auth-section">
-        <div class="auth-container">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>Create Account</h2>
-                    <p>Join HealthCare+ and manage your health better</p>
+    <section class="register-section">
+        <div class="register-container">
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>Personal Info</span>
                 </div>
-                
-                <form id="registerForm" class="auth-form" method="POST" action="php/auth.php">
-                    <input type="hidden" name="action" value="register">
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="firstName" name="firstName" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="lastName" name="lastName" required>
-                            </div>
-                        </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" required>
-                        </div>
+                    <span>Security</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
                     </div>
-
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <div class="input-group">
-                            <i class="fas fa-phone"></i>
-                            <input type="tel" id="phone" name="phone" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dateOfBirth">Date of Birth</label>
-                        <div class="input-group">
-                            <i class="fas fa-calendar"></i>
-                            <input type="date" id="dateOfBirth" name="dateOfBirth" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <div class="input-group">
-                            <i class="fas fa-venus-mars"></i>
-                            <select id="gender" name="gender" required>
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="password-strength">
-                            <div class="strength-bar">
-                                <div class="strength-fill"></div>
-                            </div>
-                            <span class="strength-text">Password strength</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="terms" required>
-                            <span class="checkmark"></span>
-                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-                </form>
-
-                <div class="auth-footer">
-                    <p>Already have an account? <a href="login.html">Sign in here</a></p>
+                    <span>Complete</span>
                 </div>
             </div>
 
-            <div class="auth-image">
-                <svg width="300" height="400" viewBox="0 0 300 400" class="auth-svg">
-                    <defs>
-                        <linearGradient id="registerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:var(--secondary-color);stop-opacity:0.8" />
-                            <stop offset="100%" style="stop-color:var(--primary-color);stop-opacity:0.6" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="150" cy="200" r="120" fill="url(#registerGradient)" opacity="0.3"/>
-                    <rect x="100" y="150" width="100" height="100" rx="15" fill="var(--secondary-color)" opacity="0.7"/>
-                    <circle cx="150" cy="200" r="25" fill="white"/>
-                    <path d="M140 200 L145 205 L160 190" stroke="var(--secondary-color)" stroke-width="3" fill="none" stroke-linecap="round"/>
-                </svg>
+            <div class="register-card">
+                <div class="register-header">
+                    <h2>Create Your Account</h2>
+                    <p>Join thousands of patients managing their health with HealthCare+</p>
+                </div>
+                
+                <form id="registerForm" class="register-form" method="POST" action="php/auth.php">
+                    <input type="hidden" name="action" value="register">
+                    
+                    <!-- Step 1: Personal Information -->
+                    <div class="form-step active" data-step="1">
+                        <h3 class="step-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                                </div>
+                                <div class="error-message" id="firstName-error"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                                </div>
+                                <div class="error-message" id="lastName-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                            </div>
+                            <div class="error-message" id="email-error"></div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required>
+                                </div>
+                                <div class="error-message" id="phone-error"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth *</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                                </div>
+                                <div class="error-message" id="dateOfBirth-error"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">Gender *</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-venus-mars"></i>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select your gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="error-message" id="gender-error"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary btn-next">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Security -->
+                    <div class="form-step" data-step="2">
+                        <h3 class="step-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Account Security
+                        </h3>
+
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-requirements">
+                                <div class="requirement" id="length-req">
+                                    <i class="fas fa-times"></i> At least 8 characters
+                                </div>
+                                <div class="requirement" id="uppercase-req">
+                                    <i class="fas fa-times"></i> One uppercase letter
+                                </div>
+                                <div class="requirement" id="lowercase-req">
+                                    <i class="fas fa-times"></i> One lowercase letter
+                                </div>
+                                <div class="requirement" id="number-req">
+                                    <i class="fas fa-times"></i> One number
+                                </div>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill"></div>
+                                </div>
+                                <span class="strength-text">Password strength</span>
+                            </div>
+                            <div class="error-message" id="password-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="confirmPassword-error"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary btn-back">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-primary btn-next">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Terms and Complete -->
+                    <div class="form-step" data-step="3">
+                        <h3 class="step-title">
+                            <i class="fas fa-file-contract"></i>
+                            Terms & Conditions
+                        </h3>
+
+                        <div class="terms-section">
+                            <div class="terms-highlights">
+                                <div class="highlight-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <div>
+                                        <h4>Your Privacy</h4>
+                                        <p>Your medical information is encrypted and secure</p>
+                                    </div>
+                                </div>
+                                <div class="highlight-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <h4>24/7 Access</h4>
+                                        <p>Book appointments and access records anytime</p>
+                                    </div>
+                                </div>
+                                <div class="highlight-item">
+                                    <i class="fas fa-user-md"></i>
+                                    <div>
+                                        <h4>Expert Care</h4>
+                                        <p>Connect with qualified healthcare professionals</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" name="terms" required>
+                                    <div class="checkmark">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span>I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a></span>
+                                </label>
+
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" name="newsletter">
+                                    <div class="checkmark">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <span>I want to receive health tips and updates via email (optional)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary btn-back">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="submit" class="btn btn-success btn-create">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html" class="sign-in-link">Sign in here</a></p>
+                </div>
+            </div>
+
+            <!-- Side Illustration -->
+            <div class="register-illustration">
+                <div class="illustration-content">
+                    <svg width="400" height="500" viewBox="0 0 400 500" class="register-svg">
+                        <defs>
+                            <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--primary-color);stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:var(--secondary-color);stop-opacity:0.6" />
+                            </linearGradient>
+                            <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                <stop offset="100%" style="stop-color:#f8f9fa;stop-opacity:0.8" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Background circles -->
+                        <circle cx="200" cy="150" r="80" fill="url(#mainGradient)" opacity="0.3"/>
+                        <circle cx="150" cy="350" r="60" fill="var(--accent-color)" opacity="0.2"/>
+                        <circle cx="300" cy="300" r="40" fill="var(--secondary-color)" opacity="0.3"/>
+                        
+                        <!-- Medical cross -->
+                        <g transform="translate(160, 120)">
+                            <rect x="30" y="10" width="20" height="60" rx="10" fill="var(--primary-color)"/>
+                            <rect x="10" y="30" width="60" height="20" rx="10" fill="var(--primary-color)"/>
+                        </g>
+                        
+                        <!-- Stethoscope -->
+                        <g transform="translate(100, 300)">
+                            <path d="M40 20 Q60 40 40 60 Q20 40 40 20" stroke="var(--secondary-color)" stroke-width="4" fill="none"/>
+                            <circle cx="40" cy="70" r="8" fill="var(--secondary-color)"/>
+                            <path d="M40 78 Q40 100 20 120" stroke="var(--secondary-color)" stroke-width="3" fill="none"/>
+                            <path d="M40 78 Q40 100 60 120" stroke="var(--secondary-color)" stroke-width="3" fill="none"/>
+                            <circle cx="20" cy="120" r="6" fill="var(--secondary-color)"/>
+                            <circle cx="60" cy="120" r="6" fill="var(--secondary-color)"/>
+                        </g>
+                        
+                        <!-- Heart rate line -->
+                        <g transform="translate(250, 400)">
+                            <path d="M0 20 L20 20 L30 5 L40 35 L50 0 L60 25 L80 25" 
+                                  stroke="var(--accent-color)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        </g>
+                        
+                        <!-- Pills -->
+                        <g transform="translate(300, 100)">
+                            <ellipse cx="15" cy="15" rx="8" ry="15" fill="var(--primary-color)" opacity="0.7"/>
+                            <ellipse cx="35" cy="25" rx="8" ry="15" fill="var(--secondary-color)" opacity="0.7"/>
+                        </g>
+                    </svg>
+                    
+                    <div class="welcome-text">
+                        <h3>Welcome to HealthCare+</h3>
+                        <p>Your journey to better health starts here. Join our community of patients who trust us with their healthcare needs.</p>
+                        
+                        <div class="stats">
+                            <div class="stat-item">
+                                <span class="stat-number">50K+</span>
+                                <span class="stat-label">Happy Patients</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">200+</span>
+                                <span class="stat-label">Expert Doctors</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <script src="js/theme-manager.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/register.js"></script>
     <script>
         // Password strength checker
         document.getElementById('password').addEventListener('input', function() {
