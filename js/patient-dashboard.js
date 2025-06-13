@@ -632,6 +632,396 @@ class PatientDashboard {
             resultsCount.textContent = `Showing ${count} of ${total} doctors`;
         }
     }
+
+    // Booking functionality
+    initializeBooking() {
+        this.selectedDoctor = null;
+        this.selectedDate = null;
+        this.selectedTime = null;
+        this.currentStep = 1;
+        this.currentMonth = new Date().getMonth();
+        this.currentYear = new Date().getFullYear();
+        
+        this.setupBookingEventListeners();
+        this.loadBookingDoctors();
+    }
+
+    setupBookingEventListeners() {
+        // Filter chips
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                this.filterBookingDoctors(e.target.dataset.specialty);
+            });
+        });
+
+        // Search
+        const searchInput = document.getElementById('booking-doctor-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.searchBookingDoctors(e.target.value);
+            });
+        }
+
+        // Calendar navigation
+        const prevBtn = document.getElementById('prev-month-btn');
+        const nextBtn = document.getElementById('next-month-btn');
+        
+        if (prevBtn) prevBtn.addEventListener('click', () => this.navigateMonth(-1));
+        if (nextBtn) nextBtn.addEventListener('click', () => this.navigateMonth(1));
+
+        // Terms checkbox
+        const termsCheckbox = document.getElementById('terms-agreement');
+        if (termsCheckbox) {
+            termsCheckbox.addEventListener('change', () => {
+                const confirmBtn = document.getElementById('confirm-booking-btn');
+                if (confirmBtn) {
+                    confirmBtn.disabled = !termsCheckbox.checked;
+                }
+            });
+        }
+    }
+
+    async loadBookingDoctors() {
+        try {
+            const response = await fetch('php/patient-api.php?action=get_doctors');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.doctors = data.doctors;
+                this.displayBookingDoctors(this.doctors);
+            }
+        } catch (error) {
+            console.error('Error loading doctors for booking:', error);
+        }
+    }
+
+    displayBookingDoctors(doctors) {
+        const container = document.getElementById('booking-doctors-grid');
+        if (!container) return;
+
+        container.innerHTML = doctors.map(doctor => this.createBookingDoctorCard(doctor)).join('');
+    }
+
+    createBookingDoctorCard(doctor) {
+        const initials = doctor.name.split(' ').map(n => n[0]).join('');
+        const stars = this.generateStars(doctor.rating);
+        const availabilityClass = doctor.available ? 'available' : 'unavailable';
+        const availabilityText = doctor.available ? 'Available' : 'Unavailable';
+
+        return `
+            <div class="booking-doctor-card" onclick="window.patientDashboard.selectDoctor(${doctor.id})" data-doctor-id="${doctor.id}">
+                <div class="doctor-header">
+                    <div class="doctor-avatar">${initials}</div>
+                    <div class="doctor-info">
+                        <h4>${doctor.name}</h4>
+                        <p>${doctor.specialty}</p>
+                        <div class="doctor-rating">
+                            <span class="stars">${stars}</span>
+                            <span>${doctor.rating} (${doctor.reviews})</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="doctor-details">
+                    <div class="doctor-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${doctor.location}</span>
+                    </div>
+                    <div class="doctor-detail">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>$${doctor.fee}</span>
+                    </div>
+                    <div class="doctor-availability ${availabilityClass}">
+                        ${availabilityText}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    filterBookingDoctors(specialty) {
+        if (specialty === 'all') {
+            this.displayBookingDoctors(this.doctors);
+        } else {
+            const filtered = this.doctors.filter(doctor => doctor.specialty === specialty);
+            this.displayBookingDoctors(filtered);
+        }
+    }
+
+    searchBookingDoctors(searchTerm) {
+        const term = searchTerm.toLowerCase();
+        const filtered = this.doctors.filter(doctor => 
+            doctor.name.toLowerCase().includes(term) ||
+            doctor.specialty.toLowerCase().includes(term) ||
+            doctor.location.toLowerCase().includes(term)
+        );
+        this.displayBookingDoctors(filtered);
+    }
+
+    selectDoctor(doctorId) {
+        this.selectedDoctor = this.doctors.find(d => d.id === doctorId);
+        if (!this.selectedDoctor) return;
+
+        // Update selected doctor display
+        this.updateSelectedDoctorDisplay();
+        
+        // Hide doctors grid and show selected doctor
+        document.getElementById('booking-doctors-grid').style.display = 'none';
+        document.getElementById('selected-doctor-display').style.display = 'block';
+        
+        // Enable next button
+        document.getElementById('next-to-time').disabled = false;
+    }
+
+    updateSelectedDoctorDisplay() {
+        if (!this.selectedDoctor) return;
+
+        document.getElementById('selected-doctor-name').textContent = this.selectedDoctor.name;
+        document.getElementById('selected-doctor-specialty').textContent = this.selectedDoctor.specialty;
+        document.getElementById('selected-doctor-location').textContent = this.selectedDoctor.location;
+        document.getElementById('selected-doctor-rating').innerHTML = this.generateStars(this.selectedDoctor.rating);
+        document.getElementById('selected-doctor-reviews').textContent = `(${this.selectedDoctor.reviews} reviews)`;
+        document.getElementById('selected-doctor-fee').textContent = `$${this.selectedDoctor.fee}`;
+    }
+
+    clearDoctorSelection() {
+        this.selectedDoctor = null;
+        document.getElementById('booking-doctors-grid').style.display = 'grid';
+        document.getElementById('selected-doctor-display').style.display = 'none';
+        document.getElementById('next-to-time').disabled = true;
+    }
+
+    generateCalendar() {
+        const calendar = document.getElementById('booking-calendar');
+        const monthYear = document.getElementById('calendar-month-year');
+        
+        if (!calendar || !monthYear) return;
+
+        const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        monthYear.textContent = `${months[this.currentMonth]} ${this.currentYear}`;
+
+        const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+        const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+        const today = new Date();
+
+        let calendarHTML = '';
+        
+        // Day headers
+        const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        dayHeaders.forEach(day => {
+            calendarHTML += `<div class="calendar-day-header">${day}</div>`;
+        });
+
+        // Empty cells for days before month starts
+        for (let i = 0; i < firstDay; i++) {
+            calendarHTML += '<div class="calendar-day disabled"></div>';
+        }
+
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(this.currentYear, this.currentMonth, day);
+            const isDisabled = date <= today;
+            const classes = ['calendar-day'];
+            
+            if (isDisabled) classes.push('disabled');
+            
+            const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            calendarHTML += `
+                <div class="${classes.join(' ')}" 
+                     ${!isDisabled ? `onclick="window.patientDashboard.selectDate('${dateStr}')"` : ''}>
+                    ${day}
+                </div>
+            `;
+        }
+
+        calendar.innerHTML = calendarHTML;
+    }
+
+    navigateMonth(direction) {
+        this.currentMonth += direction;
+        
+        if (this.currentMonth > 11) {
+            this.currentMonth = 0;
+            this.currentYear++;
+        } else if (this.currentMonth < 0) {
+            this.currentMonth = 11;
+            this.currentYear--;
+        }
+        
+        this.generateCalendar();
+    }
+
+    selectDate(dateStr) {
+        this.selectedDate = dateStr;
+        
+        // Update calendar display
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        
+        // Load time slots
+        this.loadTimeSlots(dateStr);
+    }
+
+    async loadTimeSlots(date) {
+        const timesContainer = document.getElementById('available-times');
+        if (!timesContainer) return;
+
+        // Get available times from server
+        try {
+            const response = await fetch(`php/patient-api.php?action=get_timeslots&doctor_id=${this.selectedDoctor.id}&date=${date}`);
+            const data = await response.json();
+            
+            const availableTimes = data.success ? data.timeslots : [
+                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
+            ];
+
+            const timesHTML = availableTimes.map(time => `
+                <div class="timeslot" onclick="window.patientDashboard.selectTime('${time}')">
+                    ${this.formatTime(time)}
+                </div>
+            `).join('');
+
+            timesContainer.innerHTML = timesHTML;
+        } catch (error) {
+            console.error('Error loading time slots:', error);
+            // Fallback to default times
+            const defaultTimes = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
+            const timesHTML = defaultTimes.map(time => `
+                <div class="timeslot" onclick="window.patientDashboard.selectTime('${time}')">
+                    ${this.formatTime(time)}
+                </div>
+            `).join('');
+            timesContainer.innerHTML = timesHTML;
+        }
+    }
+
+    selectTime(time) {
+        this.selectedTime = time;
+        
+        // Update time slot display
+        document.querySelectorAll('.timeslot').forEach(slot => {
+            slot.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        
+        // Show appointment summary
+        this.updateAppointmentSummary();
+        document.getElementById('appointment-summary').style.display = 'block';
+        
+        // Enable next button
+        document.getElementById('next-to-confirm').disabled = false;
+    }
+
+    updateAppointmentSummary() {
+        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) return;
+
+        document.getElementById('summary-doctor').textContent = this.selectedDoctor.name;
+        document.getElementById('summary-date').textContent = this.formatDate(this.selectedDate);
+        document.getElementById('summary-time').textContent = this.formatTime(this.selectedTime);
+        document.getElementById('summary-fee').textContent = `$${this.selectedDoctor.fee}`;
+    }
+
+    updateConfirmationDetails() {
+        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) return;
+
+        document.getElementById('confirm-doctor-name').textContent = this.selectedDoctor.name;
+        document.getElementById('confirm-doctor-specialty').textContent = this.selectedDoctor.specialty;
+        document.getElementById('confirm-doctor-location').textContent = this.selectedDoctor.location;
+        document.getElementById('confirm-date').textContent = this.formatDate(this.selectedDate);
+        document.getElementById('confirm-time').textContent = this.formatTime(this.selectedTime);
+        document.getElementById('confirm-fee').textContent = `$${this.selectedDoctor.fee}`;
+    }
+
+    async confirmAppointmentBooking() {
+        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) {
+            this.showNotification('Please complete all booking steps', 'error');
+            return;
+        }
+
+        const visitReason = document.getElementById('visit-reason').value;
+        
+        const bookingData = {
+            doctor_id: this.selectedDoctor.id,
+            appointment_date: this.selectedDate,
+            appointment_time: this.selectedTime,
+            reason: visitReason,
+            patient_name: this.currentUser.full_name,
+            patient_email: this.currentUser.email,
+            patient_phone: this.currentUser.phone
+        };
+
+        try {
+            const response = await fetch('php/booking-handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookingData)
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Appointment booked successfully!', 'success');
+                // Reset booking form
+                this.resetBooking();
+                // Switch to appointments section
+                this.showSection('appointments');
+                this.loadAppointments();
+            } else {
+                this.showNotification(data.error || 'Booking failed', 'error');
+            }
+        } catch (error) {
+            console.error('Booking error:', error);
+            this.showNotification('Booking failed. Please try again.', 'error');
+        }
+    }
+
+    resetBooking() {
+        this.selectedDoctor = null;
+        this.selectedDate = null;
+        this.selectedTime = null;
+        this.updateBookingStep(1);
+        document.getElementById('booking-doctors-grid').style.display = 'grid';
+        document.getElementById('selected-doctor-display').style.display = 'none';
+        document.getElementById('next-to-time').disabled = true;
+        document.getElementById('next-to-confirm').disabled = true;
+        document.getElementById('appointment-summary').style.display = 'none';
+        document.getElementById('visit-reason').value = '';
+        document.getElementById('terms-agreement').checked = false;
+    }
+
+    updateBookingStep(step) {
+        // Update progress indicator
+        document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+            stepEl.classList.toggle('active', index < step);
+        });
+
+        // Show/hide steps
+        document.querySelectorAll('.booking-step').forEach((stepEl, index) => {
+            stepEl.classList.toggle('active', index === step - 1);
+        });
+
+        this.currentStep = step;
+    }
+
+    formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    }
 }
 
 // Global functions for doctor interactions
@@ -660,8 +1050,54 @@ function toggleView(view) {
 }
 
 function bookAppointment(doctorId) {
-    // Navigate to booking page with pre-selected doctor
-    window.location.href = `booking.html?doctor=${doctorId}`;
+    if (window.patientDashboard) {
+        window.patientDashboard.showSection('book-appointment');
+        // Pre-select doctor if provided
+        if (doctorId) {
+            setTimeout(() => {
+                window.patientDashboard.selectDoctor(doctorId);
+            }, 500);
+        }
+    }
+}
+
+// Global booking functions
+function clearDoctorSelection() {
+    if (window.patientDashboard) {
+        window.patientDashboard.clearDoctorSelection();
+    }
+}
+
+function goToTimeSelection() {
+    if (window.patientDashboard) {
+        window.patientDashboard.updateBookingStep(2);
+        window.patientDashboard.generateCalendar();
+    }
+}
+
+function goToConfirmation() {
+    if (window.patientDashboard) {
+        window.patientDashboard.updateBookingStep(3);
+        window.patientDashboard.updateConfirmationDetails();
+    }
+}
+
+function goBackToDoctor() {
+    if (window.patientDashboard) {
+        window.patientDashboard.updateBookingStep(1);
+    }
+}
+
+function goBackToTime() {
+    if (window.patientDashboard) {
+        window.patientDashboard.updateBookingStep(2);
+    }
+}
+
+function confirmAppointmentBooking() {
+    if (window.patientDashboard) {
+        window.patientDashboard.confirmAppointmentBooking();
+    }
 }
 
 function viewDoctorProfile(doctorId) {

@@ -519,6 +519,480 @@
                 flex-direction: column;
             }
         }
+
+        /* Booking Styles */
+        .booking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .booking-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+
+        .progress-step.active:not(:last-child)::after {
+            background: var(--primary-color);
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step.active .step-circle {
+            background: var(--primary-color);
+        }
+
+        .booking-step {
+            display: none;
+        }
+
+        .booking-step.active {
+            display: block;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-header h3 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .booking-search {
+            margin-bottom: 2rem;
+        }
+
+        .booking-search .search-field {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .booking-search .search-field i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .booking-search input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .booking-search input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .selected-doctor-card {
+            background: var(--success-light);
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .selected-doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .selected-doctor-info .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .doctor-details {
+            flex: 1;
+        }
+
+        .doctor-details h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+        }
+
+        .doctor-details p {
+            margin: 0.25rem 0;
+            color: var(--text-secondary);
+        }
+
+        .doctor-fee {
+            text-align: right;
+        }
+
+        .fee-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .fee-amount {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .booking-doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .booking-doctor-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .booking-doctor-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .booking-doctor-card.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .datetime-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-section,
+        .timeslots-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day-header {
+            padding: 0.5rem;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-height: 40px;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary-light);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .calendar-day.disabled {
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .timeslots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .timeslot {
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .timeslot:hover {
+            border-color: var(--primary-color);
+        }
+
+        .timeslot.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .selected-appointment-summary {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .confirmation-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .doctor-card-mini {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .doctor-card-mini .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .appointment-info {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .info-row i {
+            width: 20px;
+            color: var(--primary-color);
+        }
+
+        .detail-section textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .detail-section textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .terms-acceptance {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .select-date-message {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .datetime-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-doctors-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .selected-doctor-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .doctor-fee {
+                text-align: center;
+            }
+            
+            .step-navigation {
+                flex-direction: column;
+            }
+            
+            .progress-step span {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -650,9 +1124,216 @@
 
             <!-- Book Appointment Section -->
             <section id="book-appointment-section" class="content-section" style="display: none;">
-                <h2>Book New Appointment</h2>
-                <div id="booking-widget">
-                    <iframe src="booking.html" style="width: 100%; height: 800px; border: none; border-radius: 12px;"></iframe>
+                <div class="booking-header">
+                    <h2>Book New Appointment</h2>
+                    <p>Select a doctor and schedule your appointment in a few simple steps</p>
+                </div>
+
+                <!-- Booking Progress -->
+                <div class="booking-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span>Select Doctor</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span>Choose Time</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <span>Confirm</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Doctor -->
+                <div id="booking-step-1" class="booking-step active">
+                    <div class="step-header">
+                        <h3>Select Your Doctor</h3>
+                        <p>Choose from our available healthcare professionals</p>
+                    </div>
+
+                    <!-- Quick Filters -->
+                    <div class="quick-filters">
+                        <button class="filter-chip active" data-specialty="all">All Doctors</button>
+                        <button class="filter-chip" data-specialty="Cardiology">Cardiology</button>
+                        <button class="filter-chip" data-specialty="Neurology">Neurology</button>
+                        <button class="filter-chip" data-specialty="Pediatrics">Pediatrics</button>
+                        <button class="filter-chip" data-specialty="Orthopedics">Orthopedics</button>
+                        <button class="filter-chip" data-specialty="Dermatology">Dermatology</button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="booking-search">
+                        <div class="search-field">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="booking-doctor-search" placeholder="Search by doctor name or location...">
+                        </div>
+                    </div>
+
+                    <!-- Selected Doctor Display -->
+                    <div id="selected-doctor-display" class="selected-doctor-card" style="display: none;">
+                        <div class="selected-doctor-info">
+                            <div class="doctor-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="doctor-details">
+                                <h4 id="selected-doctor-name">Dr. Sarah Johnson</h4>
+                                <p id="selected-doctor-specialty">Cardiology</p>
+                                <p id="selected-doctor-location">Medical Center, Downtown</p>
+                                <div class="doctor-rating">
+                                    <div class="stars" id="selected-doctor-rating"></div>
+                                    <span id="selected-doctor-reviews">(156 reviews)</span>
+                                </div>
+                            </div>
+                            <div class="doctor-fee">
+                                <span class="fee-label">Consultation Fee</span>
+                                <span class="fee-amount" id="selected-doctor-fee">$250.00</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="clearDoctorSelection()">
+                            <i class="fas fa-times"></i> Change Doctor
+                        </button>
+                    </div>
+
+                    <!-- Doctors Grid -->
+                    <div id="booking-doctors-grid" class="booking-doctors-grid">
+                        <!-- Doctors will be loaded here -->
+                    </div>
+
+                    <div class="step-navigation">
+                        <button id="next-to-time" class="btn btn-primary" disabled onclick="goToTimeSelection()">
+                            Next: Choose Time <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Choose Time -->
+                <div id="booking-step-2" class="booking-step">
+                    <div class="step-header">
+                        <h3>Choose Date & Time</h3>
+                        <p>Select your preferred appointment date and time slot</p>
+                    </div>
+
+                    <div class="datetime-container">
+                        <div class="calendar-section">
+                            <div class="calendar-header">
+                                <button class="btn btn-sm btn-secondary" id="prev-month-btn">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h4 id="calendar-month-year">June 2025</h4>
+                                <button class="btn btn-sm btn-secondary" id="next-month-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="calendar-grid" id="booking-calendar">
+                                <!-- Calendar will be generated here -->
+                            </div>
+                        </div>
+
+                        <div class="timeslots-section">
+                            <h4>Available Times</h4>
+                            <div id="available-times" class="timeslots-grid">
+                                <p class="select-date-message">Please select a date to see available times</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="selected-appointment-summary" id="appointment-summary" style="display: none;">
+                        <h4>Appointment Summary</h4>
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Doctor:</span>
+                                <span id="summary-doctor"></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Date:</span>
+                                <span id="summary-date"></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Time:</span>
+                                <span id="summary-time"></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Fee:</span>
+                                <span id="summary-fee"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary" onclick="goBackToDoctor()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button id="next-to-confirm" class="btn btn-primary" disabled onclick="goToConfirmation()">
+                            Next: Confirm <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="booking-step-3" class="booking-step">
+                    <div class="step-header">
+                        <h3>Confirm Your Appointment</h3>
+                        <p>Review your appointment details and confirm booking</p>
+                    </div>
+
+                    <div class="confirmation-card">
+                        <div class="appointment-details">
+                            <div class="detail-section">
+                                <h4>Doctor Information</h4>
+                                <div class="doctor-card-mini">
+                                    <div class="doctor-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="doctor-info">
+                                        <h5 id="confirm-doctor-name">Dr. Sarah Johnson</h5>
+                                        <p id="confirm-doctor-specialty">Cardiology</p>
+                                        <p id="confirm-doctor-location">Medical Center, Downtown</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>Appointment Details</h4>
+                                <div class="appointment-info">
+                                    <div class="info-row">
+                                        <i class="fas fa-calendar"></i>
+                                        <span id="confirm-date">June 15, 2025</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fas fa-clock"></i>
+                                        <span id="confirm-time">10:30 AM</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <span id="confirm-fee">$250.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>Reason for Visit (Optional)</h4>
+                                <textarea id="visit-reason" placeholder="Brief description of your symptoms or reason for consultation..." rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="terms-acceptance">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="terms-agreement">
+                                <span class="checkmark"></span>
+                                I agree to the <a href="#" target="_blank">Terms and Conditions</a> and understand the cancellation policy
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary" onclick="goBackToTime()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button id="confirm-booking-btn" class="btn btn-success" disabled onclick="confirmAppointmentBooking()">
+                            <i class="fas fa-check"></i> Confirm Booking
+                        </button>
+                    </div>
                 </div>
             </section>
 
