@@ -320,6 +320,20 @@ async function checkAuthStatus() {
         const data = await response.json();
         
         if (data.authenticated) {
+            // Check if we're on the home page and redirect to dashboard
+            const currentPage = window.location.pathname;
+            if (currentPage === '/' || currentPage === '/index.html' || currentPage.endsWith('index.html')) {
+                // Redirect to appropriate dashboard based on user role
+                if (data.user.role === 'admin') {
+                    window.location.href = 'dashboard-admin.html';
+                } else if (data.user.role === 'doctor') {
+                    window.location.href = 'dashboard-doctor.html';
+                } else {
+                    window.location.href = 'dashboard-patient.html';
+                }
+                return;
+            }
+            
             updateUIForAuthenticatedUser(data.user);
         }
     } catch (error) {
@@ -330,8 +344,21 @@ async function checkAuthStatus() {
 function updateUIForAuthenticatedUser(user) {
     const loginLink = document.querySelector('a[href="login.html"]');
     if (loginLink) {
-        loginLink.textContent = `Welcome, ${user.firstName}`;
-        loginLink.href = '#';
+        // Replace login link with dashboard button
+        loginLink.textContent = 'Dashboard';
+        loginLink.className = 'nav-link dashboard-link';
+        
+        // Set dashboard redirect based on user role
+        if (user.role === 'admin') {
+            loginLink.href = 'dashboard-admin.html';
+        } else if (user.role === 'doctor') {
+            loginLink.href = 'dashboard-doctor.html';
+        } else {
+            loginLink.href = 'dashboard-patient.html';
+        }
+        
+        // Remove click prevention
+        loginLink.onclick = null;
         
         // Add logout functionality
         const logoutLink = document.createElement('a');

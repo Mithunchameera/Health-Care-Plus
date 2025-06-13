@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HealthCare+</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="booking-container">
+                <div class="booking-header">
+                    <h1>Book Your Appointment</h1>
+                    <p>Select a doctor, choose your preferred date and time, and provide your details.</p>
+                </div>
+
+                <!-- Booking Steps -->
+                <div class="booking-steps">
+                    <div class="step-indicator">
+                        <div class="step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Select Doctor</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Choose Date & Time</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Patient Details</div>
+                        </div>
+                        <div class="step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Confirmation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Doctor -->
+                <div class="booking-step active" id="step-1">
+                    <h2>Select a Doctor</h2>
+                    
+                    <!-- Search and Filters -->
+                    <div class="search-filters">
+                        <div class="search-container">
+                            <input type="text" id="doctor-search" placeholder="Search by doctor name or specialty..." class="search-input">
+                            <button type="button" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="filter-grid">
+                            <div class="filter-group">
+                                <label for="specialty-filter">Specialty</label>
+                                <select id="specialty-filter">
+                                    <option value="">All Specialties</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="Pediatrics">Pediatrics</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="location-filter">Hospital/Location</label>
+                                <select id="location-filter">
+                                    <option value="">All Locations</option>
+                                    <option value="Medical Center, Downtown">Medical Center, Downtown</option>
+                                    <option value="Neurological Institute, Uptown">Neurological Institute, Uptown</option>
+                                    <option value="Children's Hospital, Westside">Children's Hospital, Westside</option>
+                                    <option value="Orthopedic Center, Central">Orthopedic Center, Central</option>
+                                    <option value="Dermatology Clinic, Eastside">Dermatology Clinic, Eastside</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Doctor Display -->
+                    <div id="selected-doctor" class="selected-doctor" style="display: none;">
+                        <h3>Selected Doctor</h3>
+                        <div class="selected-doctor-info"></div>
+                        <button type="button" class="btn btn-secondary" onclick="clearDoctorSelection()">
+                            Change Doctor
+                        </button>
+                    </div>
+
+                    <!-- Doctor List -->
+                    <div id="doctors-container" class="doctors-grid">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading doctors...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Choose Date & Time -->
+                <div class="booking-step" id="step-2">
+                    <h2>Choose Date & Time</h2>
+                    
+                    <div class="datetime-selection">
+                        <div class="calendar-section">
+                            <h3>Select Date</h3>
+                            <div class="calendar-container">
+                                <div class="calendar-header">
+                                    <button type="button" id="prev-month">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <div class="calendar-title">
+                                        <span id="current-month">June 2025</span>
+                                    </div>
+                                    <button type="button" id="next-month">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="calendar-grid" id="calendar-grid">
+                                    <!-- Calendar will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="time-section">
+                            <h3>Available Times</h3>
+                            <div id="time-slots" class="time-slots">
+                                <p class="time-placeholder">Please select a date first</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Patient Details -->
+                <div class="booking-step" id="step-3">
+                    <h2>Patient Details</h2>
+                    
+                    <form id="patient-form" class="patient-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="patient-name">Full Name *</label>
+                                <input type="text" id="patient-name" name="patient_name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patient-email">Email Address *</label>
+                                <input type="email" id="patient-email" name="patient_email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patient-phone">Phone Number *</label>
+                                <input type="tel" id="patient-phone" name="patient_phone" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patient-dob">Date of Birth *</label>
+                                <input type="date" id="patient-dob" name="patient_dob" required>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="patient-address">Address</label>
+                                <textarea id="patient-address" name="patient_address" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="emergency-contact">Emergency Contact</label>
+                                <input type="tel" id="emergency-contact" name="emergency_contact">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="insurance-number">Insurance Number</label>
+                                <input type="text" id="insurance-number" name="insurance_number">
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="reason">Reason for Visit</label>
+                                <textarea id="reason" name="reason" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="booking-step" id="step-4">
+                    <h2>Confirm Your Appointment</h2>
+                    
+                    <div class="appointment-summary">
+                        <div class="summary-section">
+                            <h3>Appointment Details</h3>
+                            <div id="appointment-summary-content">
+                                <!-- Summary will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="terms-section">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="terms-checkbox" required>
+                                <span class="checkmark"></span>
+                                I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="booking-navigation">
+                    <button type="button" id="prev-step" class="btn btn-secondary" style="display: none;">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    
+                    <button type="button" id="next-step" class="btn btn-primary">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    
+                    <button type="button" id="confirm-booking" class="btn btn-success" style="display: none;">
+                        <i class="fas fa-check"></i> Confirm Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Appointment Booked Successfully!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div id="booking-confirmation">
+                    <!-- Confirmation details will be populated here -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='index.html'">
+                        Back to Home
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='login.html'">
+                        Login to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>
