@@ -17,6 +17,7 @@ class PatientDashboard {
         this.setupEventListeners();
         this.loadDashboardData();
         this.setupSidebarNavigation();
+        this.setupProfilePicture();
     }
 
     async checkAuthentication() {
@@ -461,6 +462,57 @@ class PatientDashboard {
             showNotification(message, type);
         } else {
             alert(message);
+        }
+    }
+
+    setupProfilePicture() {
+        const profilePictureInput = document.getElementById('profile-picture-input');
+        const profilePicturePreview = document.getElementById('profile-picture-preview');
+        const profilePictureContainer = document.querySelector('.profile-picture-container');
+
+        if (profilePictureInput && profilePicturePreview) {
+            profilePictureInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        this.showNotification('Please select a valid image file (JPEG, PNG, or GIF)', 'error');
+                        return;
+                    }
+
+                    // Validate file size (max 5MB)
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        this.showNotification('Image file size must be less than 5MB', 'error');
+                        return;
+                    }
+
+                    // Read and preview the image
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePicturePreview.src = e.target.result;
+                        this.showNotification('Profile picture updated successfully', 'success');
+                        
+                        // Store in localStorage for demo purposes
+                        localStorage.setItem('profilePicture', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Add click handler to the container for easier access
+            if (profilePictureContainer) {
+                profilePictureContainer.addEventListener('click', () => {
+                    profilePictureInput.click();
+                });
+            }
+
+            // Load saved profile picture from localStorage
+            const savedPicture = localStorage.getItem('profilePicture');
+            if (savedPicture) {
+                profilePicturePreview.src = savedPicture;
+            }
         }
     }
 
@@ -1181,3 +1233,4 @@ function viewDoctorProfile(doctorId) {
 document.addEventListener('DOMContentLoaded', () => {
     window.patientDashboard = new PatientDashboard();
 });
+

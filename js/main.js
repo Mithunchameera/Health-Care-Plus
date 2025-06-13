@@ -521,6 +521,135 @@ function removeLocalStorage(key) {
     }
 }
 
+// Global Auto-Scroll Functionality
+function initializeAutoScroll() {
+    // Auto-scroll for select elements
+    document.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', function(e) {
+            if (e.target.value && e.target.value !== '') {
+                setTimeout(() => {
+                    autoScrollToNext(e.target);
+                }, 300);
+            }
+        });
+    });
+
+    // Auto-scroll for important form fields
+    document.querySelectorAll('input[type="email"], input[type="tel"], input[type="date"]').forEach(input => {
+        input.addEventListener('blur', function(e) {
+            if (e.target.value && validateInputField(e.target)) {
+                setTimeout(() => {
+                    autoScrollToNext(e.target);
+                }, 500);
+            }
+        });
+    });
+
+    // Auto-scroll for radio button groups
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function(e) {
+            setTimeout(() => {
+                autoScrollToNext(e.target);
+            }, 400);
+        });
+    });
+}
+
+function autoScrollToNext(currentElement) {
+    const nextElement = findNextScrollTarget(currentElement);
+    
+    if (nextElement) {
+        nextElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+        });
+        
+        addScrollHighlight(nextElement);
+        
+        const nextInput = nextElement.querySelector('input, select, textarea, button');
+        if (nextInput && !nextInput.disabled && nextInput.type !== 'hidden') {
+            setTimeout(() => {
+                nextInput.focus();
+                if (nextInput.type === 'text' || nextInput.type === 'email') {
+                    nextInput.select();
+                }
+            }, 600);
+        }
+    }
+}
+
+function findNextScrollTarget(currentElement) {
+    const formGroup = currentElement.closest('.form-group, .input-group, .field-group');
+    if (!formGroup) return null;
+    
+    let nextElement = formGroup.nextElementSibling;
+    while (nextElement && !isValidScrollTarget(nextElement)) {
+        nextElement = nextElement.nextElementSibling;
+    }
+    
+    if (!nextElement) {
+        const currentSection = currentElement.closest('.form-step, .booking-step, .content-section, section');
+        if (currentSection) {
+            const nextSection = currentSection.nextElementSibling;
+            if (nextSection && isValidScrollTarget(nextSection)) {
+                nextElement = nextSection.querySelector('.form-group, .input-group, .field-group');
+            }
+        }
+    }
+    
+    if (!nextElement) {
+        const container = currentElement.closest('.form-grid, .form-container, .booking-container');
+        if (container) {
+            const allFormGroups = container.querySelectorAll('.form-group, .input-group, .field-group');
+            const currentIndex = Array.from(allFormGroups).indexOf(formGroup);
+            if (currentIndex >= 0 && currentIndex < allFormGroups.length - 1) {
+                nextElement = allFormGroups[currentIndex + 1];
+            }
+        }
+    }
+    
+    return nextElement;
+}
+
+function isValidScrollTarget(element) {
+    return element && 
+           element.offsetHeight > 0 && 
+           element.offsetWidth > 0 && 
+           !element.hidden &&
+           getComputedStyle(element).display !== 'none';
+}
+
+function addScrollHighlight(element) {
+    element.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
+    element.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.2)';
+    element.style.transform = 'translateY(-2px)';
+    
+    setTimeout(() => {
+        element.style.boxShadow = '';
+        element.style.transform = '';
+        setTimeout(() => {
+            element.style.transition = '';
+        }, 300);
+    }, 1000);
+}
+
+function validateInputField(input) {
+    if (input.type === 'email') {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    }
+    if (input.type === 'tel') {
+        return input.value.length >= 10;
+    }
+    if (input.type === 'date') {
+        return input.value !== '';
+    }
+    return input.value.trim() !== '';
+}
+
+// Initialize auto-scroll when DOM is ready
+document.addEventListener('DOMContentLoaded', initializeAutoScroll);
+
 // Export functions for use in other modules
 window.HealthCare = {
     showNotification,
@@ -532,5 +661,7 @@ window.HealthCare = {
     validateEmail,
     validatePhone,
     debounce,
-    throttle
+    throttle,
+    autoScrollToNext,
+    initializeAutoScroll
 };

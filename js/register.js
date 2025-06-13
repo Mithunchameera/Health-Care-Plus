@@ -40,6 +40,28 @@ class RegistrationFormManager {
             input.addEventListener('blur', () => this.validateField(input));
             input.addEventListener('input', () => this.clearFieldError(input));
         });
+
+        // Auto-scroll on select changes
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    setTimeout(() => {
+                        this.autoScrollToNext(e.target);
+                    }, 300);
+                }
+            });
+        });
+
+        // Auto-scroll on important field completion
+        document.querySelectorAll('input[type="email"], input[type="tel"]').forEach(input => {
+            input.addEventListener('blur', (e) => {
+                if (this.validateField(e.target) && e.target.value) {
+                    setTimeout(() => {
+                        this.autoScrollToNext(e.target);
+                    }, 500);
+                }
+            });
+        });
     }
 
     nextStep() {
@@ -48,6 +70,7 @@ class RegistrationFormManager {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
+                this.smoothScrollToStep();
             }
         }
     }
@@ -346,6 +369,59 @@ function togglePassword(fieldId) {
         icon.className = 'fas fa-eye';
     }
 }
+
+// Add auto-scroll methods to RegistrationFormManager
+RegistrationFormManager.prototype.smoothScrollToStep = function() {
+    const activeStep = document.querySelector('.form-step.active');
+    if (activeStep) {
+        activeStep.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+        });
+    }
+};
+
+RegistrationFormManager.prototype.autoScrollToNext = function(currentElement) {
+    const formGroup = currentElement.closest('.form-group');
+    if (formGroup) {
+        // Find the next form group or next step
+        let nextElement = formGroup.nextElementSibling;
+        
+        // If no next sibling in current step, try to find next step
+        if (!nextElement) {
+            const currentStep = currentElement.closest('.form-step');
+            const nextStep = currentStep?.nextElementSibling;
+            if (nextStep && nextStep.classList.contains('form-step')) {
+                nextElement = nextStep.querySelector('.form-group');
+            }
+        }
+        
+        // Scroll to next element or try auto-advance to next step
+        if (nextElement) {
+            nextElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+            
+            // Focus on the first input in the next form group
+            const nextInput = nextElement.querySelector('input, select, textarea');
+            if (nextInput) {
+                setTimeout(() => {
+                    nextInput.focus();
+                }, 600);
+            }
+        } else {
+            // Check if current step is complete and auto-advance
+            if (this.validateCurrentStep()) {
+                setTimeout(() => {
+                    this.nextStep();
+                }, 800);
+            }
+        }
+    }
+};
 
 // Initialize the registration form manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {

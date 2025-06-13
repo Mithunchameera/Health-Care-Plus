@@ -102,12 +102,29 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
-- June 13, 2025: Enhanced stats section with continuous animations
-  - Floating cards with staggered animation delays
-  - Continuously pulsing "+" symbols and glowing numbers
-  - Subtle icon rotation and glow effects
-  - Hover interactions that pause animations
-  - Enhanced visual engagement while maintaining clean design
+- June 13, 2025: Added profile picture upload and store location functionality
+  - Interactive profile picture with hover overlay and click-to-upload
+  - File validation for image types and size limits (5MB max)
+  - Store/pharmacy location dropdown in profile forms
+  - Real-time image preview and localStorage persistence
+  - Professional profile section layout with user info display
+
+- June 13, 2025: Enhanced dropdown styling with gradient colors
+  - Applied blue gradient background to all select elements
+  - Added white text for better readability
+  - Enhanced focus effects with glowing shadows
+  - Consistent styling across registration and dashboard forms
+
+- June 13, 2025: Removed statistics section from homepage
+  - Deleted animated stats cards showing healthcare professionals count
+  - Removed "Trusted by Healthcare Professionals" section
+  - Streamlined homepage layout for cleaner presentation
+
+- June 13, 2025: Migration from Replit Agent to standard Replit environment completed
+  - Project successfully running on PHP 8.2 development server
+  - All static assets and API endpoints functioning properly
+  - Session handling and authentication system operational
+  - 3D video background and theme system working correctly
 
 - June 13, 2025: Added 3D animated video background to homepage using Three.js
   - Medical-themed 3D elements: floating crosses, DNA helix, heartbeat wave

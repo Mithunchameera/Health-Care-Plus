@@ -895,6 +895,21 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
+.input-group select {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    font-weight: 500;
+    border: 2px solid var(--primary-color);
+    cursor: pointer;
+}
+
+.input-group select option {
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-weight: normal;
+    padding: 0.5rem;
+}
+
 .input-group input:not([type="password"]) {
     padding-right: 1.25rem;
 }
@@ -907,6 +922,13 @@ body {
         0 0 0 3px rgba(59, 130, 246, 0.1),
         0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
+}
+
+.input-group select:focus {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+    box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.2),
+        0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .input-group input:focus + i {
@@ -2989,12 +3011,33 @@ body {
     transition: all 0.3s ease;
 }
 
+.input-wrapper select {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    font-weight: 500;
+    border: 2px solid var(--primary-color);
+    cursor: pointer;
+}
+
+.input-wrapper select option {
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-weight: normal;
+    padding: 0.5rem;
+}
+
 .input-wrapper input:focus,
 .input-wrapper select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     background: var(--card-bg);
+}
+
+.input-wrapper select:focus {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .input-wrapper input::placeholder {
@@ -3402,5 +3445,100 @@ body {
     
     .register-header h2 {
         font-size: 1.75rem;
+    }
+}
+
+/* Profile Picture Styles */
+.profile-picture-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.profile-picture-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.profile-picture-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+}
+
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+}
+
+.profile-picture-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(79, 70, 229, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.profile-picture-container:hover .profile-picture-overlay {
+    opacity: 1;
+}
+
+.profile-picture-overlay i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-picture-info h3 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.profile-role {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .profile-picture-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .profile-picture-container {
+        width: 120px;
+        height: 120px;
     }
 }
