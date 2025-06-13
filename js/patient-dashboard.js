@@ -76,6 +76,45 @@ class PatientDashboard {
     }
 
     setupEventListeners() {
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        
+        if (mobileMenuToggle && sidebar && sidebarOverlay) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('show');
+                
+                // Change icon
+                const icon = mobileMenuToggle.querySelector('i');
+                if (sidebar.classList.contains('open')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+            
+            // Close sidebar when overlay is clicked
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+                mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
+            });
+            
+            // Close sidebar when menu item is clicked (mobile)
+            const sidebarLinks = sidebar.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('show');
+                        mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
+                    }
+                });
+            });
+        }
+
         // Logout button
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
@@ -87,6 +126,21 @@ class PatientDashboard {
         if (profileForm) {
             profileForm.addEventListener('submit', this.handleProfileUpdate.bind(this));
         }
+        
+        // Handle window resize to close mobile menu on desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const sidebar = document.querySelector('.sidebar');
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                
+                if (sidebar && sidebarOverlay && mobileMenuToggle) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('show');
+                    mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
+                }
+            }
+        });
 
         // Quick action buttons
         document.querySelectorAll('.action-btn, .sidebar-link').forEach(btn => {
