@@ -19,13 +19,17 @@ function initializeNavigation() {
             // Animate hamburger menu
             const spans = navToggle.querySelectorAll('span');
             spans.forEach((span, index) => {
-                if (navMenu.classList.contains('active')) {
-                    if (index === 0) span.style.transform = 'rotate(45deg) translate(5px, 5px)';
-                    if (index === 1) span.style.opacity = '0';
-                    if (index === 2) span.style.transform = 'rotate(-45deg) translate(7px, -6px)';
-                } else {
-                    span.style.transform = 'none';
-                    span.style.opacity = '1';
+                try {
+                    if (navMenu.classList.contains('active')) {
+                        if (index === 0) span.style.transform = 'rotate(45deg) translate(5px, 5px)';
+                        if (index === 1) span.style.opacity = '0';
+                        if (index === 2) span.style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                    } else {
+                        span.style.transform = 'none';
+                        span.style.opacity = '1';
+                    }
+                } catch (error) {
+                    console.warn('Navigation animation error:', error);
                 }
             });
         });
@@ -212,6 +216,8 @@ function formatPhoneNumber(input) {
 }
 
 function validatePasswordStrength(input) {
+    if (!input || !input.value) return;
+    
     const password = input.value;
     const strengthBar = document.querySelector('.strength-fill');
     const strengthText = document.querySelector('.strength-text');
@@ -239,9 +245,13 @@ function validatePasswordStrength(input) {
     
     const strength = strengthLevels[score] || strengthLevels[0];
     
-    strengthBar.style.width = strength.percentage + '%';
-    strengthBar.className = 'strength-fill ' + strength.class;
-    strengthText.textContent = strength.text;
+    try {
+        strengthBar.style.width = strength.percentage + '%';
+        strengthBar.className = 'strength-fill ' + strength.class;
+        strengthText.textContent = strength.text;
+    } catch (error) {
+        console.warn('Password strength validation error:', error);
+    }
 }
 
 function validateForm(form) {

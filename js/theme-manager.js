@@ -195,29 +195,37 @@ class ThemeManager {
         const icon = themeToggle.querySelector('i');
         if (!icon) return;
         
-        // Remove existing classes
+        // Remove existing classes safely
         icon.className = '';
         
-        switch (this.currentTheme) {
-            case 'light':
-                icon.className = 'fas fa-sun';
-                themeToggle.setAttribute('aria-label', 'Switch to dark theme');
-                break;
-            case 'dark':
-                icon.className = 'fas fa-moon';
-                themeToggle.setAttribute('aria-label', 'Switch to auto theme');
-                break;
-            case 'auto':
-                icon.className = 'fas fa-magic';
-                themeToggle.setAttribute('aria-label', 'Switch to light theme');
-                break;
+        try {
+            switch (this.currentTheme) {
+                case 'light':
+                    icon.className = 'fas fa-sun';
+                    themeToggle.setAttribute('aria-label', 'Switch to dark theme');
+                    break;
+                case 'dark':
+                    icon.className = 'fas fa-moon';
+                    themeToggle.setAttribute('aria-label', 'Switch to auto theme');
+                    break;
+                case 'auto':
+                    icon.className = 'fas fa-magic';
+                    themeToggle.setAttribute('aria-label', 'Switch to light theme');
+                    break;
+            }
+            
+            // Add a subtle animation with error handling
+            if (icon.style) {
+                icon.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    if (icon.style) {
+                        icon.style.transform = 'scale(1)';
+                    }
+                }, 150);
+            }
+        } catch (error) {
+            console.warn('Theme toggle icon update failed:', error);
         }
-        
-        // Add a subtle animation
-        icon.style.transform = 'scale(0.8)';
-        setTimeout(() => {
-            icon.style.transform = 'scale(1)';
-        }, 150);
     }
     
     updateMetaThemeColor(theme) {

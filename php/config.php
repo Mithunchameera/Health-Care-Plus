@@ -50,6 +50,19 @@ function setCORSHeaders() {
     header("Content-Type: application/json");
 }
 
+// Initialize session configuration for better cross-environment compatibility
+function initializeSessionConfig() {
+    // Configure session settings for better compatibility
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', 0); // Allow HTTP for local development
+    ini_set('session.cookie_samesite', 'Lax');
+    ini_set('session.use_strict_mode', 1);
+    ini_set('session.cookie_lifetime', SESSION_LIFETIME);
+    
+    // Don't set domain for localhost compatibility
+    ini_set('session.cookie_domain', '');
+}
+
 // Mock Data Storage Class (Static Demo Mode)
 class MockDataStorage {
     private static $instance = null;
@@ -364,15 +377,42 @@ class MockDataStorage {
             'expires_at' => time() + SESSION_LIFETIME
         ];
         
-        // Store session in file for persistence
-        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        // Store session in file for persistence with better path handling
+        $tempDir = $this->getSessionDirectory();
+        $sessionFile = $tempDir . '/healthcare_session_' . $sessionId;
+        
+        // Ensure directory exists
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+        
         file_put_contents($sessionFile, json_encode($sessionData));
         
         return $sessionId;
     }
     
+    private function getSessionDirectory() {
+        // Try different temporary directory approaches for cross-platform compatibility
+        $possibleDirs = [
+            sys_get_temp_dir(),
+            '/tmp',
+            './tmp',
+            '.'
+        ];
+        
+        foreach ($possibleDirs as $dir) {
+            if (is_writable($dir) || (!file_exists($dir) && is_writable(dirname($dir)))) {
+                return $dir;
+            }
+        }
+        
+        // Fallback to current directory
+        return '.';
+    }
+    
     public function getSession($sessionId) {
-        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        $tempDir = $this->getSessionDirectory();
+        $sessionFile = $tempDir . '/healthcare_session_' . $sessionId;
         
         if (file_exists($sessionFile)) {
             $sessionData = json_decode(file_get_contents($sessionFile), true);
@@ -387,7 +427,8 @@ class MockDataStorage {
     }
     
     public function destroySession($sessionId) {
-        $sessionFile = sys_get_temp_dir() . '/healthcare_session_' . $sessionId;
+        $tempDir = $this->getSessionDirectory();
+        $sessionFile = $tempDir . '/healthcare_session_' . $sessionId;
         if (file_exists($sessionFile)) {
             unlink($sessionFile);
             return true;

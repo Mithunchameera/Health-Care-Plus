@@ -50,6 +50,9 @@ class PatientAPI {
             case 'get_payment_history':
                 $this->getPaymentHistory();
                 break;
+            case 'get_doctors':
+                $this->getDoctors();
+                break;
             case 'update_profile':
                 $this->updateProfile();
                 break;
@@ -230,6 +233,21 @@ class PatientAPI {
         } catch (Exception $e) {
             logError("Get payment history error: " . $e->getMessage());
             sendResponse(['error' => 'Failed to load payment history'], 500);
+        }
+    }
+    
+    private function getDoctors() {
+        try {
+            $doctors = $this->mockStorage->getDoctors();
+            
+            sendResponse([
+                'success' => true,
+                'doctors' => $doctors
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get doctors error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load doctors'], 500);
         }
     }
     

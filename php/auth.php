@@ -6,6 +6,14 @@
 
 require_once 'config.php';
 
+// Initialize session configuration for better cross-environment compatibility
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 0); // Allow HTTP for local development
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_lifetime', SESSION_LIFETIME);
+ini_set('session.cookie_domain', '');
+
 setCORSHeaders();
 
 // Handle preflight requests
@@ -61,14 +69,25 @@ class AuthHandler {
             // Create session
             $sessionId = $mockStorage->createSession($user['id']);
             
-            // Set session cookie
-            setcookie('session_id', $sessionId, [
+            // Set session cookie with environment-aware configuration
+            $cookieOptions = [
                 'expires' => time() + SESSION_LIFETIME,
                 'path' => '/',
-                'secure' => false,
+                'secure' => false, // Allow both HTTP and HTTPS
                 'httponly' => true,
                 'samesite' => 'Lax'
-            ]);
+            ];
+            
+            // Enhanced cookie setting with fallback for older PHP versions
+            if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+                setcookie('session_id', $sessionId, $cookieOptions);
+            } else {
+                // Fallback for older PHP versions
+                setcookie('session_id', $sessionId, time() + SESSION_LIFETIME, '/', '', false, true);
+            }
+            
+            // Also set a backup header for debugging
+            header('Set-Cookie: session_id=' . $sessionId . '; Path=/; HttpOnly; SameSite=Lax; Max-Age=' . SESSION_LIFETIME);
             
             // Remove password from response
             unset($user['password']);
