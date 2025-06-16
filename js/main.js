@@ -100,6 +100,9 @@ function initializeAnimations() {
     
     // Counter animation for stats
     animateCounters();
+    
+    // Initialize back to top button
+    initializeBackToTop();
 }
 
 // Animate number counters
@@ -681,3 +684,34 @@ window.HealthCare = {
     autoScrollToNext,
     initializeAutoScroll
 };
+
+// Initialize back to top button
+function initializeBackToTop() {
+    // Create back to top button
+    const backToTopButton = document.createElement('a');
+    backToTopButton.href = '#';
+    backToTopButton.className = 'back-to-top';
+    backToTopButton.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    backToTopButton.setAttribute('aria-label', 'Back to top');
+    
+    // Add to body
+    document.body.appendChild(backToTopButton);
+    
+    // Show/hide button on scroll
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('visible');
+        } else {
+            backToTopButton.classList.remove('visible');
+        }
+    });
+    
+    // Smooth scroll to top
+    backToTopButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}

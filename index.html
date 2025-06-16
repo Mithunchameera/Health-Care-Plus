@@ -99,7 +99,53 @@
         </div>
     </section>
 
-
+    <!-- Statistics Section -->
+    <section class="statistics">
+        <div class="container">
+            <div class="statistics-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" data-target="1200">0</h3>
+                        <p class="stat-label">Qualified Doctors</p>
+                        <span class="stat-description">Certified medical professionals</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" data-target="150">0</h3>
+                        <p class="stat-label">HealthCare+ Partners</p>
+                        <span class="stat-description">Trusted medical institutions</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" data-target="25000">0</h3>
+                        <p class="stat-label">Appointments Managed</p>
+                        <span class="stat-description">Successfully completed bookings</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" data-target="18500">0</h3>
+                        <p class="stat-label">Happy Patients</p>
+                        <span class="stat-description">Satisfied healthcare users</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- CTA Section -->
     <section class="cta">
@@ -174,6 +220,11 @@
                 }
             } catch (error) {
                 console.log('Auth check failed:', error);
+            }
+            
+            // Initialize back to top button
+            if (typeof initializeBackToTop === 'function') {
+                initializeBackToTop();
             }
         });
     </script>
