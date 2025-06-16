@@ -68,6 +68,18 @@ class AdminAPI {
             case 'add_doctor':
                 $this->addDoctor();
                 break;
+            case 'get_doctor_by_id':
+                $this->getDoctorById();
+                break;
+            case 'update_doctor':
+                $this->updateDoctor();
+                break;
+            case 'get_doctor_schedule':
+                $this->getDoctorSchedule();
+                break;
+            case 'update_doctor_availability':
+                $this->updateDoctorAvailability();
+                break;
             case 'update_settings':
                 $this->updateSettings();
                 break;
@@ -746,6 +758,294 @@ class AdminAPI {
         }
     }
     
+    private function getDoctorById() {
+        try {
+            $doctorId = intval($_GET['id'] ?? 0);
+            
+            if ($doctorId <= 0) {
+                sendResponse(['error' => 'Invalid doctor ID'], 400);
+                return;
+            }
+            
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
+            
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            sendResponse([
+                'success' => true,
+                'doctor' => $doctor
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get doctor by ID error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load doctor'], 500);
+        }
+    }
+    
+    private function updateDoctor() {
+        try {
+            $doctorId = intval($_POST['doctor_id'] ?? 0);
+            
+            if ($doctorId <= 0) {
+                sendResponse(['error' => 'Invalid doctor ID'], 400);
+                return;
+            }
+            
+            // Validate required fields
+            $requiredFields = ['name', 'email', 'phone', 'specialty', 'experience', 'location', 'fee'];
+            $updateData = [];
+            $errors = [];
+            
+            foreach ($requiredFields as $field) {
+                $value = sanitizeInput($_POST[$field] ?? '');
+                if (empty($value)) {
+                    $errors[] = ucfirst($field) . ' is required';
+                } else {
+                    $updateData[$field] = $value;
+                }
+            }
+            
+            // Optional fields
+            $optionalFields = ['education', 'subspecialties', 'languages', 'certifications', 'services', 'about'];
+            foreach ($optionalFields as $field) {
+                $value = sanitizeInput($_POST[$field] ?? '');
+                if (!empty($value)) {
+                    if (in_array($field, ['subspecialties', 'languages', 'certifications', 'services'])) {
+                        // Convert comma-separated strings to arrays
+                        $updateData[$field] = array_map('trim', explode(',', $value));
+                    } else {
+                        $updateData[$field] = $value;
+                    }
+                }
+            }
+            
+            // Validate specific fields
+            if (!validateEmail($updateData['email'])) {
+                $errors[] = 'Valid email is required';
+            }
+            
+            if (!validatePhone($updateData['phone'])) {
+                $errors[] = 'Valid phone number is required';
+            }
+            
+            $experience = intval($updateData['experience']);
+            if ($experience < 0 || $experience > 50) {
+                $errors[] = 'Experience must be between 0 and 50 years';
+            }
+            
+            $fee = floatval($updateData['fee']);
+            if ($fee < 0) {
+                $errors[] = 'Consultation fee must be positive';
+            }
+            
+            if (!empty($errors)) {
+                sendResponse(['error' => 'Validation failed', 'details' => $errors], 400);
+                return;
+            }
+            
+            // Check if doctor exists
+            $existingDoctor = $this->mockStorage->getDoctorById($doctorId);
+            if (!$existingDoctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Handle availability status
+            $updateData['available'] = isset($_POST['available']) && $_POST['available'] === 'true';
+            
+            // Update doctor in mock storage
+            $updated = $this->mockStorage->updateDoctor($doctorId, $updateData);
+            
+            if ($updated) {
+                // Log the activity
+                $this->logActivity([
+                    'action' => 'doctor_updated',
+                    'description' => "Doctor profile updated: {$updateData['name']}",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $doctorId,
+                    'changes' => array_keys($updateData)
+                ]);
+                
+                // Get updated doctor data
+                $updatedDoctor = $this->mockStorage->getDoctorById($doctorId);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => 'Doctor updated successfully',
+                    'doctor' => $updatedDoctor
+                ]);
+            } else {
+                sendResponse(['error' => 'Failed to update doctor'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Update doctor error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to update doctor'], 500);
+        }
+    }
+    
+    private function getDoctorSchedule() {
+        try {
+            $doctorId = intval($_GET['doctor_id'] ?? 0);
+            
+            if ($doctorId <= 0) {
+                sendResponse(['error' => 'Invalid doctor ID'], 400);
+                return;
+            }
+            
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Get appointments for this doctor
+            $appointments = $this->mockStorage->getAppointmentsByDoctor($doctorId);
+            
+            // Generate weekly schedule
+            $weeklySchedule = $this->generateWeeklySchedule($doctorId, $appointments);
+            
+            // Get availability settings
+            $availability = $this->getDoctorAvailability($doctorId);
+            
+            sendResponse([
+                'success' => true,
+                'doctor' => $doctor,
+                'weekly_schedule' => $weeklySchedule,
+                'appointments' => $appointments,
+                'availability' => $availability
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get doctor schedule error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load doctor schedule'], 500);
+        }
+    }
+    
+    private function updateDoctorAvailability() {
+        try {
+            $doctorId = intval($_POST['doctor_id'] ?? 0);
+            $availabilityData = json_decode($_POST['availability'] ?? '{}', true);
+            
+            if ($doctorId <= 0) {
+                sendResponse(['error' => 'Invalid doctor ID'], 400);
+                return;
+            }
+            
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Validate availability data
+            $validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            $processedAvailability = [];
+            
+            foreach ($availabilityData as $day => $dayData) {
+                if (!in_array($day, $validDays)) {
+                    continue;
+                }
+                
+                $processedAvailability[$day] = [
+                    'enabled' => $dayData['enabled'] ?? false,
+                    'start_time' => $dayData['start_time'] ?? '09:00',
+                    'end_time' => $dayData['end_time'] ?? '17:00',
+                    'lunch_start' => $dayData['lunch_start'] ?? '12:00',
+                    'lunch_end' => $dayData['lunch_end'] ?? '13:00'
+                ];
+            }
+            
+            // Update availability in mock storage
+            $updated = $this->mockStorage->updateDoctorAvailability($doctorId, $processedAvailability);
+            
+            if ($updated) {
+                $this->logActivity([
+                    'action' => 'doctor_availability_updated',
+                    'description' => "Availability updated for Dr. {$doctor['name']}",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $doctorId
+                ]);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => 'Doctor availability updated successfully',
+                    'availability' => $processedAvailability
+                ]);
+            } else {
+                sendResponse(['error' => 'Failed to update availability'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Update doctor availability error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to update doctor availability'], 500);
+        }
+    }
+    
+    private function generateWeeklySchedule($doctorId, $appointments) {
+        $schedule = [];
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        
+        // Get current week dates
+        $currentWeek = [];
+        $monday = new DateTime();
+        $monday->modify('this week monday');
+        
+        for ($i = 0; $i < 7; $i++) {
+            $date = clone $monday;
+            $date->modify("+{$i} days");
+            $currentWeek[] = $date->format('Y-m-d');
+        }
+        
+        foreach ($days as $index => $dayName) {
+            $date = $currentWeek[$index];
+            $dayAppointments = array_filter($appointments, function($apt) use ($date) {
+                return $apt['date'] === $date;
+            });
+            
+            $schedule[$dayName] = [
+                'date' => $date,
+                'appointments' => array_values($dayAppointments),
+                'available_slots' => $this->getAvailableSlots($doctorId, $date, $dayAppointments)
+            ];
+        }
+        
+        return $schedule;
+    }
+    
+    private function getAvailableSlots($doctorId, $date, $appointments) {
+        // Generate standard working hours
+        $slots = [];
+        $workingHours = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
+                        '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+        
+        $bookedTimes = array_column($appointments, 'time');
+        
+        foreach ($workingHours as $time) {
+            if (!in_array($time, $bookedTimes)) {
+                $slots[] = $time;
+            }
+        }
+        
+        return $slots;
+    }
+    
+    private function getDoctorAvailability($doctorId) {
+        // Mock availability data - in real app this would come from database
+        return [
+            'monday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
+            'tuesday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
+            'wednesday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
+            'thursday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
+            'friday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '17:00'],
+            'saturday' => ['enabled' => true, 'start_time' => '09:00', 'end_time' => '13:00'],
+            'sunday' => ['enabled' => false, 'start_time' => '09:00', 'end_time' => '17:00']
+        ];
+    }
+
     private function logActivity($activity) {
         try {
             // In a real application, this would insert into an activity log table

@@ -873,6 +873,358 @@
         </main>
     </div>
 
+    <!-- Patient History Modal -->
+    <div id="patient-history-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-history"></i> Patient Medical History</h2>
+                <span class="close" onclick="closeModal('patient-history-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="patient-history-content">
+                    <!-- Patient Info Header -->
+                    <div class="patient-info-header">
+                        <div class="patient-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="patient-details">
+                            <h3 id="history-patient-name">Loading...</h3>
+                            <div class="patient-meta">
+                                <span id="history-patient-age">Age: --</span>
+                                <span id="history-patient-gender">Gender: --</span>
+                                <span id="history-patient-phone">Phone: --</span>
+                            </div>
+                            <div class="patient-contact">
+                                <span id="history-patient-email">Email: --</span>
+                            </div>
+                        </div>
+                        <div class="patient-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="history-total-appointments">0</div>
+                                <div class="stat-label">Total Visits</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="history-last-visit">--</div>
+                                <div class="stat-label">Last Visit</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Tabs -->
+                    <div class="history-tabs">
+                        <button class="tab-btn active" data-tab="appointments">
+                            <i class="fas fa-calendar-check"></i> Appointments
+                        </button>
+                        <button class="tab-btn" data-tab="records">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </button>
+                        <button class="tab-btn" data-tab="prescriptions">
+                            <i class="fas fa-prescription"></i> Prescriptions
+                        </button>
+                        <button class="tab-btn" data-tab="vitals">
+                            <i class="fas fa-heartbeat"></i> Vital Signs
+                        </button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Appointments Tab -->
+                        <div id="appointments-tab" class="tab-pane active">
+                            <div class="section-header">
+                                <h4>Appointment History</h4>
+                                <div class="search-filter">
+                                    <input type="text" placeholder="Search appointments..." id="appointments-search">
+                                </div>
+                            </div>
+                            <div id="patient-appointments-list" class="history-list">
+                                <div class="loading-spinner">Loading appointments...</div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Records Tab -->
+                        <div id="records-tab" class="tab-pane">
+                            <div class="section-header">
+                                <h4>Medical Records</h4>
+                                <button class="btn btn-primary btn-sm" onclick="openAddRecordModal()">
+                                    <i class="fas fa-plus"></i> Add Record
+                                </button>
+                            </div>
+                            <div id="patient-records-list" class="history-list">
+                                <div class="loading-spinner">Loading medical records...</div>
+                            </div>
+                        </div>
+
+                        <!-- Prescriptions Tab -->
+                        <div id="prescriptions-tab" class="tab-pane">
+                            <div class="section-header">
+                                <h4>Prescriptions</h4>
+                            </div>
+                            <div id="patient-prescriptions-list" class="history-list">
+                                <div class="loading-spinner">Loading prescriptions...</div>
+                            </div>
+                        </div>
+
+                        <!-- Vital Signs Tab -->
+                        <div id="vitals-tab" class="tab-pane">
+                            <div class="section-header">
+                                <h4>Vital Signs History</h4>
+                            </div>
+                            <div id="patient-vitals-list" class="history-list">
+                                <div class="loading-spinner">Loading vital signs...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Medical Record Modal -->
+    <div id="add-record-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-medical-alt"></i> Add Medical Record</h2>
+                <span class="close" onclick="closeModal('add-record-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="add-record-form">
+                    <input type="hidden" id="record-patient-id">
+                    <div class="form-group">
+                        <label for="record-diagnosis">Diagnosis *</label>
+                        <input type="text" id="record-diagnosis" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="record-treatment">Treatment</label>
+                        <textarea id="record-treatment" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="record-notes">Notes</label>
+                        <textarea id="record-notes" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Record
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('add-record-modal')">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Patient History Modal Styles */
+        .patient-info-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--primary-color-light);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .patient-avatar {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+
+        .patient-details h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+        }
+
+        .patient-meta, .patient-contact {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+        }
+
+        .patient-stats {
+            display: flex;
+            gap: 2rem;
+            margin-left: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .history-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-filter input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 250px;
+        }
+
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .history-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-active {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .history-details {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .history-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .modal-content.large {
+            max-width: 1200px;
+            width: 90%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .patient-info-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .patient-stats {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .history-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+                justify-content: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-filter input {
+                width: 100%;
+            }
+        }
+    </style>
+
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/doctor-dashboard.js"></script>

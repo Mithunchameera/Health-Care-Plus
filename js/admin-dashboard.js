@@ -602,17 +602,258 @@ class AdminDashboard {
         document.getElementById('addStaffModal').style.display = 'block';
     }
 
-    closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
+    async editDoctor(doctorId) {
+        try {
+            const response = await fetch(`php/admin-api.php?action=get_doctor_by_id&id=${doctorId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.populateEditDoctorForm(data.doctor);
+                document.getElementById('edit-doctor-modal').style.display = 'block';
+            } else {
+                this.showNotification('Failed to load doctor data', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading doctor:', error);
+            this.showNotification('Error loading doctor data', 'error');
+        }
     }
 
-    async editDoctor(doctorId) {
-        this.showNotification('Edit doctor functionality coming soon', 'info');
+    populateEditDoctorForm(doctor) {
+        document.getElementById('edit-doctor-id').value = doctor.id;
+        document.getElementById('edit-doctor-name').value = doctor.name;
+        document.getElementById('edit-doctor-email').value = doctor.email;
+        document.getElementById('edit-doctor-phone').value = doctor.phone;
+        document.getElementById('edit-doctor-specialty').value = doctor.specialty;
+        document.getElementById('edit-doctor-education').value = doctor.education || '';
+        document.getElementById('edit-doctor-experience').value = doctor.experience;
+        document.getElementById('edit-doctor-location').value = doctor.location;
+        document.getElementById('edit-doctor-fee').value = doctor.fee;
+        document.getElementById('edit-doctor-available').checked = doctor.available;
+        
+        // Handle array fields
+        if (doctor.subspecialties && Array.isArray(doctor.subspecialties)) {
+            document.getElementById('edit-doctor-subspecialties').value = doctor.subspecialties.join(', ');
+        }
+        if (doctor.languages && Array.isArray(doctor.languages)) {
+            document.getElementById('edit-doctor-languages').value = doctor.languages.join(', ');
+        }
+        if (doctor.certifications && Array.isArray(doctor.certifications)) {
+            document.getElementById('edit-doctor-certifications').value = doctor.certifications.join(', ');
+        }
+        if (doctor.services && Array.isArray(doctor.services)) {
+            document.getElementById('edit-doctor-services').value = doctor.services.join(', ');
+        }
+        
+        document.getElementById('edit-doctor-about').value = doctor.about || '';
+    }
+
+    async handleEditDoctor(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'update_doctor');
+            formData.append('doctor_id', document.getElementById('edit-doctor-id').value);
+            formData.append('name', document.getElementById('edit-doctor-name').value);
+            formData.append('email', document.getElementById('edit-doctor-email').value);
+            formData.append('phone', document.getElementById('edit-doctor-phone').value);
+            formData.append('specialty', document.getElementById('edit-doctor-specialty').value);
+            formData.append('education', document.getElementById('edit-doctor-education').value);
+            formData.append('experience', document.getElementById('edit-doctor-experience').value);
+            formData.append('location', document.getElementById('edit-doctor-location').value);
+            formData.append('fee', document.getElementById('edit-doctor-fee').value);
+            formData.append('subspecialties', document.getElementById('edit-doctor-subspecialties').value);
+            formData.append('languages', document.getElementById('edit-doctor-languages').value);
+            formData.append('certifications', document.getElementById('edit-doctor-certifications').value);
+            formData.append('services', document.getElementById('edit-doctor-services').value);
+            formData.append('about', document.getElementById('edit-doctor-about').value);
+            formData.append('available', document.getElementById('edit-doctor-available').checked ? 'true' : 'false');
+            
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Doctor updated successfully', 'success');
+                this.closeModal('edit-doctor-modal');
+                this.loadDoctors();
+                
+                this.addActivityToFeed(
+                    `Doctor profile updated: ${data.doctor.name}`,
+                    'admin',
+                    'completed'
+                );
+            } else {
+                this.showNotification(data.error || 'Failed to update doctor', 'error');
+            }
+        } catch (error) {
+            console.error('Error updating doctor:', error);
+            this.showNotification('Error updating doctor', 'error');
+        }
     }
 
     async viewDoctorSchedule(doctorId) {
-        this.showNotification('View doctor schedule functionality coming soon', 'info');
+        try {
+            const response = await fetch(`php/admin-api.php?action=get_doctor_schedule&doctor_id=${doctorId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.displayDoctorSchedule(data);
+                document.getElementById('doctor-schedule-modal').style.display = 'block';
+            } else {
+                this.showNotification('Failed to load doctor schedule', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading doctor schedule:', error);
+            this.showNotification('Error loading doctor schedule', 'error');
+        }
     }
+
+    displayDoctorSchedule(scheduleData) {
+        const { doctor, weekly_schedule, appointments, availability } = scheduleData;
+        
+        // Update doctor info
+        document.getElementById('schedule-doctor-name').textContent = `Dr. ${doctor.name}`;
+        document.getElementById('schedule-doctor-specialty').textContent = doctor.specialty;
+        
+        // Display weekly schedule
+        this.displayWeeklySchedule(weekly_schedule);
+        
+        // Display appointments
+        this.displayDoctorAppointments(appointments);
+        
+        // Display availability settings
+        this.displayAvailabilitySettings(availability);
+        
+        // Setup tab functionality
+        this.setupScheduleTabs();
+    }
+
+    displayWeeklySchedule(schedule) {
+        const container = document.getElementById('doctor-weekly-schedule');
+        
+        const scheduleHTML = Object.entries(schedule).map(([day, dayData]) => `
+            <div class="schedule-day">
+                <h4>${day}</h4>
+                <div class="schedule-date">${dayData.date}</div>
+                <div class="day-appointments">
+                    ${dayData.appointments.length > 0 ? 
+                        dayData.appointments.map(apt => `
+                            <div class="schedule-slot booked">
+                                ${apt.time} - ${apt.patient_name || 'Patient'}
+                            </div>
+                        `).join('') : 
+                        '<div class="no-appointments">No appointments</div>'
+                    }
+                </div>
+                <div class="available-slots">
+                    ${dayData.available_slots.slice(0, 3).map(slot => `
+                        <div class="schedule-slot available">${slot}</div>
+                    `).join('')}
+                    ${dayData.available_slots.length > 3 ? 
+                        `<div class="more-slots">+${dayData.available_slots.length - 3} more</div>` : ''
+                    }
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = scheduleHTML;
+    }
+
+    displayDoctorAppointments(appointments) {
+        const container = document.getElementById('doctor-appointments-list');
+        
+        if (!appointments || appointments.length === 0) {
+            container.innerHTML = '<div class="no-data">No appointments found</div>';
+            return;
+        }
+        
+        const appointmentsHTML = appointments.map(appointment => `
+            <div class="appointment-item">
+                <div class="appointment-header">
+                    <div class="appointment-date">${appointment.date} at ${appointment.time}</div>
+                    <div class="appointment-status status-${appointment.status}">${this.capitalizeFirst(appointment.status)}</div>
+                </div>
+                <div class="appointment-details">
+                    <strong>Patient:</strong> ${appointment.patient_name || 'Unknown'}<br>
+                    <strong>Type:</strong> ${appointment.appointment_type || 'Consultation'}<br>
+                    ${appointment.notes ? `<strong>Notes:</strong> ${appointment.notes}` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = appointmentsHTML;
+    }
+
+    displayAvailabilitySettings(availability) {
+        const container = document.getElementById('availability-settings');
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        
+        const availabilityHTML = days.map(day => {
+            const dayData = availability[day] || { enabled: false, start_time: '09:00', end_time: '17:00' };
+            const dayName = this.capitalizeFirst(day);
+            
+            return `
+                <div class="availability-day">
+                    <div class="day-name">
+                        <label>
+                            <input type="checkbox" ${dayData.enabled ? 'checked' : ''} 
+                                   onchange="adminDashboard.updateDayAvailability('${day}', this)">
+                            ${dayName}
+                        </label>
+                    </div>
+                    <div class="availability-times">
+                        <input type="time" value="${dayData.start_time}" ${!dayData.enabled ? 'disabled' : ''}>
+                        <span>to</span>
+                        <input type="time" value="${dayData.end_time}" ${!dayData.enabled ? 'disabled' : ''}>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = availabilityHTML;
+    }
+
+    setupScheduleTabs() {
+        const tabButtons = document.querySelectorAll('.schedule-tabs .tab-btn');
+        const tabPanes = document.querySelectorAll('#doctor-schedule-modal .tab-pane');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+    }
+
+    closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        
+        // Clear edit doctor form if needed
+        if (modalId === 'edit-doctor-modal') {
+            document.getElementById('edit-doctor-form').reset();
+        }
+    }
+
+    updateDayAvailability(day, checkbox) {
+        const timesContainer = checkbox.closest('.availability-day').querySelector('.availability-times');
+        const timeInputs = timesContainer.querySelectorAll('input[type="time"]');
+        
+        timeInputs.forEach(input => {
+            input.disabled = !checkbox.checked;
+        });
+    }
+
+
 
     async toggleDoctorStatus(doctorId) {
         try {
@@ -824,4 +1065,12 @@ window.toggleStaffStatus = (id) => window.adminDashboard.toggleStaffStatus(id);
 // Initialize admin dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.adminDashboard = new AdminDashboard();
+    
+    // Setup edit doctor form handler
+    const editDoctorForm = document.getElementById('edit-doctor-form');
+    if (editDoctorForm) {
+        editDoctorForm.addEventListener('submit', (e) => {
+            window.adminDashboard.handleEditDoctor(e);
+        });
+    }
 });

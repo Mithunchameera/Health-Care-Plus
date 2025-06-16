@@ -795,6 +795,246 @@ class DoctorDashboard {
             alert(message);
         }
     }
+
+    // Patient History Methods
+    async viewPatientHistory(patientId) {
+        try {
+            this.currentPatientId = patientId;
+            document.getElementById('patient-history-modal').style.display = 'block';
+            
+            const response = await fetch(`php/patient-history-api.php?action=get_patient_history&patient_id=${patientId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.displayPatientHistory(data.history);
+                this.setupHistoryTabs();
+            } else {
+                this.showNotification('Failed to load patient history', 'error');
+                this.closeModal('patient-history-modal');
+            }
+        } catch (error) {
+            console.error('Error loading patient history:', error);
+            this.showNotification('Error loading patient history', 'error');
+            this.closeModal('patient-history-modal');
+        }
+    }
+
+    displayPatientHistory(history) {
+        const patient = history.patient;
+        const stats = history.statistics;
+        
+        document.getElementById('history-patient-name').textContent = patient.full_name;
+        document.getElementById('history-patient-age').textContent = `Age: ${this.calculateAge(patient.date_of_birth)}`;
+        document.getElementById('history-patient-gender').textContent = `Gender: ${patient.gender || 'Not specified'}`;
+        document.getElementById('history-patient-phone').textContent = `Phone: ${patient.phone}`;
+        document.getElementById('history-patient-email').textContent = `Email: ${patient.email}`;
+        
+        document.getElementById('history-total-appointments').textContent = stats.total_appointments;
+        document.getElementById('history-last-visit').textContent = stats.last_visit ? 
+            this.formatAppointmentDate(stats.last_visit) : 'No visits';
+        
+        this.displayPatientAppointments(history.appointments);
+        this.displayPatientRecords(history.medical_records);
+        this.displayPatientPrescriptions(history.prescriptions);
+        this.displayPatientVitals(history.vital_signs);
+    }
+
+    displayPatientAppointments(appointments) {
+        const container = document.getElementById('patient-appointments-list');
+        
+        if (!appointments || appointments.length === 0) {
+            container.innerHTML = '<div class="no-data">No appointments found</div>';
+            return;
+        }
+        
+        const appointmentsHTML = appointments.map(appointment => `
+            <div class="history-item">
+                <div class="history-item-header">
+                    <div class="history-date">${this.formatAppointmentDate(appointment.date, appointment.time)}</div>
+                    <div class="history-status status-${appointment.status}">${this.capitalizeFirst(appointment.status)}</div>
+                </div>
+                <div class="history-details">
+                    <strong>Doctor:</strong> Dr. ${appointment.doctor_name}<br>
+                    <strong>Specialty:</strong> ${appointment.specialty}<br>
+                    <strong>Type:</strong> ${appointment.appointment_type || 'Consultation'}<br>
+                    ${appointment.outcome ? `<strong>Outcome:</strong> ${appointment.outcome}<br>` : ''}
+                    ${appointment.notes ? `<strong>Notes:</strong> ${appointment.notes}` : ''}
+                </div>
+                <div class="history-meta">
+                    <span><i class="fas fa-calendar"></i> ${appointment.date}</span>
+                    <span><i class="fas fa-clock"></i> ${this.formatTime(appointment.time)}</span>
+                    ${appointment.fee ? `<span><i class="fas fa-dollar-sign"></i> $${appointment.fee}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = appointmentsHTML;
+    }
+
+    displayPatientRecords(records) {
+        const container = document.getElementById('patient-records-list');
+        
+        if (!records || records.length === 0) {
+            container.innerHTML = '<div class="no-data">No medical records found</div>';
+            return;
+        }
+        
+        const recordsHTML = records.map(record => `
+            <div class="history-item">
+                <div class="history-item-header">
+                    <div class="history-date">${this.formatAppointmentDate(record.date)}</div>
+                    <div class="history-status status-${record.status}">${this.capitalizeFirst(record.status)}</div>
+                </div>
+                <div class="history-details">
+                    <strong>Doctor:</strong> ${record.doctor_name}<br>
+                    <strong>Specialty:</strong> ${record.specialty}<br>
+                    <strong>Diagnosis:</strong> ${record.diagnosis}<br>
+                    <strong>Treatment:</strong> ${record.treatment}<br>
+                    ${record.notes ? `<strong>Notes:</strong> ${record.notes}` : ''}
+                </div>
+                <div class="history-meta">
+                    <span><i class="fas fa-calendar"></i> ${record.date}</span>
+                    <span><i class="fas fa-stethoscope"></i> ${record.type}</span>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = recordsHTML;
+    }
+
+    displayPatientPrescriptions(prescriptions) {
+        const container = document.getElementById('patient-prescriptions-list');
+        
+        if (!prescriptions || prescriptions.length === 0) {
+            container.innerHTML = '<div class="no-data">No prescriptions found</div>';
+            return;
+        }
+        
+        const prescriptionsHTML = prescriptions.map(prescription => `
+            <div class="history-item">
+                <div class="history-item-header">
+                    <div class="history-date">${this.formatAppointmentDate(prescription.date)}</div>
+                    <div class="history-status status-${prescription.status}">${this.capitalizeFirst(prescription.status)}</div>
+                </div>
+                <div class="history-details">
+                    <strong>Medication:</strong> ${prescription.medication}<br>
+                    <strong>Dosage:</strong> ${prescription.dosage}<br>
+                    <strong>Frequency:</strong> ${prescription.frequency}<br>
+                    <strong>Duration:</strong> ${prescription.duration}<br>
+                    <strong>Doctor:</strong> ${prescription.doctor_name}<br>
+                    ${prescription.instructions ? `<strong>Instructions:</strong> ${prescription.instructions}` : ''}
+                </div>
+                <div class="history-meta">
+                    <span><i class="fas fa-calendar"></i> ${prescription.date}</span>
+                    <span><i class="fas fa-pills"></i> ${prescription.refills} refills left</span>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = prescriptionsHTML;
+    }
+
+    displayPatientVitals(vitals) {
+        const container = document.getElementById('patient-vitals-list');
+        
+        if (!vitals || vitals.length === 0) {
+            container.innerHTML = '<div class="no-data">No vital signs recorded</div>';
+            return;
+        }
+        
+        const vitalsHTML = vitals.map(vital => `
+            <div class="history-item">
+                <div class="history-item-header">
+                    <div class="history-date">${this.formatAppointmentDate(vital.date)}</div>
+                    <div class="history-status status-completed">Recorded</div>
+                </div>
+                <div class="history-details">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Blood Pressure:</strong> ${vital.blood_pressure}</div>
+                        <div><strong>Heart Rate:</strong> ${vital.heart_rate} bpm</div>
+                        <div><strong>Temperature:</strong> ${vital.temperature}</div>
+                        <div><strong>Weight:</strong> ${vital.weight}</div>
+                        <div><strong>Height:</strong> ${vital.height}</div>
+                        <div><strong>BMI:</strong> ${vital.bmi}</div>
+                        <div><strong>Oxygen Sat:</strong> ${vital.oxygen_saturation}</div>
+                    </div>
+                </div>
+                <div class="history-meta">
+                    <span><i class="fas fa-calendar"></i> ${vital.date}</span>
+                    <span><i class="fas fa-heartbeat"></i> Vital Signs</span>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = vitalsHTML;
+    }
+
+    setupHistoryTabs() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+    }
+
+    openAddRecordModal() {
+        const patientId = this.currentPatientId;
+        if (!patientId) {
+            this.showNotification('Please select a patient first', 'error');
+            return;
+        }
+        
+        document.getElementById('record-patient-id').value = patientId;
+        document.getElementById('add-record-modal').style.display = 'block';
+    }
+
+    async handleAddMedicalRecord(e) {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'add_medical_record');
+            formData.append('patient_id', document.getElementById('record-patient-id').value);
+            formData.append('diagnosis', document.getElementById('record-diagnosis').value);
+            formData.append('treatment', document.getElementById('record-treatment').value);
+            formData.append('notes', document.getElementById('record-notes').value);
+            
+            const response = await fetch('php/patient-history-api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Medical record added successfully', 'success');
+                this.closeModal('add-record-modal');
+                this.viewPatientHistory(this.currentPatientId);
+            } else {
+                this.showNotification(data.error || 'Failed to add medical record', 'error');
+            }
+        } catch (error) {
+            console.error('Error adding medical record:', error);
+            this.showNotification('Error adding medical record', 'error');
+        }
+    }
+
+    closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        
+        if (modalId === 'add-record-modal') {
+            document.getElementById('add-record-form').reset();
+        }
+    }
 }
 
 // Global functions for onclick events

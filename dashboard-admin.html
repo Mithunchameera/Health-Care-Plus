@@ -804,6 +804,330 @@
         </div>
     </div>
 
+    <!-- Edit Doctor Modal -->
+    <div id="edit-doctor-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-md"></i> Edit Doctor Profile</h2>
+                <span class="close" onclick="closeModal('edit-doctor-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="edit-doctor-form" class="form-grid">
+                    <input type="hidden" id="edit-doctor-id">
+                    <div class="form-group">
+                        <label for="edit-doctor-name">Full Name *</label>
+                        <input type="text" id="edit-doctor-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-email">Email *</label>
+                        <input type="email" id="edit-doctor-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-phone">Phone *</label>
+                        <input type="tel" id="edit-doctor-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-specialty">Specialty *</label>
+                        <select id="edit-doctor-specialty" required>
+                            <option value="">Select Specialty</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Oncology">Oncology</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Surgery">Surgery</option>
+                            <option value="Radiology">Radiology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-education">Education</label>
+                        <input type="text" id="edit-doctor-education" placeholder="Medical School">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-experience">Experience (Years) *</label>
+                        <input type="number" id="edit-doctor-experience" min="0" max="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-location">Location *</label>
+                        <input type="text" id="edit-doctor-location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-fee">Consultation Fee ($) *</label>
+                        <input type="number" id="edit-doctor-fee" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-subspecialties">Subspecialties</label>
+                        <input type="text" id="edit-doctor-subspecialties" placeholder="Enter subspecialties, separated by commas">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-languages">Languages Spoken</label>
+                        <input type="text" id="edit-doctor-languages" placeholder="English, Spanish, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-certifications">Certifications</label>
+                        <input type="text" id="edit-doctor-certifications" placeholder="Board certifications, separated by commas">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-doctor-services">Services Offered</label>
+                        <input type="text" id="edit-doctor-services" placeholder="Services, separated by commas">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="edit-doctor-about">About Doctor</label>
+                        <textarea id="edit-doctor-about" rows="4" placeholder="Professional background and specializations"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="edit-doctor-available"> Currently Available
+                        </label>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Doctor
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('edit-doctor-modal')">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Schedule Modal -->
+    <div id="doctor-schedule-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-alt"></i> Doctor Schedule</h2>
+                <span class="close" onclick="closeModal('doctor-schedule-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="schedule-content">
+                    <div class="doctor-info">
+                        <h3 id="schedule-doctor-name">Dr. Name</h3>
+                        <p id="schedule-doctor-specialty">Specialty</p>
+                    </div>
+                    <div class="schedule-tabs">
+                        <button class="tab-btn active" data-tab="weekly">Weekly View</button>
+                        <button class="tab-btn" data-tab="appointments">Appointments</button>
+                        <button class="tab-btn" data-tab="availability">Set Availability</button>
+                    </div>
+                    <div class="tab-content">
+                        <div id="weekly-tab" class="tab-pane active">
+                            <div id="doctor-weekly-schedule" class="weekly-schedule">
+                                Loading schedule...
+                            </div>
+                        </div>
+                        <div id="appointments-tab" class="tab-pane">
+                            <div id="doctor-appointments-list">
+                                Loading appointments...
+                            </div>
+                        </div>
+                        <div id="availability-tab" class="tab-pane">
+                            <div class="availability-manager">
+                                <h4>Set Working Hours</h4>
+                                <div id="availability-settings">
+                                    Loading availability settings...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Edit Doctor Modal Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        /* Doctor Schedule Modal Styles */
+        .schedule-content {
+            padding: 1rem;
+        }
+
+        .doctor-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--primary-color-light);
+            border-radius: 8px;
+        }
+
+        .doctor-info h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .doctor-info p {
+            margin: 0.5rem 0 0 0;
+            color: var(--text-muted);
+        }
+
+        .schedule-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .schedule-tabs .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .schedule-tabs .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .schedule-tabs .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .weekly-schedule {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .schedule-day {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .schedule-day h4 {
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .schedule-slot {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .schedule-slot.booked {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .schedule-slot.available {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .availability-manager {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .availability-day {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .availability-times {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .availability-times input {
+            width: 120px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weekly-schedule {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-tabs {
+                flex-wrap: wrap;
+            }
+
+            .availability-day {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .availability-times {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/admin-dashboard.js"></script>

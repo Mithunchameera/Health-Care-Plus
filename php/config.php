@@ -648,6 +648,82 @@ class MockDataStorage {
         return false;
     }
 
+    public function updateDoctor($doctorId, $updateData) {
+        foreach ($this->doctors as &$doctor) {
+            if ($doctor['id'] == $doctorId) {
+                foreach ($updateData as $key => $value) {
+                    $doctor[$key] = $value;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function updateDoctorAvailability($doctorId, $availability) {
+        // In a real app, this would update a separate availability table
+        // For mock purposes, we'll store it in the doctor record
+        foreach ($this->doctors as &$doctor) {
+            if ($doctor['id'] == $doctorId) {
+                $doctor['availability'] = $availability;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getPatientById($id) {
+        if (empty($this->patients)) {
+            $this->initializePatients();
+        }
+        return $this->patients[$id] ?? null;
+    }
+    
+    public function getPatients() {
+        if (empty($this->patients)) {
+            $this->initializePatients();
+        }
+        return array_values($this->patients);
+    }
+    
+    private function initializePatients() {
+        $this->patients = [
+            1 => [
+                'id' => 1,
+                'full_name' => 'John Doe',
+                'email' => 'john.doe@email.com',
+                'phone' => '+1 (555) 111-1111',
+                'date_of_birth' => '1988-05-15',
+                'gender' => 'Male',
+                'address' => '123 Main St, City, State 12345',
+                'emergency_contact' => '+1 (555) 111-2222',
+                'insurance_number' => 'INS123456'
+            ],
+            2 => [
+                'id' => 2,
+                'full_name' => 'Maria Garcia',
+                'email' => 'maria.garcia@email.com',
+                'phone' => '+1 (555) 222-2222',
+                'date_of_birth' => '1992-08-22',
+                'gender' => 'Female',
+                'address' => '456 Oak Ave, City, State 12345',
+                'emergency_contact' => '+1 (555) 222-3333',
+                'insurance_number' => 'INS789012'
+            ],
+            3 => [
+                'id' => 3,
+                'full_name' => 'David Wilson',
+                'email' => 'david.wilson@email.com',
+                'phone' => '+1 (555) 333-3333',
+                'date_of_birth' => '1985-12-10',
+                'gender' => 'Male',
+                'address' => '789 Pine St, City, State 12345',
+                'emergency_contact' => '+1 (555) 333-4444',
+                'insurance_number' => 'INS345678'
+            ]
+        ];
+    }
+
 }
 
 // Utility Functions
