@@ -618,6 +618,16 @@ class MockDataStorage {
             return $appointment['doctor_id'] == $doctorId && $appointment['date'] === $date;
         });
     }
+    
+    public function updateDoctorStatus($doctorId, $status) {
+        foreach ($this->doctors as &$doctor) {
+            if ($doctor['id'] == $doctorId) {
+                $doctor['available'] = $status;
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 

@@ -550,7 +550,51 @@ class AdminDashboard {
     }
 
     async toggleDoctorStatus(doctorId) {
-        this.showNotification('Toggle doctor status functionality coming soon', 'info');
+        try {
+            // Find the doctor to get current status
+            const doctor = this.doctors.find(d => d.id === doctorId);
+            if (!doctor) {
+                this.showNotification('Doctor not found', 'error');
+                return;
+            }
+
+            const currentStatus = doctor.available;
+            const actionText = currentStatus ? 'deactivate' : 'activate';
+            
+            // Show confirmation dialog
+            if (!confirm(`Are you sure you want to ${actionText} Dr. ${doctor.name}?`)) {
+                return;
+            }
+
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=toggle_doctor_status&doctor_id=${doctorId}&status=${!currentStatus}`
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Update local data
+                doctor.available = !currentStatus;
+                
+                // Refresh the doctors display
+                this.displayDoctors(this.doctors);
+                
+                const statusText = doctor.available ? 'activated' : 'deactivated';
+                this.showNotification(`Dr. ${doctor.name} has been ${statusText} successfully`, 'success');
+                
+                // Log the activity in the activity feed
+                this.addActivityToFeed(`Doctor ${doctor.name} ${statusText}`, 'admin', statusText);
+            } else {
+                this.showNotification(data.error || 'Failed to update doctor status', 'error');
+            }
+        } catch (error) {
+            console.error('Toggle doctor status error:', error);
+            this.showNotification('Failed to update doctor status', 'error');
+        }
     }
 
     async viewAppointment(appointmentId) {
@@ -612,6 +656,34 @@ class AdminDashboard {
 
     capitalizeFirst(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    addActivityToFeed(description, userRole, status = 'completed') {
+        // Add activity to recent activity display
+        const tbody = document.getElementById('activity-table-body');
+        if (tbody) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${timeString}</td>
+                <td>${description}</td>
+                <td>${this.currentUser ? this.currentUser.full_name : 'Administrator'}</td>
+                <td><span class="status-badge status-${status}">${this.capitalizeFirst(status)}</span></td>
+            `;
+            
+            // Insert at the beginning of the table
+            tbody.insertBefore(newRow, tbody.firstChild);
+            
+            // Keep only the latest 10 activities visible
+            while (tbody.children.length > 10) {
+                tbody.removeChild(tbody.lastChild);
+            }
+        }
     }
 
     showNotification(message, type = 'info') {

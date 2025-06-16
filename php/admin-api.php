@@ -56,6 +56,9 @@ class AdminAPI {
             case 'update_settings':
                 $this->updateSettings();
                 break;
+            case 'toggle_doctor_status':
+                $this->toggleDoctorStatus();
+                break;
             default:
                 sendResponse(['error' => 'Invalid action'], 400);
         }
@@ -373,6 +376,74 @@ class AdminAPI {
         } catch (Exception $e) {
             logError("Update settings error: " . $e->getMessage());
             sendResponse(['error' => 'Failed to update settings'], 500);
+        }
+    }
+    
+    private function toggleDoctorStatus() {
+        try {
+            $doctorId = intval($_POST['doctor_id'] ?? 0);
+            $newStatus = filter_var($_POST['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            
+            if ($doctorId <= 0) {
+                sendResponse(['error' => 'Invalid doctor ID'], 400);
+                return;
+            }
+            
+            // Get doctor information
+            $doctor = $this->mockStorage->getDoctorById($doctorId);
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Update doctor status in mock storage
+            $updated = $this->mockStorage->updateDoctorStatus($doctorId, $newStatus);
+            
+            if ($updated) {
+                // Log the activity
+                $statusText = $newStatus ? 'activated' : 'deactivated';
+                $this->logActivity([
+                    'action' => 'doctor_status_change',
+                    'description' => "Doctor {$doctor['name']} {$statusText}",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $doctorId,
+                    'status' => $statusText
+                ]);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => "Doctor status updated successfully",
+                    'doctor_id' => $doctorId,
+                    'new_status' => $newStatus,
+                    'status_text' => $statusText
+                ]);
+            } else {
+                sendResponse(['error' => 'Failed to update doctor status'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Toggle doctor status error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to toggle doctor status'], 500);
+        }
+    }
+    
+    private function logActivity($activity) {
+        try {
+            // In a real application, this would insert into an activity log table
+            // For now, we'll just log it to the error log for demonstration
+            $logEntry = [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'action' => $activity['action'] ?? 'unknown',
+                'description' => $activity['description'] ?? '',
+                'user_id' => $activity['user_id'] ?? 0,
+                'target_id' => $activity['target_id'] ?? null,
+                'status' => $activity['status'] ?? 'completed'
+            ];
+            
+            logError("Activity Log: " . json_encode($logEntry));
+            
+        } catch (Exception $e) {
+            logError("Failed to log activity: " . $e->getMessage());
         }
     }
 }

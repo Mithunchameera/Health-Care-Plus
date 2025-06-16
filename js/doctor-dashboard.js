@@ -385,8 +385,36 @@ class DoctorDashboard {
     }
 
     displayWeeklySchedule(schedule) {
-        // Weekly schedule display logic
-        console.log('Weekly schedule loaded:', schedule);
+        const scheduleContainer = document.getElementById('weekly-schedule-grid');
+        if (!scheduleContainer) return;
+
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        scheduleContainer.innerHTML = days.map((day, index) => {
+            const daySlots = schedule[day] || [];
+            return `
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <h4>${dayNames[index]}</h4>
+                        <span class="day-date">${this.getDateForDay(index)}</span>
+                    </div>
+                    <div class="day-slots">
+                        ${daySlots.length > 0 ? 
+                            daySlots.map(time => `
+                                <div class="schedule-slot" data-day="${day}" data-time="${time}">
+                                    <span class="slot-time">${this.formatTime(time)}</span>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="doctorDashboard.viewDaySchedule('${day}', '${time}')">
+                                        View Details
+                                    </button>
+                                </div>
+                            `).join('') : 
+                            '<div class="no-slots">No appointments scheduled</div>'
+                        }
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     async loadAvailabilityForDate() {
@@ -571,6 +599,173 @@ class DoctorDashboard {
     nextWeek() {
         // Navigate to next week
         this.showNotification('Next week navigation', 'info');
+    }
+
+    getDateForDay(dayIndex) {
+        const today = new Date();
+        const currentDay = today.getDay();
+        const targetDay = dayIndex === 6 ? 0 : dayIndex + 1; // Convert our index to JS day index
+        const diff = targetDay - currentDay;
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + diff);
+        
+        return targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    async viewDaySchedule(day, time) {
+        try {
+            const response = await fetch(`php/doctor-api.php?action=get_day_schedule&day=${day}&time=${time}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showDayScheduleModal(day, time, data.appointments);
+            }
+        } catch (error) {
+            console.error('Failed to load day schedule:', error);
+            this.showNotification('Failed to load schedule details', 'error');
+        }
+    }
+
+    showDayScheduleModal(day, time, appointments) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content schedule-modal">
+                <div class="modal-header">
+                    <h3>Schedule Details - ${this.capitalizeFirst(day)} at ${this.formatTime(time)}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ${appointments.length > 0 ? `
+                        <div class="appointment-list">
+                            ${appointments.map(apt => `
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <h4>${apt.patient_name}</h4>
+                                        <span class="status-badge status-${apt.status}">${this.capitalizeFirst(apt.status)}</span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <p><i class="fas fa-clock"></i> ${this.formatTime(apt.time)}</p>
+                                        <p><i class="fas fa-phone"></i> ${apt.patient_phone}</p>
+                                        <p><i class="fas fa-envelope"></i> ${apt.patient_email}</p>
+                                        <p><i class="fas fa-notes-medical"></i> ${apt.type || 'General Consultation'}</p>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        ${apt.status === 'scheduled' ? 
+                                            `<button class="btn btn-primary btn-sm" onclick="doctorDashboard.confirmAppointment(${apt.id})">Confirm</button>` : ''
+                                        }
+                                        <button class="btn btn-secondary btn-sm" onclick="doctorDashboard.viewPatientHistory(${apt.patient_id})">View History</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>No appointments scheduled for this time slot</p>
+                            <button class="btn btn-primary" onclick="doctorDashboard.openAvailabilityManager('${day}', '${time}')">
+                                Manage Availability
+                            </button>
+                        </div>
+                    `}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+
+    async openAvailabilityManager(day, time) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content availability-modal">
+                <div class="modal-header">
+                    <h3>Manage Availability - ${this.capitalizeFirst(day)}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="availability-manager">
+                        <div class="time-slot-manager">
+                            <h4>Available Time Slots</h4>
+                            <div class="time-slots-grid" id="availability-slots">
+                                ${this.generateTimeSlots()}
+                            </div>
+                            <button class="btn btn-primary" onclick="doctorDashboard.saveAvailability('${day}')">
+                                Save Availability
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        this.loadCurrentAvailability(day);
+    }
+
+    generateTimeSlots() {
+        const slots = [];
+        for (let hour = 8; hour <= 18; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                slots.push(`
+                    <div class="time-slot" data-time="${time}">
+                        <input type="checkbox" id="slot-${time}" value="${time}">
+                        <label for="slot-${time}">${this.formatTime(time)}</label>
+                    </div>
+                `);
+            }
+        }
+        return slots.join('');
+    }
+
+    async loadCurrentAvailability(day) {
+        try {
+            const response = await fetch(`php/doctor-api.php?action=get_day_availability&day=${day}`);
+            const data = await response.json();
+            
+            if (data.success && data.availability) {
+                data.availability.forEach(time => {
+                    const checkbox = document.getElementById(`slot-${time}`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load current availability:', error);
+        }
+    }
+
+    async saveAvailability(day) {
+        const checkedSlots = Array.from(document.querySelectorAll('#availability-slots input:checked'))
+            .map(input => input.value);
+        
+        try {
+            const response = await fetch('php/doctor-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=update_day_availability&day=${day}&slots=${JSON.stringify(checkedSlots)}`
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Availability updated successfully', 'success');
+                document.querySelector('.modal-overlay').remove();
+                this.loadWeeklySchedule(); // Refresh the schedule
+            } else {
+                this.showNotification('Failed to update availability', 'error');
+            }
+        } catch (error) {
+            console.error('Failed to save availability:', error);
+            this.showNotification('Failed to save availability', 'error');
+        }
     }
 
     formatTime(time) {

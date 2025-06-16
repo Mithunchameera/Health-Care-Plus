@@ -102,6 +102,20 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 16, 2025: Created comprehensive view doctor schedule function
+  - Enhanced weekly schedule display with interactive day cards
+  - Modal-based schedule detail viewing for individual time slots
+  - Availability management system with time slot selection
+  - Real-time appointment viewing with patient information
+  - Professional CSS styling with hover effects and transitions
+  - Backend API endpoints for schedule data retrieval and management
+
+- June 16, 2025: Migration from Replit Agent to standard Replit environment completed
+  - Project successfully running on PHP 8.2 development server
+  - All static assets and API endpoints functioning properly
+  - Session handling and authentication system operational
+  - Enhanced schedule viewing functionality fully integrated
+
 - June 13, 2025: Enhanced auto-scroll and page transitions across all pages
   - Smooth auto-scroll functionality when selecting dropdown options and form fields
   - Enhanced step-by-step navigation with fade and slide animations
@@ -122,17 +136,6 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
   - Added white text for better readability
   - Enhanced focus effects with glowing shadows
   - Consistent styling across registration and dashboard forms
-
-- June 13, 2025: Removed statistics section from homepage
-  - Deleted animated stats cards showing healthcare professionals count
-  - Removed "Trusted by Healthcare Professionals" section
-  - Streamlined homepage layout for cleaner presentation
-
-- June 13, 2025: Migration from Replit Agent to standard Replit environment completed
-  - Project successfully running on PHP 8.2 development server
-  - All static assets and API endpoints functioning properly
-  - Session handling and authentication system operational
-  - 3D video background and theme system working correctly
 
 - June 13, 2025: Added 3D animated video background to homepage using Three.js
   - Medical-themed 3D elements: floating crosses, DNA helix, heartbeat wave

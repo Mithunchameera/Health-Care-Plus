@@ -62,6 +62,15 @@ class DoctorAPI {
             case 'update_profile':
                 $this->updateProfile();
                 break;
+            case 'get_day_schedule':
+                $this->getDaySchedule();
+                break;
+            case 'get_day_availability':
+                $this->getDayAvailability();
+                break;
+            case 'update_day_availability':
+                $this->updateDayAvailability();
+                break;
             default:
                 sendResponse(['error' => 'Invalid action'], 400);
         }
@@ -364,6 +373,127 @@ class DoctorAPI {
             logError("Update profile error: " . $e->getMessage());
             sendResponse(['error' => 'Failed to update profile'], 500);
         }
+    }
+    
+    private function getDaySchedule() {
+        try {
+            $day = $_GET['day'] ?? '';
+            $time = $_GET['time'] ?? '';
+            
+            // Get appointments for the specific day and time
+            $appointments = $this->mockStorage->getAppointmentsByDoctor($this->currentUser['doctor_id']);
+            $dayAppointments = [];
+            
+            $dayOfWeek = $this->getDayOfWeekNumber($day);
+            
+            foreach ($appointments as $appointment) {
+                $appointmentDate = new DateTime($appointment['date']);
+                $appointmentDayOfWeek = $appointmentDate->format('N');
+                
+                // Check if appointment is on the requested day and time
+                if (($dayOfWeek == $appointmentDayOfWeek || $day === '') && 
+                    ($time === '' || $appointment['time'] === $time)) {
+                    
+                    // Get patient information
+                    $patient = $this->mockStorage->getUserById($appointment['patient_id']);
+                    $appointment['patient_name'] = $patient ? $patient['full_name'] : 'Unknown Patient';
+                    $appointment['patient_phone'] = $patient ? $patient['phone'] : '';
+                    $appointment['patient_email'] = $patient ? $patient['email'] : '';
+                    $dayAppointments[] = $appointment;
+                }
+            }
+            
+            // Sort by time
+            usort($dayAppointments, function($a, $b) {
+                return strtotime($a['time']) - strtotime($b['time']);
+            });
+            
+            sendResponse([
+                'success' => true,
+                'appointments' => $dayAppointments
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get day schedule error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load day schedule'], 500);
+        }
+    }
+    
+    private function getDayAvailability() {
+        try {
+            $day = $_GET['day'] ?? '';
+            
+            // Mock availability data - in real app this would come from database
+            $availability = [
+                'monday' => ['09:00', '10:30', '14:00', '15:30'],
+                'tuesday' => ['09:00', '11:00', '15:00', '16:30'],
+                'wednesday' => ['10:00', '13:00', '16:00', '17:00'],
+                'thursday' => ['09:30', '14:30', '15:30', '16:00'],
+                'friday' => ['08:00', '11:30', '15:30', '17:30'],
+                'saturday' => ['10:00', '14:00', '15:00'],
+                'sunday' => []
+            ];
+            
+            $dayAvailability = $availability[$day] ?? [];
+            
+            sendResponse([
+                'success' => true,
+                'availability' => $dayAvailability
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get day availability error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load availability'], 500);
+        }
+    }
+    
+    private function updateDayAvailability() {
+        try {
+            $day = $_POST['day'] ?? '';
+            $slots = json_decode($_POST['slots'] ?? '[]', true);
+            
+            // Validate day
+            $validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            if (!in_array($day, $validDays)) {
+                sendResponse(['error' => 'Invalid day specified'], 400);
+                return;
+            }
+            
+            // Validate time slots
+            foreach ($slots as $slot) {
+                if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $slot)) {
+                    sendResponse(['error' => 'Invalid time format'], 400);
+                    return;
+                }
+            }
+            
+            // In a real application, this would update the database
+            // For now, we'll just return success
+            sendResponse([
+                'success' => true,
+                'message' => "Availability updated for {$day}",
+                'day' => $day,
+                'slots' => $slots
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Update day availability error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to update availability'], 500);
+        }
+    }
+    
+    private function getDayOfWeekNumber($dayName) {
+        $days = [
+            'monday' => 1,
+            'tuesday' => 2,
+            'wednesday' => 3,
+            'thursday' => 4,
+            'friday' => 5,
+            'saturday' => 6,
+            'sunday' => 7
+        ];
+        
+        return $days[strtolower($dayName)] ?? 0;
     }
 }
 

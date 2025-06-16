@@ -1,4 +1,4 @@
-modules = ["web", "nodejs-20", "php-8.2", "postgresql-16"]
+modules = ["web", "nodejs-20", "php-8.2"]
 
 [nix]
 channel = "stable-24_05"
