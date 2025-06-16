@@ -628,6 +628,25 @@ class MockDataStorage {
         }
         return false;
     }
+    
+    public function addUser($userData) {
+        $newId = count($this->users) + 1;
+        $userData['id'] = $newId;
+        $this->users[] = $userData;
+        return $newId;
+    }
+    
+    public function updateUser($userId, $updateData) {
+        foreach ($this->users as &$user) {
+            if ($user['id'] == $userId) {
+                foreach ($updateData as $key => $value) {
+                    $user[$key] = $value;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 
@@ -683,6 +702,32 @@ function checkUserAuth($allowedRoles = []) {
     }
     
     return null;
+}
+
+// Permission checking function
+function hasPermission($user, $permission) {
+    if (!$user || !isset($user['role'])) {
+        return false;
+    }
+    
+    $permissions = [
+        'admin' => [
+            'manage_doctors', 'manage_staff', 'manage_patients', 
+            'manage_appointments', 'manage_settings', 'view_reports'
+        ],
+        'staff' => [
+            'manage_appointments', 'view_patients', 'manage_staff'
+        ],
+        'doctor' => [
+            'manage_appointments', 'view_patients'
+        ],
+        'patient' => [
+            'view_appointments', 'book_appointments'
+        ]
+    ];
+    
+    $userRole = $user['role'];
+    return isset($permissions[$userRole]) && in_array($permission, $permissions[$userRole]);
 }
 
 // Initialize mock data storage (static demo mode)

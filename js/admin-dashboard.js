@@ -16,6 +16,7 @@ class AdminDashboard {
     init() {
         this.checkAuthentication();
         this.setupEventListeners();
+        this.setupFormHandlers();
         this.loadDashboardData();
         this.setupSidebarNavigation();
         // Initialize back to top button
@@ -68,6 +69,16 @@ class AdminDashboard {
         const addDoctorForm = document.getElementById('add-doctor-form');
         if (addDoctorForm) {
             addDoctorForm.addEventListener('submit', this.handleAddDoctor.bind(this));
+        }
+
+        const addStaffForm = document.getElementById('add-staff-form');
+        if (addStaffForm) {
+            addStaffForm.addEventListener('submit', this.handleAddStaff.bind(this));
+        }
+
+        const editStaffForm = document.getElementById('edit-staff-form');
+        if (editStaffForm) {
+            editStaffForm.addEventListener('submit', this.handleEditStaff.bind(this));
         }
 
         // Filters
@@ -527,14 +538,68 @@ class AdminDashboard {
         }
     }
 
+    async handleAddStaff(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        formData.append('action', 'add_staff');
+        
+        try {
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Staff member added successfully!', 'success');
+                this.closeModal('addStaffModal');
+                this.loadStaff();
+                e.target.reset();
+            } else {
+                this.showNotification(data.error || 'Failed to add staff member', 'error');
+            }
+        } catch (error) {
+            console.error('Add staff failed:', error);
+            this.showNotification('Failed to add staff member', 'error');
+        }
+    }
+
+    async handleEditStaff(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        formData.append('action', 'update_staff');
+        
+        try {
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Staff member updated successfully!', 'success');
+                this.closeModal('editStaffModal');
+                this.loadStaff();
+            } else {
+                this.showNotification(data.error || 'Failed to update staff member', 'error');
+            }
+        } catch (error) {
+            console.error('Update staff failed:', error);
+            this.showNotification('Failed to update staff member', 'error');
+        }
+    }
+
     // Modal and utility functions
     openAddDoctorModal() {
         document.getElementById('addDoctorModal').style.display = 'block';
     }
 
     openAddStaffModal() {
-        // Implementation for staff modal
-        this.showNotification('Add staff functionality coming soon', 'info');
+        document.getElementById('addStaffModal').style.display = 'block';
     }
 
     closeModal(modalId) {
@@ -618,11 +683,57 @@ class AdminDashboard {
     }
 
     async editStaff(staffId) {
-        this.showNotification('Edit staff functionality coming soon', 'info');
+        try {
+            // Load staff member data
+            const response = await fetch(`php/admin-api.php?action=get_staff_by_id&id=${staffId}`);
+            const data = await response.json();
+            
+            if (data.success && data.staff) {
+                const staff = data.staff;
+                
+                // Populate the form
+                document.getElementById('edit-staff-id').value = staff.id;
+                document.getElementById('edit-staff-name').value = staff.name;
+                document.getElementById('edit-staff-email').value = staff.email;
+                document.getElementById('edit-staff-phone').value = staff.phone;
+                document.getElementById('edit-staff-role').value = staff.role;
+                document.getElementById('edit-staff-department').value = staff.department;
+                document.getElementById('edit-staff-hire-date').value = staff.hire_date;
+                document.getElementById('edit-staff-status').value = staff.is_active ? '1' : '0';
+                
+                // Show the modal
+                document.getElementById('editStaffModal').style.display = 'block';
+            } else {
+                this.showNotification(data.error || 'Failed to load staff data', 'error');
+            }
+        } catch (error) {
+            console.error('Edit staff failed:', error);
+            this.showNotification('Failed to load staff data', 'error');
+        }
     }
 
     async toggleStaffStatus(staffId) {
-        this.showNotification('Toggle staff status functionality coming soon', 'info');
+        try {
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=toggle_staff_status&staff_id=${staffId}`
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showNotification('Staff status updated successfully!', 'success');
+                this.loadStaff(); // Reload staff list
+            } else {
+                this.showNotification(data.error || 'Failed to update staff status', 'error');
+            }
+        } catch (error) {
+            console.error('Toggle staff status failed:', error);
+            this.showNotification('Failed to update staff status', 'error');
+        }
     }
 
     calculateAge(dateOfBirth) {

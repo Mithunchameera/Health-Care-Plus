@@ -686,6 +686,124 @@
         </div>
     </div>
 
+    <!-- Add Staff Modal -->
+    <div id="addStaffModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addStaffModal')">&times;</span>
+            <h2>Add New Staff</h2>
+            <form id="add-staff-form" class="form-grid">
+                <div class="form-group">
+                    <label for="new-staff-name">Full Name</label>
+                    <input type="text" id="new-staff-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-staff-email">Email</label>
+                    <input type="email" id="new-staff-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-staff-phone">Phone</label>
+                    <input type="tel" id="new-staff-phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-staff-role">Role</label>
+                    <select id="new-staff-role" name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="staff">General Staff</option>
+                        <option value="nurse">Nurse</option>
+                        <option value="receptionist">Receptionist</option>
+                        <option value="technician">Technician</option>
+                        <option value="administrator">Administrator</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-staff-department">Department</label>
+                    <select id="new-staff-department" name="department" required>
+                        <option value="">Select Department</option>
+                        <option value="reception">Reception</option>
+                        <option value="nursing">Nursing</option>
+                        <option value="laboratory">Laboratory</option>
+                        <option value="radiology">Radiology</option>
+                        <option value="administration">Administration</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-staff-hire-date">Hire Date</label>
+                    <input type="date" id="new-staff-hire-date" name="hire_date" required>
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Add Staff
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Staff Modal -->
+    <div id="editStaffModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editStaffModal')">&times;</span>
+            <h2>Edit Staff Member</h2>
+            <form id="edit-staff-form" class="form-grid">
+                <input type="hidden" id="edit-staff-id" name="staff_id">
+                <div class="form-group">
+                    <label for="edit-staff-name">Full Name</label>
+                    <input type="text" id="edit-staff-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-email">Email</label>
+                    <input type="email" id="edit-staff-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-phone">Phone</label>
+                    <input type="tel" id="edit-staff-phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-role">Role</label>
+                    <select id="edit-staff-role" name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="staff">General Staff</option>
+                        <option value="nurse">Nurse</option>
+                        <option value="receptionist">Receptionist</option>
+                        <option value="technician">Technician</option>
+                        <option value="administrator">Administrator</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-department">Department</label>
+                    <select id="edit-staff-department" name="department" required>
+                        <option value="">Select Department</option>
+                        <option value="reception">Reception</option>
+                        <option value="nursing">Nursing</option>
+                        <option value="laboratory">Laboratory</option>
+                        <option value="radiology">Radiology</option>
+                        <option value="administration">Administration</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-hire-date">Hire Date</label>
+                    <input type="date" id="edit-staff-hire-date" name="hire_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-staff-status">Status</label>
+                    <select id="edit-staff-status" name="is_active" required>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Staff
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
     <script src="js/admin-dashboard.js"></script>

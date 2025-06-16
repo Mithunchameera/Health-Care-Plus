@@ -5,6 +5,7 @@
  */
 
 require_once 'config.php';
+require_once 'database.php';
 
 setCORSHeaders();
 
@@ -20,10 +21,12 @@ if (!$currentUser) {
 
 class AdminAPI {
     private $mockStorage;
+    private $db;
     private $currentUser;
     
     public function __construct($user) {
         $this->mockStorage = MockDataStorage::getInstance();
+        $this->db = Database::getInstance();
         $this->currentUser = $user;
     }
     
@@ -49,6 +52,18 @@ class AdminAPI {
                 break;
             case 'get_staff':
                 $this->getStaff();
+                break;
+            case 'get_staff_by_id':
+                $this->getStaffById();
+                break; 
+            case 'add_staff':
+                $this->addStaff();
+                break;
+            case 'update_staff':
+                $this->updateStaff();
+                break;
+            case 'toggle_staff_status':
+                $this->toggleStaffStatus();
                 break;
             case 'add_doctor':
                 $this->addDoctor();
@@ -238,19 +253,25 @@ class AdminAPI {
     
     private function getStaff() {
         try {
-            $users = $this->mockStorage->getUsers();
+            $sql = "SELECT 
+                        u.id, 
+                        u.first_name || ' ' || u.last_name as name,
+                        u.email, 
+                        u.phone, 
+                        u.role,
+                        s.department,
+                        s.hire_date,
+                        u.is_active
+                    FROM users u 
+                    LEFT JOIN staff s ON u.id = s.user_id 
+                    WHERE u.role IN ('admin', 'staff')
+                    ORDER BY u.first_name, u.last_name";
             
-            $staff = array_filter($users, function($user) {
-                return in_array($user['role'], ['admin', 'staff']);
-            });
-            
-            foreach ($staff as &$member) {
-                $member['name'] = $member['full_name'];
-            }
+            $staff = $this->db->fetchAll($sql);
             
             sendResponse([
                 'success' => true,
-                'staff' => array_values($staff)
+                'staff' => $staff
             ]);
             
         } catch (Exception $e) {
@@ -261,8 +282,8 @@ class AdminAPI {
     
     private function addDoctor() {
         try {
-            // Check permissions
-            if (!hasPermission($this->currentUser, 'manage_doctors')) {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
                 sendResponse(['error' => 'Insufficient permissions'], 403);
                 return;
             }
@@ -424,6 +445,304 @@ class AdminAPI {
         } catch (Exception $e) {
             logError("Toggle doctor status error: " . $e->getMessage());
             sendResponse(['error' => 'Failed to toggle doctor status'], 500);
+        }
+    }
+    
+    private function getStaffById() {
+        try {
+            $staffId = intval($_GET['id'] ?? 0);
+            
+            if ($staffId <= 0) {
+                sendResponse(['error' => 'Invalid staff ID'], 400);
+                return;
+            }
+            
+            $sql = "SELECT 
+                        u.id,
+                        u.first_name || ' ' || u.last_name as name,
+                        u.email,
+                        u.phone,
+                        u.role,
+                        s.department,
+                        s.hire_date,
+                        u.is_active
+                    FROM users u 
+                    LEFT JOIN staff s ON u.id = s.user_id 
+                    WHERE u.id = ? AND u.role IN ('admin', 'staff')";
+            
+            $staff = $this->db->fetchOne($sql, [$staffId]);
+            
+            if (!$staff) {
+                sendResponse(['error' => 'Staff member not found'], 404);
+                return;
+            }
+            
+            sendResponse([
+                'success' => true,
+                'staff' => $staff
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get staff by ID error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load staff member'], 500);
+        }
+    }
+    
+    private function addStaff() {
+        try {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
+                sendResponse(['error' => 'Insufficient permissions'], 403);
+                return;
+            }
+            
+            $staffData = [
+                'name' => sanitizeInput($_POST['name'] ?? ''),
+                'email' => sanitizeInput($_POST['email'] ?? ''),
+                'phone' => sanitizeInput($_POST['phone'] ?? ''),
+                'role' => sanitizeInput($_POST['role'] ?? 'staff'),
+                'department' => sanitizeInput($_POST['department'] ?? ''),
+                'hire_date' => sanitizeInput($_POST['hire_date'] ?? '')
+            ];
+            
+            // Validate data
+            $errors = [];
+            
+            if (empty($staffData['name'])) {
+                $errors[] = 'Staff name is required';
+            }
+            
+            if (!validateEmail($staffData['email'])) {
+                $errors[] = 'Valid email is required';
+            }
+            
+            if (empty($staffData['phone'])) {
+                $errors[] = 'Phone number is required';
+            }
+            
+            if (empty($staffData['role'])) {
+                $errors[] = 'Role is required';
+            }
+            
+            if (empty($staffData['department'])) {
+                $errors[] = 'Department is required';
+            }
+            
+            if (!empty($errors)) {
+                sendResponse(['error' => implode(', ', $errors)], 400);
+                return;
+            }
+            
+            // Create user record
+            $this->db->beginTransaction();
+            
+            $userSql = "INSERT INTO users (username, email, password_hash, role, first_name, last_name, phone, is_active) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $nameParts = explode(' ', $staffData['name'], 2);
+            $firstName = $nameParts[0];
+            $lastName = $nameParts[1] ?? '';
+            
+            $userId = $this->db->insert($userSql, [
+                strtolower(str_replace(' ', '.', $staffData['name'])),
+                $staffData['email'],
+                password_hash('defaultpassword123', PASSWORD_DEFAULT),
+                $staffData['role'],
+                $firstName,
+                $lastName,
+                $staffData['phone'],
+                true
+            ]);
+            
+            // Create staff record
+            $staffSql = "INSERT INTO staff (user_id, department, hire_date, employee_id) VALUES (?, ?, ?, ?)";
+            $this->db->insert($staffSql, [
+                $userId,
+                $staffData['department'],
+                $staffData['hire_date'],
+                'EMP' . str_pad($userId, 3, '0', STR_PAD_LEFT)
+            ]);
+            
+            $this->db->commit();
+            
+            if ($userId) {
+                $this->logActivity([
+                    'action' => 'staff_added',
+                    'description' => "New staff member {$staffData['name']} added",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $userId
+                ]);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => 'Staff member added successfully',
+                    'staff_id' => $userId
+                ]);
+            } else {
+                $this->db->rollback();
+                sendResponse(['error' => 'Failed to add staff member'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Add staff error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to add staff member'], 500);
+        }
+    }
+    
+    private function updateStaff() {
+        try {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
+                sendResponse(['error' => 'Insufficient permissions'], 403);
+                return;
+            }
+            
+            $staffId = intval($_POST['staff_id'] ?? 0);
+            
+            if ($staffId <= 0) {
+                sendResponse(['error' => 'Invalid staff ID'], 400);
+                return;
+            }
+            
+            $staffData = [
+                'name' => sanitizeInput($_POST['name'] ?? ''),
+                'email' => sanitizeInput($_POST['email'] ?? ''),
+                'phone' => sanitizeInput($_POST['phone'] ?? ''),
+                'role' => sanitizeInput($_POST['role'] ?? ''),
+                'department' => sanitizeInput($_POST['department'] ?? ''),
+                'hire_date' => sanitizeInput($_POST['hire_date'] ?? ''),
+                'is_active' => intval($_POST['is_active'] ?? 1) === 1
+            ];
+            
+            // Validate data
+            $errors = [];
+            
+            if (empty($staffData['name'])) {
+                $errors[] = 'Staff name is required';
+            }
+            
+            if (!validateEmail($staffData['email'])) {
+                $errors[] = 'Valid email is required';
+            }
+            
+            if (empty($staffData['phone'])) {
+                $errors[] = 'Phone number is required';
+            }
+            
+            if (!empty($errors)) {
+                sendResponse(['error' => implode(', ', $errors)], 400);
+                return;
+            }
+            
+            // Update user and staff records
+            $this->db->beginTransaction();
+            
+            $nameParts = explode(' ', $staffData['name'], 2);
+            $firstName = $nameParts[0];
+            $lastName = $nameParts[1] ?? '';
+            
+            // Update user table
+            $userSql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ?, is_active = ?, updated_at = NOW() WHERE id = ?";
+            $this->db->update($userSql, [
+                $firstName,
+                $lastName,
+                $staffData['email'],
+                $staffData['phone'],
+                $staffData['role'],
+                $staffData['is_active'],
+                $staffId
+            ]);
+            
+            // Update staff table
+            $staffSql = "UPDATE staff SET department = ?, hire_date = ?, updated_at = NOW() WHERE user_id = ?";
+            $updated = $this->db->update($staffSql, [
+                $staffData['department'],
+                $staffData['hire_date'],
+                $staffId
+            ]);
+            
+            $this->db->commit();
+            
+            if ($updated) {
+                $this->logActivity([
+                    'action' => 'staff_updated',
+                    'description' => "Staff member {$staffData['name']} updated",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $staffId
+                ]);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => 'Staff member updated successfully',
+                    'staff_id' => $staffId
+                ]);
+            } else {
+                sendResponse(['error' => 'Failed to update staff member'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Update staff error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to update staff member'], 500);
+        }
+    }
+    
+    private function toggleStaffStatus() {
+        try {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
+                sendResponse(['error' => 'Insufficient permissions'], 403);
+                return;
+            }
+            
+            $staffId = intval($_POST['staff_id'] ?? 0);
+            
+            if ($staffId <= 0) {
+                sendResponse(['error' => 'Invalid staff ID'], 400);
+                return;
+            }
+            
+            // Get current staff status
+            $sql = "SELECT u.*, u.first_name || ' ' || u.last_name as full_name 
+                    FROM users u 
+                    WHERE u.id = ? AND u.role IN ('admin', 'staff')";
+            
+            $staff = $this->db->fetchOne($sql, [$staffId]);
+            
+            if (!$staff) {
+                sendResponse(['error' => 'Staff member not found'], 404);
+                return;
+            }
+            
+            $newStatus = !($staff['is_active'] ?? true);
+            
+            // Update staff status
+            $updateSql = "UPDATE users SET is_active = ?, updated_at = NOW() WHERE id = ?";
+            $updated = $this->db->update($updateSql, [$newStatus, $staffId]);
+            
+            if ($updated) {
+                $statusText = $newStatus ? 'activated' : 'deactivated';
+                $this->logActivity([
+                    'action' => 'staff_status_change',
+                    'description' => "Staff member {$staff['full_name']} {$statusText}",
+                    'user_id' => $this->currentUser['id'],
+                    'target_id' => $staffId,
+                    'status' => $statusText
+                ]);
+                
+                sendResponse([
+                    'success' => true,
+                    'message' => "Staff status updated successfully",
+                    'staff_id' => $staffId,
+                    'new_status' => $newStatus,
+                    'status_text' => $statusText
+                ]);
+            } else {
+                sendResponse(['error' => 'Failed to update staff status'], 500);
+            }
+            
+        } catch (Exception $e) {
+            logError("Toggle staff status error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to toggle staff status'], 500);
         }
     }
     
