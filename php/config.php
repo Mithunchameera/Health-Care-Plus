@@ -8,13 +8,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Database Configuration - Disabled for static demo
-// define('DB_HOST', $_ENV['PGHOST'] ?? 'localhost');
-// define('DB_NAME', $_ENV['PGDATABASE'] ?? 'healthcare_plus');
-// define('DB_USER', $_ENV['PGUSER'] ?? 'postgres');
-// define('DB_PASS', $_ENV['PGPASSWORD'] ?? '');
-// define('DB_PORT', $_ENV['PGPORT'] ?? '5432');
-// define('DB_CHARSET', 'utf8');
+// Database Configuration - Enabled for Replit environment
+define('DB_HOST', $_ENV['PGHOST'] ?? 'localhost');
+define('DB_NAME', $_ENV['PGDATABASE'] ?? 'healthcare_plus');
+define('DB_USER', $_ENV['PGUSER'] ?? 'postgres');
+define('DB_PASS', $_ENV['PGPASSWORD'] ?? '');
+define('DB_PORT', $_ENV['PGPORT'] ?? '5432');
+define('DB_CHARSET', 'utf8');
 
 // Application Configuration
 define('APP_NAME', 'HealthCare+');

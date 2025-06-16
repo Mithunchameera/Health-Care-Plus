@@ -1,0 +1,20 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "E-channeling Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@types/node": "^24.0.1",
+    "drizzle-kit": "^0.31.1",
+    "drizzle-orm": "^0.44.2",
+    "typescript": "^5.8.3",
+    "ws": "^8.18.2"
+  }
+}
