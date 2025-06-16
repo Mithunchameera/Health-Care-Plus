@@ -20,6 +20,10 @@ class BookingManager {
         this.setupCalendar();
         this.bindEvents();
         this.checkURLParams();
+        // Initialize back to top button
+        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
+            window.HealthCare.initializeBackToTop();
+        }
     }
     
     checkURLParams() {

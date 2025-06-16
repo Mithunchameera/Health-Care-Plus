@@ -16,6 +16,10 @@ class RegistrationFormManager {
         this.updateStepDisplay();
         this.setupPasswordValidation();
         this.setupFormValidation();
+        // Initialize back to top button
+        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
+            window.HealthCare.initializeBackToTop();
+        }
     }
 
     setupEventListeners() {

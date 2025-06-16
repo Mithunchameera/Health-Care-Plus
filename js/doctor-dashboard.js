@@ -18,6 +18,10 @@ class DoctorDashboard {
         this.loadDashboardData();
         this.setupSidebarNavigation();
         this.setupAvailabilitySelector();
+        // Initialize back to top button
+        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
+            window.HealthCare.initializeBackToTop();
+        }
     }
 
     async checkAuthentication() {

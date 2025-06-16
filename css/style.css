@@ -1866,6 +1866,87 @@ body {
     font-weight: 500;
     border: 2px solid var(--primary-color);
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+/* Enhanced Select and Dropdown Styling */
+select {
+    appearance: none;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 3rem 1rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.2);
+    transform: translateY(-1px);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+select option {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-color);
+}
+
+select option:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+select option:checked {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+/* Special styling for primary dropdowns */
+.input-group select {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    font-weight: 500;
+    border: 2px solid var(--primary-color);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.input-group select:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.4);
+}
+
+.input-group select:focus {
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.3);
 }
 
 .input-group select option {
@@ -1873,6 +1954,230 @@ body {
     color: var(--text-color);
     font-weight: normal;
     padding: 0.5rem;
+}
+
+/* Dashboard Filter Dropdowns */
+.filter-group select,
+.search-filters select,
+.dashboard-filters select {
+    background: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    min-width: 150px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+}
+
+.filter-group select:hover,
+.search-filters select:hover,
+.dashboard-filters select:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.15);
+}
+
+.filter-group select:focus,
+.search-filters select:focus,
+.dashboard-filters select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Form Select Elements */
+.form-group select,
+.field-group select,
+.booking-form select {
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem 3rem 1rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+.form-group select:hover,
+.field-group select:hover,
+.booking-form select:hover {
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.1);
+}
+
+.form-group select:focus,
+.field-group select:focus,
+.booking-form select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Select in Tables and Lists */
+.table-filters select,
+.appointments-filters select,
+.patients-filters select {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    min-width: 120px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 0.8rem;
+}
+
+.table-filters select:hover,
+.appointments-filters select:hover,
+.patients-filters select:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+/* Multi-Select and Advanced Dropdowns */
+.specialty-filter select,
+.location-filter select,
+.availability-filter select {
+    background: linear-gradient(135deg, var(--surface-color), var(--card-bg));
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+.specialty-filter select:hover,
+.location-filter select:hover,
+.availability-filter select:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Theme-aware dropdown styling */
+[data-theme="dark"] select {
+    background-color: var(--surface-secondary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] select:hover {
+    background-color: var(--card-bg);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.4);
+}
+
+[data-theme="dark"] select option {
+    background-color: var(--surface-secondary);
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Enhanced option styling for better visibility */
+select option {
+    min-height: 2.5rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+}
+
+select option:nth-child(even) {
+    background-color: var(--surface-color);
+}
+
+select option:nth-child(odd) {
+    background-color: var(--card-bg);
+}
+
+select option:hover,
+select option:focus {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+}
+
+select option:checked {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Mobile responsive dropdown styling */
+@media (max-width: 768px) {
+    select {
+        padding: 0.875rem 2.5rem 0.875rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .filter-group select,
+    .search-filters select,
+    .dashboard-filters select {
+        min-width: 120px;
+        padding: 0.625rem 2rem 0.625rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-filters select,
+    .appointments-filters select,
+    .patients-filters select {
+        min-width: 100px;
+        padding: 0.5rem 1.75rem 0.5rem 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Accessibility improvements */
+select:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+select[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--disabled-bg);
+    border-color: var(--disabled-border);
+}
+
+select[disabled]:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Custom dropdown arrow for better visibility */
+select:not(.input-group select) {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+[data-theme="dark"] select:not(.input-group select) {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 .input-group input:not([type="password"]) {

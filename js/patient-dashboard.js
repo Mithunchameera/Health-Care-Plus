@@ -18,6 +18,10 @@ class PatientDashboard {
         this.loadDashboardData();
         this.setupSidebarNavigation();
         this.setupProfilePicture();
+        // Initialize back to top button
+        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
+            window.HealthCare.initializeBackToTop();
+        }
     }
 
     async checkAuthentication() {

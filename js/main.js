@@ -666,8 +666,11 @@ function validateInputField(input) {
     return input.value.trim() !== '';
 }
 
-// Initialize auto-scroll when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeAutoScroll);
+// Initialize auto-scroll and back to top when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAutoScroll();
+    initializeBackToTop();
+});
 
 // Export functions for use in other modules
 window.HealthCare = {
@@ -682,7 +685,8 @@ window.HealthCare = {
     debounce,
     throttle,
     autoScrollToNext,
-    initializeAutoScroll
+    initializeAutoScroll,
+    initializeBackToTop
 };
 
 // Initialize back to top button

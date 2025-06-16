@@ -18,6 +18,10 @@ class AdminDashboard {
         this.setupEventListeners();
         this.loadDashboardData();
         this.setupSidebarNavigation();
+        // Initialize back to top button
+        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
+            window.HealthCare.initializeBackToTop();
+        }
     }
 
     async checkAuthentication() {
