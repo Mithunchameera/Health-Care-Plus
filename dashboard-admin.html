@@ -15,13 +15,53 @@
         }
         
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: var(--card-bg);
             border-right: 1px solid var(--border-color);
             padding: 2rem 0;
             position: fixed;
-            height: 100vh;
+            height: calc(100vh - 70px);
             overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .admin-details h3 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+        
+        .admin-details p {
+            margin: 0.25rem 0 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
         
         .sidebar-menu {
@@ -41,71 +81,113 @@
             color: var(--text-color);
             text-decoration: none;
             transition: all 0.3s ease;
+            border-left: 3px solid transparent;
         }
         
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: var(--primary-color);
-            color: white;
+            background: var(--primary-color-light);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
         }
         
         .sidebar-menu i {
             margin-right: 0.75rem;
             width: 20px;
+            font-size: 1.1rem;
         }
         
         .main-content {
             flex: 1;
-            margin-left: 250px;
+            margin-left: 280px;
             padding: 2rem;
+            background: var(--bg-color);
         }
         
         .dashboard-header {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .dashboard-header h1 {
+            margin: 0 0 0.5rem;
+            color: var(--text-color);
+            font-size: 2rem;
+        }
+        
+        .dashboard-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
         
         .stat-card {
             background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 2rem;
+            border-radius: 16px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .stat-card i {
-            font-size: 2.5rem;
-            color: var(--primary-color);
+            font-size: 3rem;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
         }
         
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
         .content-section {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
         
-        .table-responsive {
-            overflow-x: auto;
+        .content-section h2 {
+            margin: 0 0 1.5rem;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-icon {
+            color: var(--primary-color);
         }
         
         .data-table {
@@ -124,13 +206,20 @@
         .data-table th {
             background: var(--bg-color);
             font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .data-table tbody tr:hover {
+            background: var(--primary-color-light);
         }
         
         .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .status-active {
@@ -149,80 +238,146 @@
         }
         
         .status-confirmed {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-completed {
             background: #d1ecf1;
             color: #0c5460;
         }
         
-        .chart-container {
-            height: 400px;
-            margin: 2rem 0;
-            padding: 1rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-content {
-            background-color: var(--card-bg);
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80vh;
+        .recent-activity {
+            max-height: 400px;
             overflow-y: auto;
         }
         
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
         }
         
-        .close:hover {
-            color: #000;
+        .activity-item:hover {
+            background: var(--primary-color-light);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-content h4 {
+            margin: 0 0 0.25rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        .activity-content p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .search-bar {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-bar input {
+            padding-left: 3rem;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
         }
         
         .filter-controls {
             display: flex;
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
         
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .action-card {
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color-light);
+        }
+        
+        .action-card i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .action-card h4 {
+            margin: 0 0 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .action-card p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 85px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
         }
         
         @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                width: 280px;
             }
             
             .sidebar.active {
@@ -231,10 +386,15 @@
             
             .main-content {
                 margin-left: 0;
+                padding: 1rem;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
             }
         }
     </style>
@@ -260,16 +420,32 @@
         </div>
     </nav>
 
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-info">
+                    <div class="admin-avatar" id="admin-avatar">
+                        AD
+                    </div>
+                    <div class="admin-details">
+                        <h3 id="admin-name">System Admin</h3>
+                        <p id="admin-role">Administrator</p>
+                    </div>
+                </div>
+            </div>
             <nav class="sidebar-nav">
                 <ul class="sidebar-menu">
                     <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a></li>
                     <li><a href="#doctors" class="sidebar-link" data-section="doctors">
-                        <i class="fas fa-user-md"></i> Manage Doctors
+                        <i class="fas fa-user-md"></i> Doctors
                     </a></li>
                     <li><a href="#appointments" class="sidebar-link" data-section="appointments">
                         <i class="fas fa-calendar-check"></i> Appointments
@@ -278,13 +454,13 @@
                         <i class="fas fa-users"></i> Patients
                     </a></li>
                     <li><a href="#staff" class="sidebar-link" data-section="staff">
-                        <i class="fas fa-user-tie"></i> Staff Management
+                        <i class="fas fa-user-tie"></i> Staff
                     </a></li>
                     <li><a href="#reports" class="sidebar-link" data-section="reports">
-                        <i class="fas fa-chart-bar"></i> Reports & Analytics
+                        <i class="fas fa-chart-bar"></i> Reports
                     </a></li>
                     <li><a href="#settings" class="sidebar-link" data-section="settings">
-                        <i class="fas fa-cog"></i> System Settings
+                        <i class="fas fa-cogs"></i> Settings
                     </a></li>
                 </ul>
             </nav>
@@ -295,8 +471,8 @@
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="content-section active">
                 <div class="dashboard-header">
-                    <h1>System Overview</h1>
-                    <p>Hospital administration and management dashboard</p>
+                    <h1>Welcome to Admin Dashboard</h1>
+                    <p>Manage your healthcare system efficiently from this central hub</p>
                 </div>
 
                 <!-- Stats Grid -->
@@ -304,96 +480,80 @@
                     <div class="stat-card">
                         <i class="fas fa-user-md"></i>
                         <div class="stat-number" id="total-doctors">25</div>
-                        <div class="stat-label">Active Doctors</div>
+                        <div class="stat-label">Total Doctors</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-users"></i>
-                        <div class="stat-number" id="total-patients">1,250</div>
-                        <div class="stat-label">Registered Patients</div>
+                        <div class="stat-number" id="total-patients">1,248</div>
+                        <div class="stat-label">Total Patients</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-calendar-check"></i>
-                        <div class="stat-number" id="today-appointments">45</div>
-                        <div class="stat-label">Today's Appointments</div>
+                        <div class="stat-number" id="total-appointments">342</div>
+                        <div class="stat-label">This Month</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-dollar-sign"></i>
-                        <div class="stat-number" id="monthly-revenue">$125K</div>
-                        <div class="stat-label">Monthly Revenue</div>
+                        <div class="stat-number" id="total-revenue">$45,680</div>
+                        <div class="stat-label">Revenue</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-section">
+                    <h2><i class="fas fa-bolt section-icon"></i>Quick Actions</h2>
+                    <div class="quick-actions">
+                        <div class="action-card" onclick="adminDashboard.showSection('doctors')">
+                            <i class="fas fa-plus-circle"></i>
+                            <h4>Add Doctor</h4>
+                            <p>Register a new doctor</p>
+                        </div>
+                        <div class="action-card" onclick="adminDashboard.showSection('appointments')">
+                            <i class="fas fa-calendar-plus"></i>
+                            <h4>View Appointments</h4>
+                            <p>Manage all appointments</p>
+                        </div>
+                        <div class="action-card" onclick="adminDashboard.showSection('reports')">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Generate Report</h4>
+                            <p>Create system reports</p>
+                        </div>
+                        <div class="action-card" onclick="adminDashboard.showSection('settings')">
+                            <i class="fas fa-cog"></i>
+                            <h4>System Settings</h4>
+                            <p>Configure system</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Recent Activity -->
                 <div class="content-section">
-                    <h2>Recent Activity</h2>
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Activity</th>
-                                    <th>User</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activity-table-body">
-                                <tr>
-                                    <td>11:30 AM</td>
-                                    <td>New appointment booked</td>
-                                    <td>John Doe</td>
-                                    <td><span class="status-badge status-confirmed">Confirmed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>11:15 AM</td>
-                                    <td>Doctor schedule updated</td>
-                                    <td>Dr. Sarah Johnson</td>
-                                    <td><span class="status-badge status-active">Updated</span></td>
-                                </tr>
-                                <tr>
-                                    <td>10:45 AM</td>
-                                    <td>Payment processed</td>
-                                    <td>Maria Garcia</td>
-                                    <td><span class="status-badge status-completed">Completed</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <h2><i class="fas fa-clock section-icon"></i>Recent Activity</h2>
+                    <div class="recent-activity" id="recent-activity-list">
+                        <!-- Activity items will be loaded dynamically -->
                     </div>
                 </div>
             </section>
 
             <!-- Doctors Section -->
             <section id="doctors-section" class="content-section" style="display: none;">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h2>Manage Doctors</h2>
-                    <button class="btn btn-primary" onclick="openAddDoctorModal()">
-                        <i class="fas fa-plus"></i> Add Doctor
-                    </button>
-                </div>
-
+                <h2><i class="fas fa-user-md section-icon"></i>Doctors Management</h2>
+                
                 <div class="filter-controls">
-                    <div class="filter-group">
-                        <label>Specialty</label>
-                        <select id="specialty-filter" class="form-control">
-                            <option value="">All Specialties</option>
-                            <option value="cardiology">Cardiology</option>
-                            <option value="neurology">Neurology</option>
-                            <option value="pediatrics">Pediatrics</option>
-                            <option value="orthopedics">Orthopedics</option>
-                            <option value="dermatology">Dermatology</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Status</label>
-                        <select id="status-filter" class="form-control">
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Search</label>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
                         <input type="text" id="doctor-search" placeholder="Search doctors..." class="form-control">
                     </div>
+                    <select id="doctor-specialty-filter" class="form-control">
+                        <option value="">All Specialties</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="neurology">Neurology</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="orthopedics">Orthopedics</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="adminDashboard.openAddDoctorModal()">
+                        <i class="fas fa-plus"></i> Add Doctor
+                    </button>
                 </div>
 
                 <div class="table-responsive">
@@ -402,32 +562,14 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Specialty</th>
+                                <th>Contact</th>
                                 <th>Experience</th>
-                                <th>Patients</th>
-                                <th>Rating</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="doctors-table-body">
-                            <tr>
-                                <td>
-                                    <div>Dr. Sarah Johnson</div>
-                                    <div style="font-size: 0.875rem; color: #666;">dr.johnson@healthcareplus.com</div>
-                                </td>
-                                <td>Cardiology</td>
-                                <td>15 years</td>
-                                <td>2,500</td>
-                                <td>4.8/5</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-primary" onclick="editDoctor(1)">Edit</button>
-                                        <button class="btn btn-sm btn-secondary" onclick="viewDoctorSchedule(1)">Schedule</button>
-                                        <button class="btn btn-sm btn-danger" onclick="toggleDoctorStatus(1)">Deactivate</button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Doctors will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -435,33 +577,21 @@
 
             <!-- Appointments Section -->
             <section id="appointments-section" class="content-section" style="display: none;">
-                <h2>Appointment Management</h2>
+                <h2><i class="fas fa-calendar-check section-icon"></i>Appointments Management</h2>
                 
                 <div class="filter-controls">
-                    <div class="filter-group">
-                        <label>Date Range</label>
-                        <input type="date" id="start-date" class="form-control">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="appointment-search" placeholder="Search appointments..." class="form-control">
                     </div>
-                    <div class="filter-group">
-                        <label>&nbsp;</label>
-                        <input type="date" id="end-date" class="form-control">
-                    </div>
-                    <div class="filter-group">
-                        <label>Doctor</label>
-                        <select id="appointment-doctor-filter" class="form-control">
-                            <option value="">All Doctors</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Status</label>
-                        <select id="appointment-status-filter" class="form-control">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
+                    <select id="appointment-status-filter" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <input type="date" id="appointment-date-filter" class="form-control">
                 </div>
 
                 <div class="table-responsive">
@@ -472,13 +602,12 @@
                                 <th>Patient</th>
                                 <th>Doctor</th>
                                 <th>Type</th>
-                                <th>Fee</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="appointments-table-body">
-                            <!-- Appointments will be loaded here -->
+                            <!-- Appointments will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -486,21 +615,12 @@
 
             <!-- Patients Section -->
             <section id="patients-section" class="content-section" style="display: none;">
-                <h2>Patient Management</h2>
+                <h2><i class="fas fa-users section-icon"></i>Patients Management</h2>
                 
                 <div class="filter-controls">
-                    <div class="filter-group">
-                        <label>Search</label>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
                         <input type="text" id="patient-search" placeholder="Search patients..." class="form-control">
-                    </div>
-                    <div class="filter-group">
-                        <label>Registration Date</label>
-                        <select id="registration-filter" class="form-control">
-                            <option value="">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                        </select>
                     </div>
                 </div>
 
@@ -517,7 +637,7 @@
                             </tr>
                         </thead>
                         <tbody id="patients-table-body">
-                            <!-- Patients will be loaded here -->
+                            <!-- Patients will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -525,9 +645,14 @@
 
             <!-- Staff Section -->
             <section id="staff-section" class="content-section" style="display: none;">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h2>Staff Management</h2>
-                    <button class="btn btn-primary" onclick="openAddStaffModal()">
+                <h2><i class="fas fa-user-tie section-icon"></i>Staff Management</h2>
+                
+                <div class="filter-controls">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="staff-search" placeholder="Search staff..." class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="adminDashboard.openAddStaffModal()">
                         <i class="fas fa-plus"></i> Add Staff
                     </button>
                 </div>
@@ -538,26 +663,14 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Role</th>
-                                <th>Department</th>
                                 <th>Contact</th>
+                                <th>Department</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="staff-table-body">
-                            <tr>
-                                <td>Reception Staff</td>
-                                <td>Staff</td>
-                                <td>Reception</td>
-                                <td>+1 (555) 888-0000</td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-primary" onclick="editStaff(1)">Edit</button>
-                                        <button class="btn btn-sm btn-danger" onclick="toggleStaffStatus(1)">Deactivate</button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Staff will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -565,571 +678,71 @@
 
             <!-- Reports Section -->
             <section id="reports-section" class="content-section" style="display: none;">
-                <h2>Reports & Analytics</h2>
+                <h2><i class="fas fa-chart-bar section-icon"></i>Reports & Analytics</h2>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <i class="fas fa-chart-line"></i>
-                        <div class="stat-number">+15%</div>
-                        <div class="stat-label">Monthly Growth</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <div class="stat-number">$380K</div>
-                        <div class="stat-label">Quarterly Revenue</div>
+                        <i class="fas fa-calendar-day"></i>
+                        <div class="stat-number" id="today-appointments">28</div>
+                        <div class="stat-label">Today's Appointments</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-user-plus"></i>
-                        <div class="stat-number">142</div>
-                        <div class="stat-label">New Patients</div>
+                        <div class="stat-number" id="new-patients">15</div>
+                        <div class="stat-label">New Patients This Week</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-percentage"></i>
-                        <div class="stat-number">94%</div>
-                        <div class="stat-label">Satisfaction Rate</div>
+                        <div class="stat-number" id="occupancy-rate">85%</div>
+                        <div class="stat-label">Occupancy Rate</div>
                     </div>
-                </div>
-
-                <div class="chart-container">
-                    <h3>Appointment Trends</h3>
-                    <p>Chart visualization would be displayed here using a charting library like Chart.js</p>
-                </div>
-
-                <div class="chart-container">
-                    <h3>Revenue Analysis</h3>
-                    <p>Revenue trends and analytics would be displayed here</p>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-number" id="avg-rating">4.7</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
                 </div>
             </section>
 
             <!-- Settings Section -->
             <section id="settings-section" class="content-section" style="display: none;">
-                <h2>System Settings</h2>
+                <h2><i class="fas fa-cogs section-icon"></i>System Settings</h2>
                 
-                <form id="settings-form" class="form-grid">
-                    <div class="form-group">
-                        <label for="hospital-name">Hospital Name</label>
-                        <input type="text" id="hospital-name" value="HealthCare+" required>
+                <form id="settings-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="system-name">System Name</label>
+                            <input type="text" id="system-name" class="form-control" value="HealthCare+" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-email">Admin Email</label>
+                            <input type="email" id="admin-email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="system-timezone">Timezone</label>
+                            <select id="system-timezone" class="form-control">
+                                <option value="UTC">UTC</option>
+                                <option value="America/New_York">Eastern Time</option>
+                                <option value="America/Chicago">Central Time</option>
+                                <option value="America/Denver">Mountain Time</option>
+                                <option value="America/Los_Angeles">Pacific Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-duration">Default Appointment Duration (minutes)</label>
+                            <input type="number" id="appointment-duration" class="form-control" value="30" min="15" max="120">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="hospital-address">Address</label>
-                        <textarea id="hospital-address" rows="3" required>123 Medical Center Drive, Healthcare City, HC 12345</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="hospital-phone">Contact Phone</label>
-                        <input type="tel" id="hospital-phone" value="+1 (555) 999-0000" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="hospital-email">Contact Email</label>
-                        <input type="email" id="hospital-email" value="info@healthcareplus.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="appointment-fee">Default Consultation Fee</label>
-                        <input type="number" id="appointment-fee" value="150" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="booking-advance">Booking Advance Days</label>
-                        <input type="number" id="booking-advance" value="30" min="1" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Settings
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
                 </form>
             </section>
         </main>
     </div>
 
-    <!-- Add Doctor Modal -->
-    <div id="addDoctorModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('addDoctorModal')">&times;</span>
-            <h2>Add New Doctor</h2>
-            <form id="add-doctor-form" class="form-grid">
-                <div class="form-group">
-                    <label for="new-doctor-name">Full Name</label>
-                    <input type="text" id="new-doctor-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-doctor-email">Email</label>
-                    <input type="email" id="new-doctor-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-doctor-phone">Phone</label>
-                    <input type="tel" id="new-doctor-phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-doctor-specialty">Specialty</label>
-                    <select id="new-doctor-specialty" required>
-                        <option value="">Select Specialty</option>
-                        <option value="cardiology">Cardiology</option>
-                        <option value="neurology">Neurology</option>
-                        <option value="pediatrics">Pediatrics</option>
-                        <option value="orthopedics">Orthopedics</option>
-                        <option value="dermatology">Dermatology</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="new-doctor-experience">Experience (Years)</label>
-                    <input type="number" id="new-doctor-experience" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-doctor-fee">Consultation Fee</label>
-                    <input type="number" id="new-doctor-fee" min="0" step="0.01" required>
-                </div>
-                <div class="form-group full-width">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Add Doctor
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Staff Modal -->
-    <div id="addStaffModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('addStaffModal')">&times;</span>
-            <h2>Add New Staff</h2>
-            <form id="add-staff-form" class="form-grid">
-                <div class="form-group">
-                    <label for="new-staff-name">Full Name</label>
-                    <input type="text" id="new-staff-name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-staff-email">Email</label>
-                    <input type="email" id="new-staff-email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-staff-phone">Phone</label>
-                    <input type="tel" id="new-staff-phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-staff-role">Role</label>
-                    <select id="new-staff-role" name="role" required>
-                        <option value="">Select Role</option>
-                        <option value="staff">General Staff</option>
-                        <option value="nurse">Nurse</option>
-                        <option value="receptionist">Receptionist</option>
-                        <option value="technician">Technician</option>
-                        <option value="administrator">Administrator</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="new-staff-department">Department</label>
-                    <select id="new-staff-department" name="department" required>
-                        <option value="">Select Department</option>
-                        <option value="reception">Reception</option>
-                        <option value="nursing">Nursing</option>
-                        <option value="laboratory">Laboratory</option>
-                        <option value="radiology">Radiology</option>
-                        <option value="administration">Administration</option>
-                        <option value="pharmacy">Pharmacy</option>
-                        <option value="emergency">Emergency</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="new-staff-hire-date">Hire Date</label>
-                    <input type="date" id="new-staff-hire-date" name="hire_date" required>
-                </div>
-                <div class="form-group full-width">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Add Staff
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Staff Modal -->
-    <div id="editStaffModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('editStaffModal')">&times;</span>
-            <h2>Edit Staff Member</h2>
-            <form id="edit-staff-form" class="form-grid">
-                <input type="hidden" id="edit-staff-id" name="staff_id">
-                <div class="form-group">
-                    <label for="edit-staff-name">Full Name</label>
-                    <input type="text" id="edit-staff-name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-email">Email</label>
-                    <input type="email" id="edit-staff-email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-phone">Phone</label>
-                    <input type="tel" id="edit-staff-phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-role">Role</label>
-                    <select id="edit-staff-role" name="role" required>
-                        <option value="">Select Role</option>
-                        <option value="staff">General Staff</option>
-                        <option value="nurse">Nurse</option>
-                        <option value="receptionist">Receptionist</option>
-                        <option value="technician">Technician</option>
-                        <option value="administrator">Administrator</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-department">Department</label>
-                    <select id="edit-staff-department" name="department" required>
-                        <option value="">Select Department</option>
-                        <option value="reception">Reception</option>
-                        <option value="nursing">Nursing</option>
-                        <option value="laboratory">Laboratory</option>
-                        <option value="radiology">Radiology</option>
-                        <option value="administration">Administration</option>
-                        <option value="pharmacy">Pharmacy</option>
-                        <option value="emergency">Emergency</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-hire-date">Hire Date</label>
-                    <input type="date" id="edit-staff-hire-date" name="hire_date" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-staff-status">Status</label>
-                    <select id="edit-staff-status" name="is_active" required>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
-                </div>
-                <div class="form-group full-width">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Staff
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Doctor Modal -->
-    <div id="edit-doctor-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-user-md"></i> Edit Doctor Profile</h2>
-                <span class="close" onclick="closeModal('edit-doctor-modal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="edit-doctor-form" class="form-grid">
-                    <input type="hidden" id="edit-doctor-id">
-                    <div class="form-group">
-                        <label for="edit-doctor-name">Full Name *</label>
-                        <input type="text" id="edit-doctor-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-email">Email *</label>
-                        <input type="email" id="edit-doctor-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-phone">Phone *</label>
-                        <input type="tel" id="edit-doctor-phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-specialty">Specialty *</label>
-                        <select id="edit-doctor-specialty" required>
-                            <option value="">Select Specialty</option>
-                            <option value="Cardiology">Cardiology</option>
-                            <option value="Neurology">Neurology</option>
-                            <option value="Pediatrics">Pediatrics</option>
-                            <option value="Orthopedics">Orthopedics</option>
-                            <option value="Dermatology">Dermatology</option>
-                            <option value="Oncology">Oncology</option>
-                            <option value="Psychiatry">Psychiatry</option>
-                            <option value="General Medicine">General Medicine</option>
-                            <option value="Surgery">Surgery</option>
-                            <option value="Radiology">Radiology</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-education">Education</label>
-                        <input type="text" id="edit-doctor-education" placeholder="Medical School">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-experience">Experience (Years) *</label>
-                        <input type="number" id="edit-doctor-experience" min="0" max="50" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-location">Location *</label>
-                        <input type="text" id="edit-doctor-location" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-fee">Consultation Fee ($) *</label>
-                        <input type="number" id="edit-doctor-fee" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-subspecialties">Subspecialties</label>
-                        <input type="text" id="edit-doctor-subspecialties" placeholder="Enter subspecialties, separated by commas">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-languages">Languages Spoken</label>
-                        <input type="text" id="edit-doctor-languages" placeholder="English, Spanish, etc.">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-certifications">Certifications</label>
-                        <input type="text" id="edit-doctor-certifications" placeholder="Board certifications, separated by commas">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-doctor-services">Services Offered</label>
-                        <input type="text" id="edit-doctor-services" placeholder="Services, separated by commas">
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="edit-doctor-about">About Doctor</label>
-                        <textarea id="edit-doctor-about" rows="4" placeholder="Professional background and specializations"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="edit-doctor-available"> Currently Available
-                        </label>
-                    </div>
-                    <div class="form-group full-width">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Update Doctor
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('edit-doctor-modal')">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Doctor Schedule Modal -->
-    <div id="doctor-schedule-modal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2><i class="fas fa-calendar-alt"></i> Doctor Schedule</h2>
-                <span class="close" onclick="closeModal('doctor-schedule-modal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="schedule-content">
-                    <div class="doctor-info">
-                        <h3 id="schedule-doctor-name">Dr. Name</h3>
-                        <p id="schedule-doctor-specialty">Specialty</p>
-                    </div>
-                    <div class="schedule-tabs">
-                        <button class="tab-btn active" data-tab="weekly">Weekly View</button>
-                        <button class="tab-btn" data-tab="appointments">Appointments</button>
-                        <button class="tab-btn" data-tab="availability">Set Availability</button>
-                    </div>
-                    <div class="tab-content">
-                        <div id="weekly-tab" class="tab-pane active">
-                            <div id="doctor-weekly-schedule" class="weekly-schedule">
-                                Loading schedule...
-                            </div>
-                        </div>
-                        <div id="appointments-tab" class="tab-pane">
-                            <div id="doctor-appointments-list">
-                                Loading appointments...
-                            </div>
-                        </div>
-                        <div id="availability-tab" class="tab-pane">
-                            <div class="availability-manager">
-                                <h4>Set Working Hours</h4>
-                                <div id="availability-settings">
-                                    Loading availability settings...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* Edit Doctor Modal Styles */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .form-group input[type="checkbox"] {
-            width: auto;
-            margin-right: 0.5rem;
-        }
-
-        /* Doctor Schedule Modal Styles */
-        .schedule-content {
-            padding: 1rem;
-        }
-
-        .doctor-info {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--primary-color-light);
-            border-radius: 8px;
-        }
-
-        .doctor-info h3 {
-            margin: 0;
-            color: var(--primary-color);
-        }
-
-        .doctor-info p {
-            margin: 0.5rem 0 0 0;
-            color: var(--text-muted);
-        }
-
-        .schedule-tabs {
-            display: flex;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
-
-        .schedule-tabs .tab-btn {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-
-        .schedule-tabs .tab-btn:hover {
-            color: var(--primary-color);
-        }
-
-        .schedule-tabs .tab-btn.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        .weekly-schedule {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .schedule-day {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .schedule-day h4 {
-            margin: 0 0 1rem 0;
-            color: var(--primary-color);
-        }
-
-        .schedule-slot {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .schedule-slot.booked {
-            background: var(--error-color);
-            color: white;
-        }
-
-        .schedule-slot.available {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .availability-manager {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .availability-day {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .availability-times {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .availability-times input {
-            width: 120px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .weekly-schedule {
-                grid-template-columns: 1fr;
-            }
-
-            .schedule-tabs {
-                flex-wrap: wrap;
-            }
-
-            .availability-day {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .availability-times {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-    </style>
-
-    <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/admin-dashboard.js"></script>
 </body>
 </html>

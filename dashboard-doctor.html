@@ -15,41 +15,53 @@
         }
         
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: var(--card-bg);
             border-right: 1px solid var(--border-color);
             padding: 2rem 0;
             position: fixed;
-            height: 100vh;
+            height: calc(100vh - 70px);
             overflow-y: auto;
             transition: transform 0.3s ease;
             z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
         
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1001;
-            background: var(--primary-color);
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
         
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+        .doctor-details h3 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+        
+        .doctor-details p {
+            margin: 0.25rem 0 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
         
         .sidebar-menu {
@@ -69,162 +81,189 @@
             color: var(--text-color);
             text-decoration: none;
             transition: all 0.3s ease;
+            border-left: 3px solid transparent;
         }
         
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: var(--primary-color);
-            color: white;
+            background: var(--primary-color-light);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
         }
         
         .sidebar-menu i {
             margin-right: 0.75rem;
             width: 20px;
+            font-size: 1.1rem;
         }
         
         .main-content {
             flex: 1;
-            margin-left: 250px;
+            margin-left: 280px;
             padding: 2rem;
+            background: var(--bg-color);
         }
         
         .dashboard-header {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .dashboard-header h1 {
+            margin: 0 0 0.5rem;
+            color: var(--text-color);
+            font-size: 2rem;
+        }
+        
+        .dashboard-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
         
         .stat-card {
             background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 2rem;
+            border-radius: 16px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .stat-card i {
-            font-size: 2.5rem;
-            color: var(--primary-color);
+            font-size: 3rem;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1rem;
         }
         
         .content-section {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
         
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1px;
-            background: var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 2rem;
+        .content-section h2 {
+            margin: 0 0 1.5rem;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .schedule-day {
-            background: var(--card-bg);
-            padding: 1rem;
-            min-height: 150px;
-        }
-        
-        .schedule-day-header {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        .section-icon {
             color: var(--primary-color);
         }
         
-        .schedule-slot {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
-            cursor: pointer;
-        }
-        
-        .schedule-slot.booked {
-            background: var(--secondary-color);
-        }
-        
-        .schedule-slot.available {
-            background: #28a745;
-        }
-        
         .appointment-card {
-            background: var(--card-bg);
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             transition: all 0.3s ease;
         }
         
         .appointment-card:hover {
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
         
         .appointment-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
         
         .appointment-time {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: var(--primary-color);
         }
         
         .appointment-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
         }
         
         .patient-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .patient-detail {
             display: flex;
             align-items: center;
+            color: var(--text-color);
         }
         
         .patient-detail i {
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
             color: var(--primary-color);
+            width: 16px;
         }
         
-        .table-responsive {
-            overflow-x: auto;
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
         
         .data-table {
@@ -243,115 +282,63 @@
         .data-table th {
             background: var(--bg-color);
             font-weight: 600;
+            color: var(--text-color);
         }
         
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
+        .data-table tbody tr:hover {
+            background: var(--primary-color-light);
         }
         
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-confirmed {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-completed {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .time-slot-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .time-slot {
-            padding: 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .time-slot.available {
-            border-color: #28a745;
-            background: #f8fff9;
-        }
-        
-        .time-slot.booked {
-            border-color: #dc3545;
-            background: #fff5f5;
-            cursor: not-allowed;
-        }
-        
-        .time-slot.selected {
-            border-color: var(--primary-color);
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        /* Enhanced Schedule Viewing Styles */
         .weekly-schedule {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
         .schedule-day {
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1rem;
-            background: var(--card-bg);
+            padding: 1.5rem;
+            background: var(--bg-color);
             transition: all 0.3s ease;
         }
         
         .schedule-day:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
         
         .day-header {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .day-header h4 {
             margin: 0;
             color: var(--text-color);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
         }
         
         .day-date {
             font-size: 0.875rem;
             color: var(--text-muted);
-        }
-        
-        .day-slots {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin-top: 0.25rem;
         }
         
         .schedule-slot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
+            padding: 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            background: var(--bg-color);
+            background: var(--card-bg);
+            margin-bottom: 0.75rem;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .schedule-slot:hover {
@@ -360,18 +347,77 @@
         }
         
         .slot-time {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-color);
+        }
+        
+        .slot-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .booked {
+            background: #f8d7da;
+            color: #721c24;
         }
         
         .no-slots {
             text-align: center;
             color: var(--text-muted);
             font-style: italic;
-            padding: 2rem 0;
+            padding: 3rem 0;
         }
         
-        /* Modal Styles for Schedule Viewing */
+        .schedule-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        #current-week {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .search-bar {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .search-bar input {
+            padding-left: 3rem;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -382,31 +428,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
             backdrop-filter: blur(4px);
         }
         
         .modal-content {
             background: var(--card-bg);
-            border-radius: 12px;
-            max-width: 600px;
+            border-radius: 16px;
+            max-width: 700px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem;
+            padding: 2rem;
             border-bottom: 1px solid var(--border-color);
         }
         
         .modal-header h3 {
             margin: 0;
             color: var(--text-color);
+            font-size: 1.5rem;
         }
         
         .modal-close {
@@ -426,117 +473,25 @@
         }
         
         .modal-body {
-            padding: 1.5rem;
-        }
-        
-        .appointment-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .appointment-card {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            background: var(--bg-color);
-        }
-        
-        .appointment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .appointment-header h4 {
-            margin: 0;
-            color: var(--text-color);
-        }
-        
-        .appointment-details {
-            margin-bottom: 1rem;
-        }
-        
-        .appointment-details p {
-            margin: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            color: var(--text-color);
-        }
-        
-        .appointment-details i {
-            margin-right: 0.5rem;
-            color: var(--primary-color);
-            width: 16px;
-        }
-        
-        .appointment-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            padding: 2rem;
         }
         
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 4rem 2rem;
             color: var(--text-muted);
         }
         
         .empty-state i {
-            font-size: 3rem;
+            font-size: 4rem;
             margin-bottom: 1rem;
             color: var(--text-muted);
-        }
-        
-        .availability-manager {
-            max-width: 100%;
-        }
-        
-        .time-slots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-        
-        .time-slots-grid .time-slot {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: var(--bg-color);
-        }
-        
-        .time-slots-grid .time-slot input[type="checkbox"] {
-            margin-right: 0.5rem;
-        }
-        
-        .time-slots-grid .time-slot:has(input:checked) {
-            background: var(--primary-color-light);
-            border-color: var(--primary-color);
-        }
-        
-        /* Schedule Controls */
-        .schedule-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        #current-week {
-            font-weight: 600;
-            color: var(--text-color);
-            font-size: 1.1rem;
         }
         
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                width: 280px;
             }
             
             .sidebar.active {
@@ -545,14 +500,40 @@
             
             .main-content {
                 margin-left: 0;
+                padding: 1rem;
             }
             
             .stats-grid {
                 grid-template-columns: 1fr;
             }
             
-            .schedule-grid {
+            .weekly-schedule {
                 grid-template-columns: 1fr;
+            }
+            
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 85px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
             }
         }
     </style>
@@ -578,9 +559,25 @@
         </div>
     </nav>
 
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="doctor-info">
+                    <div class="doctor-avatar" id="doctor-avatar">
+                        SJ
+                    </div>
+                    <div class="doctor-details">
+                        <h3 id="doctor-name">Dr. Sarah Johnson</h3>
+                        <p id="doctor-specialty">Cardiologist</p>
+                    </div>
+                </div>
+            </div>
             <nav class="sidebar-nav">
                 <ul class="sidebar-menu">
                     <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
@@ -593,13 +590,13 @@
                         <i class="fas fa-calendar-check"></i> Appointments
                     </a></li>
                     <li><a href="#patients" class="sidebar-link" data-section="patients">
-                        <i class="fas fa-users"></i> Patients
+                        <i class="fas fa-users"></i> My Patients
                     </a></li>
                     <li><a href="#availability" class="sidebar-link" data-section="availability">
                         <i class="fas fa-clock"></i> Set Availability
                     </a></li>
                     <li><a href="#profile" class="sidebar-link" data-section="profile">
-                        <i class="fas fa-user"></i> My Profile
+                        <i class="fas fa-user-md"></i> My Profile
                     </a></li>
                 </ul>
             </nav>
@@ -610,127 +607,63 @@
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="content-section active">
                 <div class="dashboard-header">
-                    <h1>Welcome, <span id="doctor-name">Dr. Sarah Johnson</span>!</h1>
-                    <p>Here's your practice overview for today.</p>
+                    <h1>Welcome back, <span id="dashboard-doctor-name">Dr. Sarah Johnson</span>!</h1>
+                    <p>Here's your practice overview for today, <span id="current-date"></span></p>
                 </div>
 
                 <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-calendar-day"></i>
-                        <div class="stat-number" id="today-appointments">8</div>
+                        <div class="stat-number" id="today-appointments">12</div>
                         <div class="stat-label">Today's Appointments</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-users"></i>
-                        <div class="stat-number" id="total-patients">156</div>
+                        <div class="stat-number" id="total-patients">248</div>
                         <div class="stat-label">Total Patients</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-clock"></i>
-                        <div class="stat-number" id="upcoming-count">3</div>
+                        <div class="stat-number" id="upcoming-count">5</div>
                         <div class="stat-label">Upcoming Today</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-star"></i>
-                        <div class="stat-number" id="doctor-rating">4.8</div>
+                        <div class="stat-number" id="doctor-rating">4.9</div>
                         <div class="stat-label">Patient Rating</div>
                     </div>
                 </div>
 
                 <!-- Today's Appointments -->
                 <div class="content-section">
-                    <h2>Today's Appointments</h2>
+                    <h2><i class="fas fa-calendar-day section-icon"></i>Today's Appointments</h2>
                     <div id="today-appointments-list">
-                        <div class="appointment-card">
-                            <div class="appointment-header">
-                                <div class="appointment-time">10:30 AM</div>
-                                <div class="appointment-status status-confirmed">Confirmed</div>
-                            </div>
-                            <div class="patient-info">
-                                <div class="patient-detail">
-                                    <i class="fas fa-user"></i>
-                                    <span>John Doe</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-phone"></i>
-                                    <span>+1 (555) 111-1111</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-envelope"></i>
-                                    <span>john.doe@email.com</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-notes-medical"></i>
-                                    <span>Routine Checkup</span>
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="startConsultation(1)">
-                                    <i class="fas fa-play"></i> Start Consultation
-                                </button>
-                                <button class="btn btn-secondary btn-sm" onclick="viewPatientHistory(1)">
-                                    <i class="fas fa-history"></i> View History
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="appointment-card">
-                            <div class="appointment-header">
-                                <div class="appointment-time">2:00 PM</div>
-                                <div class="appointment-status status-pending">Pending</div>
-                            </div>
-                            <div class="patient-info">
-                                <div class="patient-detail">
-                                    <i class="fas fa-user"></i>
-                                    <span>Maria Garcia</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-phone"></i>
-                                    <span>+1 (555) 222-2222</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-envelope"></i>
-                                    <span>maria.garcia@email.com</span>
-                                </div>
-                                <div class="patient-detail">
-                                    <i class="fas fa-notes-medical"></i>
-                                    <span>Follow-up Consultation</span>
-                                </div>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="confirmAppointment(2)">
-                                    <i class="fas fa-check"></i> Confirm
-                                </button>
-                                <button class="btn btn-secondary btn-sm" onclick="viewPatientHistory(2)">
-                                    <i class="fas fa-history"></i> View History
-                                </button>
-                            </div>
-                        </div>
+                        <!-- Appointments will be loaded dynamically -->
                     </div>
                 </div>
             </section>
 
             <!-- Schedule Section -->
             <section id="schedule-section" class="content-section" style="display: none;">
-                <h2>Weekly Schedule</h2>
-                <div class="schedule-controls" style="margin-bottom: 2rem;">
-                    <button class="btn btn-secondary" onclick="previousWeek()">
+                <h2><i class="fas fa-calendar section-icon"></i>Weekly Schedule</h2>
+                <div class="schedule-controls">
+                    <button class="btn btn-secondary" id="prev-week-btn">
                         <i class="fas fa-chevron-left"></i> Previous Week
                     </button>
-                    <span id="current-week" style="margin: 0 2rem; font-weight: bold;">June 9-15, 2025</span>
-                    <button class="btn btn-secondary" onclick="nextWeek()">
+                    <span id="current-week"></span>
+                    <button class="btn btn-secondary" id="next-week-btn">
                         Next Week <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
                 <div class="weekly-schedule" id="weekly-schedule-grid">
-                    <!-- Dynamic schedule content will be loaded here -->
+                    <!-- Schedule will be loaded dynamically -->
                 </div>
             </section>
 
             <!-- Appointments Section -->
             <section id="appointments-section" class="content-section" style="display: none;">
-                <h2>All Appointments</h2>
+                <h2><i class="fas fa-calendar-check section-icon"></i>All Appointments</h2>
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
@@ -744,17 +677,7 @@
                             </tr>
                         </thead>
                         <tbody id="appointments-table-body">
-                            <tr>
-                                <td>June 15, 2025 10:30 AM</td>
-                                <td>John Doe</td>
-                                <td>+1 (555) 111-1111</td>
-                                <td>Routine Checkup</td>
-                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="startConsultation(1)">Start</button>
-                                    <button class="btn btn-sm btn-secondary" onclick="viewPatientHistory(1)">History</button>
-                                </td>
-                            </tr>
+                            <!-- Appointments will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -762,9 +685,10 @@
 
             <!-- Patients Section -->
             <section id="patients-section" class="content-section" style="display: none;">
-                <h2>My Patients</h2>
-                <div class="search-bar" style="margin-bottom: 2rem;">
-                    <input type="text" id="patient-search" placeholder="Search patients..." class="form-control">
+                <h2><i class="fas fa-users section-icon"></i>My Patients</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="patient-search" placeholder="Search patients by name, phone, or email..." class="form-control">
                 </div>
                 <div class="table-responsive">
                     <table class="data-table">
@@ -778,18 +702,7 @@
                             </tr>
                         </thead>
                         <tbody id="patients-table-body">
-                            <tr>
-                                <td>John Doe</td>
-                                <td>
-                                    <div>+1 (555) 111-1111</div>
-                                    <div style="font-size: 0.875rem; color: #666;">john.doe@email.com</div>
-                                </td>
-                                <td>June 10, 2025</td>
-                                <td>5</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="viewPatientHistory(1)">View History</button>
-                                </td>
-                            </tr>
+                            <!-- Patients will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -797,436 +710,95 @@
 
             <!-- Availability Section -->
             <section id="availability-section" class="content-section" style="display: none;">
-                <h2>Set Availability</h2>
-                <form id="availability-form">
+                <h2><i class="fas fa-clock section-icon"></i>Set Availability</h2>
+                <div class="availability-form">
                     <div class="form-group">
-                        <label for="availability-date">Select Date</label>
-                        <input type="date" id="availability-date" class="form-control" required>
+                        <label for="availability-date">Select Date:</label>
+                        <input type="date" id="availability-date" class="form-control">
                     </div>
-                    
-                    <h3>Available Time Slots</h3>
-                    <div class="time-slot-grid" id="time-slots-grid">
-                        <div class="time-slot available" data-time="09:00">9:00 AM</div>
-                        <div class="time-slot available" data-time="09:30">9:30 AM</div>
-                        <div class="time-slot available" data-time="10:00">10:00 AM</div>
-                        <div class="time-slot available" data-time="10:30">10:30 AM</div>
-                        <div class="time-slot available" data-time="11:00">11:00 AM</div>
-                        <div class="time-slot available" data-time="11:30">11:30 AM</div>
-                        <div class="time-slot available" data-time="14:00">2:00 PM</div>
-                        <div class="time-slot available" data-time="14:30">2:30 PM</div>
-                        <div class="time-slot available" data-time="15:00">3:00 PM</div>
-                        <div class="time-slot available" data-time="15:30">3:30 PM</div>
-                        <div class="time-slot available" data-time="16:00">4:00 PM</div>
-                        <div class="time-slot available" data-time="16:30">4:30 PM</div>
+                    <div id="availability-slots">
+                        <!-- Time slots will be loaded dynamically -->
                     </div>
-                    
-                    <div class="btn-group" style="margin-top: 2rem;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Availability
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="clearAllSlots()">
-                            <i class="fas fa-times"></i> Clear All
-                        </button>
-                    </div>
-                </form>
+                    <button class="btn btn-primary" id="save-availability-btn">
+                        <i class="fas fa-save"></i> Save Availability
+                    </button>
+                </div>
             </section>
 
             <!-- Profile Section -->
             <section id="profile-section" class="content-section" style="display: none;">
-                <h2>Doctor Profile</h2>
-                <form id="doctor-profile-form" class="form-grid">
-                    <div class="form-group">
-                        <label for="doctor-full-name">Full Name</label>
-                        <input type="text" id="doctor-full-name" value="Dr. Sarah Johnson" required>
+                <h2><i class="fas fa-user-md section-icon"></i>My Profile</h2>
+                <form id="profile-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="profile-name">Full Name</label>
+                            <input type="text" id="profile-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-specialty">Specialty</label>
+                            <input type="text" id="profile-specialty" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-phone">Phone Number</label>
+                            <input type="tel" id="profile-phone" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-email">Email Address</label>
+                            <input type="email" id="profile-email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-experience">Years of Experience</label>
+                            <input type="number" id="profile-experience" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-qualification">Qualification</label>
+                            <input type="text" id="profile-qualification" class="form-control" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="doctor-email">Email</label>
-                        <input type="email" id="doctor-email" value="dr.johnson@healthcareplus.com" required>
+                        <label for="profile-bio">Bio</label>
+                        <textarea id="profile-bio" class="form-control" rows="4" placeholder="Tell patients about yourself..."></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="doctor-phone">Phone</label>
-                        <input type="tel" id="doctor-phone" value="+1 (555) 123-4567" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="doctor-specialty">Specialty</label>
-                        <input type="text" id="doctor-specialty" value="Cardiology" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="doctor-license">License Number</label>
-                        <input type="text" id="doctor-license" value="MD123456" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="doctor-experience">Experience (Years)</label>
-                        <input type="number" id="doctor-experience" value="15" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="doctor-about">About</label>
-                        <textarea id="doctor-about" rows="4" required>Dr. Johnson is a board-certified cardiologist with extensive experience in treating heart conditions.</textarea>
-                    </div>
-                    <div class="form-group full-width">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Update Profile
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Profile
+                    </button>
                 </form>
             </section>
         </main>
     </div>
 
     <!-- Patient History Modal -->
-    <div id="patient-history-modal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2><i class="fas fa-history"></i> Patient Medical History</h2>
-                <span class="close" onclick="closeModal('patient-history-modal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="patient-history-content">
-                    <!-- Patient Info Header -->
-                    <div class="patient-info-header">
-                        <div class="patient-avatar">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <div class="patient-details">
-                            <h3 id="history-patient-name">Loading...</h3>
-                            <div class="patient-meta">
-                                <span id="history-patient-age">Age: --</span>
-                                <span id="history-patient-gender">Gender: --</span>
-                                <span id="history-patient-phone">Phone: --</span>
-                            </div>
-                            <div class="patient-contact">
-                                <span id="history-patient-email">Email: --</span>
-                            </div>
-                        </div>
-                        <div class="patient-stats">
-                            <div class="stat-item">
-                                <div class="stat-value" id="history-total-appointments">0</div>
-                                <div class="stat-label">Total Visits</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="history-last-visit">--</div>
-                                <div class="stat-label">Last Visit</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- History Tabs -->
-                    <div class="history-tabs">
-                        <button class="tab-btn active" data-tab="appointments">
-                            <i class="fas fa-calendar-check"></i> Appointments
-                        </button>
-                        <button class="tab-btn" data-tab="records">
-                            <i class="fas fa-file-medical"></i> Medical Records
-                        </button>
-                        <button class="tab-btn" data-tab="prescriptions">
-                            <i class="fas fa-prescription"></i> Prescriptions
-                        </button>
-                        <button class="tab-btn" data-tab="vitals">
-                            <i class="fas fa-heartbeat"></i> Vital Signs
-                        </button>
-                    </div>
-
-                    <!-- Tab Content -->
-                    <div class="tab-content">
-                        <!-- Appointments Tab -->
-                        <div id="appointments-tab" class="tab-pane active">
-                            <div class="section-header">
-                                <h4>Appointment History</h4>
-                                <div class="search-filter">
-                                    <input type="text" placeholder="Search appointments..." id="appointments-search">
-                                </div>
-                            </div>
-                            <div id="patient-appointments-list" class="history-list">
-                                <div class="loading-spinner">Loading appointments...</div>
-                            </div>
-                        </div>
-
-                        <!-- Medical Records Tab -->
-                        <div id="records-tab" class="tab-pane">
-                            <div class="section-header">
-                                <h4>Medical Records</h4>
-                                <button class="btn btn-primary btn-sm" onclick="openAddRecordModal()">
-                                    <i class="fas fa-plus"></i> Add Record
-                                </button>
-                            </div>
-                            <div id="patient-records-list" class="history-list">
-                                <div class="loading-spinner">Loading medical records...</div>
-                            </div>
-                        </div>
-
-                        <!-- Prescriptions Tab -->
-                        <div id="prescriptions-tab" class="tab-pane">
-                            <div class="section-header">
-                                <h4>Prescriptions</h4>
-                            </div>
-                            <div id="patient-prescriptions-list" class="history-list">
-                                <div class="loading-spinner">Loading prescriptions...</div>
-                            </div>
-                        </div>
-
-                        <!-- Vital Signs Tab -->
-                        <div id="vitals-tab" class="tab-pane">
-                            <div class="section-header">
-                                <h4>Vital Signs History</h4>
-                            </div>
-                            <div id="patient-vitals-list" class="history-list">
-                                <div class="loading-spinner">Loading vital signs...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Medical Record Modal -->
-    <div id="add-record-modal" class="modal">
+    <div id="patient-history-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-file-medical-alt"></i> Add Medical Record</h2>
-                <span class="close" onclick="closeModal('add-record-modal')">&times;</span>
+                <h3>Patient History</h3>
+                <button class="modal-close" onclick="closeModal('patient-history-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <form id="add-record-form">
-                    <input type="hidden" id="record-patient-id">
-                    <div class="form-group">
-                        <label for="record-diagnosis">Diagnosis *</label>
-                        <input type="text" id="record-diagnosis" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="record-treatment">Treatment</label>
-                        <textarea id="record-treatment" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="record-notes">Notes</label>
-                        <textarea id="record-notes" rows="4"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Record
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('add-record-modal')">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+            <div class="modal-body" id="patient-history-content">
+                <!-- Patient history content will be loaded here -->
             </div>
         </div>
     </div>
 
-    <style>
-        /* Patient History Modal Styles */
-        .patient-info-header {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 1.5rem;
-            background: var(--primary-color-light);
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
+    <!-- Schedule Details Modal -->
+    <div id="schedule-details-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Schedule Details</h3>
+                <button class="modal-close" onclick="closeModal('schedule-details-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="schedule-details-content">
+                <!-- Schedule details content will be loaded here -->
+            </div>
+        </div>
+    </div>
 
-        .patient-avatar {
-            font-size: 4rem;
-            color: var(--primary-color);
-        }
-
-        .patient-details h3 {
-            margin: 0 0 0.5rem 0;
-            color: var(--primary-color);
-        }
-
-        .patient-meta, .patient-contact {
-            display: flex;
-            gap: 1rem;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin: 0.25rem 0;
-        }
-
-        .patient-stats {
-            display: flex;
-            gap: 2rem;
-            margin-left: auto;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .history-tabs {
-            display: flex;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
-
-        .tab-btn {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary-color);
-        }
-
-        .tab-btn.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-
-        .tab-content {
-            min-height: 400px;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .search-filter input {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            width: 250px;
-        }
-
-        .history-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .history-item:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .history-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .history-date {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .history-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-active {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        .history-details {
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .history-meta {
-            display: flex;
-            gap: 1rem;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
-
-        .loading-spinner {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-        }
-
-        .modal-content.large {
-            max-width: 1200px;
-            width: 90%;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .patient-info-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .patient-stats {
-                margin-left: 0;
-                justify-content: center;
-            }
-
-            .history-tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab-btn {
-                flex: 1;
-                min-width: 120px;
-                justify-content: center;
-            }
-
-            .section-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .search-filter input {
-                width: 100%;
-            }
-        }
-    </style>
-
-    <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/doctor-dashboard.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@ class DoctorDashboard {
         this.appointments = [];
         this.patients = [];
         this.availability = {};
+        this.currentWeek = new Date();
         this.init();
     }
 
@@ -17,10 +18,48 @@ class DoctorDashboard {
         this.setupEventListeners();
         this.loadDashboardData();
         this.setupSidebarNavigation();
-        this.setupAvailabilitySelector();
+        this.setupMobileMenu();
+        this.updateCurrentDate();
         // Initialize back to top button
         if (window.HealthCare && window.HealthCare.initializeBackToTop) {
             window.HealthCare.initializeBackToTop();
+        }
+    }
+
+    setupMobileMenu() {
+        const mobileToggle = document.getElementById('mobile-menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (mobileToggle && sidebar) {
+            mobileToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    const isToggle = e.target.closest('#mobile-menu-toggle');
+                    const isSidebar = e.target.closest('#sidebar');
+                    
+                    if (!isToggle && !isSidebar && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        }
+    }
+
+    updateCurrentDate() {
+        const currentDateElement = document.getElementById('current-date');
+        if (currentDateElement) {
+            const today = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            currentDateElement.textContent = today.toLocaleDateString('en-US', options);
         }
     }
 
@@ -44,15 +83,35 @@ class DoctorDashboard {
 
     updateUserDisplay() {
         if (this.currentUser) {
+            // Update navigation and header elements
             const userNameElement = document.getElementById('user-name');
             const doctorNameElement = document.getElementById('doctor-name');
+            const dashboardDoctorName = document.getElementById('dashboard-doctor-name');
+            const doctorAvatar = document.getElementById('doctor-avatar');
+            const doctorSpecialty = document.getElementById('doctor-specialty');
             
             if (userNameElement) {
                 userNameElement.textContent = `Dr. ${this.currentUser.full_name}`;
             }
             
             if (doctorNameElement) {
-                doctorNameElement.textContent = this.currentUser.full_name;
+                doctorNameElement.textContent = `Dr. ${this.currentUser.full_name}`;
+            }
+            
+            if (dashboardDoctorName) {
+                dashboardDoctorName.textContent = `Dr. ${this.currentUser.full_name}`;
+            }
+            
+            if (doctorAvatar && this.currentUser.full_name) {
+                const initials = this.currentUser.full_name.split(' ')
+                    .map(name => name.charAt(0))
+                    .join('')
+                    .toUpperCase();
+                doctorAvatar.textContent = initials;
+            }
+            
+            if (doctorSpecialty) {
+                doctorSpecialty.textContent = this.currentUser.department || 'General Medicine';
             }
             
             this.populateProfileForm();
@@ -63,11 +122,13 @@ class DoctorDashboard {
         if (!this.currentUser) return;
         
         const fields = {
-            'doctor-full-name': this.currentUser.full_name,
-            'doctor-email': this.currentUser.email,
-            'doctor-phone': this.currentUser.phone,
-            'doctor-specialty': this.currentUser.department,
-            'doctor-license': this.currentUser.license_number
+            'profile-name': this.currentUser.full_name,
+            'profile-email': this.currentUser.email,
+            'profile-phone': this.currentUser.phone,
+            'profile-specialty': this.currentUser.department || 'General Medicine',
+            'profile-experience': this.currentUser.experience || '5',
+            'profile-qualification': this.currentUser.qualification || 'MBBS',
+            'profile-bio': this.currentUser.bio || ''
         };
         
         Object.entries(fields).forEach(([id, value]) => {
@@ -86,7 +147,7 @@ class DoctorDashboard {
         }
 
         // Profile form
-        const profileForm = document.getElementById('doctor-profile-form');
+        const profileForm = document.getElementById('profile-form');
         if (profileForm) {
             profileForm.addEventListener('submit', this.handleProfileUpdate.bind(this));
         }
@@ -95,6 +156,30 @@ class DoctorDashboard {
         const availabilityForm = document.getElementById('availability-form');
         if (availabilityForm) {
             availabilityForm.addEventListener('submit', this.handleAvailabilityUpdate.bind(this));
+        }
+
+        // Save availability button
+        const saveAvailabilityBtn = document.getElementById('save-availability-btn');
+        if (saveAvailabilityBtn) {
+            saveAvailabilityBtn.addEventListener('click', this.handleSaveAvailability.bind(this));
+        }
+
+        // Week navigation buttons
+        const prevWeekBtn = document.getElementById('prev-week-btn');
+        const nextWeekBtn = document.getElementById('next-week-btn');
+        
+        if (prevWeekBtn) {
+            prevWeekBtn.addEventListener('click', this.previousWeek.bind(this));
+        }
+        
+        if (nextWeekBtn) {
+            nextWeekBtn.addEventListener('click', this.nextWeek.bind(this));
+        }
+
+        // Availability date selector
+        const availabilityDate = document.getElementById('availability-date');
+        if (availabilityDate) {
+            availabilityDate.addEventListener('change', this.loadAvailabilityForDate.bind(this));
         }
 
         // Patient search
@@ -246,9 +331,13 @@ class DoctorDashboard {
             
             if (data.success) {
                 this.displayTodayAppointments(data.appointments);
+            } else {
+                // Show empty state when no data available
+                this.displayTodayAppointments([]);
             }
         } catch (error) {
             console.error('Failed to load today appointments:', error);
+            this.displayTodayAppointments([]);
         }
     }
 
@@ -257,7 +346,13 @@ class DoctorDashboard {
         if (!container) return;
         
         if (appointments.length === 0) {
-            container.innerHTML = '<p>No appointments for today.</p>';
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3>No appointments scheduled for today</h3>
+                    <p>You have a clear schedule today. Enjoy your free time!</p>
+                </div>
+            `;
             return;
         }
         
@@ -282,7 +377,7 @@ class DoctorDashboard {
                     </div>
                     <div class="patient-detail">
                         <i class="fas fa-notes-medical"></i>
-                        <span>${apt.type || 'Consultation'}</span>
+                        <span>${apt.reason || 'General Consultation'}</span>
                     </div>
                 </div>
                 <div class="btn-group">
@@ -419,7 +514,9 @@ class DoctorDashboard {
 
     async loadAvailabilityForDate() {
         const dateInput = document.getElementById('availability-date');
-        const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        if (!dateInput) return;
+        
+        const selectedDate = dateInput.value || new Date().toISOString().split('T')[0];
         
         try {
             const response = await fetch(`php/doctor-api.php?action=get_availability&date=${selectedDate}`);
@@ -427,9 +524,69 @@ class DoctorDashboard {
             
             if (data.success) {
                 this.updateAvailabilityDisplay(data.availability);
+            } else {
+                this.generateAvailabilitySlots(selectedDate);
             }
         } catch (error) {
             console.error('Failed to load availability:', error);
+            this.generateAvailabilitySlots(selectedDate);
+        }
+    }
+
+    generateAvailabilitySlots(date) {
+        const slotsContainer = document.getElementById('availability-slots');
+        if (!slotsContainer) return;
+
+        const timeSlots = [];
+        for (let hour = 8; hour <= 18; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                timeSlots.push(time);
+            }
+        }
+
+        slotsContainer.innerHTML = `
+            <div class="availability-header">
+                <h4>Set your availability for ${new Date(date).toLocaleDateString()}</h4>
+                <p>Select the time slots when you're available for appointments</p>
+            </div>
+            <div class="time-slots-grid">
+                ${timeSlots.map(time => `
+                    <div class="time-slot" data-time="${time}">
+                        <input type="checkbox" id="slot-${time}" value="${time}">
+                        <label for="slot-${time}">${this.formatTime(time)}</label>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    async handleSaveAvailability() {
+        const dateInput = document.getElementById('availability-date');
+        const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        
+        const selectedSlots = Array.from(document.querySelectorAll('#availability-slots input:checked'))
+            .map(input => input.value);
+
+        try {
+            const response = await fetch('php/doctor-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=save_availability&date=${selectedDate}&slots=${JSON.stringify(selectedSlots)}`
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.showNotification('Availability saved successfully', 'success');
+            } else {
+                this.showNotification('Failed to save availability', 'error');
+            }
+        } catch (error) {
+            console.error('Failed to save availability:', error);
+            this.showNotification('Failed to save availability', 'error');
         }
     }
 
@@ -1034,6 +1191,71 @@ class DoctorDashboard {
         if (modalId === 'add-record-modal') {
             document.getElementById('add-record-form').reset();
         }
+    }
+
+    // Additional appointment management methods
+    async startConsultation(appointmentId) {
+        this.showNotification('Starting consultation...', 'info');
+        // In a real application, this would open a consultation interface
+        console.log('Starting consultation for appointment:', appointmentId);
+    }
+
+    async confirmAppointment(appointmentId) {
+        try {
+            const response = await fetch('php/doctor-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=confirm_appointment&appointment_id=${appointmentId}`
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.showNotification('Appointment confirmed successfully', 'success');
+                this.loadTodayAppointments();
+                this.loadAllAppointments();
+            } else {
+                this.showNotification('Failed to confirm appointment', 'error');
+            }
+        } catch (error) {
+            console.error('Failed to confirm appointment:', error);
+            this.showNotification('Failed to confirm appointment', 'error');
+        }
+    }
+
+    // Week navigation methods
+    previousWeek() {
+        this.currentWeek.setDate(this.currentWeek.getDate() - 7);
+        this.updateWeekDisplay();
+        this.loadWeeklySchedule();
+    }
+
+    nextWeek() {
+        this.currentWeek.setDate(this.currentWeek.getDate() + 7);
+        this.updateWeekDisplay();
+        this.loadWeeklySchedule();
+    }
+
+    updateWeekDisplay() {
+        const weekElement = document.getElementById('current-week');
+        if (weekElement) {
+            const startOfWeek = new Date(this.currentWeek);
+            startOfWeek.setDate(this.currentWeek.getDate() - this.currentWeek.getDay() + 1);
+            
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+            const weekString = `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            weekElement.textContent = weekString;
+        }
+    }
+
+    clearAllSlots() {
+        const slots = document.querySelectorAll('#availability-slots input[type="checkbox"]');
+        slots.forEach(slot => slot.checked = false);
+        this.showNotification('All time slots cleared', 'info');
     }
 }
 
