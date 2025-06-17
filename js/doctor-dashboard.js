@@ -187,6 +187,9 @@ class DoctorDashboard {
         if (patientSearch) {
             patientSearch.addEventListener('input', this.handlePatientSearch.bind(this));
         }
+
+        // Initialize enhanced patient search functionality
+        this.setupEnhancedPatientSearch();
     }
 
     setupSidebarNavigation() {
@@ -606,12 +609,167 @@ class DoctorDashboard {
 
     handlePatientSearch(e) {
         const searchTerm = e.target.value.toLowerCase();
+        const searchBar = e.target.closest('.search-bar');
+        
+        // Show/hide clear button
+        const clearBtn = searchBar?.querySelector('.search-clear');
+        if (clearBtn) {
+            clearBtn.style.display = searchTerm.length > 0 ? 'block' : 'none';
+            if (searchTerm.length > 0) {
+                searchBar.classList.add('has-text');
+            } else {
+                searchBar.classList.remove('has-text');
+            }
+        }
+        
+        // Show suggestions for terms longer than 1 character
+        if (searchTerm.length > 1) {
+            this.showPatientSearchSuggestions(searchTerm);
+        } else {
+            this.hidePatientSuggestions();
+        }
+        
         const filteredPatients = this.patients.filter(patient => 
             patient.name.toLowerCase().includes(searchTerm) ||
             patient.email.toLowerCase().includes(searchTerm) ||
             patient.phone.includes(searchTerm)
         );
+        
         this.displayPatients(filteredPatients);
+        this.updatePatientSearchResults(searchTerm, filteredPatients.length, this.patients.length);
+        this.highlightPatientSearchTerms(searchTerm);
+    }
+
+    clearPatientSearch() {
+        const searchInput = document.getElementById('patient-search');
+        const searchBar = document.querySelector('.search-bar');
+        const clearBtn = searchBar?.querySelector('.search-clear');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
+        if (searchBar) {
+            searchBar.classList.remove('has-text');
+        }
+        
+        this.hidePatientSuggestions();
+        this.displayPatients(this.patients);
+        this.hidePatientSearchResults();
+    }
+
+    setupEnhancedPatientSearch() {
+        const searchInput = document.getElementById('patient-search');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', this.handlePatientSearch.bind(this));
+            
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.clearPatientSearch();
+                } else if (e.key === 'Enter') {
+                    this.hidePatientSuggestions();
+                }
+            });
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                this.hidePatientSuggestions();
+            }
+        });
+    }
+
+    showPatientSearchSuggestions(searchTerm) {
+        if (!this.patients || this.patients.length === 0) return;
+
+        const suggestions = new Set();
+        const term = searchTerm.toLowerCase();
+
+        // Get unique suggestions from patients data
+        this.patients.forEach(patient => {
+            if (patient.name.toLowerCase().includes(term)) {
+                suggestions.add(patient.name);
+            }
+            if (patient.email && patient.email.toLowerCase().includes(term)) {
+                suggestions.add(patient.email);
+            }
+            if (patient.phone && patient.phone.includes(term)) {
+                suggestions.add(patient.phone);
+            }
+        });
+
+        this.displayPatientSuggestions(Array.from(suggestions).slice(0, 5));
+    }
+
+    displayPatientSuggestions(suggestions) {
+        const container = document.getElementById('patient-search-suggestions');
+        if (!container) return;
+
+        if (suggestions.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = suggestions.map(suggestion => 
+            `<div class="search-suggestion" onclick="doctorDashboard.selectPatientSuggestion('${suggestion}')">${suggestion}</div>`
+        ).join('');
+        
+        container.style.display = 'block';
+    }
+
+    selectPatientSuggestion(suggestion) {
+        const searchInput = document.getElementById('patient-search');
+        if (searchInput) {
+            searchInput.value = suggestion;
+            this.handlePatientSearch({ target: searchInput });
+        }
+        this.hidePatientSuggestions();
+    }
+
+    hidePatientSuggestions() {
+        const container = document.getElementById('patient-search-suggestions');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    updatePatientSearchResults(searchTerm, filteredCount, totalCount) {
+        const container = document.getElementById('patient-search-results');
+        if (!container) return;
+
+        if (searchTerm && searchTerm.length > 0) {
+            container.innerHTML = `Showing ${filteredCount} of ${totalCount} patients for "${searchTerm}"`;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    hidePatientSearchResults() {
+        const container = document.getElementById('patient-search-results');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    highlightPatientSearchTerms(searchTerm) {
+        if (!searchTerm || searchTerm.length < 2) return;
+
+        const tableBody = document.getElementById('patients-table-body');
+        if (!tableBody) return;
+
+        const cells = tableBody.querySelectorAll('td');
+        cells.forEach(cell => {
+            const text = cell.textContent;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            if (regex.test(text)) {
+                cell.innerHTML = text.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+        });
     }
 
     async handleLogout() {

@@ -265,6 +265,12 @@ function clearFilters() {
     }
 }
 
+function clearDoctorSearch() {
+    if (window.patientDashboard) {
+        window.patientDashboard.clearDoctorSearch();
+    }
+}
+
 function toggleView(view) {
     if (window.patientDashboard) {
         window.patientDashboard.toggleView(view);

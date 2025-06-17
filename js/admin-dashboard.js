@@ -109,20 +109,16 @@ class AdminDashboard {
             settingsForm.addEventListener('submit', this.handleSettingsUpdate.bind(this));
         }
 
-        // Search inputs
+        // Initialize advanced search functionality
+        this.setupSearchListeners();
+
+        // Legacy search inputs for compatibility
         const searchInputs = {
             'doctor-search': this.filterDoctors.bind(this),
             'appointment-search': this.filterAppointments.bind(this),
             'patient-search': this.filterPatients.bind(this),
             'staff-search': this.filterStaff.bind(this)
         };
-
-        Object.entries(searchInputs).forEach(([id, handler]) => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.addEventListener('input', handler);
-            }
-        });
 
         // Filter selects
         const filterSelects = {
@@ -619,7 +615,11 @@ class AdminDashboard {
         
         const filteredDoctors = this.doctors.filter(doctor => {
             const matchesSearch = doctor.full_name.toLowerCase().includes(searchTerm) ||
-                                doctor.email.toLowerCase().includes(searchTerm);
+                                doctor.email.toLowerCase().includes(searchTerm) ||
+                                (doctor.specialty && doctor.specialty.toLowerCase().includes(searchTerm)) ||
+                                (doctor.department && doctor.department.toLowerCase().includes(searchTerm)) ||
+                                (doctor.phone && doctor.phone.includes(searchTerm));
+            
             const matchesSpecialty = !specialtyFilter || 
                                    (doctor.specialty && doctor.specialty.toLowerCase().includes(specialtyFilter)) ||
                                    (doctor.department && doctor.department.toLowerCase().includes(specialtyFilter));
@@ -628,6 +628,184 @@ class AdminDashboard {
         });
         
         this.displayDoctors(filteredDoctors);
+        this.updateSearchResults('doctor', filteredDoctors.length, this.doctors.length, searchTerm);
+        this.highlightSearchTerms(searchTerm);
+    }
+
+    clearDoctorSearch() {
+        const searchInput = document.getElementById('doctor-search');
+        const specialtyFilter = document.getElementById('doctor-specialty-filter');
+        const searchBar = document.querySelector('.search-bar');
+        
+        if (searchInput) {
+            searchInput.value = '';
+            searchBar?.classList.remove('has-text');
+        }
+        if (specialtyFilter) {
+            specialtyFilter.value = '';
+        }
+        
+        this.hideSuggestions('doctor-search-suggestions');
+        this.displayDoctors(this.doctors);
+        this.hideSearchResults('doctor-search-results');
+    }
+
+    setupSearchListeners() {
+        // Doctor search
+        const doctorSearch = document.getElementById('doctor-search');
+        if (doctorSearch) {
+            doctorSearch.addEventListener('input', (e) => {
+                const searchBar = e.target.closest('.search-bar');
+                if (e.target.value.length > 0) {
+                    searchBar?.classList.add('has-text');
+                    this.showSearchSuggestions('doctor', e.target.value);
+                } else {
+                    searchBar?.classList.remove('has-text');
+                    this.hideSuggestions('doctor-search-suggestions');
+                }
+                this.filterDoctors();
+            });
+
+            doctorSearch.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.clearDoctorSearch();
+                }
+            });
+        }
+
+        // Specialty filter
+        const specialtyFilter = document.getElementById('doctor-specialty-filter');
+        if (specialtyFilter) {
+            specialtyFilter.addEventListener('change', () => {
+                this.filterDoctors();
+            });
+        }
+
+        // Appointment search
+        const appointmentSearch = document.getElementById('appointment-search');
+        if (appointmentSearch) {
+            appointmentSearch.addEventListener('input', (e) => {
+                const searchBar = e.target.closest('.search-bar');
+                if (e.target.value.length > 0) {
+                    searchBar?.classList.add('has-text');
+                    this.showSearchSuggestions('appointment', e.target.value);
+                } else {
+                    searchBar?.classList.remove('has-text');
+                    this.hideSuggestions('appointment-search-suggestions');
+                }
+                this.filterAppointments();
+            });
+        }
+
+        // Click outside to hide suggestions
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                this.hideSuggestions('doctor-search-suggestions');
+                this.hideSuggestions('appointment-search-suggestions');
+            }
+        });
+    }
+
+    showSearchSuggestions(type, searchTerm) {
+        if (searchTerm.length < 2) return;
+
+        const suggestions = [];
+        const term = searchTerm.toLowerCase();
+
+        if (type === 'doctor') {
+            // Get unique suggestions from doctors data
+            const doctorSuggestions = new Set();
+            this.doctors.forEach(doctor => {
+                if (doctor.full_name.toLowerCase().includes(term)) {
+                    doctorSuggestions.add(doctor.full_name);
+                }
+                if (doctor.specialty && doctor.specialty.toLowerCase().includes(term)) {
+                    doctorSuggestions.add(doctor.specialty);
+                }
+                if (doctor.email && doctor.email.toLowerCase().includes(term)) {
+                    doctorSuggestions.add(doctor.email);
+                }
+            });
+            suggestions.push(...Array.from(doctorSuggestions).slice(0, 5));
+        }
+
+        this.displaySuggestions(`${type}-search-suggestions`, suggestions, searchTerm);
+    }
+
+    displaySuggestions(containerId, suggestions, searchTerm) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (suggestions.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = suggestions.map(suggestion => 
+            `<div class="search-suggestion" onclick="adminDashboard.selectSuggestion('${containerId}', '${suggestion}')">${suggestion}</div>`
+        ).join('');
+        
+        container.style.display = 'block';
+    }
+
+    selectSuggestion(containerId, suggestion) {
+        const inputId = containerId.replace('-suggestions', '');
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.value = suggestion;
+            input.focus();
+            
+            // Trigger search
+            if (inputId.includes('doctor')) {
+                this.filterDoctors();
+            } else if (inputId.includes('appointment')) {
+                this.filterAppointments();
+            }
+        }
+        this.hideSuggestions(containerId);
+    }
+
+    hideSuggestions(containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    updateSearchResults(type, filteredCount, totalCount, searchTerm) {
+        const resultId = `${type}-search-results`;
+        const container = document.getElementById(resultId);
+        if (!container) return;
+
+        if (searchTerm && searchTerm.length > 0) {
+            container.innerHTML = `Showing ${filteredCount} of ${totalCount} ${type}s for "${searchTerm}"`;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    hideSearchResults(containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    highlightSearchTerms(searchTerm) {
+        if (!searchTerm || searchTerm.length < 2) return;
+
+        const tableBody = document.getElementById('doctors-table-body');
+        if (!tableBody) return;
+
+        const cells = tableBody.querySelectorAll('td');
+        cells.forEach(cell => {
+            const text = cell.textContent;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            if (regex.test(text)) {
+                cell.innerHTML = text.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+        });
     }
 
     filterAppointments() {

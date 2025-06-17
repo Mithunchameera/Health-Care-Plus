@@ -155,6 +155,9 @@ class PatientDashboard {
                 this.showSection(section);
             });
         });
+
+        // Initialize enhanced search functionality
+        this.setupEnhancedSearch();
     }
 
     setupSidebarNavigation() {
@@ -732,7 +735,9 @@ class PatientDashboard {
         
         this.filteredDoctors = this.doctors.filter(doctor => {
             const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
-                                doctor.specialty.toLowerCase().includes(searchTerm);
+                                doctor.specialty.toLowerCase().includes(searchTerm) ||
+                                doctor.location?.toLowerCase().includes(searchTerm) ||
+                                doctor.email?.toLowerCase().includes(searchTerm);
             
             const matchesSpecialty = !specialtyFilter || doctor.specialty === specialtyFilter;
             const matchesLocation = !locationFilter || doctor.location === locationFilter;
@@ -745,6 +750,172 @@ class PatientDashboard {
         
         this.displayDoctors();
         this.updateResultsCount();
+        this.updateSearchResults(searchTerm);
+        this.highlightSearchTerms(searchTerm);
+    }
+
+    clearDoctorSearch() {
+        const searchInput = document.getElementById('doctor-search');
+        const clearBtn = document.querySelector('.search-clear');
+        const specialtyFilter = document.getElementById('specialty-filter');
+        const locationFilter = document.getElementById('location-filter');
+        const availabilityFilter = document.getElementById('availability-filter');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
+        if (specialtyFilter) specialtyFilter.value = '';
+        if (locationFilter) locationFilter.value = '';
+        if (availabilityFilter) availabilityFilter.value = '';
+        
+        this.hideSuggestions();
+        this.filteredDoctors = [...this.doctors];
+        this.displayDoctors();
+        this.updateResultsCount();
+        this.hideSearchResults();
+    }
+
+    setupEnhancedSearch() {
+        const searchInput = document.getElementById('doctor-search');
+        const clearBtn = document.querySelector('.search-clear');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                
+                // Show/hide clear button
+                if (clearBtn) {
+                    clearBtn.style.display = value.length > 0 ? 'block' : 'none';
+                }
+                
+                // Show suggestions for terms longer than 1 character
+                if (value.length > 1) {
+                    this.showSearchSuggestions(value);
+                } else {
+                    this.hideSuggestions();
+                }
+                
+                this.searchDoctors();
+            });
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.clearDoctorSearch();
+                } else if (e.key === 'Enter') {
+                    this.hideSuggestions();
+                }
+            });
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.enhanced-search')) {
+                this.hideSuggestions();
+            }
+        });
+    }
+
+    showSearchSuggestions(searchTerm) {
+        if (!this.doctors || this.doctors.length === 0) return;
+
+        const suggestions = new Set();
+        const term = searchTerm.toLowerCase();
+
+        // Get unique suggestions from doctors data
+        this.doctors.forEach(doctor => {
+            if (doctor.name.toLowerCase().includes(term)) {
+                suggestions.add(doctor.name);
+            }
+            if (doctor.specialty && doctor.specialty.toLowerCase().includes(term)) {
+                suggestions.add(doctor.specialty);
+            }
+            if (doctor.location && doctor.location.toLowerCase().includes(term)) {
+                suggestions.add(doctor.location);
+            }
+        });
+
+        this.displaySuggestions(Array.from(suggestions).slice(0, 5));
+    }
+
+    displaySuggestions(suggestions) {
+        const container = document.getElementById('doctor-search-suggestions');
+        if (!container) return;
+
+        if (suggestions.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = suggestions.map(suggestion => 
+            `<div class="search-suggestion" onclick="patientDashboard.selectSuggestion('${suggestion}')">${suggestion}</div>`
+        ).join('');
+        
+        container.style.display = 'block';
+    }
+
+    selectSuggestion(suggestion) {
+        const searchInput = document.getElementById('doctor-search');
+        if (searchInput) {
+            searchInput.value = suggestion;
+            this.searchDoctors();
+        }
+        this.hideSuggestions();
+    }
+
+    hideSuggestions() {
+        const container = document.getElementById('doctor-search-suggestions');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    updateSearchResults(searchTerm) {
+        const resultsContainer = document.querySelector('.search-results-count');
+        if (!resultsContainer) {
+            // Create results container if it doesn't exist
+            const searchContainer = document.querySelector('.search-filters');
+            if (searchContainer) {
+                const resultsDiv = document.createElement('div');
+                resultsDiv.className = 'search-results-count';
+                searchContainer.appendChild(resultsDiv);
+            }
+        }
+        
+        const container = document.querySelector('.search-results-count');
+        if (container && searchTerm && searchTerm.length > 0) {
+            const filteredCount = this.filteredDoctors.length;
+            const totalCount = this.doctors.length;
+            container.innerHTML = `Showing ${filteredCount} of ${totalCount} doctors for "${searchTerm}"`;
+            container.style.display = 'block';
+        } else if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    hideSearchResults() {
+        const container = document.querySelector('.search-results-count');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    highlightSearchTerms(searchTerm) {
+        if (!searchTerm || searchTerm.length < 2) return;
+
+        const doctorCards = document.querySelectorAll('.doctor-card, .doctor-list-item');
+        doctorCards.forEach(card => {
+            const textElements = card.querySelectorAll('h3, p, .doctor-specialty, .doctor-location');
+            textElements.forEach(element => {
+                const text = element.textContent;
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                if (regex.test(text)) {
+                    element.innerHTML = text.replace(regex, '<span class="search-highlight">$1</span>');
+                }
+            });
+        });
     }
     
     clearFilters() {

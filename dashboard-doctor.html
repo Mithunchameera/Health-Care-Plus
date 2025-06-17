@@ -403,18 +403,110 @@
         .search-bar {
             position: relative;
             margin-bottom: 2rem;
+            max-width: 500px;
         }
         
         .search-bar input {
-            padding-left: 3rem;
+            width: 100%;
+            padding: 12px 45px 12px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(51, 122, 183, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
         }
         
         .search-bar i {
             position: absolute;
-            left: 1rem;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+        
+        .search-bar input:focus ~ i {
+            color: var(--primary-color);
+        }
+        
+        .search-clear {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s ease;
+            z-index: 2;
+            display: none;
+        }
+        
+        .search-clear:hover {
+            color: var(--primary-color);
+        }
+        
+        .search-bar.has-text .search-clear {
+            display: block;
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .search-suggestion {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease;
+        }
+        
+        .search-suggestion:hover {
+            background: var(--primary-color-light);
+        }
+        
+        .search-suggestion:last-child {
+            border-bottom: none;
+        }
+        
+        .search-results-count {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .search-highlight {
+            background: rgba(255, 193, 7, 0.3);
+            padding: 1px 3px;
+            border-radius: 3px;
         }
         
         /* Modal Styles */
@@ -689,7 +781,13 @@
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" id="patient-search" placeholder="Search patients by name, phone, or email..." class="form-control">
+                    <button type="button" class="search-clear" onclick="doctorDashboard.clearPatientSearch()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="search-suggestions" id="patient-search-suggestions"></div>
                 </div>
+                
+                <div class="search-results-count" id="patient-search-results" style="display: none;"></div>
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>

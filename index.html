@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/themes.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script type="module" src="js/three-video-background.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -36,6 +36,7 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <div id="video-background"></div>
         <div class="hero-content">
             <div class="hero-text">
                 <h1>Your Health, Our Priority</h1>
@@ -194,6 +195,7 @@
     </footer>
 
     <script src="js/theme-manager.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script>
         // Check authentication on page load and redirect if logged in
@@ -225,6 +227,14 @@
             // Initialize back to top button
             if (typeof initializeBackToTop === 'function') {
                 initializeBackToTop();
+            }
+            
+            // Initialize Three.js video background
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
             }
         });
     </script>

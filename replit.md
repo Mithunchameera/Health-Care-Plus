@@ -102,6 +102,17 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 17, 2025: Redesigned search boxes across all dashboards with enhanced functionality
+  - Implemented modern rounded search styling with focus animations and hover effects
+  - Added autocomplete suggestions dropdown with real-time filtering
+  - Enhanced search functionality with clear buttons and search result counters
+  - Integrated search term highlighting in results with yellow background
+  - Admin dashboard: Enhanced doctor and appointment search with specialty filtering
+  - Patient dashboard: Improved doctor search with location and availability filters
+  - Doctor dashboard: Redesigned patient search with enhanced suggestions and clearing
+  - All search boxes now support keyboard navigation (Escape to clear, Enter to execute)
+  - Mobile-responsive design with touch-friendly controls and proper input sizing
+
 - June 17, 2025: Recreated admin dashboard pages with complete functionality overhaul
   - Fixed JavaScript error by removing undefined setupFormHandlers method
   - Complete redesign of admin dashboard interface with professional styling

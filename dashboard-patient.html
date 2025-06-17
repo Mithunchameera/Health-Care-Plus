@@ -820,6 +820,101 @@
             color: white;
         }
 
+        /* Enhanced Search Styling */
+        .enhanced-search {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .enhanced-search .search-input {
+            padding: 12px 45px 12px 45px;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-search .search-input:focus {
+            box-shadow: 0 4px 15px rgba(51, 122, 183, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .enhanced-search .search-input:focus ~ .search-icon {
+            color: var(--primary-color);
+        }
+
+        .enhanced-search .search-input::placeholder {
+            font-style: italic;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        .search-clear:hover {
+            color: var(--primary-color);
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-suggestion {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease;
+        }
+
+        .search-suggestion:hover {
+            background: var(--primary-color-light);
+        }
+
+        .search-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .search-results-count {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .search-highlight {
+            background: rgba(255, 193, 7, 0.3);
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
         .booking-search {
             margin-bottom: 2rem;
         }
@@ -1586,12 +1681,13 @@
                 <!-- Search and Filter Bar -->
                 <div class="search-filters">
                     <div class="search-container">
-                        <div class="search-field">
-                            <input type="text" id="doctor-search" placeholder="Search by doctor name..." class="search-input">
-                            <button type="button" class="search-btn" onclick="searchDoctors()">
-                                <i class="fas fa-search"></i>
-                                <span>Search</span>
+                        <div class="search-field enhanced-search">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="doctor-search" placeholder="Search by doctor name, specialty, or location..." class="search-input">
+                            <button type="button" class="search-clear" onclick="clearDoctorSearch()" style="display: none;">
+                                <i class="fas fa-times"></i>
                             </button>
+                            <div class="search-suggestions" id="doctor-search-suggestions"></div>
                         </div>
                     </div>
                     

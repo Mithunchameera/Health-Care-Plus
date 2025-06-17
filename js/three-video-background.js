@@ -3,7 +3,7 @@
  * Creates animated medical-themed 3D background with theme awareness
  */
 
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+// Three.js will be loaded from CDN in the HTML file
 
 class HealthcareVideoBackground {
     constructor(container) {
