@@ -5899,6 +5899,345 @@ select:not(.input-group select) {
     to { height: 12px; }
 }
 
+/* Enhanced Search Clear Button Styles */
+.search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-clear:hover {
+    color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.1);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-clear:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Search bar with integrated clear button */
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    padding-right: 50px;
+}
+
+.search-bar .search-clear {
+    right: 15px;
+}
+
+/* Enhanced search field styles */
+.search-field {
+    position: relative;
+}
+
+.search-field input {
+    padding-right: 45px;
+}
+
+.enhanced-search {
+    position: relative;
+}
+
+.enhanced-search input {
+    padding-right: 45px;
+}
+
+.booking-search .search-field {
+    position: relative;
+}
+
+.booking-search .search-field input {
+    padding-right: 45px;
+}
+
+/* Patient Details Modal Styles */
+.modal-content.large-modal {
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+}
+
+.patient-details-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.patient-info-card {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.patient-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+}
+
+.patient-basic-info h4 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.patient-basic-info p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.patient-details-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.patient-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.tab-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-button:hover {
+    color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.medical-record-item {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.record-type {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.record-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.record-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.record-description {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.appointment-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.appointment-date-time {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.appointment-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.appointment-status.completed {
+    background: var(--success-color);
+    color: white;
+}
+
+.appointment-status.cancelled {
+    background: var(--error-color);
+    color: white;
+}
+
+.appointment-status.scheduled {
+    background: var(--warning-color);
+    color: white;
+}
+
+.vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.vital-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.vital-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.vital-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.vital-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.add-record-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.add-record-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .patient-details-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .patient-details-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .patient-tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .patient-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .vitals-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .modal-header-modern h2 {
     font-size: 1.8rem;
     font-weight: 700;

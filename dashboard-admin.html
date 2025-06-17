@@ -756,6 +756,10 @@
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
                         <input type="text" id="patient-search" placeholder="Search patients..." class="form-control">
+                        <button type="button" class="search-clear" onclick="adminDashboard.clearPatientSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="search-suggestions" id="patient-search-suggestions"></div>
                     </div>
                 </div>
 
@@ -786,6 +790,10 @@
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
                         <input type="text" id="staff-search" placeholder="Search staff..." class="form-control">
+                        <button type="button" class="search-clear" onclick="adminDashboard.clearStaffSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="search-suggestions" id="staff-search-suggestions"></div>
                     </div>
                     <button class="btn btn-primary" onclick="adminDashboard.openAddStaffModal()">
                         <i class="fas fa-plus"></i> Add Staff

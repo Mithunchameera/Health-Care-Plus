@@ -778,6 +778,23 @@ class PatientDashboard {
         this.hideSearchResults();
     }
 
+    clearBookingDoctorSearch() {
+        const searchInput = document.getElementById('booking-doctor-search');
+        const clearBtn = searchInput?.parentElement.querySelector('.search-clear');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
+        
+        // Reset booking doctors display
+        if (this.bookingDoctors) {
+            this.displayBookingDoctors(this.bookingDoctors);
+        }
+    }
+
     setupEnhancedSearch() {
         const searchInput = document.getElementById('doctor-search');
         const clearBtn = document.querySelector('.search-clear');

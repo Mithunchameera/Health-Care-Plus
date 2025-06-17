@@ -18,6 +18,12 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 if ($action === 'get_doctors') {
     // Allow public access to doctors list for booking purposes
     $currentUser = null;
+} elseif (in_array($action, ['get_patient_details', 'get_medical_records', 'add_medical_record'])) {
+    // Allow doctors and admin to access patient details
+    $currentUser = checkUserAuth(['doctor', 'admin']);
+    if (!$currentUser) {
+        sendResponse(['error' => 'Authentication required'], 401);
+    }
 } else {
     // Require authentication for other patient actions
     $currentUser = checkUserAuth(['patient']);
@@ -66,6 +72,15 @@ class PatientAPI {
                 break;
             case 'update_profile':
                 $this->updateProfile();
+                break;
+            case 'get_patient_details':
+                $this->getPatientDetails();
+                break;
+            case 'get_medical_records':
+                $this->getMedicalRecords();
+                break;
+            case 'add_medical_record':
+                $this->addMedicalRecord();
                 break;
             default:
                 sendResponse(['error' => 'Invalid action'], 400);
@@ -404,6 +419,129 @@ class PatientAPI {
         } catch (Exception $e) {
             logError("Update profile error: " . $e->getMessage());
             sendResponse(['error' => 'Failed to update profile'], 500);
+        }
+    }
+
+    private function getPatientDetails() {
+        try {
+            $patientId = $_GET['patient_id'] ?? null;
+            
+            if (!$patientId) {
+                sendResponse(['error' => 'Patient ID required'], 400);
+                return;
+            }
+            
+            // Get patient data from mock storage
+            $patient = $this->mockStorage->getPatientById($patientId);
+            
+            if (!$patient) {
+                sendResponse(['error' => 'Patient not found'], 404);
+                return;
+            }
+            
+            // Add additional mock patient details
+            $patient['blood_type'] = $patient['blood_type'] ?? ['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'][array_rand(['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'])];
+            $patient['emergency_contact'] = $patient['emergency_contact'] ?? '+1 (555) ' . rand(100, 999) . '-' . rand(1000, 9999);
+            $patient['heart_rate'] = rand(60, 100);
+            $patient['temperature'] = number_format(rand(968, 990) / 10, 1);
+            $patient['blood_pressure'] = rand(110, 140) . '/' . rand(70, 90);
+            $patient['weight'] = rand(50, 100);
+            $patient['height'] = rand(150, 190);
+            $patient['oxygen_saturation'] = rand(95, 100);
+            
+            sendResponse([
+                'success' => true,
+                'patient' => $patient
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get patient details error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load patient details'], 500);
+        }
+    }
+
+    private function getMedicalRecords() {
+        try {
+            $patientId = $_GET['patient_id'] ?? null;
+            
+            if (!$patientId) {
+                sendResponse(['error' => 'Patient ID required'], 400);
+                return;
+            }
+            
+            // Generate mock medical records
+            $records = [
+                [
+                    'id' => 1,
+                    'type' => 'diagnosis',
+                    'title' => 'Hypertension',
+                    'description' => 'Patient diagnosed with mild hypertension. Recommended lifestyle changes and monitoring.',
+                    'date' => date('Y-m-d H:i:s', strtotime('-2 months')),
+                    'doctor_id' => 1
+                ],
+                [
+                    'id' => 2,
+                    'type' => 'prescription',
+                    'title' => 'Lisinopril 10mg',
+                    'description' => 'Take one tablet daily for blood pressure management. Monitor for side effects.',
+                    'date' => date('Y-m-d H:i:s', strtotime('-2 months')),
+                    'doctor_id' => 1
+                ],
+                [
+                    'id' => 3,
+                    'type' => 'lab_result',
+                    'title' => 'Blood Panel Complete',
+                    'description' => 'Cholesterol: 195 mg/dL, Glucose: 98 mg/dL, All values within normal range.',
+                    'date' => date('Y-m-d H:i:s', strtotime('-1 month')),
+                    'doctor_id' => 1
+                ],
+                [
+                    'id' => 4,
+                    'type' => 'note',
+                    'title' => 'Follow-up Consultation',
+                    'description' => 'Patient reports feeling better. Blood pressure stable. Continue current medication.',
+                    'date' => date('Y-m-d H:i:s', strtotime('-2 weeks')),
+                    'doctor_id' => 1
+                ]
+            ];
+            
+            sendResponse([
+                'success' => true,
+                'records' => $records
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Get medical records error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to load medical records'], 500);
+        }
+    }
+
+    private function addMedicalRecord() {
+        try {
+            $patientId = $_POST['patient_id'] ?? null;
+            $type = $_POST['type'] ?? null;
+            $title = $_POST['title'] ?? null;
+            $description = $_POST['description'] ?? null;
+            $date = $_POST['date'] ?? null;
+            
+            if (!$patientId || !$type || !$title || !$description || !$date) {
+                sendResponse(['error' => 'All fields are required'], 400);
+                return;
+            }
+            
+            // In a real application, this would save to database
+            // For mock purposes, we'll just return success
+            $recordId = rand(1000, 9999);
+            
+            sendResponse([
+                'success' => true,
+                'message' => 'Medical record added successfully',
+                'record_id' => $recordId
+            ]);
+            
+        } catch (Exception $e) {
+            logError("Add medical record error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to add medical record'], 500);
         }
     }
 }

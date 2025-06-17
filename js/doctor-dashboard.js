@@ -190,6 +190,12 @@ class DoctorDashboard {
 
         // Initialize enhanced patient search functionality
         this.setupEnhancedPatientSearch();
+        
+        // Add medical record form
+        const addRecordForm = document.getElementById('add-record-form');
+        if (addRecordForm) {
+            addRecordForm.addEventListener('submit', this.handleAddMedicalRecord.bind(this));
+        }
     }
 
     setupSidebarNavigation() {
@@ -463,7 +469,9 @@ class DoctorDashboard {
                 <td>${patient.last_visit || 'Never'}</td>
                 <td>${patient.total_visits || 0}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="doctorDashboard.viewPatientHistory(${patient.id})">View History</button>
+                    <button class="btn btn-sm btn-primary" onclick="doctorDashboard.viewPatientDetails(${patient.id})">
+                        <i class="fas fa-user-circle"></i> View Details
+                    </button>
                 </td>
             </tr>
         `).join('');
@@ -1111,26 +1119,248 @@ class DoctorDashboard {
         }
     }
 
-    // Patient History Methods
-    async viewPatientHistory(patientId) {
+    // Patient Details Methods
+    async viewPatientDetails(patientId) {
         try {
             this.currentPatientId = patientId;
-            document.getElementById('patient-history-modal').style.display = 'block';
+            document.getElementById('patient-details-modal').style.display = 'block';
             
-            const response = await fetch(`php/patient-history-api.php?action=get_patient_history&patient_id=${patientId}`);
+            // Load comprehensive patient data
+            const [patientResponse, historyResponse, recordsResponse] = await Promise.all([
+                fetch(`php/patient-api.php?action=get_patient_details&patient_id=${patientId}`),
+                fetch(`php/patient-history-api.php?action=get_patient_history&patient_id=${patientId}`),
+                fetch(`php/patient-api.php?action=get_medical_records&patient_id=${patientId}`)
+            ]);
+            
+            const patientData = await patientResponse.json();
+            const historyData = await historyResponse.json();
+            const recordsData = await recordsResponse.json();
+            
+            if (patientData.success && historyData.success) {
+                this.displayPatientDetails(patientData.patient, historyData.history, recordsData.records || []);
+                this.setupPatientDetailsTabs();
+            } else {
+                this.showNotification('Failed to load patient details', 'error');
+                this.closeModal('patient-details-modal');
+            }
+        } catch (error) {
+            console.error('Error loading patient details:', error);
+            this.showNotification('Error loading patient details', 'error');
+            this.closeModal('patient-details-modal');
+        }
+    }
+
+    displayPatientDetails(patient, history, records) {
+        const content = document.getElementById('patient-details-content');
+        const age = this.calculateAge(patient.date_of_birth);
+        
+        content.innerHTML = `
+            <div class="patient-details-container">
+                <div class="patient-info-card">
+                    <div class="patient-avatar">
+                        ${patient.full_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="patient-basic-info">
+                        <h4>${patient.full_name}</h4>
+                        <p><i class="fas fa-birthday-cake"></i> ${age} years old</p>
+                        <p><i class="fas fa-envelope"></i> ${patient.email}</p>
+                        <p><i class="fas fa-phone"></i> ${patient.phone}</p>
+                    </div>
+                    
+                    <div class="patient-details-info">
+                        <div class="info-item">
+                            <span class="info-label">Patient ID</span>
+                            <span class="info-value">#${patient.id}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Blood Type</span>
+                            <span class="info-value">${patient.blood_type || 'Not specified'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Address</span>
+                            <span class="info-value">${patient.address || 'Not provided'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Emergency Contact</span>
+                            <span class="info-value">${patient.emergency_contact || 'Not provided'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="patient-details-main">
+                    <div class="patient-tabs">
+                        <button class="tab-button active" data-tab="appointments">
+                            <i class="fas fa-calendar-alt"></i> Appointments
+                        </button>
+                        <button class="tab-button" data-tab="records">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </button>
+                        <button class="tab-button" data-tab="prescriptions">
+                            <i class="fas fa-pills"></i> Prescriptions
+                        </button>
+                        <button class="tab-button" data-tab="vitals">
+                            <i class="fas fa-heartbeat"></i> Vitals
+                        </button>
+                    </div>
+                    
+                    <div id="appointments-tab" class="tab-content active">
+                        ${this.renderAppointmentHistory(history)}
+                    </div>
+                    
+                    <div id="records-tab" class="tab-content">
+                        ${this.renderMedicalRecords(records)}
+                    </div>
+                    
+                    <div id="prescriptions-tab" class="tab-content">
+                        ${this.renderPrescriptions(records.filter(r => r.type === 'prescription'))}
+                    </div>
+                    
+                    <div id="vitals-tab" class="tab-content">
+                        ${this.renderVitals(patient)}
+                    </div>
+                </div>
+            </div>
+            
+            <button class="add-record-btn" onclick="doctorDashboard.openAddRecordModal()">
+                <i class="fas fa-plus"></i>
+            </button>
+        `;
+    }
+
+    renderAppointmentHistory(appointments) {
+        if (!appointments.length) {
+            return '<p class="text-center text-muted">No appointment history found.</p>';
+        }
+
+        return appointments.map(apt => `
+            <div class="appointment-history-item">
+                <div>
+                    <div class="appointment-date-time">
+                        ${this.formatAppointmentDate(apt.date, apt.time)}
+                    </div>
+                    <div class="text-muted">${apt.reason || 'General consultation'}</div>
+                </div>
+                <span class="appointment-status ${apt.status}">
+                    ${this.capitalizeFirst(apt.status)}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    renderMedicalRecords(records) {
+        if (!records.length) {
+            return '<p class="text-center text-muted">No medical records found.</p>';
+        }
+
+        return records.map(record => `
+            <div class="medical-record-item">
+                <div class="record-header">
+                    <span class="record-type">${this.capitalizeFirst(record.type)}</span>
+                    <span class="record-date">${new Date(record.date).toLocaleDateString()}</span>
+                </div>
+                <div class="record-title">${record.title}</div>
+                <div class="record-description">${record.description}</div>
+            </div>
+        `).join('');
+    }
+
+    renderPrescriptions(prescriptions) {
+        if (!prescriptions.length) {
+            return '<p class="text-center text-muted">No prescriptions found.</p>';
+        }
+
+        return prescriptions.map(prescription => `
+            <div class="medical-record-item">
+                <div class="record-header">
+                    <span class="record-type">Prescription</span>
+                    <span class="record-date">${new Date(prescription.date).toLocaleDateString()}</span>
+                </div>
+                <div class="record-title">${prescription.title}</div>
+                <div class="record-description">${prescription.description}</div>
+            </div>
+        `).join('');
+    }
+
+    renderVitals(patient) {
+        const vitals = [
+            { icon: 'fas fa-heartbeat', value: patient.heart_rate || '--', label: 'Heart Rate (bpm)' },
+            { icon: 'fas fa-thermometer-half', value: patient.temperature || '--', label: 'Temperature (°F)' },
+            { icon: 'fas fa-tachometer-alt', value: patient.blood_pressure || '--', label: 'Blood Pressure' },
+            { icon: 'fas fa-weight', value: patient.weight || '--', label: 'Weight (kg)' },
+            { icon: 'fas fa-ruler-vertical', value: patient.height || '--', label: 'Height (cm)' },
+            { icon: 'fas fa-lungs', value: patient.oxygen_saturation || '--', label: 'Oxygen Saturation (%)' }
+        ];
+
+        return `
+            <div class="vitals-grid">
+                ${vitals.map(vital => `
+                    <div class="vital-card">
+                        <div class="vital-icon">
+                            <i class="${vital.icon}"></i>
+                        </div>
+                        <div class="vital-value">${vital.value}</div>
+                        <div class="vital-label">${vital.label}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    setupPatientDetailsTabs() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Remove active class from all tabs
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to selected tab
+                button.classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
+    }
+
+    openAddRecordModal() {
+        document.getElementById('record-patient-id').value = this.currentPatientId;
+        document.getElementById('record-date').value = new Date().toISOString().slice(0, 16);
+        document.getElementById('add-record-modal').style.display = 'block';
+    }
+
+    async handleAddMedicalRecord(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('action', 'add_medical_record');
+        formData.append('patient_id', document.getElementById('record-patient-id').value);
+        formData.append('type', document.getElementById('record-type').value);
+        formData.append('title', document.getElementById('record-title').value);
+        formData.append('description', document.getElementById('record-description').value);
+        formData.append('date', document.getElementById('record-date').value);
+
+        try {
+            const response = await fetch('php/patient-api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
             const data = await response.json();
             
             if (data.success) {
-                this.displayPatientHistory(data.history);
-                this.setupHistoryTabs();
+                this.showNotification('Medical record added successfully', 'success');
+                this.closeModal('add-record-modal');
+                // Refresh patient details
+                this.viewPatientDetails(this.currentPatientId);
             } else {
-                this.showNotification('Failed to load patient history', 'error');
-                this.closeModal('patient-history-modal');
+                this.showNotification(data.error || 'Failed to add medical record', 'error');
             }
         } catch (error) {
-            console.error('Error loading patient history:', error);
-            this.showNotification('Error loading patient history', 'error');
-            this.closeModal('patient-history-modal');
+            console.error('Error adding medical record:', error);
+            this.showNotification('Error adding medical record', 'error');
         }
     }
 

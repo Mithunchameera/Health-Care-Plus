@@ -650,6 +650,62 @@ class AdminDashboard {
         this.hideSearchResults('doctor-search-results');
     }
 
+    clearPatientSearch() {
+        const searchInput = document.getElementById('patient-search');
+        const searchBar = searchInput?.closest('.search-bar');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (searchBar) {
+            searchBar.classList.remove('has-text');
+        }
+        
+        this.hideSuggestions('patient-search-suggestions');
+        this.displayPatients(this.patients);
+        this.hideSearchResults('patient-search-results');
+    }
+
+    clearStaffSearch() {
+        const searchInput = document.getElementById('staff-search');
+        const searchBar = searchInput?.closest('.search-bar');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (searchBar) {
+            searchBar.classList.remove('has-text');
+        }
+        
+        this.hideSuggestions('staff-search-suggestions');
+        this.displayStaff(this.staff);
+        this.hideSearchResults('staff-search-results');
+    }
+
+    clearAppointmentSearch() {
+        const searchInput = document.getElementById('appointment-search');
+        const statusFilter = document.getElementById('appointment-status-filter');
+        const dateFilter = document.getElementById('appointment-date-filter');
+        const searchBar = searchInput?.closest('.search-bar');
+        
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        if (statusFilter) {
+            statusFilter.value = '';
+        }
+        if (dateFilter) {
+            dateFilter.value = '';
+        }
+        if (searchBar) {
+            searchBar.classList.remove('has-text');
+        }
+        
+        this.hideSuggestions('appointment-search-suggestions');
+        this.displayAppointments(this.appointments);
+        this.hideSearchResults('appointment-search-results');
+    }
+
     setupSearchListeners() {
         // Doctor search
         const doctorSearch = document.getElementById('doctor-search');
