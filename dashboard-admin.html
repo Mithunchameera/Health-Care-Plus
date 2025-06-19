@@ -489,6 +489,196 @@
             cursor: pointer;
         }
         
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-color);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .modal-form {
+            padding: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .photo-upload-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .photo-preview {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: var(--bg-color);
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .photo-preview:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .photo-preview i {
+            font-size: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .photo-preview.has-image {
+            padding: 0;
+            border-style: solid;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-secondary);
+        }
+
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: block;
@@ -497,6 +687,23 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: 280px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-form {
+                padding: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
             }
             
             .sidebar.active {
@@ -518,7 +725,7 @@
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -622,10 +829,15 @@
                 <div class="content-section">
                     <h2><i class="fas fa-bolt section-icon"></i>Quick Actions</h2>
                     <div class="quick-actions">
-                        <div class="action-card" onclick="adminDashboard.showSection('doctors')">
+                        <div class="action-card" onclick="adminDashboard.openAddDoctorModal()">
                             <i class="fas fa-plus-circle"></i>
                             <h4>Add Doctor</h4>
                             <p>Register a new doctor</p>
+                        </div>
+                        <div class="action-card" onclick="adminDashboard.openAddStaffModal()">
+                            <i class="fas fa-user-plus"></i>
+                            <h4>Add Staff</h4>
+                            <p>Register new staff member</p>
                         </div>
                         <div class="action-card" onclick="adminDashboard.showSection('appointments')">
                             <i class="fas fa-calendar-plus"></i>
@@ -636,11 +848,6 @@
                             <i class="fas fa-chart-line"></i>
                             <h4>Generate Report</h4>
                             <p>Create system reports</p>
-                        </div>
-                        <div class="action-card" onclick="adminDashboard.showSection('settings')">
-                            <i class="fas fa-cog"></i>
-                            <h4>System Settings</h4>
-                            <p>Configure system</p>
                         </div>
                     </div>
                 </div>
@@ -882,6 +1089,204 @@
                 </form>
             </section>
         </main>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="add-doctor-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
+                <button class="modal-close" onclick="adminDashboard.closeModal('add-doctor-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-doctor-form" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctor-first-name">First Name *</label>
+                        <input type="text" id="doctor-first-name" name="first_name" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-last-name">Last Name *</label>
+                        <input type="text" id="doctor-last-name" name="last_name" required class="form-control">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctor-email">Email Address *</label>
+                        <input type="email" id="doctor-email" name="email" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-phone">Phone Number *</label>
+                        <input type="tel" id="doctor-phone" name="phone" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctor-specialty">Specialty *</label>
+                        <select id="doctor-specialty" name="specialty" required class="form-control">
+                            <option value="">Select Specialty</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="neurology">Neurology</option>
+                            <option value="pediatrics">Pediatrics</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="dermatology">Dermatology</option>
+                            <option value="psychiatry">Psychiatry</option>
+                            <option value="general">General Medicine</option>
+                            <option value="gynecology">Gynecology</option>
+                            <option value="urology">Urology</option>
+                            <option value="oncology">Oncology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-experience">Years of Experience *</label>
+                        <input type="number" id="doctor-experience" name="experience" min="0" max="50" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctor-license">License Number *</label>
+                        <input type="text" id="doctor-license" name="license_number" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-fee">Consultation Fee ($) *</label>
+                        <input type="number" id="doctor-fee" name="consultation_fee" min="0" step="0.01" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor-education">Education</label>
+                    <textarea id="doctor-education" name="education" class="form-control" placeholder="Medical degree, certifications, etc."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor-bio">Biography</label>
+                    <textarea id="doctor-bio" name="bio" class="form-control" placeholder="Professional background and expertise"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor-profile-photo">Profile Photo</label>
+                    <div class="photo-upload-container">
+                        <input type="file" id="doctor-profile-photo" name="profile_photo" accept="image/*" class="file-input">
+                        <div class="photo-preview" id="doctor-photo-preview">
+                            <i class="fas fa-camera"></i>
+                            <span>Click to upload photo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="adminDashboard.closeModal('add-doctor-modal')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add Doctor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Staff Modal -->
+    <div id="add-staff-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-tie"></i> Add New Staff Member</h3>
+                <button class="modal-close" onclick="adminDashboard.closeModal('add-staff-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-staff-form" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="staff-first-name">First Name *</label>
+                        <input type="text" id="staff-first-name" name="first_name" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-last-name">Last Name *</label>
+                        <input type="text" id="staff-last-name" name="last_name" required class="form-control">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="staff-email">Email Address *</label>
+                        <input type="email" id="staff-email" name="email" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-phone">Phone Number *</label>
+                        <input type="tel" id="staff-phone" name="phone" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="staff-role">Role *</label>
+                        <select id="staff-role" name="role" required class="form-control">
+                            <option value="">Select Role</option>
+                            <option value="receptionist">Receptionist</option>
+                            <option value="nurse">Nurse</option>
+                            <option value="technician">Medical Technician</option>
+                            <option value="administrator">Administrator</option>
+                            <option value="pharmacist">Pharmacist</option>
+                            <option value="therapist">Therapist</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-department">Department *</label>
+                        <select id="staff-department" name="department" required class="form-control">
+                            <option value="">Select Department</option>
+                            <option value="administration">Administration</option>
+                            <option value="nursing">Nursing</option>
+                            <option value="laboratory">Laboratory</option>
+                            <option value="pharmacy">Pharmacy</option>
+                            <option value="radiology">Radiology</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="outpatient">Outpatient</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="staff-employee-id">Employee ID *</label>
+                        <input type="text" id="staff-employee-id" name="employee_id" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-hire-date">Hire Date *</label>
+                        <input type="date" id="staff-hire-date" name="hire_date" required class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="staff-qualifications">Qualifications</label>
+                    <textarea id="staff-qualifications" name="qualifications" class="form-control" placeholder="Certifications, degrees, and qualifications"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="staff-profile-photo">Profile Photo</label>
+                    <div class="photo-upload-container">
+                        <input type="file" id="staff-profile-photo" name="profile_photo" accept="image/*" class="file-input">
+                        <div class="photo-preview" id="staff-photo-preview">
+                            <i class="fas fa-camera"></i>
+                            <span>Click to upload photo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="adminDashboard.closeModal('add-staff-modal')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add Staff Member
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="js/theme-manager.js"></script>

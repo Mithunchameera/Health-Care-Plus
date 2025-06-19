@@ -32,9 +32,18 @@ class AdminAPI {
     
     public function handleRequest() {
         $method = $_SERVER['REQUEST_METHOD'];
-        $action = $_GET['action'] ?? $_POST['action'] ?? '';
+        
+        // Handle JSON requests
+        $input = json_decode(file_get_contents('php://input'), true);
+        $action = $input['action'] ?? $_GET['action'] ?? $_POST['action'] ?? '';
         
         switch ($action) {
+            case 'create_doctor':
+                $this->createDoctor($input);
+                break;
+            case 'create_staff':
+                $this->createStaff($input);
+                break;
             case 'get_stats':
                 $this->getSystemStats();
                 break;
@@ -1063,6 +1072,231 @@ class AdminAPI {
             
         } catch (Exception $e) {
             logError("Failed to log activity: " . $e->getMessage());
+        }
+    }
+
+    private function createDoctor($input) {
+        try {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
+                sendResponse(['error' => 'Insufficient permissions'], 403);
+                return;
+            }
+
+            // Validate input data
+            $errors = [];
+            
+            if (empty($input['first_name'])) {
+                $errors[] = 'First name is required';
+            }
+            
+            if (empty($input['last_name'])) {
+                $errors[] = 'Last name is required';
+            }
+            
+            if (empty($input['email']) || !filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Valid email is required';
+            }
+            
+            if (empty($input['phone'])) {
+                $errors[] = 'Phone number is required';
+            }
+            
+            if (empty($input['specialty'])) {
+                $errors[] = 'Specialty is required';
+            }
+            
+            if (empty($input['license_number'])) {
+                $errors[] = 'License number is required';
+            }
+            
+            if (empty($input['consultation_fee']) || !is_numeric($input['consultation_fee'])) {
+                $errors[] = 'Valid consultation fee is required';
+            }
+
+            if (!empty($errors)) {
+                sendResponse(['error' => implode(', ', $errors)], 400);
+                return;
+            }
+
+            // Check if email already exists
+            $existingUser = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$input['email']]);
+            if ($existingUser) {
+                sendResponse(['error' => 'Email already exists'], 400);
+                return;
+            }
+
+            // Create user account
+            $this->db->beginTransaction();
+
+            $username = strtolower($input['first_name'] . '.' . $input['last_name']);
+            $defaultPassword = 'Doctor@' . date('Y');
+
+            $userSql = "INSERT INTO users (username, email, password_hash, role, first_name, last_name, phone, is_active) 
+                        VALUES (?, ?, ?, 'doctor', ?, ?, ?, true)";
+            
+            $userId = $this->db->insert($userSql, [
+                $username,
+                $input['email'],
+                password_hash($defaultPassword, PASSWORD_DEFAULT),
+                $input['first_name'],
+                $input['last_name'],
+                $input['phone']
+            ]);
+
+            // Create doctor record
+            $doctorSql = "INSERT INTO doctors (user_id, specialty, license_number, experience_years, consultation_fee, education, bio, is_available) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?, true)";
+            
+            $doctorId = $this->db->insert($doctorSql, [
+                $userId,
+                $input['specialty'],
+                $input['license_number'],
+                intval($input['experience'] ?? 0),
+                floatval($input['consultation_fee']),
+                $input['education'] ?? '',
+                $input['bio'] ?? ''
+            ]);
+
+            $this->db->commit();
+
+            // Log activity
+            $this->logActivity([
+                'action' => 'doctor_added',
+                'description' => "New doctor {$input['first_name']} {$input['last_name']} added",
+                'user_id' => $this->currentUser['id'],
+                'target_id' => $userId
+            ]);
+
+            sendResponse([
+                'success' => true,
+                'message' => 'Doctor added successfully',
+                'doctor_id' => $doctorId,
+                'user_id' => $userId,
+                'default_password' => $defaultPassword
+            ]);
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Create doctor error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to create doctor'], 500);
+        }
+    }
+
+    private function createStaff($input) {
+        try {
+            // Admin permission check
+            if ($this->currentUser['role'] !== 'admin') {
+                sendResponse(['error' => 'Insufficient permissions'], 403);
+                return;
+            }
+
+            // Validate input data
+            $errors = [];
+            
+            if (empty($input['first_name'])) {
+                $errors[] = 'First name is required';
+            }
+            
+            if (empty($input['last_name'])) {
+                $errors[] = 'Last name is required';
+            }
+            
+            if (empty($input['email']) || !filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Valid email is required';
+            }
+            
+            if (empty($input['phone'])) {
+                $errors[] = 'Phone number is required';
+            }
+            
+            if (empty($input['role'])) {
+                $errors[] = 'Role is required';
+            }
+            
+            if (empty($input['department'])) {
+                $errors[] = 'Department is required';
+            }
+            
+            if (empty($input['employee_id'])) {
+                $errors[] = 'Employee ID is required';
+            }
+
+            if (!empty($errors)) {
+                sendResponse(['error' => implode(', ', $errors)], 400);
+                return;
+            }
+
+            // Check if email already exists
+            $existingUser = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$input['email']]);
+            if ($existingUser) {
+                sendResponse(['error' => 'Email already exists'], 400);
+                return;
+            }
+
+            // Create user account
+            $this->db->beginTransaction();
+
+            $username = strtolower($input['first_name'] . '.' . $input['last_name']);
+            $defaultPassword = 'Staff@' . date('Y');
+
+            $userSql = "INSERT INTO users (username, email, password_hash, role, first_name, last_name, phone, is_active) 
+                        VALUES (?, ?, ?, 'staff', ?, ?, ?, true)";
+            
+            $userId = $this->db->insert($userSql, [
+                $username,
+                $input['email'],
+                password_hash($defaultPassword, PASSWORD_DEFAULT),
+                $input['first_name'],
+                $input['last_name'],
+                $input['phone']
+            ]);
+
+            // Create staff table if it doesn't exist
+            $this->db->query("CREATE TABLE IF NOT EXISTS staff (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                department VARCHAR(100),
+                employee_id VARCHAR(50) UNIQUE,
+                hire_date DATE,
+                qualifications TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            // Create staff record
+            $staffSql = "INSERT INTO staff (user_id, department, employee_id, hire_date, qualifications) 
+                         VALUES (?, ?, ?, ?, ?)";
+            
+            $staffId = $this->db->insert($staffSql, [
+                $userId,
+                $input['department'],
+                $input['employee_id'],
+                $input['hire_date'] ?? date('Y-m-d'),
+                $input['qualifications'] ?? ''
+            ]);
+
+            $this->db->commit();
+
+            // Log activity
+            $this->logActivity([
+                'action' => 'staff_added',
+                'description' => "New staff member {$input['first_name']} {$input['last_name']} added",
+                'user_id' => $this->currentUser['id'],
+                'target_id' => $userId
+            ]);
+
+            sendResponse([
+                'success' => true,
+                'message' => 'Staff member added successfully',
+                'staff_id' => $staffId,
+                'user_id' => $userId,
+                'default_password' => $defaultPassword
+            ]);
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Create staff error: " . $e->getMessage());
+            sendResponse(['error' => 'Failed to create staff member'], 500);
         }
     }
 }

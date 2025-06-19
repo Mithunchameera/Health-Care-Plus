@@ -154,7 +154,10 @@ class AdminDashboard {
                 
                 // Close mobile sidebar
                 if (window.innerWidth <= 768) {
-                    document.getElementById('sidebar').classList.remove('active');
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        sidebar.classList.remove('active');
+                    }
                 }
             });
         });
@@ -173,6 +176,13 @@ class AdminDashboard {
         if (targetSection) {
             targetSection.style.display = 'block';
             targetSection.classList.add('active');
+        } else {
+            // If section doesn't exist, show dashboard
+            const dashboardSection = document.getElementById('dashboard-section');
+            if (dashboardSection) {
+                dashboardSection.style.display = 'block';
+                dashboardSection.classList.add('active');
+            }
         }
         
         // Load section-specific data
@@ -954,11 +964,171 @@ class AdminDashboard {
 
     // Modal and action methods
     openAddDoctorModal() {
-        this.showNotification('Add Doctor feature coming soon', 'info');
+        const modal = document.getElementById('add-doctor-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            this.setupPhotoUpload('doctor-profile-photo', 'doctor-photo-preview');
+            this.setupAddDoctorForm();
+        }
     }
 
     openAddStaffModal() {
-        this.showNotification('Add Staff feature coming soon', 'info');
+        const modal = document.getElementById('add-staff-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            this.setupPhotoUpload('staff-profile-photo', 'staff-photo-preview');
+            this.setupAddStaffForm();
+        }
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            // Reset form
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+                // Reset photo preview
+                const photoPreview = modal.querySelector('.photo-preview');
+                if (photoPreview) {
+                    photoPreview.innerHTML = '<i class="fas fa-camera"></i><span>Click to upload photo</span>';
+                    photoPreview.classList.remove('has-image');
+                }
+            }
+        }
+    }
+
+    setupPhotoUpload(inputId, previewId) {
+        const fileInput = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        
+        if (fileInput && preview) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Profile Photo">`;
+                        preview.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Click to upload functionality
+            preview.addEventListener('click', () => {
+                fileInput.click();
+            });
+        }
+    }
+
+    setupAddDoctorForm() {
+        const form = document.getElementById('add-doctor-form');
+        if (form) {
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.handleAddDoctor(form);
+            };
+        }
+    }
+
+    setupAddStaffForm() {
+        const form = document.getElementById('add-staff-form');
+        if (form) {
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.handleAddStaff(form);
+            };
+        }
+    }
+
+    async handleAddDoctor(form) {
+        try {
+            const formData = new FormData(form);
+            
+            // Create user account first
+            const userData = {
+                action: 'create_doctor',
+                first_name: formData.get('first_name'),
+                last_name: formData.get('last_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                specialty: formData.get('specialty'),
+                experience: formData.get('experience'),
+                license_number: formData.get('license_number'),
+                consultation_fee: formData.get('consultation_fee'),
+                education: formData.get('education'),
+                bio: formData.get('bio')
+            };
+
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.showNotification('Doctor added successfully!', 'success');
+                this.closeModal('add-doctor-modal');
+                // Refresh doctors list if we're on that section
+                if (document.getElementById('doctors-section').style.display !== 'none') {
+                    this.loadDoctors();
+                }
+            } else {
+                this.showNotification(result.error || 'Failed to add doctor', 'error');
+            }
+        } catch (error) {
+            console.error('Add doctor failed:', error);
+            this.showNotification('Failed to add doctor', 'error');
+        }
+    }
+
+    async handleAddStaff(form) {
+        try {
+            const formData = new FormData(form);
+            
+            const staffData = {
+                action: 'create_staff',
+                first_name: formData.get('first_name'),
+                last_name: formData.get('last_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                role: formData.get('role'),
+                department: formData.get('department'),
+                employee_id: formData.get('employee_id'),
+                hire_date: formData.get('hire_date'),
+                qualifications: formData.get('qualifications')
+            };
+
+            const response = await fetch('php/admin-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(staffData)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.showNotification('Staff member added successfully!', 'success');
+                this.closeModal('add-staff-modal');
+                // Refresh staff list if we're on that section
+                if (document.getElementById('staff-section').style.display !== 'none') {
+                    this.loadStaff();
+                }
+            } else {
+                this.showNotification(result.error || 'Failed to add staff member', 'error');
+            }
+        } catch (error) {
+            console.error('Add staff failed:', error);
+            this.showNotification('Failed to add staff member', 'error');
+        }
     }
 
     async editDoctor(doctorId) {

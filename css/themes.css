@@ -1,40 +1,40 @@
-/* Theme Variables */
+/* Theme Variables - Default Dark Theme */
 :root {
-    /* Light Theme (Default) */
-    --primary-color: #007bff;
-    --primary-hover: #0056b3;
-    --primary-light: rgba(0, 123, 255, 0.1);
-    --secondary-color: #6c757d;
-    --secondary-light: rgba(108, 117, 125, 0.1);
-    --success-color: #28a745;
-    --success-hover: #218838;
-    --success-light: rgba(40, 167, 69, 0.1);
-    --error-color: #dc3545;
-    --error-light: rgba(220, 53, 69, 0.1);
-    --warning-color: #ffc107;
-    --info-color: #17a2b8;
+    /* Dark Theme (Default) */
+    --primary-color: #4dabf7;
+    --primary-hover: #339af0;
+    --primary-light: rgba(77, 171, 247, 0.15);
+    --secondary-color: #adb5bd;
+    --secondary-light: rgba(173, 181, 189, 0.15);
+    --success-color: #51cf66;
+    --success-hover: #40c057;
+    --success-light: rgba(81, 207, 102, 0.15);
+    --error-color: #ff6b6b;
+    --error-light: rgba(255, 107, 107, 0.15);
+    --warning-color: #ffd43b;
+    --info-color: #22d3ee;
     
     /* Background Colors */
-    --bg-color: #ffffff;
-    --card-bg: #f8f9fa;
-    --nav-bg: rgba(255, 255, 255, 0.95);
-    --footer-bg: #343a40;
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --nav-bg: rgba(18, 18, 18, 0.95);
+    --footer-bg: #0d1117;
     
     /* Text Colors */
-    --text-color: #212529;
-    --text-secondary: #6c757d;
-    --footer-text: #ffffff;
-    --footer-text-secondary: rgba(255, 255, 255, 0.7);
+    --text-color: #e9ecef;
+    --text-secondary: #adb5bd;
+    --footer-text: #e9ecef;
+    --footer-text-secondary: rgba(233, 236, 239, 0.7);
     
     /* Border and Shadow */
-    --border-color: #dee2e6;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-color: #343a40;
+    --shadow-color: rgba(0, 0, 0, 0.3);
     
     /* Healthcare specific colors */
-    --medical-blue: #007bff;
-    --medical-green: #28a745;
-    --medical-red: #dc3545;
-    --medical-orange: #fd7e14;
+    --medical-blue: #4dabf7;
+    --medical-green: #51cf66;
+    --medical-red: #ff6b6b;
+    --medical-orange: #ffa94d;
 }
 
 /* Dark Theme */
