@@ -1697,7 +1697,7 @@
                     <div class="filter-grid">
                         <div class="filter-group">
                             <label for="specialty-filter">Specialty</label>
-                            <select id="specialty-filter" onchange="filterDoctors()">
+                            <select id="specialty-filter" class="specialty-dropdown" onchange="filterDoctors()">
                                 <option value="">All Specialties</option>
                                 <option value="Cardiology">Cardiology</option>
                                 <option value="Neurology">Neurology</option>
@@ -1712,7 +1712,7 @@
                         
                         <div class="filter-group">
                             <label for="location-filter">Hospital/Location</label>
-                            <select id="location-filter" onchange="filterDoctors()">
+                            <select id="location-filter" class="location-dropdown" onchange="filterDoctors()">
                                 <option value="">All Locations</option>
                                 <option value="Medical Center, Downtown">Medical Center, Downtown</option>
                                 <option value="Neurological Institute, Uptown">Neurological Institute, Uptown</option>
@@ -1724,7 +1724,7 @@
                         
                         <div class="filter-group">
                             <label for="availability-filter">Availability</label>
-                            <select id="availability-filter" onchange="filterDoctors()">
+                            <select id="availability-filter" class="filter-dropdown" onchange="filterDoctors()">
                                 <option value="">All Doctors</option>
                                 <option value="available">Available Now</option>
                                 <option value="unavailable">Currently Unavailable</option>
@@ -1854,7 +1854,7 @@
                         <label for="profile-store-location">Preferred Store/Pharmacy Location</label>
                         <div class="input-wrapper">
                             <i class="fas fa-store"></i>
-                            <select id="profile-store-location" required>
+                            <select id="profile-store-location" class="location-dropdown" required>
                                 <option value="">Select a store location</option>
                                 <option value="downtown-pharmacy">Downtown Pharmacy - 456 Main St</option>
                                 <option value="central-medical">Central Medical Store - 789 Center Ave</option>

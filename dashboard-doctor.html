@@ -579,6 +579,159 @@
             margin-bottom: 1rem;
             color: var(--text-muted);
         }
+
+        /* Profile Photo Styling */
+        .profile-photo-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .photo-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-picture-wrapper {
+            position: relative;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-picture:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-overlay i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .photo-info h3 {
+            margin: 0 0 0.5rem;
+            color: var(--text-color);
+            font-size: 1.5rem;
+        }
+
+        .photo-info p {
+            margin: 0 0 1rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Enhanced Profile Form Styling */
+        .profile-form {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .form-section h3 {
+            margin: 0 0 1.5rem;
+            color: var(--text-color);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-section h3 i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
         
         @media (max-width: 768px) {
             .sidebar {
@@ -826,40 +979,164 @@
             <!-- Profile Section -->
             <section id="profile-section" class="content-section" style="display: none;">
                 <h2><i class="fas fa-user-md section-icon"></i>My Profile</h2>
-                <form id="profile-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="profile-name">Full Name</label>
-                            <input type="text" id="profile-name" class="form-control" required>
+                
+                <!-- Profile Photo Section -->
+                <div class="profile-photo-section">
+                    <div class="photo-container">
+                        <div class="profile-picture-wrapper">
+                            <div class="profile-picture" id="profile-picture">
+                                <img id="profile-image" src="" alt="Profile Photo" style="display: none;">
+                                <div class="profile-placeholder" id="profile-placeholder">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="photo-overlay">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Change Photo</span>
+                                </div>
+                            </div>
+                            <input type="file" id="profile-photo-input" accept="image/*" style="display: none;">
                         </div>
-                        <div class="form-group">
-                            <label for="profile-specialty">Specialty</label>
-                            <input type="text" id="profile-specialty" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-phone">Phone Number</label>
-                            <input type="tel" id="profile-phone" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-email">Email Address</label>
-                            <input type="email" id="profile-email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-experience">Years of Experience</label>
-                            <input type="number" id="profile-experience" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-qualification">Qualification</label>
-                            <input type="text" id="profile-qualification" class="form-control" required>
+                        <div class="photo-info">
+                            <h3 id="profile-display-name">Dr. Sarah Johnson</h3>
+                            <p id="profile-display-specialty">Cardiologist</p>
+                            <button class="btn btn-outline-primary btn-sm" id="change-photo-btn">
+                                <i class="fas fa-camera"></i> Change Photo
+                            </button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="profile-bio">Bio</label>
-                        <textarea id="profile-bio" class="form-control" rows="4" placeholder="Tell patients about yourself..."></textarea>
+                </div>
+
+                <!-- Profile Form -->
+                <form id="profile-form" class="profile-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Personal Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="profile-name">Full Name</label>
+                                <input type="text" id="profile-name" class="form-control" required placeholder="Dr. John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-specialty">Primary Specialty</label>
+                                <select id="profile-specialty" class="form-control specialty-dropdown" required>
+                                    <option value="">Select Specialty</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                    <option value="Emergency Medicine">Emergency Medicine</option>
+                                    <option value="Family Medicine">Family Medicine</option>
+                                    <option value="Internal Medicine">Internal Medicine</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Pediatrics">Pediatrics</option>
+                                    <option value="Psychiatry">Psychiatry</option>
+                                    <option value="Radiology">Radiology</option>
+                                    <option value="Surgery">Surgery</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-subspecialty">Sub-specialty (Optional)</label>
+                                <input type="text" id="profile-subspecialty" class="form-control" placeholder="e.g., Interventional Cardiology">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-license">Medical License Number</label>
+                                <input type="text" id="profile-license" class="form-control" required placeholder="MD123456">
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Profile
-                    </button>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-phone"></i> Contact Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="profile-phone">Phone Number</label>
+                                <input type="tel" id="profile-phone" class="form-control" required placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" class="form-control" required placeholder="doctor@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-office-address">Office Address</label>
+                                <input type="text" id="profile-office-address" class="form-control" placeholder="123 Medical Center Blvd">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-hospital">Hospital/Clinic Affiliation</label>
+                                <input type="text" id="profile-hospital" class="form-control" placeholder="City General Hospital">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-graduation-cap"></i> Professional Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="profile-experience">Years of Experience</label>
+                                <input type="number" id="profile-experience" class="form-control" required min="0" max="50" placeholder="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-qualification">Primary Qualification</label>
+                                <input type="text" id="profile-qualification" class="form-control" required placeholder="MD, Harvard Medical School">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-certifications">Certifications</label>
+                                <input type="text" id="profile-certifications" class="form-control" placeholder="Board Certified in Cardiology">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-languages">Languages Spoken</label>
+                                <input type="text" id="profile-languages" class="form-control" placeholder="English, Spanish, French">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-stethoscope"></i> Practice Information</h3>
+                        <div class="form-group">
+                            <label for="profile-bio">Professional Bio</label>
+                            <textarea id="profile-bio" class="form-control" rows="5" placeholder="Tell patients about your experience, approach to care, and what makes you unique as a healthcare provider..."></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="profile-consultation-fee">Consultation Fee ($)</label>
+                                <input type="number" id="profile-consultation-fee" class="form-control" min="0" step="0.01" placeholder="150.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-follow-up-fee">Follow-up Fee ($)</label>
+                                <input type="number" id="profile-follow-up-fee" class="form-control" min="0" step="0.01" placeholder="100.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-services">Services Offered</label>
+                            <textarea id="profile-services" class="form-control" rows="3" placeholder="List the services you offer, separated by commas (e.g., General Consultation, ECG, Stress Testing)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-calendar-alt"></i> Availability Settings</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="profile-typical-hours">Typical Working Hours</label>
+                                <input type="text" id="profile-typical-hours" class="form-control" placeholder="Monday-Friday: 9:00 AM - 5:00 PM">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-appointment-duration">Default Appointment Duration (minutes)</label>
+                                <select id="profile-appointment-duration" class="form-control time-dropdown">
+                                    <option value="15">15 minutes</option>
+                                    <option value="30" selected>30 minutes</option>
+                                    <option value="45">45 minutes</option>
+                                    <option value="60">60 minutes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="reset-profile-btn">
+                            <i class="fas fa-undo"></i> Reset Changes
+                        </button>
+                    </div>
                 </form>
             </section>
         </main>
@@ -894,7 +1171,7 @@
                     <input type="hidden" id="record-patient-id">
                     <div class="form-group">
                         <label for="record-type">Record Type</label>
-                        <select id="record-type" class="form-control" required>
+                        <select id="record-type" class="form-control status-dropdown" required>
                             <option value="">Select type...</option>
                             <option value="diagnosis">Diagnosis</option>
                             <option value="prescription">Prescription</option>

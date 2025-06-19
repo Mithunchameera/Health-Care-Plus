@@ -102,6 +102,35 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 19, 2025: Implemented comprehensive dropdown lists styling with dark theme integration
+  - Applied universal dark background (#0a0a0a) with white text to all dropdown lists across entire website
+  - Completely removed dropdown arrow icons using cross-browser CSS overrides (appearance: none, -webkit-appearance, -moz-appearance, -ms-appearance)
+  - Added universal selectors targeting all select elements regardless of class or ID names
+  - Implemented comprehensive CSS with !important declarations to override any conflicting styles
+  - Enhanced hover effects with lighter dark background (#1a1a1a) for better user interaction
+  - Applied styling to all pages: contact, booking, registration, admin dashboard, doctor dashboard, patient dashboard
+  - Used attribute selectors to catch dynamically generated dropdowns and filter elements
+  - Added vendor-specific pseudo-element removal for complete arrow elimination
+
+- June 19, 2025: Created comprehensive doctor profile management system with photo upload
+  - Interactive profile photo upload with click-to-change functionality and hover overlay effects
+  - Enhanced profile form with organized sections: personal info, contact details, professional qualifications
+  - Added practice information fields including consultation fees, services offered, and availability settings
+  - Implemented photo validation (image file types and 5MB size limit) with user feedback
+  - Profile data persistence using localStorage with reset functionality
+  - Real-time sidebar avatar updates when profile photo is changed
+  - Professional styling with dark theme integration and responsive design
+  - Comprehensive form fields: specialty selection, license numbers, certifications, languages, bio
+
+- June 19, 2025: Applied comprehensive dark color palette across all pages
+  - Enhanced dark theme with deeper black backgrounds (#0a0a0a vs #121212)
+  - Updated primary colors to refined blue tones (#3b82f6)
+  - Applied consistent dark styling to all components: forms, cards, modals, tables
+  - Added hover effects and glowing accents for improved user experience
+  - Implemented dark theme for all pages: homepage, about, contact, login, register, booking, dashboards
+  - Enhanced scrollbars, notifications, and interactive elements with dark palette
+  - Maintained accessibility with proper contrast ratios
+
 - June 17, 2025: Redesigned search boxes across all dashboards with enhanced functionality
   - Implemented modern rounded search styling with focus animations and hover effects
   - Added autocomplete suggestions dropdown with real-time filtering

@@ -874,7 +874,7 @@
                         </button>
                         <div class="search-suggestions" id="doctor-search-suggestions"></div>
                     </div>
-                    <select id="doctor-specialty-filter" class="form-control">
+                    <select id="doctor-specialty-filter" class="form-control specialty-dropdown">
                         <option value="">All Specialties</option>
                         <option value="cardiology">Cardiology</option>
                         <option value="neurology">Neurology</option>
@@ -923,7 +923,7 @@
                         </button>
                         <div class="search-suggestions" id="appointment-search-suggestions"></div>
                     </div>
-                    <select id="appointment-status-filter" class="form-control">
+                    <select id="appointment-status-filter" class="form-control status-dropdown">
                         <option value="">All Status</option>
                         <option value="scheduled">Scheduled</option>
                         <option value="confirmed">Confirmed</option>
@@ -1070,7 +1070,7 @@
                         </div>
                         <div class="form-group">
                             <label for="system-timezone">Timezone</label>
-                            <select id="system-timezone" class="form-control">
+                            <select id="system-timezone" class="form-control time-dropdown">
                                 <option value="UTC">UTC</option>
                                 <option value="America/New_York">Eastern Time</option>
                                 <option value="America/Chicago">Central Time</option>
@@ -1126,7 +1126,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="doctor-specialty">Specialty *</label>
-                        <select id="doctor-specialty" name="specialty" required class="form-control">
+                        <select id="doctor-specialty" name="specialty" required class="form-control specialty-dropdown">
                             <option value="">Select Specialty</option>
                             <option value="cardiology">Cardiology</option>
                             <option value="neurology">Neurology</option>
@@ -1225,7 +1225,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="staff-role">Role *</label>
-                        <select id="staff-role" name="role" required class="form-control">
+                        <select id="staff-role" name="role" required class="form-control status-dropdown">
                             <option value="">Select Role</option>
                             <option value="receptionist">Receptionist</option>
                             <option value="nurse">Nurse</option>
@@ -1237,7 +1237,7 @@
                     </div>
                     <div class="form-group">
                         <label for="staff-department">Department *</label>
-                        <select id="staff-department" name="department" required class="form-control">
+                        <select id="staff-department" name="department" required class="form-control filter-dropdown">
                             <option value="">Select Department</option>
                             <option value="administration">Administration</option>
                             <option value="nursing">Nursing</option>

@@ -20,6 +20,8 @@ class DoctorDashboard {
         this.setupSidebarNavigation();
         this.setupMobileMenu();
         this.updateCurrentDate();
+        this.setupProfilePhotoUpload();
+        this.populateProfileForm();
         // Initialize back to top button
         if (window.HealthCare && window.HealthCare.initializeBackToTop) {
             window.HealthCare.initializeBackToTop();
@@ -804,24 +806,49 @@ class DoctorDashboard {
     async handleProfileUpdate(e) {
         e.preventDefault();
         
-        const formData = new FormData(e.target);
-        formData.append('action', 'update_profile');
-        
         try {
-            const response = await fetch('php/doctor-api.php', {
-                method: 'POST',
-                body: formData
+            // Collect form data
+            const profileData = {
+                name: document.getElementById('profile-name').value,
+                specialty: document.getElementById('profile-specialty').value,
+                subspecialty: document.getElementById('profile-subspecialty').value,
+                license: document.getElementById('profile-license').value,
+                phone: document.getElementById('profile-phone').value,
+                email: document.getElementById('profile-email').value,
+                officeAddress: document.getElementById('profile-office-address').value,
+                hospital: document.getElementById('profile-hospital').value,
+                experience: document.getElementById('profile-experience').value,
+                qualification: document.getElementById('profile-qualification').value,
+                certifications: document.getElementById('profile-certifications').value,
+                languages: document.getElementById('profile-languages').value,
+                bio: document.getElementById('profile-bio').value,
+                consultationFee: document.getElementById('profile-consultation-fee').value,
+                followUpFee: document.getElementById('profile-follow-up-fee').value,
+                services: document.getElementById('profile-services').value,
+                typicalHours: document.getElementById('profile-typical-hours').value,
+                appointmentDuration: document.getElementById('profile-appointment-duration').value
+            };
+
+            // Save to localStorage
+            localStorage.setItem('doctor_profile', JSON.stringify(profileData));
+            
+            // Update current user data
+            if (this.currentUser) {
+                this.currentUser.name = profileData.name;
+                this.currentUser.specialty = profileData.specialty;
+                this.currentUser.phone = profileData.phone;
+                this.currentUser.email = profileData.email;
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+
+            // Update display elements
+            this.updateUserDisplay();
+            this.updateProfileDisplay({
+                'profile-name': profileData.name,
+                'profile-specialty': profileData.specialty
             });
             
-            const data = await response.json();
-            
-            if (data.success) {
-                this.showNotification('Profile updated successfully!', 'success');
-                this.currentUser = { ...this.currentUser, ...data.user };
-                this.updateUserDisplay();
-            } else {
-                this.showNotification(data.error || 'Failed to update profile', 'error');
-            }
+            this.showNotification('Profile updated successfully!', 'success');
         } catch (error) {
             console.error('Profile update failed:', error);
             this.showNotification('Failed to update profile', 'error');
@@ -1644,6 +1671,181 @@ class DoctorDashboard {
         const slots = document.querySelectorAll('#availability-slots input[type="checkbox"]');
         slots.forEach(slot => slot.checked = false);
         this.showNotification('All time slots cleared', 'info');
+    }
+
+    setupProfilePhotoUpload() {
+        const profilePicture = document.getElementById('profile-picture');
+        const photoInput = document.getElementById('profile-photo-input');
+        const changePhotoBtn = document.getElementById('change-photo-btn');
+        const resetProfileBtn = document.getElementById('reset-profile-btn');
+
+        // Load existing profile photo
+        this.loadProfilePhoto();
+
+        // Handle photo upload
+        if (profilePicture && photoInput) {
+            profilePicture.addEventListener('click', () => {
+                photoInput.click();
+            });
+
+            if (changePhotoBtn) {
+                changePhotoBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    photoInput.click();
+                });
+            }
+
+            photoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    this.handlePhotoUpload(file);
+                }
+            });
+        }
+
+        // Handle reset profile button
+        if (resetProfileBtn) {
+            resetProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.resetProfileForm();
+            });
+        }
+    }
+
+    async loadProfilePhoto() {
+        const savedPhoto = localStorage.getItem('doctor_profile_photo');
+        const profileImage = document.getElementById('profile-image');
+        const profilePlaceholder = document.getElementById('profile-placeholder');
+        const sidebarAvatar = document.getElementById('doctor-avatar');
+
+        if (savedPhoto && profileImage && profilePlaceholder) {
+            profileImage.src = savedPhoto;
+            profileImage.style.display = 'block';
+            profilePlaceholder.style.display = 'none';
+            
+            // Update sidebar avatar
+            if (sidebarAvatar) {
+                sidebarAvatar.innerHTML = `<img src="${savedPhoto}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+        }
+    }
+
+    handlePhotoUpload(file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            this.showNotification('Please select a valid image file', 'error');
+            return;
+        }
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            this.showNotification('Image size must be less than 5MB', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imageData = e.target.result;
+            
+            // Update profile photo display
+            const profileImage = document.getElementById('profile-image');
+            const profilePlaceholder = document.getElementById('profile-placeholder');
+            const sidebarAvatar = document.getElementById('doctor-avatar');
+
+            if (profileImage && profilePlaceholder) {
+                profileImage.src = imageData;
+                profileImage.style.display = 'block';
+                profilePlaceholder.style.display = 'none';
+            }
+
+            // Update sidebar avatar
+            if (sidebarAvatar) {
+                sidebarAvatar.innerHTML = `<img src="${imageData}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+
+            // Save to localStorage
+            localStorage.setItem('doctor_profile_photo', imageData);
+            
+            this.showNotification('Profile photo updated successfully!', 'success');
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    populateProfileForm() {
+        // Get saved profile data
+        const savedProfile = JSON.parse(localStorage.getItem('doctor_profile') || '{}');
+        const currentUser = this.currentUser || JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+        // Default values for doctor profile
+        const fields = {
+            'profile-name': savedProfile.name || currentUser.name || 'Dr. Sarah Johnson',
+            'profile-specialty': savedProfile.specialty || currentUser.specialty || 'Cardiology',
+            'profile-subspecialty': savedProfile.subspecialty || '',
+            'profile-license': savedProfile.license || 'MD123456',
+            'profile-phone': savedProfile.phone || currentUser.phone || '+1 (555) 123-4567',
+            'profile-email': savedProfile.email || currentUser.email || 'sarah.johnson@healthcare.com',
+            'profile-office-address': savedProfile.officeAddress || '123 Medical Center Blvd, Suite 400',
+            'profile-hospital': savedProfile.hospital || 'City General Hospital',
+            'profile-experience': savedProfile.experience || '15',
+            'profile-qualification': savedProfile.qualification || 'MD, Harvard Medical School',
+            'profile-certifications': savedProfile.certifications || 'Board Certified in Cardiology',
+            'profile-languages': savedProfile.languages || 'English, Spanish',
+            'profile-bio': savedProfile.bio || 'Experienced cardiologist specializing in preventive care and advanced cardiac procedures. Committed to providing personalized, compassionate healthcare.',
+            'profile-consultation-fee': savedProfile.consultationFee || '150.00',
+            'profile-follow-up-fee': savedProfile.followUpFee || '100.00',
+            'profile-services': savedProfile.services || 'General Consultation, ECG, Stress Testing, Cardiac Catheterization',
+            'profile-typical-hours': savedProfile.typicalHours || 'Monday-Friday: 9:00 AM - 5:00 PM',
+            'profile-appointment-duration': savedProfile.appointmentDuration || '30'
+        };
+
+        // Set form values
+        Object.entries(fields).forEach(([fieldId, value]) => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = value;
+            }
+        });
+
+        // Update display elements
+        this.updateProfileDisplay(fields);
+    }
+
+    updateProfileDisplay(fields) {
+        const displayName = document.getElementById('profile-display-name');
+        const displaySpecialty = document.getElementById('profile-display-specialty');
+        const doctorName = document.getElementById('doctor-name');
+        const doctorSpecialty = document.getElementById('doctor-specialty');
+
+        if (displayName) displayName.textContent = fields['profile-name'];
+        if (displaySpecialty) displaySpecialty.textContent = fields['profile-specialty'];
+        if (doctorName) doctorName.textContent = fields['profile-name'];
+        if (doctorSpecialty) doctorSpecialty.textContent = fields['profile-specialty'];
+    }
+
+    resetProfileForm() {
+        // Clear saved profile data
+        localStorage.removeItem('doctor_profile');
+        localStorage.removeItem('doctor_profile_photo');
+        
+        // Reset profile photo
+        const profileImage = document.getElementById('profile-image');
+        const profilePlaceholder = document.getElementById('profile-placeholder');
+        const sidebarAvatar = document.getElementById('doctor-avatar');
+        
+        if (profileImage && profilePlaceholder) {
+            profileImage.style.display = 'none';
+            profilePlaceholder.style.display = 'flex';
+        }
+        
+        if (sidebarAvatar) {
+            sidebarAvatar.innerHTML = 'SJ';
+        }
+        
+        // Repopulate with defaults
+        this.populateProfileForm();
+        
+        this.showNotification('Profile reset to defaults', 'info');
     }
 }
 
