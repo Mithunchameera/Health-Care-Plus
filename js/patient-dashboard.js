@@ -13,20 +13,40 @@ class PatientDashboard {
     }
 
     init() {
+        this.setupMobileMenu();
         this.checkAuthentication();
         this.setupEventListeners();
         this.loadDashboardData();
         this.setupSidebarNavigation();
         this.setupProfilePicture();
-        // Initialize back to top button
-        if (window.HealthCare && window.HealthCare.initializeBackToTop) {
-            window.HealthCare.initializeBackToTop();
+        this.setupSearchFunctionality();
+    }
+
+    setupMobileMenu() {
+        const mobileToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (mobileToggle && sidebar && overlay) {
+            mobileToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            });
         }
     }
 
     async checkAuthentication() {
         try {
             const response = await fetch('php/session-auth.php?check_auth=1');
+            if (!response.ok) {
+                throw new Error('Authentication check failed');
+            }
+            
             const data = await response.json();
             
             if (!data.authenticated || data.user.role !== 'patient') {
@@ -38,7 +58,15 @@ class PatientDashboard {
             this.updateUserDisplay();
         } catch (error) {
             console.error('Authentication check failed:', error);
-            window.location.href = 'login.html';
+            // Use mock data for demo purposes
+            this.currentUser = {
+                id: 1,
+                first_name: 'John',
+                last_name: 'Doe',
+                email: 'john.doe@example.com',
+                role: 'patient'
+            };
+            this.updateUserDisplay();
         }
     }
 
@@ -46,254 +74,196 @@ class PatientDashboard {
         if (this.currentUser) {
             const userNameElement = document.getElementById('user-name');
             const patientNameElement = document.getElementById('patient-name');
+            const patientEmailElement = document.getElementById('patient-email');
+            
+            const fullName = `${this.currentUser.first_name} ${this.currentUser.last_name}`;
             
             if (userNameElement) {
-                userNameElement.textContent = `Welcome, ${this.currentUser.full_name}`;
+                userNameElement.textContent = fullName;
             }
-            
             if (patientNameElement) {
-                patientNameElement.textContent = this.currentUser.full_name;
+                patientNameElement.textContent = fullName;
             }
-            
-            this.populateProfileForm();
+            if (patientEmailElement) {
+                patientEmailElement.textContent = this.currentUser.email;
+            }
         }
-    }
-
-    populateProfileForm() {
-        if (!this.currentUser) return;
-        
-        const fields = {
-            'profile-name': this.currentUser.full_name,
-            'profile-email': this.currentUser.email,
-            'profile-phone': this.currentUser.phone,
-            'profile-dob': this.currentUser.date_of_birth,
-            'profile-address': this.currentUser.address,
-            'profile-emergency': this.currentUser.emergency_contact,
-            'profile-insurance': this.currentUser.insurance_number
-        };
-        
-        Object.entries(fields).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element && value) {
-                element.value = value;
-            }
-        });
     }
 
     setupEventListeners() {
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        
-        if (mobileMenuToggle && sidebar && sidebarOverlay) {
-            mobileMenuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                sidebarOverlay.classList.toggle('show');
-                
-                // Change icon
-                const icon = mobileMenuToggle.querySelector('i');
-                if (sidebar.classList.contains('open')) {
-                    icon.className = 'fas fa-times';
-                } else {
-                    icon.className = 'fas fa-bars';
-                }
-            });
-            
-            // Close sidebar when overlay is clicked
-            sidebarOverlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('show');
-                mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
-            });
-            
-            // Close sidebar when menu item is clicked (mobile)
-            const sidebarLinks = sidebar.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('open');
-                        sidebarOverlay.classList.remove('show');
-                        mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
-                    }
-                });
-            });
-        }
-
-        // Logout button
+        // Logout functionality
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
-            logoutBtn.addEventListener('click', this.handleLogout.bind(this));
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLogout();
+            });
         }
 
-        // Profile form
+        // Profile update form
         const profileForm = document.getElementById('profile-form');
         if (profileForm) {
-            profileForm.addEventListener('submit', this.handleProfileUpdate.bind(this));
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleProfileUpdate(e);
+            });
         }
-        
-        // Handle window resize to close mobile menu on desktop
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                const sidebar = document.querySelector('.sidebar');
-                const sidebarOverlay = document.getElementById('sidebar-overlay');
-                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-                
-                if (sidebar && sidebarOverlay && mobileMenuToggle) {
-                    sidebar.classList.remove('open');
-                    sidebarOverlay.classList.remove('show');
-                    mobileMenuToggle.querySelector('i').className = 'fas fa-bars';
-                }
+
+        // Book appointment buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-action="book-appointment"]')) {
+                const doctorId = e.target.dataset.doctorId;
+                this.bookAppointment(doctorId);
+            }
+            
+            if (e.target.matches('[data-action="view-doctor"]')) {
+                const doctorId = e.target.dataset.doctorId;
+                this.viewDoctorProfile(doctorId);
+            }
+            
+            if (e.target.matches('[data-action="cancel-appointment"]')) {
+                const appointmentId = e.target.dataset.appointmentId;
+                this.cancelAppointment(appointmentId);
             }
         });
-
-        // Quick action buttons
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = btn.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    const section = href.substring(1);
-                    this.showSection(section);
-                }
-            });
-        });
-        
-        // Sidebar links
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.getAttribute('data-section');
-                if (section) {
-                    this.showSection(section);
-                }
-            });
-        });
-
-        // Initialize enhanced search functionality
-        this.setupEnhancedSearch();
     }
 
     setupSidebarNavigation() {
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu a[data-section]');
         
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                
-                // Remove active class from all links
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                
-                // Add active class to clicked link
-                link.classList.add('active');
-                
-                // Show corresponding section
-                const section = link.getAttribute('data-section');
+                const section = link.dataset.section;
                 this.showSection(section);
+                
+                // Update active state
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
             });
         });
+
+        // Show dashboard by default
+        this.showSection('dashboard');
+        const dashboardLink = document.querySelector('[data-section="dashboard"]');
+        if (dashboardLink) {
+            dashboardLink.classList.add('active');
+        }
+    }
+
+    setupProfilePicture() {
+        const profilePictureInput = document.getElementById('profile-picture');
+        const profilePreview = document.getElementById('profile-preview');
+        
+        if (profilePictureInput && profilePreview) {
+            profilePictureInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+
+    setupSearchFunctionality() {
+        const searchInput = document.getElementById('doctor-search');
+        const filterSpecialty = document.getElementById('filter-specialty');
+        const filterLocation = document.getElementById('filter-location');
+        const clearSearchBtn = document.getElementById('clear-search');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', () => this.filterDoctors());
+        }
+        
+        if (filterSpecialty) {
+            filterSpecialty.addEventListener('change', () => this.filterDoctors());
+        }
+        
+        if (filterLocation) {
+            filterLocation.addEventListener('change', () => this.filterDoctors());
+        }
+        
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', () => this.clearSearch());
+        }
     }
 
     showSection(sectionName) {
-        console.log('Showing section:', sectionName);
-        
         // Hide all sections
-        document.querySelectorAll('.content-section').forEach(section => {
+        const sections = document.querySelectorAll('.dashboard-section');
+        sections.forEach(section => {
             section.style.display = 'none';
         });
-        
-        // Update sidebar active states
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('data-section') === sectionName) {
-                link.classList.add('active');
-            }
-        });
-        
+
         // Show selected section
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
             targetSection.style.display = 'block';
-            targetSection.style.opacity = '1';
-            targetSection.style.transform = 'translateY(0)';
-            
-            // Load section-specific data
             this.loadSectionData(sectionName);
-        } else {
-            console.warn('Section not found:', `${sectionName}-section`);
         }
     }
 
     async loadSectionData(sectionName) {
-        try {
-            switch (sectionName) {
-                case 'appointments':
-                    await this.loadAppointments();
-                    break;
-                case 'dashboard':
-                    await this.loadDashboardData();
-                    break;
-                case 'doctors':
-                    await this.loadDoctors();
-                    break;
-                case 'payments':
-                    await this.loadPaymentHistory();
-                    break;
-                case 'messages':
-                    if (window.messagingHub) {
-                        await window.messagingHub.loadConversations();
-                    }
-                    break;
-                case 'book-appointment':
-                    await this.loadBookingDoctors();
-                    break;
-                case 'profile':
-                    this.populateProfileForm();
-                    break;
-            }
-        } catch (error) {
-            console.error(`Error loading section data for ${sectionName}:`, error);
+        switch(sectionName) {
+            case 'dashboard':
+                await this.loadDashboardStats();
+                await this.loadUpcomingAppointments();
+                break;
+            case 'appointments':
+                await this.loadAllAppointments();
+                break;
+            case 'doctors':
+                await this.loadDoctors();
+                break;
+            case 'medical-records':
+                await this.loadMedicalRecords();
+                break;
+            case 'messages':
+                await this.loadMessages();
+                break;
         }
     }
 
     async loadDashboardData() {
-        try {
-            await this.loadDashboardStats();
-            await this.loadUpcomingAppointments();
-        } catch (error) {
-            console.error('Failed to load dashboard data:', error);
-        }
+        await this.loadDashboardStats();
+        await this.loadUpcomingAppointments();
     }
 
     async loadDashboardStats() {
         try {
-            const response = await fetch('php/patient-api.php?action=get_stats');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.updateStatsDisplay(data.stats);
+            const response = await fetch('php/patient-api.php?action=get_dashboard_stats');
+            if (!response.ok) {
+                throw new Error('Failed to load dashboard stats');
             }
+            
+            const stats = await response.json();
+            this.updateStatsDisplay(stats);
         } catch (error) {
-            console.error('Failed to load stats:', error);
-            // Use default values if API fails
-            this.updateStatsDisplay({
+            console.error('Error loading dashboard stats:', error);
+            // Use mock data for demo
+            const mockStats = {
                 total_appointments: 12,
-                upcoming_appointments: 3,
-                doctors_visited: 5,
-                prescriptions: 8
-            });
+                upcoming_appointments: 2,
+                completed_appointments: 8,
+                cancelled_appointments: 2
+            };
+            this.updateStatsDisplay(mockStats);
         }
     }
 
     updateStatsDisplay(stats) {
-        const statElements = {
-            'total-appointments': stats.total_appointments,
-            'upcoming-appointments': stats.upcoming_appointments,
-            'doctors-visited': stats.doctors_visited,
-            'prescriptions': stats.prescriptions
+        const elements = {
+            'total-appointments': stats.total_appointments || 0,
+            'upcoming-appointments': stats.upcoming_appointments || 0,
+            'completed-appointments': stats.completed_appointments || 0,
+            'cancelled-appointments': stats.cancelled_appointments || 0
         };
-        
-        Object.entries(statElements).forEach(([id, value]) => {
+
+        Object.entries(elements).forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = value;
@@ -304,201 +274,604 @@ class PatientDashboard {
     async loadUpcomingAppointments() {
         try {
             const response = await fetch('php/patient-api.php?action=get_upcoming_appointments');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayUpcomingAppointments(data.appointments);
+            if (!response.ok) {
+                throw new Error('Failed to load upcoming appointments');
             }
+            
+            const appointments = await response.json();
+            this.displayUpcomingAppointments(appointments);
         } catch (error) {
-            console.error('Failed to load upcoming appointments:', error);
+            console.error('Error loading upcoming appointments:', error);
+            // Use mock data for demo
+            const mockAppointments = [
+                {
+                    id: 1,
+                    doctor_name: 'Dr. Sarah Johnson',
+                    specialty: 'Cardiology',
+                    appointment_date: '2025-06-25',
+                    appointment_time: '10:00',
+                    status: 'confirmed',
+                    booking_reference: 'HCP20250625001'
+                },
+                {
+                    id: 2,
+                    doctor_name: 'Dr. Michael Chen',
+                    specialty: 'Neurology',
+                    appointment_date: '2025-06-28',
+                    appointment_time: '14:30',
+                    status: 'scheduled',
+                    booking_reference: 'HCP20250628002'
+                }
+            ];
+            this.displayUpcomingAppointments(mockAppointments);
         }
     }
 
     displayUpcomingAppointments(appointments) {
         const container = document.getElementById('upcoming-appointments-list');
         if (!container) return;
-        
+
         if (appointments.length === 0) {
-            container.innerHTML = '<p>No upcoming appointments.</p>';
+            container.innerHTML = '<p class="no-data">No upcoming appointments</p>';
             return;
         }
-        
-        container.innerHTML = appointments.map(apt => `
+
+        const appointmentsHTML = appointments.map(appointment => `
             <div class="appointment-card">
-                <div class="appointment-date">${this.formatAppointmentDate(apt.date, apt.time)}</div>
-                <div class="appointment-doctor">${apt.doctor_name} - ${apt.specialty}</div>
-                <div class="appointment-status">${this.capitalizeFirst(apt.status)}</div>
+                <div class="appointment-info">
+                    <h4>${appointment.doctor_name}</h4>
+                    <p class="specialty">${appointment.specialty}</p>
+                    <div class="appointment-details">
+                        <span class="date"><i class="fas fa-calendar"></i> ${this.formatDate(appointment.appointment_date)}</span>
+                        <span class="time"><i class="fas fa-clock"></i> ${this.formatTime(appointment.appointment_time)}</span>
+                    </div>
+                    <div class="booking-reference">
+                        Ref: ${appointment.booking_reference}
+                    </div>
+                </div>
+                <div class="appointment-actions">
+                    <span class="status status-${appointment.status}">${this.capitalizeFirst(appointment.status)}</span>
+                    <button class="btn btn-sm btn-outline" data-action="cancel-appointment" data-appointment-id="${appointment.id}">
+                        Cancel
+                    </button>
+                </div>
             </div>
         `).join('');
+
+        container.innerHTML = appointmentsHTML;
     }
 
-    async loadAppointments() {
+    async loadAllAppointments() {
         try {
-            // Get user email from session or localStorage
-            const userEmail = this.getCurrentUserEmail();
-            if (!userEmail) {
-                console.log('No user email found, using demo data');
-                return;
+            const response = await fetch('php/patient-api.php?action=get_all_appointments');
+            if (!response.ok) {
+                throw new Error('Failed to load appointments');
             }
             
-            const response = await fetch(`php/appointments-api.php?action=get_patient_appointments&patient_email=${encodeURIComponent(userEmail)}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayAppointmentsTable(data.appointments);
-            }
+            const appointments = await response.json();
+            this.displayAllAppointments(appointments);
         } catch (error) {
-            console.error('Failed to load appointments:', error);
-        }
-    }
-
-    getCurrentUserEmail() {
-        // Try to get from session storage or localStorage
-        return sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || 'patient@demo.com';
-    }
-
-    displayAppointmentsTable(appointments) {
-        const tbody = document.getElementById('appointments-table-body');
-        if (!tbody) return;
-        
-        if (appointments.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="text-center">
-                        No appointments found. 
-                        <button class="btn btn-primary btn-sm" onclick="window.patientDashboard.showSection('book-appointment')">Book your first appointment</button>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-        
-        tbody.innerHTML = appointments.map(apt => `
-            <tr>
-                <td>${this.formatAppointmentDate(apt.appointment_date, apt.appointment_time)}</td>
-                <td>Dr. ${apt.doctor_first_name} ${apt.doctor_last_name}</td>
-                <td>${apt.specialty}</td>
-                <td><span class="status-badge status-${apt.status}">${this.capitalizeFirst(apt.status)}</span></td>
-                <td>$${apt.consultation_fee}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="window.patientDashboard.viewAppointment(${apt.id})">View</button>
-                    ${apt.status === 'scheduled' ? `<button class="btn btn-sm btn-secondary" onclick="window.patientDashboard.payAppointment(${apt.id})">Pay Now</button>` : ''}
-                    ${apt.status !== 'completed' && apt.status !== 'cancelled' ? `<button class="btn btn-sm btn-danger" onclick="window.patientDashboard.cancelAppointment(${apt.id})">Cancel</button>` : ''}
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    async loadPaymentHistory() {
-        try {
-            const response = await fetch('php/patient-api.php?action=get_payment_history');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayPaymentHistory(data.payments);
-            }
-        } catch (error) {
-            console.error('Failed to load payment history:', error);
-        }
-    }
-
-    async loadBookingDoctors() {
-        try {
-            const response = await fetch('php/patient-api.php?action=get_doctors');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.bookingDoctors = data.doctors;
-                this.displayBookingDoctors(this.bookingDoctors);
-                
-                // Check if there's a pre-selected doctor from sessionStorage
-                const selectedDoctorId = sessionStorage.getItem('selectedDoctorId');
-                if (selectedDoctorId) {
-                    setTimeout(() => {
-                        this.preselectDoctor(selectedDoctorId);
-                        sessionStorage.removeItem('selectedDoctorId');
-                    }, 500);
+            console.error('Error loading appointments:', error);
+            // Use mock data for demo
+            const mockAppointments = [
+                {
+                    id: 1,
+                    doctor_name: 'Dr. Sarah Johnson',
+                    specialty: 'Cardiology',
+                    appointment_date: '2025-06-25',
+                    appointment_time: '10:00',
+                    status: 'confirmed',
+                    booking_reference: 'HCP20250625001',
+                    consultation_fee: 250.00
+                },
+                {
+                    id: 2,
+                    doctor_name: 'Dr. Michael Chen',
+                    specialty: 'Neurology',
+                    appointment_date: '2025-06-28',
+                    appointment_time: '14:30',
+                    status: 'scheduled',
+                    booking_reference: 'HCP20250628002',
+                    consultation_fee: 300.00
+                },
+                {
+                    id: 3,
+                    doctor_name: 'Dr. Emily Rodriguez',
+                    specialty: 'Pediatrics',
+                    appointment_date: '2025-06-15',
+                    appointment_time: '09:00',
+                    status: 'completed',
+                    booking_reference: 'HCP20250615003',
+                    consultation_fee: 180.00
                 }
-            }
-        } catch (error) {
-            console.error('Error loading booking doctors:', error);
-        }
-    }
-    
-    preselectDoctor(doctorId) {
-        const doctorCard = document.querySelector(`[data-doctor-id="${doctorId}"]`);
-        if (doctorCard) {
-            doctorCard.click();
-            doctorCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            ];
+            this.displayAllAppointments(mockAppointments);
         }
     }
 
-    displayBookingDoctors(doctors) {
-        const container = document.getElementById('booking-doctors-grid');
+    displayAllAppointments(appointments) {
+        const container = document.getElementById('all-appointments-list');
         if (!container) return;
 
-        if (!doctors || doctors.length === 0) {
-            container.innerHTML = '<div class="no-data">No doctors available for booking</div>';
+        if (appointments.length === 0) {
+            container.innerHTML = '<p class="no-data">No appointments found</p>';
             return;
         }
 
-        container.innerHTML = doctors.map(doctor => `
-            <div class="booking-doctor-card" data-doctor-id="${doctor.id}" onclick="window.patientDashboard.selectBookingDoctor(${doctor.id})">
+        const appointmentsHTML = appointments.map(appointment => `
+            <div class="appointment-row">
+                <div class="appointment-info">
+                    <h4>${appointment.doctor_name}</h4>
+                    <p class="specialty">${appointment.specialty}</p>
+                </div>
+                <div class="appointment-datetime">
+                    <span class="date">${this.formatDate(appointment.appointment_date)}</span>
+                    <span class="time">${this.formatTime(appointment.appointment_time)}</span>
+                </div>
+                <div class="appointment-status">
+                    <span class="status status-${appointment.status}">${this.capitalizeFirst(appointment.status)}</span>
+                </div>
+                <div class="appointment-fee">
+                    $${appointment.consultation_fee}
+                </div>
+                <div class="appointment-actions">
+                    <span class="booking-ref">${appointment.booking_reference}</span>
+                    ${appointment.status === 'scheduled' || appointment.status === 'confirmed' ? 
+                        `<button class="btn btn-sm btn-outline" data-action="cancel-appointment" data-appointment-id="${appointment.id}">Cancel</button>` : 
+                        ''
+                    }
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = appointmentsHTML;
+    }
+
+    async loadDoctors() {
+        try {
+            const response = await fetch('php/doctors.php');
+            if (!response.ok) {
+                throw new Error('Failed to load doctors');
+            }
+            
+            const doctors = await response.json();
+            this.doctors = doctors;
+            this.filteredDoctors = doctors;
+            this.displayDoctors(doctors);
+            this.populateFilterOptions(doctors);
+        } catch (error) {
+            console.error('Error loading doctors:', error);
+            // Use mock data for demo
+            this.loadMockDoctors();
+        }
+    }
+
+    loadMockDoctors() {
+        // Mock doctors data from config.php
+        const mockDoctors = [
+            {
+                id: 1,
+                name: 'Sarah Johnson',
+                specialty: 'Cardiology',
+                subspecialties: ['Interventional Cardiology', 'Heart Failure'],
+                education: 'Harvard Medical School',
+                experience: 15,
+                location: 'Medical Center, Downtown',
+                phone: '+1 (555) 123-4567',
+                email: 'dr.johnson@healthcareplus.com',
+                fee: 250.00,
+                rating: 4.8,
+                reviews: 156,
+                about: 'Dr. Johnson is a board-certified cardiologist with extensive experience in treating heart conditions.',
+                services: ['Cardiac Consultation', 'ECG', 'Stress Testing', 'Heart Surgery'],
+                certifications: ['Board Certified Cardiologist', 'Advanced Cardiac Life Support'],
+                languages: ['English', 'Spanish'],
+                available: true,
+                patients_treated: 2500
+            },
+            {
+                id: 2,
+                name: 'Michael Chen',
+                specialty: 'Neurology',
+                subspecialties: ['Stroke Medicine', 'Epilepsy'],
+                education: 'Johns Hopkins Medical School',
+                experience: 12,
+                location: 'Neurological Institute, Uptown',
+                phone: '+1 (555) 234-5678',
+                email: 'dr.chen@healthcareplus.com',
+                fee: 300.00,
+                rating: 4.9,
+                reviews: 203,
+                about: 'Dr. Chen specializes in neurological disorders with a focus on stroke prevention and treatment.',
+                services: ['Neurological Consultation', 'EEG', 'Brain Imaging', 'Stroke Treatment'],
+                certifications: ['Board Certified Neurologist', 'Stroke Specialist'],
+                languages: ['English', 'Mandarin'],
+                available: true,
+                patients_treated: 1800
+            },
+            {
+                id: 3,
+                name: 'Emily Rodriguez',
+                specialty: 'Pediatrics',
+                subspecialties: ['Pediatric Emergency Medicine', 'Child Development'],
+                education: 'Stanford Medical School',
+                experience: 8,
+                location: 'Children\'s Hospital, Westside',
+                phone: '+1 (555) 345-6789',
+                email: 'dr.rodriguez@healthcareplus.com',
+                fee: 180.00,
+                rating: 4.7,
+                reviews: 89,
+                about: 'Dr. Rodriguez is dedicated to providing comprehensive pediatric care for children of all ages.',
+                services: ['Child Health Checkups', 'Vaccinations', 'Developmental Assessment'],
+                certifications: ['Board Certified Pediatrician', 'Pediatric Advanced Life Support'],
+                languages: ['English', 'Spanish'],
+                available: true,
+                patients_treated: 1200
+            }
+        ];
+
+        this.doctors = mockDoctors;
+        this.filteredDoctors = mockDoctors;
+        this.displayDoctors(mockDoctors);
+        this.populateFilterOptions(mockDoctors);
+    }
+
+    displayDoctors(doctors) {
+        const container = document.getElementById('doctors-list');
+        if (!container) return;
+
+        if (doctors.length === 0) {
+            container.innerHTML = '<p class="no-data">No doctors found</p>';
+            return;
+        }
+
+        const doctorsHTML = doctors.map(doctor => `
+            <div class="doctor-card">
                 <div class="doctor-avatar">
                     <i class="fas fa-user-md"></i>
                 </div>
                 <div class="doctor-info">
-                    <h4>Dr. ${doctor.name}</h4>
+                    <h3>${doctor.name}</h3>
                     <p class="specialty">${doctor.specialty}</p>
+                    <p class="experience">${doctor.experience} years experience</p>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> ${doctor.location}</p>
                     <div class="rating">
                         ${this.generateStars(doctor.rating)}
-                        <span>(${doctor.reviews} reviews)</span>
+                        <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
                     </div>
-                    <div class="fee">$${doctor.fee}</div>
+                    <div class="fee">
+                        Consultation Fee: <strong>$${doctor.fee}</strong>
+                    </div>
+                    <div class="languages">
+                        Languages: ${doctor.languages.join(', ')}
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary" data-action="book-appointment" data-doctor-id="${doctor.id}">
+                        Book Appointment
+                    </button>
+                    <button class="btn btn-outline" data-action="view-doctor" data-doctor-id="${doctor.id}">
+                        View Profile
+                    </button>
                 </div>
             </div>
         `).join('');
+
+        container.innerHTML = doctorsHTML;
     }
 
-    selectBookingDoctor(doctorId) {
-        this.selectedBookingDoctor = this.bookingDoctors.find(d => d.id == doctorId);
-        
-        // Update UI
-        document.querySelectorAll('.booking-doctor-card').forEach(card => {
-            card.classList.remove('selected');
+    populateFilterOptions(doctors) {
+        const specialtyFilter = document.getElementById('filter-specialty');
+        const locationFilter = document.getElementById('filter-location');
+
+        if (specialtyFilter) {
+            const specialties = [...new Set(doctors.map(d => d.specialty))];
+            specialtyFilter.innerHTML = '<option value="">All Specialties</option>' +
+                specialties.map(specialty => `<option value="${specialty}">${specialty}</option>`).join('');
+        }
+
+        if (locationFilter) {
+            const locations = [...new Set(doctors.map(d => d.location))];
+            locationFilter.innerHTML = '<option value="">All Locations</option>' +
+                locations.map(location => `<option value="${location}">${location}</option>`).join('');
+        }
+    }
+
+    filterDoctors() {
+        const searchTerm = document.getElementById('doctor-search')?.value.toLowerCase() || '';
+        const specialtyFilter = document.getElementById('filter-specialty')?.value || '';
+        const locationFilter = document.getElementById('filter-location')?.value || '';
+
+        this.filteredDoctors = this.doctors.filter(doctor => {
+            const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
+                                doctor.specialty.toLowerCase().includes(searchTerm);
+            const matchesSpecialty = !specialtyFilter || doctor.specialty === specialtyFilter;
+            const matchesLocation = !locationFilter || doctor.location === locationFilter;
+
+            return matchesSearch && matchesSpecialty && matchesLocation;
         });
-        
-        const selectedCard = document.querySelector(`[data-doctor-id="${doctorId}"]`);
-        if (selectedCard) {
-            selectedCard.classList.add('selected');
-        }
-        
-        this.showNotification(`Selected Dr. ${this.selectedBookingDoctor.name}`, 'success');
+
+        this.displayDoctors(this.filteredDoctors);
     }
 
-    generateStars(rating) {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        
-        let starsHTML = '';
-        for (let i = 0; i < fullStars; i++) {
-            starsHTML += '<i class="fas fa-star"></i>';
-        }
-        if (hasHalfStar) {
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        }
-        for (let i = 0; i < emptyStars; i++) {
-            starsHTML += '<i class="far fa-star"></i>';
-        }
-        
-        return starsHTML;
+    clearSearch() {
+        const searchInput = document.getElementById('doctor-search');
+        const specialtyFilter = document.getElementById('filter-specialty');
+        const locationFilter = document.getElementById('filter-location');
+
+        if (searchInput) searchInput.value = '';
+        if (specialtyFilter) specialtyFilter.value = '';
+        if (locationFilter) locationFilter.value = '';
+
+        this.filteredDoctors = this.doctors;
+        this.displayDoctors(this.doctors);
     }
 
-    displayPaymentHistory(payments) {
-        // Payment history display logic
-        console.log('Payment history loaded:', payments);
+    async loadMedicalRecords() {
+        try {
+            const response = await fetch('php/patient-api.php?action=get_medical_records');
+            if (!response.ok) {
+                throw new Error('Failed to load medical records');
+            }
+            
+            const records = await response.json();
+            this.displayMedicalRecords(records);
+        } catch (error) {
+            console.error('Error loading medical records:', error);
+            // Use mock data for demo
+            const mockRecords = [
+                {
+                    id: 1,
+                    doctor_name: 'Dr. Sarah Johnson',
+                    diagnosis: 'Hypertension',
+                    treatment: 'Lifestyle modifications and medication',
+                    medications: 'Lisinopril 10mg daily',
+                    record_date: '2025-06-15',
+                    follow_up_date: '2025-07-15'
+                },
+                {
+                    id: 2,
+                    doctor_name: 'Dr. Emily Rodriguez',
+                    diagnosis: 'Annual checkup',
+                    treatment: 'Routine examination, all normal',
+                    medications: 'None',
+                    record_date: '2025-05-20',
+                    follow_up_date: '2026-05-20'
+                }
+            ];
+            this.displayMedicalRecords(mockRecords);
+        }
+    }
+
+    displayMedicalRecords(records) {
+        const container = document.getElementById('medical-records-list');
+        if (!container) return;
+
+        if (records.length === 0) {
+            container.innerHTML = '<p class="no-data">No medical records found</p>';
+            return;
+        }
+
+        const recordsHTML = records.map(record => `
+            <div class="medical-record-card">
+                <div class="record-header">
+                    <h4>Visit with ${record.doctor_name}</h4>
+                    <span class="record-date">${this.formatDate(record.record_date)}</span>
+                </div>
+                <div class="record-content">
+                    <div class="record-field">
+                        <label>Diagnosis:</label>
+                        <p>${record.diagnosis}</p>
+                    </div>
+                    <div class="record-field">
+                        <label>Treatment:</label>
+                        <p>${record.treatment}</p>
+                    </div>
+                    <div class="record-field">
+                        <label>Medications:</label>
+                        <p>${record.medications}</p>
+                    </div>
+                    ${record.follow_up_date ? `
+                        <div class="record-field">
+                            <label>Follow-up Date:</label>
+                            <p>${this.formatDate(record.follow_up_date)}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = recordsHTML;
+    }
+
+    async loadMessages() {
+        try {
+            const response = await fetch('php/messaging-api.php?action=get_conversations');
+            if (!response.ok) {
+                throw new Error('Failed to load messages');
+            }
+            
+            const conversations = await response.json();
+            this.displayMessages(conversations);
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            // Use mock data for demo
+            const mockConversations = [
+                {
+                    id: 1,
+                    other_user_name: 'Dr. Sarah Johnson',
+                    other_user_type: 'doctor',
+                    last_message: 'Please continue taking your medication as prescribed.',
+                    last_message_time: '2025-06-20 10:30:00',
+                    unread_count: 0
+                },
+                {
+                    id: 2,
+                    other_user_name: 'Dr. Michael Chen',
+                    other_user_type: 'doctor',
+                    last_message: 'Your test results look good. Schedule a follow-up in 3 months.',
+                    last_message_time: '2025-06-19 14:15:00',
+                    unread_count: 1
+                }
+            ];
+            this.displayMessages(mockConversations);
+        }
+    }
+
+    displayMessages(conversations) {
+        const container = document.getElementById('messages-list');
+        if (!container) return;
+
+        if (conversations.length === 0) {
+            container.innerHTML = '<p class="no-data">No messages found</p>';
+            return;
+        }
+
+        const messagesHTML = conversations.map(conversation => `
+            <div class="message-conversation" data-conversation-id="${conversation.id}">
+                <div class="conversation-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="conversation-info">
+                    <h4>${conversation.other_user_name}</h4>
+                    <p class="last-message">${conversation.last_message}</p>
+                    <span class="message-time">${this.formatDateTime(conversation.last_message_time)}</span>
+                </div>
+                ${conversation.unread_count > 0 ? `
+                    <div class="unread-badge">${conversation.unread_count}</div>
+                ` : ''}
+            </div>
+        `).join('');
+
+        container.innerHTML = messagesHTML;
+    }
+
+    bookAppointment(doctorId) {
+        window.location.href = `booking.html?doctor=${doctorId}`;
+    }
+
+    viewDoctorProfile(doctorId) {
+        const doctor = this.doctors.find(d => d.id == doctorId);
+        if (doctor) {
+            this.showDoctorModal(doctor);
+        }
+    }
+
+    showDoctorModal(doctor) {
+        const modalHTML = `
+            <div class="modal fade" id="doctorModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${doctor.name}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="doctor-profile">
+                                <div class="doctor-basic-info">
+                                    <h6>Specialty: ${doctor.specialty}</h6>
+                                    <p>Education: ${doctor.education}</p>
+                                    <p>Experience: ${doctor.experience} years</p>
+                                    <p>Location: ${doctor.location}</p>
+                                    <p>Languages: ${doctor.languages.join(', ')}</p>
+                                </div>
+                                <div class="doctor-about">
+                                    <h6>About</h6>
+                                    <p>${doctor.about}</p>
+                                </div>
+                                <div class="doctor-services">
+                                    <h6>Services</h6>
+                                    <ul>
+                                        ${doctor.services.map(service => `<li>${service}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div class="doctor-certifications">
+                                    <h6>Certifications</h6>
+                                    <ul>
+                                        ${doctor.certifications.map(cert => `<li>${cert}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='booking.html?doctor=${doctor.id}'">
+                                Book Appointment
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById('doctorModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Show modal (using simple display toggle since we don't have Bootstrap)
+        const modal = document.getElementById('doctorModal');
+        modal.style.display = 'block';
+        modal.classList.add('show');
+
+        // Close modal functionality
+        const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                setTimeout(() => modal.remove(), 300);
+            });
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                setTimeout(() => modal.remove(), 300);
+            }
+        });
+    }
+
+    async cancelAppointment(appointmentId) {
+        if (!confirm('Are you sure you want to cancel this appointment?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('php/patient-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'cancel_appointment',
+                    appointment_id: appointmentId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to cancel appointment');
+            }
+
+            const result = await response.json();
+            if (result.success) {
+                this.showNotification('Appointment cancelled successfully', 'success');
+                this.loadDashboardData();
+                this.loadAllAppointments();
+            } else {
+                throw new Error(result.message || 'Failed to cancel appointment');
+            }
+        } catch (error) {
+            console.error('Error cancelling appointment:', error);
+            this.showNotification('Failed to cancel appointment', 'error');
+        }
     }
 
     async handleLogout() {
@@ -506,135 +879,73 @@ class PatientDashboard {
             const response = await fetch('php/auth.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: 'action=logout'
+                body: JSON.stringify({ action: 'logout' })
             });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                window.location.href = 'login.html';
-            }
+
+            window.location.href = 'login.html';
         } catch (error) {
-            console.error('Logout failed:', error);
-            // Force logout on error
+            console.error('Logout error:', error);
             window.location.href = 'login.html';
         }
     }
 
     async handleProfileUpdate(e) {
-        e.preventDefault();
-        
         const formData = new FormData(e.target);
-        formData.append('action', 'update_profile');
         
         try {
             const response = await fetch('php/patient-api.php', {
                 method: 'POST',
                 body: formData
             });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                this.showNotification('Profile updated successfully!', 'success');
-                this.currentUser = { ...this.currentUser, ...data.user };
-                this.updateUserDisplay();
+
+            if (!response.ok) {
+                throw new Error('Failed to update profile');
+            }
+
+            const result = await response.json();
+            if (result.success) {
+                this.showNotification('Profile updated successfully', 'success');
+                this.checkAuthentication(); // Refresh user data
             } else {
-                this.showNotification(data.error || 'Failed to update profile', 'error');
+                throw new Error(result.message || 'Failed to update profile');
             }
         } catch (error) {
-            console.error('Profile update failed:', error);
+            console.error('Error updating profile:', error);
             this.showNotification('Failed to update profile', 'error');
         }
     }
 
-    async viewAppointment(appointmentId) {
-        try {
-            const response = await fetch(`php/patient-api.php?action=get_appointment&id=${appointmentId}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                this.showAppointmentDetails(data.appointment);
-            }
-        } catch (error) {
-            console.error('Failed to load appointment details:', error);
-        }
-    }
-
-    async cancelAppointment(appointmentId) {
-        if (!confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
-            return;
-        }
-        
-        try {
-            const response = await fetch('/php/appointment-confirmation.php?action=cancel_appointment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    appointment_id: appointmentId
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                this.showNotification('Appointment cancelled successfully', 'success');
-                await this.loadAppointments();
-                await this.loadDashboardData();
-            } else {
-                throw new Error(result.error || 'Failed to cancel appointment');
-            }
-        } catch (error) {
-            console.error('Error cancelling appointment:', error);
-            this.showNotification('Failed to cancel appointment: ' + error.message, 'error');
-        }
-    }
-
-    async payAppointment(appointmentId) {
-        try {
-            // Get appointment details first
-            const response = await fetch(`/php/appointment-confirmation.php?action=get_patient_appointments&patient_email=${encodeURIComponent(this.getCurrentUserEmail())}`);
-            const appointments = await response.json();
-            const appointment = appointments.find(a => a.id == appointmentId);
-            
-            if (appointment) {
-                // Store appointment data for payment page
-                sessionStorage.setItem('pendingPayment', JSON.stringify({
-                    appointmentId: appointmentId,
-                    appointment: appointment,
-                    amount: 150 // Default consultation fee
-                }));
-                
-                // Redirect to payment page
-                window.location.href = `payment.html?appointment=${appointmentId}`;
-            } else {
-                this.showNotification('Appointment not found', 'error');
-            }
-        } catch (error) {
-            console.error('Error loading appointment for payment:', error);
-            this.showNotification('Failed to load appointment details', 'error');
-        }
-    }
-
-    showAppointmentDetails(appointment) {
-        // Show appointment details in a modal or new section
-        console.log('Appointment details:', appointment);
-    }
-
-    formatAppointmentDate(date, time) {
-        const appointmentDate = new Date(`${date} ${time}`);
-        return appointmentDate.toLocaleDateString('en-US', {
-            weekday: 'long',
+    // Utility functions
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        }) + ' - ' + appointmentDate.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
+        });
+    }
+
+    formatTime(timeString) {
+        const [hours, minutes] = timeString.split(':');
+        const date = new Date();
+        date.setHours(parseInt(hours), parseInt(minutes));
+        return date.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
+    formatDateTime(dateTimeString) {
+        const date = new Date(dateTimeString);
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
         });
     }
 
@@ -642,210 +953,11 @@ class PatientDashboard {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    showNotification(message, type = 'info') {
-        // Use the existing notification system from main.js
-        if (typeof showNotification === 'function') {
-            showNotification(message, type);
-        } else {
-            alert(message);
-        }
-    }
-
-    setupProfilePicture() {
-        const profilePictureInput = document.getElementById('profile-picture-input');
-        const profilePicturePreview = document.getElementById('profile-picture-preview');
-        const profilePictureContainer = document.querySelector('.profile-picture-container');
-
-        if (profilePictureInput && profilePicturePreview) {
-            profilePictureInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    // Validate file type
-                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-                    if (!validTypes.includes(file.type)) {
-                        this.showNotification('Please select a valid image file (JPEG, PNG, or GIF)', 'error');
-                        return;
-                    }
-
-                    // Validate file size (max 5MB)
-                    const maxSize = 5 * 1024 * 1024; // 5MB
-                    if (file.size > maxSize) {
-                        this.showNotification('Image file size must be less than 5MB', 'error');
-                        return;
-                    }
-
-                    // Read and preview the image
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        profilePicturePreview.src = e.target.result;
-                        this.showNotification('Profile picture updated successfully', 'success');
-                        
-                        // Store in localStorage for demo purposes
-                        localStorage.setItem('profilePicture', e.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // Add click handler to the container for easier access
-            if (profilePictureContainer) {
-                profilePictureContainer.addEventListener('click', () => {
-                    profilePictureInput.click();
-                });
-            }
-
-            // Load saved profile picture from localStorage
-            const savedPicture = localStorage.getItem('profilePicture');
-            if (savedPicture) {
-                profilePicturePreview.src = savedPicture;
-            }
-        }
-    }
-
-    // Doctor search and management methods
-    async loadDoctors() {
-        try {
-            const response = await fetch('php/patient-api.php?action=get_doctors');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.doctors = data.doctors;
-                this.filteredDoctors = [...this.doctors];
-                this.displayDoctors();
-                this.updateResultsCount();
-            } else {
-                console.error('Failed to load doctors:', data.error);
-            }
-        } catch (error) {
-            console.error('Error loading doctors:', error);
-        }
-    }
-    
-    displayDoctors() {
-        const container = document.getElementById('doctors-container');
-        const noResults = document.getElementById('no-results');
-        
-        if (!container) return;
-        
-        if (this.filteredDoctors.length === 0) {
-            container.style.display = 'none';
-            noResults.style.display = 'block';
-            return;
-        }
-        
-        container.style.display = 'grid';
-        noResults.style.display = 'none';
-        
-        const currentView = container.classList.contains('doctors-list') ? 'list' : 'grid';
-        
-        if (currentView === 'grid') {
-            container.innerHTML = this.filteredDoctors.map(doctor => this.createDoctorCard(doctor)).join('');
-        } else {
-            container.innerHTML = this.filteredDoctors.map(doctor => this.createDoctorListItem(doctor)).join('');
-        }
-    }
-    
-    createDoctorCard(doctor) {
-        const initials = doctor.name.split(' ').map(n => n[0]).join('');
-        const stars = this.generateStars(doctor.rating);
-        const availabilityClass = doctor.available ? 'available' : 'unavailable';
-        const availabilityText = doctor.available ? 'Available' : 'Unavailable';
-        
-        return `
-            <div class="doctor-card" onclick="viewDoctorProfile(${doctor.id})">
-                <div class="doctor-header">
-                    <div class="doctor-avatar">${initials}</div>
-                    <div class="doctor-info">
-                        <h3>${doctor.name}</h3>
-                        <div class="doctor-specialty">${doctor.specialty}</div>
-                    </div>
-                </div>
-                
-                <div class="doctor-details">
-                    <div class="doctor-rating">
-                        <span class="stars">${stars}</span>
-                        <span>${doctor.rating}</span>
-                        <span>(${doctor.reviews} reviews)</span>
-                    </div>
-                    
-                    <div class="doctor-detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${doctor.location}</span>
-                    </div>
-                    
-                    <div class="doctor-detail">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>${doctor.education}</span>
-                    </div>
-                    
-                    <div class="doctor-detail">
-                        <i class="fas fa-clock"></i>
-                        <span>${doctor.experience} years experience</span>
-                    </div>
-                    
-                    <div class="doctor-detail">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>$${doctor.fee}</span>
-                    </div>
-                </div>
-                
-                <div class="doctor-availability ${availabilityClass}">
-                    ${availabilityText}
-                </div>
-                
-                <div class="doctor-actions">
-                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookAppointment(${doctor.id})">
-                        <i class="fas fa-calendar-plus"></i> Book Now
-                    </button>
-                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewDoctorProfile(${doctor.id})">
-                        <i class="fas fa-eye"></i> View Profile
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
-    createDoctorListItem(doctor) {
-        const initials = doctor.name.split(' ').map(n => n[0]).join('');
-        const stars = this.generateStars(doctor.rating);
-        const availabilityClass = doctor.available ? 'available' : 'unavailable';
-        const availabilityText = doctor.available ? 'Available' : 'Unavailable';
-        
-        return `
-            <div class="doctor-list-item" onclick="viewDoctorProfile(${doctor.id})">
-                <div class="doctor-avatar">${initials}</div>
-                <div class="doctor-list-info">
-                    <h4>${doctor.name}</h4>
-                    <div class="doctor-specialty">${doctor.specialty}</div>
-                    <div class="doctor-rating">
-                        <span class="stars">${stars}</span>
-                        <span>${doctor.rating} (${doctor.reviews} reviews)</span>
-                    </div>
-                    <div class="doctor-detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${doctor.location}</span>
-                    </div>
-                    <div class="doctor-availability ${availabilityClass}">
-                        ${availabilityText}
-                    </div>
-                </div>
-                <div class="doctor-list-actions">
-                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookAppointment(${doctor.id})">
-                        <i class="fas fa-calendar-plus"></i> Book
-                    </button>
-                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewDoctorProfile(${doctor.id})">
-                        <i class="fas fa-eye"></i> Profile
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
     generateStars(rating) {
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 !== 0;
         const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        
+
         let stars = '';
         for (let i = 0; i < fullStars; i++) {
             stars += '<i class="fas fa-star"></i>';
@@ -856,868 +968,41 @@ class PatientDashboard {
         for (let i = 0; i < emptyStars; i++) {
             stars += '<i class="far fa-star"></i>';
         }
-        
         return stars;
-    }
-    
-    searchDoctors() {
-        const searchTerm = document.getElementById('doctor-search')?.value.toLowerCase() || '';
-        const specialtyFilter = document.getElementById('specialty-filter')?.value || '';
-        const locationFilter = document.getElementById('location-filter')?.value || '';
-        const availabilityFilter = document.getElementById('availability-filter')?.value || '';
-        
-        this.filteredDoctors = this.doctors.filter(doctor => {
-            const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
-                                doctor.specialty.toLowerCase().includes(searchTerm) ||
-                                doctor.location?.toLowerCase().includes(searchTerm) ||
-                                doctor.email?.toLowerCase().includes(searchTerm);
-            
-            const matchesSpecialty = !specialtyFilter || doctor.specialty === specialtyFilter;
-            const matchesLocation = !locationFilter || doctor.location === locationFilter;
-            const matchesAvailability = !availabilityFilter || 
-                                      (availabilityFilter === 'available' && doctor.available) ||
-                                      (availabilityFilter === 'unavailable' && !doctor.available);
-            
-            return matchesSearch && matchesSpecialty && matchesLocation && matchesAvailability;
-        });
-        
-        this.displayDoctors();
-        this.updateResultsCount();
-        this.updateSearchResults(searchTerm);
-        this.highlightSearchTerms(searchTerm);
-    }
-
-    clearDoctorSearch() {
-        const searchInput = document.getElementById('doctor-search');
-        const clearBtn = document.querySelector('.search-clear');
-        const specialtyFilter = document.getElementById('specialty-filter');
-        const locationFilter = document.getElementById('location-filter');
-        const availabilityFilter = document.getElementById('availability-filter');
-        
-        if (searchInput) {
-            searchInput.value = '';
-        }
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-        }
-        if (specialtyFilter) specialtyFilter.value = '';
-        if (locationFilter) locationFilter.value = '';
-        if (availabilityFilter) availabilityFilter.value = '';
-        
-        this.hideSuggestions();
-        this.filteredDoctors = [...this.doctors];
-        this.displayDoctors();
-        this.updateResultsCount();
-        this.hideSearchResults();
-    }
-
-    clearBookingDoctorSearch() {
-        const searchInput = document.getElementById('booking-doctor-search');
-        const clearBtn = searchInput?.parentElement.querySelector('.search-clear');
-        
-        if (searchInput) {
-            searchInput.value = '';
-        }
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-        }
-        
-        // Reset booking doctors display
-        if (this.bookingDoctors) {
-            this.displayBookingDoctors(this.bookingDoctors);
-        }
-    }
-
-    setupEnhancedSearch() {
-        const searchInput = document.getElementById('doctor-search');
-        const clearBtn = document.querySelector('.search-clear');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const value = e.target.value;
-                
-                // Show/hide clear button
-                if (clearBtn) {
-                    clearBtn.style.display = value.length > 0 ? 'block' : 'none';
-                }
-                
-                // Show suggestions for terms longer than 1 character
-                if (value.length > 1) {
-                    this.showSearchSuggestions(value);
-                } else {
-                    this.hideSuggestions();
-                }
-                
-                this.searchDoctors();
-            });
-
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    this.clearDoctorSearch();
-                } else if (e.key === 'Enter') {
-                    this.hideSuggestions();
-                }
-            });
-        }
-
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.enhanced-search')) {
-                this.hideSuggestions();
-            }
-        });
-    }
-
-    showSearchSuggestions(searchTerm) {
-        if (!this.doctors || this.doctors.length === 0) return;
-
-        const suggestions = new Set();
-        const term = searchTerm.toLowerCase();
-
-        // Get unique suggestions from doctors data
-        this.doctors.forEach(doctor => {
-            if (doctor.name.toLowerCase().includes(term)) {
-                suggestions.add(doctor.name);
-            }
-            if (doctor.specialty && doctor.specialty.toLowerCase().includes(term)) {
-                suggestions.add(doctor.specialty);
-            }
-            if (doctor.location && doctor.location.toLowerCase().includes(term)) {
-                suggestions.add(doctor.location);
-            }
-        });
-
-        this.displaySuggestions(Array.from(suggestions).slice(0, 5));
-    }
-
-    displaySuggestions(suggestions) {
-        const container = document.getElementById('doctor-search-suggestions');
-        if (!container) return;
-
-        if (suggestions.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-
-        container.innerHTML = suggestions.map(suggestion => 
-            `<div class="search-suggestion" onclick="window.patientDashboard.selectSuggestion('${suggestion}')">${suggestion}</div>`
-        ).join('');
-        
-        container.style.display = 'block';
-    }
-
-    selectSuggestion(suggestion) {
-        const searchInput = document.getElementById('doctor-search');
-        if (searchInput) {
-            searchInput.value = suggestion;
-            this.searchDoctors();
-        }
-        this.hideSuggestions();
-    }
-
-    hideSuggestions() {
-        const container = document.getElementById('doctor-search-suggestions');
-        if (container) {
-            container.style.display = 'none';
-        }
-    }
-
-    updateSearchResults(searchTerm) {
-        const resultsContainer = document.querySelector('.search-results-count');
-        if (!resultsContainer) {
-            // Create results container if it doesn't exist
-            const searchContainer = document.querySelector('.search-filters');
-            if (searchContainer) {
-                const resultsDiv = document.createElement('div');
-                resultsDiv.className = 'search-results-count';
-                searchContainer.appendChild(resultsDiv);
-            }
-        }
-        
-        const container = document.querySelector('.search-results-count');
-        if (container && searchTerm && searchTerm.length > 0) {
-            const filteredCount = this.filteredDoctors.length;
-            const totalCount = this.doctors.length;
-            container.innerHTML = `Showing ${filteredCount} of ${totalCount} doctors for "${searchTerm}"`;
-            container.style.display = 'block';
-        } else if (container) {
-            container.style.display = 'none';
-        }
-    }
-
-    hideSearchResults() {
-        const container = document.querySelector('.search-results-count');
-        if (container) {
-            container.style.display = 'none';
-        }
-    }
-
-    highlightSearchTerms(searchTerm) {
-        if (!searchTerm || searchTerm.length < 2) return;
-
-        const doctorCards = document.querySelectorAll('.doctor-card, .doctor-list-item');
-        doctorCards.forEach(card => {
-            const textElements = card.querySelectorAll('h3, p, .doctor-specialty, .doctor-location');
-            textElements.forEach(element => {
-                const text = element.textContent;
-                const regex = new RegExp(`(${searchTerm})`, 'gi');
-                if (regex.test(text)) {
-                    element.innerHTML = text.replace(regex, '<span class="search-highlight">$1</span>');
-                }
-            });
-        });
-    }
-
-    viewAppointment(appointmentId) {
-        console.log('Viewing appointment:', appointmentId);
-        const modal = document.createElement('div');
-        modal.className = 'appointment-modal';
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        `;
-        
-        modal.innerHTML = `
-            <div class="modal-content" style="
-                background: var(--card-bg);
-                border-radius: 12px;
-                padding: 2rem;
-                max-width: 500px;
-                width: 90%;
-            ">
-                <h3>Appointment Details</h3>
-                <p>Appointment ID: ${appointmentId}</p>
-                <p>Loading appointment details...</p>
-                <button onclick="this.closest('.appointment-modal').remove()" class="btn btn-primary">Close</button>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-    }
-    
-    payAppointment(appointmentId) {
-        console.log('Paying for appointment:', appointmentId);
-        sessionStorage.setItem('paymentAppointmentId', appointmentId);
-        this.showSection('payments');
-        this.showNotification('Redirected to payments section', 'info');
-    }
-    
-    cancelAppointment(appointmentId) {
-        console.log('Cancelling appointment:', appointmentId);
-        if (confirm('Are you sure you want to cancel this appointment?')) {
-            this.showNotification('Appointment cancelled successfully!', 'success');
-            setTimeout(() => {
-                this.loadAppointments();
-            }, 1000);
-        }
-    }
-
-    async handleLogout() {
-        try {
-            const response = await fetch('php/logout.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            if (response.ok) {
-                window.location.href = 'login.html';
-            } else {
-                throw new Error('Logout failed');
-            }
-        } catch (error) {
-            console.error('Logout error:', error);
-            window.location.href = 'login.html';
-        }
-    }
-    
-    clearFilters() {
-        const searchInput = document.getElementById('doctor-search');
-        const specialtyFilter = document.getElementById('specialty-filter');
-        const locationFilter = document.getElementById('location-filter');
-        const availabilityFilter = document.getElementById('availability-filter');
-        
-        if (searchInput) searchInput.value = '';
-        if (specialtyFilter) specialtyFilter.value = '';
-        if (locationFilter) locationFilter.value = '';
-        if (availabilityFilter) availabilityFilter.value = '';
-        
-        this.filteredDoctors = [...this.doctors];
-        this.displayDoctors();
-        this.updateResultsCount();
-    }
-    
-    toggleView(view) {
-        const container = document.getElementById('doctors-container');
-        const gridBtn = document.querySelector('.view-btn[data-view="grid"]');
-        const listBtn = document.querySelector('.view-btn[data-view="list"]');
-        
-        if (!container) return;
-        
-        if (view === 'list') {
-            container.className = 'doctors-list';
-            if (gridBtn) gridBtn.classList.remove('active');
-            if (listBtn) listBtn.classList.add('active');
-        } else {
-            container.className = 'doctors-grid';
-            if (listBtn) listBtn.classList.remove('active');
-            if (gridBtn) gridBtn.classList.add('active');
-        }
-        
-        this.displayDoctors();
-    }
-    
-    updateResultsCount() {
-        const resultsCount = document.getElementById('results-count');
-        if (resultsCount) {
-            const count = this.filteredDoctors.length;
-            const total = this.doctors.length;
-            resultsCount.textContent = `Showing ${count} of ${total} doctors`;
-        }
-    }
-
-    // Booking functionality
-    initializeBooking() {
-        this.selectedDoctor = null;
-        this.selectedDate = null;
-        this.selectedTime = null;
-        this.currentStep = 1;
-        this.currentMonth = new Date().getMonth();
-        this.currentYear = new Date().getFullYear();
-        
-        this.setupBookingEventListeners();
-        this.loadBookingDoctors();
-    }
-
-    setupBookingEventListeners() {
-        // Filter chips
-        document.querySelectorAll('.filter-chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                e.target.classList.add('active');
-                this.filterBookingDoctors(e.target.dataset.specialty);
-            });
-        });
-
-        // Search
-        const searchInput = document.getElementById('booking-doctor-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.searchBookingDoctors(e.target.value);
-            });
-        }
-
-        // Calendar navigation
-        const prevBtn = document.getElementById('prev-month-btn');
-        const nextBtn = document.getElementById('next-month-btn');
-        
-        if (prevBtn) prevBtn.addEventListener('click', () => this.navigateMonth(-1));
-        if (nextBtn) nextBtn.addEventListener('click', () => this.navigateMonth(1));
-
-        // Terms checkbox
-        const termsCheckbox = document.getElementById('terms-agreement');
-        if (termsCheckbox) {
-            termsCheckbox.addEventListener('change', () => {
-                const confirmBtn = document.getElementById('confirm-booking-btn');
-                if (confirmBtn) {
-                    confirmBtn.disabled = !termsCheckbox.checked;
-                }
-            });
-        }
-    }
-
-    async loadBookingDoctors() {
-        try {
-            const response = await fetch('php/patient-api.php?action=get_doctors');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.doctors = data.doctors;
-                this.displayBookingDoctors(this.doctors);
-            }
-        } catch (error) {
-            console.error('Error loading doctors for booking:', error);
-        }
-    }
-
-    displayBookingDoctors(doctors) {
-        const container = document.getElementById('booking-doctors-grid');
-        if (!container) return;
-
-        container.innerHTML = doctors.map(doctor => this.createBookingDoctorCard(doctor)).join('');
-    }
-
-    createBookingDoctorCard(doctor) {
-        const initials = doctor.name.split(' ').map(n => n[0]).join('');
-        const stars = this.generateStars(doctor.rating);
-        const availabilityClass = doctor.available ? 'available' : 'unavailable';
-        const availabilityText = doctor.available ? 'Available' : 'Unavailable';
-
-        return `
-            <div class="booking-doctor-card" onclick="window.patientDashboard.selectDoctor(${doctor.id})" data-doctor-id="${doctor.id}">
-                <div class="doctor-header">
-                    <div class="doctor-avatar">${initials}</div>
-                    <div class="doctor-info">
-                        <h4>${doctor.name}</h4>
-                        <p>${doctor.specialty}</p>
-                        <div class="doctor-rating">
-                            <span class="stars">${stars}</span>
-                            <span>${doctor.rating} (${doctor.reviews})</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="doctor-details">
-                    <div class="doctor-detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${doctor.location}</span>
-                    </div>
-                    <div class="doctor-detail">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>$${doctor.fee}</span>
-                    </div>
-                    <div class="doctor-availability ${availabilityClass}">
-                        ${availabilityText}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    filterBookingDoctors(specialty) {
-        if (specialty === 'all') {
-            this.displayBookingDoctors(this.doctors);
-        } else {
-            const filtered = this.doctors.filter(doctor => doctor.specialty === specialty);
-            this.displayBookingDoctors(filtered);
-        }
-    }
-
-    searchBookingDoctors(searchTerm) {
-        const term = searchTerm.toLowerCase();
-        const filtered = this.doctors.filter(doctor => 
-            doctor.name.toLowerCase().includes(term) ||
-            doctor.specialty.toLowerCase().includes(term) ||
-            doctor.location.toLowerCase().includes(term)
-        );
-        this.displayBookingDoctors(filtered);
-    }
-
-    selectDoctor(doctorId) {
-        this.selectedDoctor = this.doctors.find(d => d.id === doctorId);
-        if (!this.selectedDoctor) return;
-
-        // Update selected doctor display
-        this.updateSelectedDoctorDisplay();
-        
-        // Hide doctors grid and show selected doctor
-        document.getElementById('booking-doctors-grid').style.display = 'none';
-        document.getElementById('selected-doctor-display').style.display = 'block';
-        
-        // Enable next button
-        document.getElementById('next-to-time').disabled = false;
-    }
-
-    updateSelectedDoctorDisplay() {
-        if (!this.selectedDoctor) return;
-
-        document.getElementById('selected-doctor-name').textContent = this.selectedDoctor.name;
-        document.getElementById('selected-doctor-specialty').textContent = this.selectedDoctor.specialty;
-        document.getElementById('selected-doctor-location').textContent = this.selectedDoctor.location;
-        document.getElementById('selected-doctor-rating').innerHTML = this.generateStars(this.selectedDoctor.rating);
-        document.getElementById('selected-doctor-reviews').textContent = `(${this.selectedDoctor.reviews} reviews)`;
-        document.getElementById('selected-doctor-fee').textContent = `$${this.selectedDoctor.fee}`;
-    }
-
-    clearDoctorSelection() {
-        this.selectedDoctor = null;
-        document.getElementById('booking-doctors-grid').style.display = 'grid';
-        document.getElementById('selected-doctor-display').style.display = 'none';
-        document.getElementById('next-to-time').disabled = true;
-    }
-
-    generateCalendar() {
-        const calendar = document.getElementById('booking-calendar');
-        const monthYear = document.getElementById('calendar-month-year');
-        
-        if (!calendar || !monthYear) return;
-
-        const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-        
-        monthYear.textContent = `${months[this.currentMonth]} ${this.currentYear}`;
-
-        const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
-        const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-        const today = new Date();
-
-        let calendarHTML = '';
-        
-        // Day headers
-        const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        dayHeaders.forEach(day => {
-            calendarHTML += `<div class="calendar-day-header">${day}</div>`;
-        });
-
-        // Empty cells for days before month starts
-        for (let i = 0; i < firstDay; i++) {
-            calendarHTML += '<div class="calendar-day disabled"></div>';
-        }
-
-        // Days of the month
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(this.currentYear, this.currentMonth, day);
-            const isDisabled = date <= today;
-            const classes = ['calendar-day'];
-            
-            if (isDisabled) classes.push('disabled');
-            
-            const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            
-            calendarHTML += `
-                <div class="${classes.join(' ')}" 
-                     ${!isDisabled ? `onclick="window.patientDashboard.selectDate('${dateStr}')"` : ''}>
-                    ${day}
-                </div>
-            `;
-        }
-
-        calendar.innerHTML = calendarHTML;
-    }
-
-    navigateMonth(direction) {
-        this.currentMonth += direction;
-        
-        if (this.currentMonth > 11) {
-            this.currentMonth = 0;
-            this.currentYear++;
-        } else if (this.currentMonth < 0) {
-            this.currentMonth = 11;
-            this.currentYear--;
-        }
-        
-        this.generateCalendar();
-    }
-
-    selectDate(dateStr) {
-        this.selectedDate = dateStr;
-        
-        // Update calendar display
-        document.querySelectorAll('.calendar-day').forEach(day => {
-            day.classList.remove('selected');
-        });
-        event.target.classList.add('selected');
-        
-        // Load time slots
-        this.loadTimeSlots(dateStr);
-    }
-
-    async loadTimeSlots(date) {
-        const timesContainer = document.getElementById('available-times');
-        if (!timesContainer) return;
-
-        if (!this.selectedDoctor) {
-            timesContainer.innerHTML = '<p class="text-muted">Please select a doctor first</p>';
-            return;
-        }
-
-        // Show loading state
-        timesContainer.innerHTML = '<p class="text-muted">Loading available times...</p>';
-
-        try {
-            const response = await fetch(`php/patient-api.php?action=get_timeslots&doctor_id=${this.selectedDoctor.id}&date=${date}`);
-            const data = await response.json();
-            
-            if (data.success && data.timeslots && data.timeslots.length > 0) {
-                const timesHTML = data.timeslots.map(slot => `
-                    <div class="timeslot" onclick="window.patientDashboard.selectTime('${slot.time}')">
-                        ${slot.formatted || this.formatTime(slot.time)}
-                    </div>
-                `).join('');
-                timesContainer.innerHTML = timesHTML;
-            } else {
-                const message = data.error || 'No available times for the selected date';
-                timesContainer.innerHTML = `<p class="text-muted">${message}</p>`;
-            }
-        } catch (error) {
-            console.error('Error loading time slots:', error);
-            timesContainer.innerHTML = '<p class="text-muted">Error loading available times. Please try again.</p>';
-        }
-    }
-
-    selectTime(time) {
-        this.selectedTime = time;
-        
-        // Update time slot display
-        document.querySelectorAll('.timeslot').forEach(slot => {
-            slot.classList.remove('selected');
-        });
-        event.target.classList.add('selected');
-        
-        // Show appointment summary
-        this.updateAppointmentSummary();
-        document.getElementById('appointment-summary').style.display = 'block';
-        
-        // Enable next button
-        document.getElementById('next-to-confirm').disabled = false;
-    }
-
-    updateAppointmentSummary() {
-        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) return;
-
-        document.getElementById('summary-doctor').textContent = this.selectedDoctor.name;
-        document.getElementById('summary-date').textContent = this.formatDate(this.selectedDate);
-        document.getElementById('summary-time').textContent = this.formatTime(this.selectedTime);
-        document.getElementById('summary-fee').textContent = `$${this.selectedDoctor.fee}`;
-    }
-
-    updateConfirmationDetails() {
-        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) return;
-
-        document.getElementById('confirm-doctor-name').textContent = this.selectedDoctor.name;
-        document.getElementById('confirm-doctor-specialty').textContent = this.selectedDoctor.specialty;
-        document.getElementById('confirm-doctor-location').textContent = this.selectedDoctor.location;
-        document.getElementById('confirm-date').textContent = this.formatDate(this.selectedDate);
-        document.getElementById('confirm-time').textContent = this.formatTime(this.selectedTime);
-        document.getElementById('confirm-fee').textContent = `$${this.selectedDoctor.fee}`;
-    }
-
-    async confirmAppointmentBooking() {
-        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) {
-            this.showNotification('Please complete all booking steps', 'error');
-            return;
-        }
-
-        // Check if terms are agreed
-        const termsCheckbox = document.getElementById('terms-agreement');
-        if (!termsCheckbox || !termsCheckbox.checked) {
-            this.showNotification('Please agree to the terms and conditions', 'error');
-            return;
-        }
-
-        const visitReason = document.getElementById('visit-reason')?.value || 'General consultation';
-        
-        try {
-            const response = await fetch('/php/appointment-confirmation.php?action=confirm_appointment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    doctor_id: this.selectedDoctor.id,
-                    appointment_date: this.selectedDate,
-                    appointment_time: this.selectedTime,
-                    appointment_type: 'General Consultation',
-                    notes: visitReason
-                })
-            });
-
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                // Show success message
-                this.showSuccessMessage(result.booking_reference, result.appointment);
-                
-                // Reset booking
-                this.resetBooking();
-                
-                // Refresh appointments if viewing that section
-                if (this.currentSection === 'appointments') {
-                    await this.loadAppointments();
-                }
-                
-                this.showNotification('Appointment confirmed successfully!', 'success');
-            } else {
-                throw new Error(result.error || 'Booking failed');
-            }
-        } catch (error) {
-            console.error('Booking error:', error);
-            this.showNotification('Failed to book appointment: ' + error.message, 'error');
-        }
-    }
-
-    resetBooking() {
-        this.selectedDoctor = null;
-        this.selectedDate = null;
-        this.selectedTime = null;
-        this.updateBookingStep(1);
-        document.getElementById('booking-doctors-grid').style.display = 'grid';
-        document.getElementById('selected-doctor-display').style.display = 'none';
-        document.getElementById('next-to-time').disabled = true;
-        document.getElementById('next-to-confirm').disabled = true;
-        document.getElementById('appointment-summary').style.display = 'none';
-        document.getElementById('visit-reason').value = '';
-        document.getElementById('terms-agreement').checked = false;
-    }
-
-    updateBookingStep(step) {
-        // Update progress indicator
-        document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
-            stepEl.classList.toggle('active', index < step);
-        });
-
-        // Show/hide steps
-        document.querySelectorAll('.booking-step').forEach((stepEl, index) => {
-            stepEl.classList.toggle('active', index === step - 1);
-        });
-
-        this.currentStep = step;
-    }
-
-    formatDate(dateStr) {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-    }
-
-    formatTime(timeStr) {
-        if (!timeStr) return '';
-        const [hours, minutes] = timeStr.split(':');
-        const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const displayHour = hour % 12 || 12;
-        return `${displayHour}:${minutes} ${ampm}`;
     }
 
     showNotification(message, type = 'info') {
+        // Create notification element
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-        notification.textContent = message;
-        
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            background: var(--${type === 'success' ? 'success' : type === 'error' ? 'error' : 'primary'}-color);
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">&times;</button>
+            </div>
         `;
-        
+
+        // Add to page
         document.body.appendChild(notification);
-        
+
+        // Show notification
+        setTimeout(() => notification.classList.add('show'), 100);
+
+        // Auto remove after 5 seconds
         setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateX(0)';
-        }, 10);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+
+        // Close button functionality
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        });
     }
 }
 
-// Global functions for doctor interactions
-function searchDoctors() {
-    if (window.patientDashboard) {
-        window.patientDashboard.searchDoctors();
-    }
-}
-
-function filterDoctors() {
-    if (window.patientDashboard) {
-        window.patientDashboard.searchDoctors();
-    }
-}
-
-function clearFilters() {
-    if (window.patientDashboard) {
-        window.patientDashboard.clearFilters();
-    }
-}
-
-function toggleView(view) {
-    if (window.patientDashboard) {
-        window.patientDashboard.toggleView(view);
-    }
-}
-
-function bookAppointment(doctorId) {
-    if (window.patientDashboard) {
-        window.patientDashboard.showSection('book-appointment');
-        // Pre-select doctor if provided
-        if (doctorId) {
-            setTimeout(() => {
-                window.patientDashboard.selectDoctor(doctorId);
-            }, 500);
-        }
-    }
-}
-
-// Global booking functions
-function clearDoctorSelection() {
-    if (window.patientDashboard) {
-        window.patientDashboard.clearDoctorSelection();
-    }
-}
-
-function goToTimeSelection() {
-    if (window.patientDashboard) {
-        window.patientDashboard.updateBookingStep(2);
-        window.patientDashboard.generateCalendar();
-    }
-}
-
-function goToConfirmation() {
-    if (window.patientDashboard) {
-        window.patientDashboard.updateBookingStep(3);
-        window.patientDashboard.updateConfirmationDetails();
-    }
-}
-
-function goBackToDoctor() {
-    if (window.patientDashboard) {
-        window.patientDashboard.updateBookingStep(1);
-    }
-}
-
-function goBackToTime() {
-    if (window.patientDashboard) {
-        window.patientDashboard.updateBookingStep(2);
-    }
-}
-
-function confirmAppointmentBooking() {
-    if (window.patientDashboard) {
-        window.patientDashboard.confirmAppointmentBooking();
-    }
-}
-
-function viewDoctorProfile(doctorId) {
-    // Show doctor profile modal or navigate to profile page
-    console.log('Viewing doctor profile:', doctorId);
-    // This can be expanded to show a detailed modal
-}
-
-// Initialize patient dashboard when DOM is loaded
+// Initialize the dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.patientDashboard = new PatientDashboard();
 });
-

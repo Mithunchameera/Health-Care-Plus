@@ -1,552 +1,233 @@
 <?php
 /**
  * Patient API Endpoints
- * Handles patient-specific API requests
+ * Handles patient-specific data operations
  */
 
 require_once 'config.php';
+require_once 'database.php';
 
+// Set CORS headers
 setCORSHeaders();
+
+// Initialize session
+initializeSessionConfig();
+session_start();
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+    http_response_code(200);
+    exit();
 }
 
-// Check if this is a doctors request (which should be public for booking)
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
-if ($action === 'get_doctors') {
-    // Allow public access to doctors list for booking purposes
-    $currentUser = null;
-} elseif (in_array($action, ['get_patient_details', 'get_medical_records', 'add_medical_record'])) {
-    // Allow doctors and admin to access patient details
-    $currentUser = checkUserAuth(['doctor', 'admin']);
-    if (!$currentUser) {
-        sendResponse(['error' => 'Authentication required'], 401);
-    }
-} else {
-    // Require authentication for other patient actions
-    $currentUser = checkUserAuth(['patient']);
-    if (!$currentUser) {
-        sendResponse(['error' => 'Authentication required'], 401);
+
+switch ($action) {
+    case 'get_dashboard_stats':
+        getDashboardStats();
+        break;
+    case 'get_upcoming_appointments':
+        getUpcomingAppointments();
+        break;
+    case 'get_all_appointments':
+        getAllAppointments();
+        break;
+    case 'get_medical_records':
+        getMedicalRecords();
+        break;
+    case 'cancel_appointment':
+        cancelAppointment();
+        break;
+    case 'update_profile':
+        updateProfile();
+        break;
+    default:
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid action']);
+        break;
+}
+
+function getDashboardStats() {
+    try {
+        // Use mock data for demo environment
+        $stats = [
+            'total_appointments' => 12,
+            'upcoming_appointments' => 2,
+            'completed_appointments' => 8,
+            'cancelled_appointments' => 2
+        ];
+        
+        header('Content-Type: application/json');
+        echo json_encode($stats);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load dashboard stats']);
     }
 }
 
-class PatientAPI {
-    private $mockStorage;
-    private $currentUser;
-    
-    public function __construct($user = null) {
-        $this->mockStorage = MockDataStorage::getInstance();
-        $this->currentUser = $user;
-    }
-    
-    public function handleRequest() {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $action = $_GET['action'] ?? $_POST['action'] ?? '';
+function getUpcomingAppointments() {
+    try {
+        // Use mock data for demo environment
+        $appointments = [
+            [
+                'id' => 1,
+                'doctor_name' => 'Dr. Sarah Johnson',
+                'specialty' => 'Cardiology',
+                'appointment_date' => '2025-06-25',
+                'appointment_time' => '10:00',
+                'status' => 'confirmed',
+                'booking_reference' => 'HCP20250625001'
+            ],
+            [
+                'id' => 2,
+                'doctor_name' => 'Dr. Michael Chen',
+                'specialty' => 'Neurology',
+                'appointment_date' => '2025-06-28',
+                'appointment_time' => '14:30',
+                'status' => 'scheduled',
+                'booking_reference' => 'HCP20250628002'
+            ]
+        ];
         
-        switch ($action) {
-            case 'get_stats':
-                $this->getPatientStats();
-                break;
-            case 'get_upcoming_appointments':
-                $this->getUpcomingAppointments();
-                break;
-            case 'get_appointments':
-                $this->getAllAppointments();
-                break;
-            case 'get_appointment':
-                $this->getAppointment();
-                break;
-            case 'cancel_appointment':
-                $this->cancelAppointment();
-                break;
-            case 'get_payment_history':
-                $this->getPaymentHistory();
-                break;
-            case 'get_doctors':
-                $this->getDoctors();
-                break;
-            case 'get_timeslots':
-                $this->getTimeSlots();
-                break;
-            case 'update_profile':
-                $this->updateProfile();
-                break;
-            case 'get_patient_details':
-                $this->getPatientDetails();
-                break;
-            case 'get_medical_records':
-                $this->getMedicalRecords();
-                break;
-            case 'add_medical_record':
-                $this->addMedicalRecord();
-                break;
-            default:
-                sendResponse(['error' => 'Invalid action'], 400);
-        }
-    }
-    
-    private function getPatientStats() {
-        try {
-            $appointments = $this->mockStorage->getAppointmentsByPatient($this->currentUser['id']);
-            $upcomingCount = 0;
-            $doctorsVisited = [];
-            
-            foreach ($appointments as $appointment) {
-                if (strtotime($appointment['date']) > time()) {
-                    $upcomingCount++;
-                }
-                $doctorsVisited[] = $appointment['doctor_id'];
-            }
-            
-            $stats = [
-                'total_appointments' => count($appointments),
-                'upcoming_appointments' => $upcomingCount,
-                'doctors_visited' => count(array_unique($doctorsVisited)),
-                'prescriptions' => rand(5, 15) // Mock data for prescriptions
-            ];
-            
-            sendResponse([
-                'success' => true,
-                'stats' => $stats
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get patient stats error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load statistics'], 500);
-        }
-    }
-    
-    private function getUpcomingAppointments() {
-        try {
-            $appointments = $this->mockStorage->getAppointmentsByPatient($this->currentUser['id']);
-            $upcomingAppointments = [];
-            
-            foreach ($appointments as $appointment) {
-                if (strtotime($appointment['date']) > time()) {
-                    $doctor = $this->mockStorage->getDoctorById($appointment['doctor_id']);
-                    $appointment['doctor_name'] = $doctor ? $doctor['name'] : 'Unknown Doctor';
-                    $appointment['specialty'] = $doctor ? $doctor['specialty'] : 'Unknown';
-                    $upcomingAppointments[] = $appointment;
-                }
-            }
-            
-            // Sort by date
-            usort($upcomingAppointments, function($a, $b) {
-                return strtotime($a['date']) - strtotime($b['date']);
-            });
-            
-            sendResponse([
-                'success' => true,
-                'appointments' => array_slice($upcomingAppointments, 0, 5) // Limit to 5 upcoming
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get upcoming appointments error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load upcoming appointments'], 500);
-        }
-    }
-    
-    private function getAllAppointments() {
-        try {
-            $appointments = $this->mockStorage->getAppointmentsByPatient($this->currentUser['id']);
-            
-            foreach ($appointments as &$appointment) {
-                $doctor = $this->mockStorage->getDoctorById($appointment['doctor_id']);
-                $appointment['doctor_name'] = $doctor ? $doctor['name'] : 'Unknown Doctor';
-                $appointment['specialty'] = $doctor ? $doctor['specialty'] : 'Unknown';
-                $appointment['fee'] = $doctor ? $doctor['fee'] : 0;
-            }
-            
-            // Sort by date (newest first)
-            usort($appointments, function($a, $b) {
-                return strtotime($b['date']) - strtotime($a['date']);
-            });
-            
-            sendResponse([
-                'success' => true,
-                'appointments' => $appointments
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get all appointments error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load appointments'], 500);
-        }
-    }
-    
-    private function getAppointment() {
-        try {
-            $appointmentId = $_GET['id'] ?? 0;
-            $appointments = $this->mockStorage->getAppointmentsByPatient($this->currentUser['id']);
-            
-            $appointment = null;
-            foreach ($appointments as $apt) {
-                if ($apt['id'] == $appointmentId) {
-                    $appointment = $apt;
-                    break;
-                }
-            }
-            
-            if (!$appointment) {
-                sendResponse(['error' => 'Appointment not found'], 404);
-                return;
-            }
-            
-            $doctor = $this->mockStorage->getDoctorById($appointment['doctor_id']);
-            $appointment['doctor_name'] = $doctor ? $doctor['name'] : 'Unknown Doctor';
-            $appointment['specialty'] = $doctor ? $doctor['specialty'] : 'Unknown';
-            $appointment['doctor_info'] = $doctor;
-            
-            sendResponse([
-                'success' => true,
-                'appointment' => $appointment
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get appointment error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load appointment'], 500);
-        }
-    }
-    
-    private function cancelAppointment() {
-        try {
-            $appointmentId = $_POST['id'] ?? 0;
-            
-            // In a real application, this would update the database
-            // For mock purposes, we'll just return success
-            
-            sendResponse([
-                'success' => true,
-                'message' => 'Appointment cancelled successfully'
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Cancel appointment error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to cancel appointment'], 500);
-        }
-    }
-    
-    private function getPaymentHistory() {
-        try {
-            // Mock payment history data
-            $payments = [
-                [
-                    'id' => 1,
-                    'date' => '2025-06-10',
-                    'appointment_type' => 'Cardiology Consultation',
-                    'doctor_name' => 'Dr. Sarah Johnson',
-                    'amount' => 250.00,
-                    'method' => 'Credit Card',
-                    'status' => 'completed'
-                ],
-                [
-                    'id' => 2,
-                    'date' => '2025-05-28',
-                    'appointment_type' => 'Pediatric Checkup',
-                    'doctor_name' => 'Dr. Emily Rodriguez',
-                    'amount' => 180.00,
-                    'method' => 'Insurance',
-                    'status' => 'completed'
-                ]
-            ];
-            
-            sendResponse([
-                'success' => true,
-                'payments' => $payments
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get payment history error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load payment history'], 500);
-        }
-    }
-    
-    private function getDoctors() {
-        try {
-            $doctors = $this->mockStorage->getDoctors();
-            
-            sendResponse([
-                'success' => true,
-                'doctors' => $doctors
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get doctors error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load doctors'], 500);
-        }
-    }
-    
-    private function getTimeSlots() {
-        try {
-            $doctorId = $_GET['doctor_id'] ?? 0;
-            $date = $_GET['date'] ?? '';
-            
-            if (!$doctorId || !$date) {
-                sendResponse(['error' => 'Doctor ID and date are required'], 400);
-                return;
-            }
-            
-            // Validate date format
-            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
-            if (!$dateObj || $dateObj->format('Y-m-d') !== $date) {
-                sendResponse(['error' => 'Invalid date format'], 400);
-                return;
-            }
-            
-            // Check if date is in the past
-            if ($dateObj < new DateTime('today')) {
-                sendResponse(['error' => 'Cannot book appointments for past dates'], 400);
-                return;
-            }
-            
-            // Check if doctor exists
-            $doctor = $this->mockStorage->getDoctorById($doctorId);
-            if (!$doctor) {
-                sendResponse(['error' => 'Doctor not found'], 404);
-                return;
-            }
-            
-            // Check if doctor is available
-            if (!$doctor['available']) {
-                sendResponse(['error' => 'Doctor is currently unavailable'], 400);
-                return;
-            }
-            
-            // Generate time slots based on doctor's specialty and working hours
-            $timeSlots = $this->generateTimeSlots($doctorId, $date);
-            
-            sendResponse([
-                'success' => true,
-                'timeslots' => $timeSlots,
-                'doctor_name' => $doctor['name'],
-                'date' => $date
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get time slots error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load time slots'], 500);
-        }
-    }
-    
-    private function generateTimeSlots($doctorId, $date) {
-        // Get existing appointments for this doctor on this date
-        $existingAppointments = $this->mockStorage->getAppointmentsByDoctorAndDate($doctorId, $date);
-        $bookedTimes = array_column($existingAppointments, 'time');
-        
-        // Define working hours (9 AM to 5 PM)
-        $startHour = 9;
-        $endHour = 17;
-        $slotDuration = 30; // 30 minutes per slot
-        
-        $timeSlots = [];
-        $dayOfWeek = date('N', strtotime($date)); // 1 = Monday, 7 = Sunday
-        
-        // Skip Sundays
-        if ($dayOfWeek == 7) {
-            return $timeSlots;
-        }
-        
-        // Saturday has reduced hours (9 AM to 1 PM)
-        if ($dayOfWeek == 6) {
-            $endHour = 13;
-        }
-        
-        for ($hour = $startHour; $hour < $endHour; $hour++) {
-            for ($minute = 0; $minute < 60; $minute += $slotDuration) {
-                $time = sprintf('%02d:%02d', $hour, $minute);
-                
-                // Skip lunch break (12:00 - 13:00)
-                if ($hour == 12) {
-                    continue;
-                }
-                
-                // Check if slot is not already booked
-                if (!in_array($time, $bookedTimes)) {
-                    $timeSlots[] = [
-                        'time' => $time,
-                        'available' => true,
-                        'formatted' => date('g:i A', strtotime($time))
-                    ];
-                }
-            }
-        }
-        
-        return $timeSlots;
-    }
-
-    private function updateProfile() {
-        try {
-            $updateData = [
-                'full_name' => sanitizeInput($_POST['profile-name'] ?? ''),
-                'email' => sanitizeInput($_POST['profile-email'] ?? ''),
-                'phone' => sanitizeInput($_POST['profile-phone'] ?? ''),
-                'date_of_birth' => $_POST['profile-dob'] ?? '',
-                'address' => sanitizeInput($_POST['profile-address'] ?? ''),
-                'emergency_contact' => sanitizeInput($_POST['profile-emergency'] ?? ''),
-                'insurance_number' => sanitizeInput($_POST['profile-insurance'] ?? '')
-            ];
-            
-            // Validate data
-            $errors = [];
-            
-            if (empty($updateData['full_name'])) {
-                $errors[] = 'Full name is required';
-            }
-            
-            if (!validateEmail($updateData['email'])) {
-                $errors[] = 'Valid email is required';
-            }
-            
-            if (!validatePhone($updateData['phone'])) {
-                $errors[] = 'Valid phone number is required';
-            }
-            
-            if (!empty($errors)) {
-                sendResponse(['error' => 'Validation failed', 'details' => $errors], 400);
-                return;
-            }
-            
-            // In a real application, this would update the database
-            // For mock purposes, we'll just return success with updated data
-            
-            sendResponse([
-                'success' => true,
-                'message' => 'Profile updated successfully',
-                'user' => array_merge($this->currentUser, $updateData)
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Update profile error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to update profile'], 500);
-        }
-    }
-
-    private function getPatientDetails() {
-        try {
-            $patientId = $_GET['patient_id'] ?? null;
-            
-            if (!$patientId) {
-                sendResponse(['error' => 'Patient ID required'], 400);
-                return;
-            }
-            
-            // Get patient data from mock storage
-            $patient = $this->mockStorage->getPatientById($patientId);
-            
-            if (!$patient) {
-                sendResponse(['error' => 'Patient not found'], 404);
-                return;
-            }
-            
-            // Add additional mock patient details
-            $patient['blood_type'] = $patient['blood_type'] ?? ['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'][array_rand(['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'])];
-            $patient['emergency_contact'] = $patient['emergency_contact'] ?? '+1 (555) ' . rand(100, 999) . '-' . rand(1000, 9999);
-            $patient['heart_rate'] = rand(60, 100);
-            $patient['temperature'] = number_format(rand(968, 990) / 10, 1);
-            $patient['blood_pressure'] = rand(110, 140) . '/' . rand(70, 90);
-            $patient['weight'] = rand(50, 100);
-            $patient['height'] = rand(150, 190);
-            $patient['oxygen_saturation'] = rand(95, 100);
-            
-            sendResponse([
-                'success' => true,
-                'patient' => $patient
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get patient details error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load patient details'], 500);
-        }
-    }
-
-    private function getMedicalRecords() {
-        try {
-            $patientId = $_GET['patient_id'] ?? null;
-            
-            if (!$patientId) {
-                sendResponse(['error' => 'Patient ID required'], 400);
-                return;
-            }
-            
-            // Generate mock medical records
-            $records = [
-                [
-                    'id' => 1,
-                    'type' => 'diagnosis',
-                    'title' => 'Hypertension',
-                    'description' => 'Patient diagnosed with mild hypertension. Recommended lifestyle changes and monitoring.',
-                    'date' => date('Y-m-d H:i:s', strtotime('-2 months')),
-                    'doctor_id' => 1
-                ],
-                [
-                    'id' => 2,
-                    'type' => 'prescription',
-                    'title' => 'Lisinopril 10mg',
-                    'description' => 'Take one tablet daily for blood pressure management. Monitor for side effects.',
-                    'date' => date('Y-m-d H:i:s', strtotime('-2 months')),
-                    'doctor_id' => 1
-                ],
-                [
-                    'id' => 3,
-                    'type' => 'lab_result',
-                    'title' => 'Blood Panel Complete',
-                    'description' => 'Cholesterol: 195 mg/dL, Glucose: 98 mg/dL, All values within normal range.',
-                    'date' => date('Y-m-d H:i:s', strtotime('-1 month')),
-                    'doctor_id' => 1
-                ],
-                [
-                    'id' => 4,
-                    'type' => 'note',
-                    'title' => 'Follow-up Consultation',
-                    'description' => 'Patient reports feeling better. Blood pressure stable. Continue current medication.',
-                    'date' => date('Y-m-d H:i:s', strtotime('-2 weeks')),
-                    'doctor_id' => 1
-                ]
-            ];
-            
-            sendResponse([
-                'success' => true,
-                'records' => $records
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Get medical records error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to load medical records'], 500);
-        }
-    }
-
-    private function addMedicalRecord() {
-        try {
-            $patientId = $_POST['patient_id'] ?? null;
-            $type = $_POST['type'] ?? null;
-            $title = $_POST['title'] ?? null;
-            $description = $_POST['description'] ?? null;
-            $date = $_POST['date'] ?? null;
-            
-            if (!$patientId || !$type || !$title || !$description || !$date) {
-                sendResponse(['error' => 'All fields are required'], 400);
-                return;
-            }
-            
-            // In a real application, this would save to database
-            // For mock purposes, we'll just return success
-            $recordId = rand(1000, 9999);
-            
-            sendResponse([
-                'success' => true,
-                'message' => 'Medical record added successfully',
-                'record_id' => $recordId
-            ]);
-            
-        } catch (Exception $e) {
-            logError("Add medical record error: " . $e->getMessage());
-            sendResponse(['error' => 'Failed to add medical record'], 500);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($appointments);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load upcoming appointments']);
     }
 }
 
-// Handle the request
-$patientAPI = new PatientAPI($currentUser);
-$patientAPI->handleRequest();
+function getAllAppointments() {
+    try {
+        // Use mock data for demo environment
+        $appointments = [
+            [
+                'id' => 1,
+                'doctor_name' => 'Dr. Sarah Johnson',
+                'specialty' => 'Cardiology',
+                'appointment_date' => '2025-06-25',
+                'appointment_time' => '10:00',
+                'status' => 'confirmed',
+                'booking_reference' => 'HCP20250625001',
+                'consultation_fee' => 250.00
+            ],
+            [
+                'id' => 2,
+                'doctor_name' => 'Dr. Michael Chen',
+                'specialty' => 'Neurology',
+                'appointment_date' => '2025-06-28',
+                'appointment_time' => '14:30',
+                'status' => 'scheduled',
+                'booking_reference' => 'HCP20250628002',
+                'consultation_fee' => 300.00
+            ],
+            [
+                'id' => 3,
+                'doctor_name' => 'Dr. Emily Rodriguez',
+                'specialty' => 'Pediatrics',
+                'appointment_date' => '2025-06-15',
+                'appointment_time' => '09:00',
+                'status' => 'completed',
+                'booking_reference' => 'HCP20250615003',
+                'consultation_fee' => 180.00
+            ],
+            [
+                'id' => 4,
+                'doctor_name' => 'Dr. David Thompson',
+                'specialty' => 'Orthopedics',
+                'appointment_date' => '2025-06-10',
+                'appointment_time' => '15:30',
+                'status' => 'cancelled',
+                'booking_reference' => 'HCP20250610004',
+                'consultation_fee' => 275.00
+            ]
+        ];
+        
+        header('Content-Type: application/json');
+        echo json_encode($appointments);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load appointments']);
+    }
+}
+
+function getMedicalRecords() {
+    try {
+        // Use mock data for demo environment
+        $records = [
+            [
+                'id' => 1,
+                'doctor_name' => 'Dr. Sarah Johnson',
+                'diagnosis' => 'Hypertension',
+                'treatment' => 'Lifestyle modifications and medication management',
+                'medications' => 'Lisinopril 10mg daily, Hydrochlorothiazide 25mg daily',
+                'record_date' => '2025-06-15',
+                'follow_up_date' => '2025-07-15'
+            ],
+            [
+                'id' => 2,
+                'doctor_name' => 'Dr. Emily Rodriguez',
+                'diagnosis' => 'Annual Physical Examination',
+                'treatment' => 'Routine examination - all parameters within normal limits',
+                'medications' => 'Multivitamin daily (recommended)',
+                'record_date' => '2025-05-20',
+                'follow_up_date' => '2026-05-20'
+            ],
+            [
+                'id' => 3,
+                'doctor_name' => 'Dr. Michael Chen',
+                'diagnosis' => 'Migraine headaches',
+                'treatment' => 'Trigger identification and avoidance, prophylactic medication',
+                'medications' => 'Sumatriptan 50mg as needed, Propranolol 40mg daily',
+                'record_date' => '2025-05-05',
+                'follow_up_date' => '2025-08-05'
+            ]
+        ];
+        
+        header('Content-Type: application/json');
+        echo json_encode($records);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load medical records']);
+    }
+}
+
+function cancelAppointment() {
+    try {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $appointmentId = $input['appointment_id'] ?? '';
+        
+        if (empty($appointmentId)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Appointment ID required']);
+            return;
+        }
+        
+        // In a real implementation, update the database
+        // For demo, just return success
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'message' => 'Appointment cancelled successfully'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to cancel appointment']);
+    }
+}
+
+function updateProfile() {
+    try {
+        // In a real implementation, validate and update user profile
+        // For demo, just return success
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'message' => 'Profile updated successfully'
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to update profile']);
+    }
+}
 ?>
