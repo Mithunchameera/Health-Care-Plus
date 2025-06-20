@@ -679,6 +679,116 @@
             background: var(--text-secondary);
         }
 
+        /* Messages section styling */
+        .notification-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 5px;
+            min-width: 18px;
+            text-align: center;
+            position: relative;
+            top: -2px;
+        }
+
+        .message-sender strong {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .message-sender small {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .message-subject {
+            font-weight: 500;
+            color: var(--text-color);
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-normal {
+            background: #e0f2fe;
+            color: #0277bd;
+        }
+
+        .message-date {
+            font-size: 0.875rem;
+            color: var(--text-color);
+        }
+
+        .message-date small {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            border-radius: 6px;
+        }
+
+        .unread-message {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .message-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .detail-row label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .message-content {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: block;
@@ -781,6 +891,10 @@
                     </a></li>
                     <li><a href="#staff" class="sidebar-link" data-section="staff">
                         <i class="fas fa-user-tie"></i> Staff
+                    </a></li>
+                    <li><a href="#messages" class="sidebar-link" data-section="messages">
+                        <i class="fas fa-envelope"></i> Messages
+                        <span class="notification-badge" id="messages-badge" style="display: none;">0</span>
                     </a></li>
                     <li><a href="#reports" class="sidebar-link" data-section="reports">
                         <i class="fas fa-chart-bar"></i> Reports
@@ -1051,6 +1165,121 @@
                         <i class="fas fa-star"></i>
                         <div class="stat-number" id="avg-rating">4.7</div>
                         <div class="stat-label">Average Rating</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Messages Section -->
+            <section id="messages-section" class="content-section" style="display: none;">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-envelope"></i> Contact Messages</h1>
+                    <p>Manage contact form submissions and customer inquiries</p>
+                </div>
+                
+                <div class="section-content">
+                    <!-- Message Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="total-messages">0</h3>
+                                <p class="stat-label">Total Messages</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-envelope-open"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="unread-messages">0</h3>
+                                <p class="stat-label">Unread Messages</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-reply"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="replied-messages">0</h3>
+                                <p class="stat-label">Replied</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="today-messages">0</h3>
+                                <p class="stat-label">Today</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message Filters -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-filter"></i> Filter Messages</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="filter-bar">
+                                <div class="filter-group">
+                                    <input type="text" id="message-search" placeholder="Search messages..." class="search-input">
+                                    <button class="search-btn" onclick="adminDashboard.searchMessages()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="clear-btn" onclick="adminDashboard.clearMessageSearch()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="filter-group">
+                                    <select id="status-filter" class="filter-dropdown" onchange="adminDashboard.filterMessages()">
+                                        <option value="all">All Status</option>
+                                        <option value="unread">Unread</option>
+                                        <option value="read">Read</option>
+                                        <option value="replied">Replied</option>
+                                    </select>
+                                    <select id="priority-filter" class="filter-dropdown" onchange="adminDashboard.filterMessages()">
+                                        <option value="all">All Priority</option>
+                                        <option value="high">High Priority</option>
+                                        <option value="medium">Medium Priority</option>
+                                        <option value="normal">Normal Priority</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> Messages</h3>
+                            <button class="btn btn-primary" onclick="adminDashboard.refreshMessages()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="table-container">
+                                <table class="data-table" id="messages-table">
+                                    <thead>
+                                        <tr>
+                                            <th>From</th>
+                                            <th>Subject</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="messages-table-body">
+                                        <tr>
+                                            <td colspan="6" class="text-center">Loading messages...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -1,0 +1,72 @@
+[
+    {
+        "id": "msg_001",
+        "from_name": "Sarah Johnson",
+        "from_email": "sarah.johnson@email.com",
+        "phone": "+1-555-0123",
+        "subject": "Appointment Booking Issue",
+        "message": "Hi, I'm having trouble booking an appointment through your website. The system keeps showing an error when I try to select a time slot with Dr. Smith. Could you please help me resolve this issue?",
+        "priority": "high",
+        "status": "unread",
+        "timestamp": "2025-06-20 09:30:00",
+        "ip_address": "192.168.1.100",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    },
+    {
+        "id": "msg_002",
+        "from_name": "Michael Chen",
+        "from_email": "michael.chen@company.com",
+        "phone": "+1-555-0456",
+        "subject": "Insurance Coverage Question",
+        "message": "Hello, I wanted to inquire about which insurance plans your clinic accepts. I have Blue Cross Blue Shield and want to confirm coverage before scheduling my first appointment.",
+        "priority": "medium",
+        "status": "read",
+        "timestamp": "2025-06-20 08:15:00",
+        "ip_address": "192.168.1.101",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+    },
+    {
+        "id": "msg_003",
+        "from_name": "Emily Rodriguez",
+        "from_email": "emily.r@healthcare.org",
+        "phone": "+1-555-0789",
+        "subject": "Prescription Refill Request",
+        "message": "I need to refill my prescription for blood pressure medication. My usual doctor Dr. Williams is not available this week. Can someone else help me with this refill?",
+        "priority": "high",
+        "status": "replied",
+        "timestamp": "2025-06-19 16:45:00",
+        "ip_address": "192.168.1.102",
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
+        "reply": {
+            "message": "Hello Emily, we can help you with your prescription refill. Please call our pharmacy department at 555-0100 during business hours.",
+            "replied_by": "Admin",
+            "replied_at": "2025-06-19 17:30:00"
+        }
+    },
+    {
+        "id": "msg_004",
+        "from_name": "David Thompson",
+        "from_email": "david.thompson@gmail.com",
+        "phone": "+1-555-0321",
+        "subject": "General Inquiry",
+        "message": "What are your clinic hours? I work late shifts and need to know if you have evening appointments available.",
+        "priority": "normal",
+        "status": "unread",
+        "timestamp": "2025-06-20 07:20:00",
+        "ip_address": "192.168.1.103",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    },
+    {
+        "id": "msg_005",
+        "from_name": "Lisa Martinez",
+        "from_email": "lisa.martinez@university.edu",
+        "phone": "+1-555-0654",
+        "subject": "Medical Records Request",
+        "message": "I need copies of my medical records from my last visit on June 10th for my new specialist. How can I request these documents?",
+        "priority": "medium",
+        "status": "read",
+        "timestamp": "2025-06-19 14:30:00",
+        "ip_address": "192.168.1.104",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+]

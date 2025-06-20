@@ -102,6 +102,13 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 20, 2025: Successfully migrated project from Replit Agent to standard Replit environment
+  - Fixed querySelector DOMException error with invalid '#' selector validation
+  - Added comprehensive language selector with English and Sinhala support
+  - Implemented bilingual translation system with complete Sinhala translations
+  - Resolved content visibility issues with proper z-index layering
+  - All Node.js packages installed and PHP server running properly
+
 - June 20, 2025: Completed comprehensive Three.js video backgrounds and enhanced animations across entire system
   - Implemented Three.js video backgrounds on all pages: homepage, about, contact, login, register, booking, dashboards, payment pages
   - Added unique video background containers (hero-video-background, about-video-background, contact-video-background, login-video-background, register-video-background, booking-video-background, admin-video-background, doctor-video-background, patient-video-background, payment-video-background, success-video-background)

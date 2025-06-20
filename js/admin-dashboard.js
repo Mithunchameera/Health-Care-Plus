@@ -206,6 +206,9 @@ class AdminDashboard {
             case 'staff':
                 await this.loadStaff();
                 break;
+            case 'messages':
+                await this.loadMessages();
+                break;
             case 'reports':
                 await this.loadReportsData();
                 break;
@@ -1215,6 +1218,290 @@ class AdminDashboard {
         } else {
             alert(message);
         }
+    }
+
+    // Messages functionality
+    async loadMessages() {
+        try {
+            const response = await fetch('php/admin-messages-api.php');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.displayMessages(data.messages);
+                this.updateMessageStats(data.stats);
+                this.updateMessagesBadge(data.stats.unread);
+            } else {
+                console.error('Failed to load messages:', data.message);
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+
+    displayMessages(messages) {
+        const tableBody = document.getElementById('messages-table-body');
+        if (!tableBody) return;
+
+        if (!messages || messages.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No messages found</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = messages.map(message => `
+            <tr class="${message.status === 'unread' ? 'unread-message' : ''}">
+                <td>
+                    <div class="message-sender">
+                        <strong>${this.escapeHtml(message.from_name || message.name)}</strong>
+                        <br><small>${this.escapeHtml(message.from_email || message.email)}</small>
+                    </div>
+                </td>
+                <td>
+                    <div class="message-subject">
+                        ${this.escapeHtml(message.subject)}
+                    </div>
+                </td>
+                <td>
+                    <span class="priority-badge priority-${message.priority || 'normal'}">
+                        ${this.capitalizeFirst(message.priority || 'normal')}
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge status-${message.status}">
+                        ${this.capitalizeFirst(message.status)}
+                    </span>
+                </td>
+                <td>
+                    <div class="message-date">
+                        ${message.formatted_date || this.formatDate(message.timestamp || message.created_at)}
+                        <br><small>${message.formatted_time || this.formatTime(message.timestamp || message.created_at)}</small>
+                    </div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="adminDashboard.viewMessage('${message.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="adminDashboard.replyToMessage('${message.id}')">
+                            <i class="fas fa-reply"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="adminDashboard.deleteMessage('${message.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    updateMessageStats(stats) {
+        const elements = {
+            'total-messages': stats.total || 0,
+            'unread-messages': stats.unread || 0,
+            'replied-messages': stats.replied || 0,
+            'today-messages': stats.today || 0
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        });
+    }
+
+    updateMessagesBadge(unreadCount) {
+        const badge = document.getElementById('messages-badge');
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    async viewMessage(messageId) {
+        try {
+            const response = await fetch(`php/admin-messages-api.php?action=get&id=${messageId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showMessageModal(data.message);
+                await this.markMessageAsRead(messageId);
+            } else {
+                this.showNotification('Failed to load message', 'error');
+            }
+        } catch (error) {
+            console.error('Error viewing message:', error);
+            this.showNotification('Error loading message', 'error');
+        }
+    }
+
+    async markMessageAsRead(messageId) {
+        try {
+            const response = await fetch('php/admin-messages-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'mark_read',
+                    id: messageId
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                await this.loadMessages();
+            }
+        } catch (error) {
+            console.error('Error marking message as read:', error);
+        }
+    }
+
+    async replyToMessage(messageId) {
+        this.showNotification('Reply functionality coming soon', 'info');
+    }
+
+    async deleteMessage(messageId) {
+        if (confirm('Are you sure you want to delete this message?')) {
+            try {
+                const response = await fetch('php/admin-messages-api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        id: messageId
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    this.showNotification('Message deleted successfully', 'success');
+                    await this.loadMessages();
+                } else {
+                    this.showNotification('Failed to delete message', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                this.showNotification('Error deleting message', 'error');
+            }
+        }
+    }
+
+    showMessageModal(message) {
+        const modal = document.createElement('div');
+        modal.className = 'modal active';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-envelope"></i> Message Details</h3>
+                    <button class="modal-close" onclick="this.closest('.modal').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="message-details">
+                        <div class="detail-row">
+                            <label>From:</label>
+                            <span>${this.escapeHtml(message.from_name || message.name)} (${this.escapeHtml(message.from_email || message.email)})</span>
+                        </div>
+                        <div class="detail-row">
+                            <label>Phone:</label>
+                            <span>${this.escapeHtml(message.phone || 'Not provided')}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label>Subject:</label>
+                            <span>${this.escapeHtml(message.subject)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label>Priority:</label>
+                            <span class="priority-badge priority-${message.priority || 'normal'}">
+                                ${this.capitalizeFirst(message.priority || 'normal')}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <label>Date:</label>
+                            <span>${message.formatted_date || this.formatDate(message.timestamp || message.created_at)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label>Message:</label>
+                            <div class="message-content">
+                                ${this.escapeHtml(message.message).replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="btn btn-primary" onclick="adminDashboard.replyToMessage('${message.id}')">
+                        <i class="fas fa-reply"></i> Reply
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    searchMessages() {
+        const searchTerm = document.getElementById('message-search').value.toLowerCase();
+        const statusFilter = document.getElementById('status-filter').value;
+        const priorityFilter = document.getElementById('priority-filter').value;
+        
+        const rows = document.querySelectorAll('#messages-table-body tr');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const cells = row.cells;
+            if (cells.length < 6) return;
+            
+            const name = cells[0].textContent.toLowerCase();
+            const subject = cells[1].textContent.toLowerCase();
+            const priority = cells[2].textContent.toLowerCase();
+            const status = cells[3].textContent.toLowerCase();
+            
+            const matchesSearch = !searchTerm || name.includes(searchTerm) || subject.includes(searchTerm);
+            const matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
+            const matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
+            
+            if (matchesSearch && matchesStatus && matchesPriority) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    filterMessages() {
+        this.searchMessages();
+    }
+
+    clearMessageSearch() {
+        document.getElementById('message-search').value = '';
+        document.getElementById('status-filter').value = 'all';
+        document.getElementById('priority-filter').value = 'all';
+        this.searchMessages();
+    }
+
+    async refreshMessages() {
+        await this.loadMessages();
+        this.showNotification('Messages refreshed', 'success');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    formatDate(timestamp) {
+        return new Date(timestamp).toLocaleDateString();
     }
 }
 

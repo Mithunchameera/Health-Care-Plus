@@ -18,10 +18,20 @@
                 <span>HealthCare+</span>
             </div>
             <div class="nav-menu">
-                <a href="index.html" class="nav-link active">Home</a>
-                <a href="about.html" class="nav-link">About Us</a>
-                <a href="contact.html" class="nav-link">Contact Us</a>
-                <a href="login.html" class="nav-link">Login</a>
+                <a href="index.html" class="nav-link active" data-translate="home">Home</a>
+                <a href="about.html" class="nav-link" data-translate="about_us">About Us</a>
+                <a href="contact.html" class="nav-link" data-translate="contact_us">Contact Us</a>
+                <a href="login.html" class="nav-link" data-translate="login">Login</a>
+                <div class="language-selector">
+                    <button id="language-toggle" class="language-toggle" aria-label="Change language">
+                        <i class="fas fa-globe"></i>
+                        <span id="current-language">EN</span>
+                    </button>
+                    <div id="language-dropdown" class="language-dropdown">
+                        <a href="#" class="language-option" data-lang="en">English</a>
+                        <a href="#" class="language-option" data-lang="si">සිංහල</a>
+                    </div>
+                </div>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -39,11 +49,11 @@
         <div id="video-background"></div>
         <div class="hero-content">
             <div class="hero-text">
-                <h1>Your Health, Our Priority</h1>
-                <p>Book appointments with trusted healthcare professionals instantly. Experience modern healthcare management with our intuitive e-channelling platform.</p>
+                <h1 data-translate="hero_title">Your Health, Our Priority</h1>
+                <p data-translate="hero_subtitle">Book appointments with trusted healthcare professionals instantly. Experience modern healthcare management with our intuitive e-channelling platform.</p>
                 <div class="hero-buttons">
-                    <a href="about.html" class="btn btn-primary">Learn More</a>
-                    <a href="contact.html" class="btn btn-secondary">Contact Us</a>
+                    <a href="about.html" class="btn btn-primary" data-translate="learn_more">Learn More</a>
+                    <a href="contact.html" class="btn btn-secondary" data-translate="contact_us_btn">Contact Us</a>
                 </div>
             </div>
             <div class="hero-image">
@@ -66,35 +76,35 @@
     <!-- Features Section -->
     <section class="features">
         <div class="container">
-            <h2>Why Choose HealthCare+?</h2>
+            <h2 data-translate="why_choose">Why Choose HealthCare+?</h2>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-calendar-check"></i>
                     </div>
-                    <h3>Easy Booking</h3>
-                    <p>Schedule appointments with your preferred doctors in just a few clicks. Real-time availability updates.</p>
+                    <h3 data-translate="easy_booking">Easy Booking</h3>
+                    <p data-translate="easy_booking_desc">Schedule appointments with your preferred doctors in just a few clicks. Real-time availability updates.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-user-md"></i>
                     </div>
-                    <h3>Qualified Doctors</h3>
-                    <p>Access to a network of certified healthcare professionals across various specializations.</p>
+                    <h3 data-translate="qualified_doctors">Qualified Doctors</h3>
+                    <p data-translate="qualified_doctors_desc">Access to a network of certified healthcare professionals across various specializations.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <h3>24/7 Access</h3>
-                    <p>Book appointments anytime, anywhere. Our platform is available round the clock for your convenience.</p>
+                    <h3 data-translate="access_247">24/7 Access</h3>
+                    <p data-translate="access_247_desc">Book appointments anytime, anywhere. Our platform is available round the clock for your convenience.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3>Secure & Private</h3>
-                    <p>Your health data is protected with enterprise-grade security and privacy measures.</p>
+                    <h3 data-translate="secure_private">Secure & Private</h3>
+                    <p data-translate="secure_private_desc">Your health data is protected with enterprise-grade security and privacy measures.</p>
                 </div>
             </div>
         </div>
@@ -197,6 +207,7 @@
     <script src="js/theme-manager.js"></script>
     <script src="js/enhanced-animations.js"></script>
     <script src="js/three-video-background.js"></script>
+    <script src="js/language-manager.js"></script>
     <script src="js/main.js"></script>
     <script>
         // Check authentication on page load and redirect if logged in

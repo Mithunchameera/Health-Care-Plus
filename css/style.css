@@ -507,6 +507,77 @@ body {
     transition: transform 0.3s ease;
 }
 
+/* Language Selector */
+.language-selector {
+    position: relative;
+    display: inline-block;
+}
+
+.language-toggle {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 60px;
+    height: 40px;
+    font-size: 0.9rem;
+}
+
+.language-toggle:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.language-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.language-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.language-option {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
 .theme-toggle {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -682,6 +753,8 @@ body {
 .features {
     padding: 80px 0;
     background: var(--card-bg);
+    position: relative;
+    z-index: 10;
 }
 
 .features h2 {
@@ -689,12 +762,16 @@ body {
     font-size: 2.5rem;
     margin-bottom: 3rem;
     color: var(--text-color);
+    position: relative;
+    z-index: 20;
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
+    position: relative;
+    z-index: 15;
 }
 
 .feature-card {
@@ -704,6 +781,10 @@ body {
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid var(--border-color);
+    position: relative;
+    z-index: 15;
+    opacity: 1;
+    visibility: visible;
 }
 
 .feature-card:hover {
