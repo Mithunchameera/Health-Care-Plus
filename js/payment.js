@@ -46,13 +46,17 @@ function setupPaymentForm(booking) {
     if (paymentForm) {
         paymentForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            processPayment(booking);
+            if (validatePaymentTerms()) {
+                processPayment(booking);
+            }
         });
     }
     
     if (proceedBtn) {
         proceedBtn.addEventListener('click', function() {
-            processPayment(booking);
+            if (validatePaymentTerms()) {
+                processPayment(booking);
+            }
         });
     }
     
@@ -63,6 +67,58 @@ function setupPaymentForm(booking) {
             updatePaymentMethod(this.value);
         });
     });
+    
+    // Setup terms validation
+    setupPaymentTermsValidation();
+}
+
+function setupPaymentTermsValidation() {
+    const termsCheckbox = document.getElementById('payment-terms-agreement');
+    const privacyCheckbox = document.getElementById('payment-privacy-agreement');
+    const proceedBtn = document.getElementById('proceed-payment');
+    
+    function validateTerms() {
+        const termsChecked = termsCheckbox && termsCheckbox.checked;
+        const privacyChecked = privacyCheckbox && privacyCheckbox.checked;
+        const allChecked = termsChecked && privacyChecked;
+        
+        if (proceedBtn) {
+            proceedBtn.disabled = !allChecked;
+            proceedBtn.style.opacity = allChecked ? '1' : '0.6';
+        }
+        
+        return allChecked;
+    }
+    
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', validateTerms);
+    }
+    
+    if (privacyCheckbox) {
+        privacyCheckbox.addEventListener('change', validateTerms);
+    }
+    
+    // Initial validation
+    validateTerms();
+}
+
+function validatePaymentTerms() {
+    const termsCheckbox = document.getElementById('payment-terms-agreement');
+    const privacyCheckbox = document.getElementById('payment-privacy-agreement');
+    
+    if (!termsCheckbox || !termsCheckbox.checked) {
+        showNotification('Please agree to the Terms and Conditions', 'error');
+        termsCheckbox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    if (!privacyCheckbox || !privacyCheckbox.checked) {
+        showNotification('Please authorize payment processing', 'error');
+        privacyCheckbox?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    return true;
 }
 
 function updatePaymentMethod(method) {

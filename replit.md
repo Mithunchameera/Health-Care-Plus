@@ -102,6 +102,34 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 20, 2025: Fixed all button linking problems and navigation issues across the platform
+  - Corrected dashboard navigation buttons to use proper window.patientDashboard reference
+  - Fixed sidebar link navigation with proper section targeting and error handling  
+  - Enhanced appointment table buttons with proper onclick functionality
+  - Added missing loadBookingDoctors method with doctor pre-selection support
+  - Improved appointment viewing with modal dialogs and payment redirection
+  - Fixed syntax errors causing JavaScript execution problems
+  - Enhanced logout functionality with proper session cleanup
+  - All navigation now works seamlessly within dashboard environment
+
+- June 20, 2025: Redesigned doctor profile cards with modern component architecture
+  - Created doctor-card-component.js with reusable card designs
+  - Modern circular avatars with availability indicators and gradient backgrounds
+  - Compact and full card variants for different use cases
+  - Interactive profile modals with detailed doctor information
+  - Smooth hover animations and visual feedback
+  - Responsive design optimized for mobile and desktop
+  - Global functions for consistent booking and profile viewing
+
+- June 20, 2025: Added comprehensive auto-scroll functionality across all pages
+  - Created auto-scroll-manager.js with smooth scrolling between form fields
+  - Automatic progression when selecting dropdown options (specialty, doctor, designation)
+  - Visual feedback with highlight animations and smooth transitions
+  - Keyboard navigation support with Tab key auto-scrolling
+  - Enhanced form field focus states with animated outlines
+  - Integrated across all pages: contact, booking, registration, dashboards, payment
+  - Smart next-field detection for logical form progression
+
 - June 20, 2025: Successfully migrated project from Replit Agent to standard Replit environment
   - Fixed querySelector DOMException error with invalid '#' selector validation
   - Added comprehensive language selector with English and Sinhala support

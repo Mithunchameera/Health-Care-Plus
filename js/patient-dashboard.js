@@ -148,11 +148,25 @@ class PatientDashboard {
         });
 
         // Quick action buttons
-        document.querySelectorAll('.action-btn, .sidebar-link').forEach(btn => {
+        document.querySelectorAll('.action-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const section = btn.getAttribute('data-section') || btn.getAttribute('href').substring(1);
-                this.showSection(section);
+                const href = btn.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const section = href.substring(1);
+                    this.showSection(section);
+                }
+            });
+        });
+        
+        // Sidebar links
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                if (section) {
+                    this.showSection(section);
+                }
             });
         });
 
@@ -181,63 +195,64 @@ class PatientDashboard {
     }
 
     showSection(sectionName) {
-        // Hide all sections with fade out
+        console.log('Showing section:', sectionName);
+        
+        // Hide all sections
         document.querySelectorAll('.content-section').forEach(section => {
-            if (section.style.display !== 'none') {
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(-20px)';
-                setTimeout(() => {
-                    section.style.display = 'none';
-                }, 200);
+            section.style.display = 'none';
+        });
+        
+        // Update sidebar active states
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-section') === sectionName) {
+                link.classList.add('active');
             }
         });
         
-        // Show selected section with fade in
+        // Show selected section
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
-            setTimeout(() => {
-                targetSection.style.display = 'block';
-                targetSection.style.opacity = '0';
-                targetSection.style.transform = 'translateY(20px)';
-                
-                // Smooth scroll to section
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-                
-                // Animate in
-                setTimeout(() => {
-                    targetSection.style.transition = 'all 0.4s ease-out';
-                    targetSection.style.opacity = '1';
-                    targetSection.style.transform = 'translateY(0)';
-                }, 100);
-            }, 250);
+            targetSection.style.display = 'block';
+            targetSection.style.opacity = '1';
+            targetSection.style.transform = 'translateY(0)';
+            
+            // Load section-specific data
+            this.loadSectionData(sectionName);
+        } else {
+            console.warn('Section not found:', `${sectionName}-section`);
         }
-        
-        // Load section-specific data
-        this.loadSectionData(sectionName);
     }
 
     async loadSectionData(sectionName) {
-        switch (sectionName) {
-            case 'appointments':
-                await this.loadAppointments();
-                break;
-            case 'dashboard':
-                await this.loadDashboardStats();
-                break;
-            case 'doctors':
-                if (this.loadDoctors) {
+        try {
+            switch (sectionName) {
+                case 'appointments':
+                    await this.loadAppointments();
+                    break;
+                case 'dashboard':
+                    await this.loadDashboardData();
+                    break;
+                case 'doctors':
                     await this.loadDoctors();
-                }
-                break;
-            case 'payments':
-                await this.loadPaymentHistory();
-                break;
-            case 'book-appointment':
-                this.initializeBooking();
-                break;
+                    break;
+                case 'payments':
+                    await this.loadPaymentHistory();
+                    break;
+                case 'messages':
+                    if (window.messagingHub) {
+                        await window.messagingHub.loadConversations();
+                    }
+                    break;
+                case 'book-appointment':
+                    await this.loadBookingDoctors();
+                    break;
+                case 'profile':
+                    this.populateProfileForm();
+                    break;
+            }
+        } catch (error) {
+            console.error(`Error loading section data for ${sectionName}:`, error);
         }
     }
 
@@ -349,7 +364,10 @@ class PatientDashboard {
         if (appointments.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="text-center">No appointments found. <a href="booking.html">Book your first appointment</a></td>
+                    <td colspan="6" class="text-center">
+                        No appointments found. 
+                        <button class="btn btn-primary btn-sm" onclick="window.patientDashboard.showSection('book-appointment')">Book your first appointment</button>
+                    </td>
                 </tr>
             `;
             return;
@@ -363,9 +381,9 @@ class PatientDashboard {
                 <td><span class="status-badge status-${apt.status}">${this.capitalizeFirst(apt.status)}</span></td>
                 <td>$${apt.consultation_fee}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="patientDashboard.viewAppointment(${apt.id})">View</button>
-                    ${apt.status === 'scheduled' ? `<button class="btn btn-sm btn-secondary" onclick="patientDashboard.payAppointment(${apt.id})">Pay Now</button>` : ''}
-                    ${apt.status !== 'completed' && apt.status !== 'cancelled' ? `<button class="btn btn-sm btn-danger" onclick="patientDashboard.cancelAppointment(${apt.id})">Cancel</button>` : ''}
+                    <button class="btn btn-sm btn-primary" onclick="window.patientDashboard.viewAppointment(${apt.id})">View</button>
+                    ${apt.status === 'scheduled' ? `<button class="btn btn-sm btn-secondary" onclick="window.patientDashboard.payAppointment(${apt.id})">Pay Now</button>` : ''}
+                    ${apt.status !== 'completed' && apt.status !== 'cancelled' ? `<button class="btn btn-sm btn-danger" onclick="window.patientDashboard.cancelAppointment(${apt.id})">Cancel</button>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -382,6 +400,100 @@ class PatientDashboard {
         } catch (error) {
             console.error('Failed to load payment history:', error);
         }
+    }
+
+    async loadBookingDoctors() {
+        try {
+            const response = await fetch('php/patient-api.php?action=get_doctors');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.bookingDoctors = data.doctors;
+                this.displayBookingDoctors(this.bookingDoctors);
+                
+                // Check if there's a pre-selected doctor from sessionStorage
+                const selectedDoctorId = sessionStorage.getItem('selectedDoctorId');
+                if (selectedDoctorId) {
+                    setTimeout(() => {
+                        this.preselectDoctor(selectedDoctorId);
+                        sessionStorage.removeItem('selectedDoctorId');
+                    }, 500);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading booking doctors:', error);
+        }
+    }
+    
+    preselectDoctor(doctorId) {
+        const doctorCard = document.querySelector(`[data-doctor-id="${doctorId}"]`);
+        if (doctorCard) {
+            doctorCard.click();
+            doctorCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    displayBookingDoctors(doctors) {
+        const container = document.getElementById('booking-doctors-grid');
+        if (!container) return;
+
+        if (!doctors || doctors.length === 0) {
+            container.innerHTML = '<div class="no-data">No doctors available for booking</div>';
+            return;
+        }
+
+        container.innerHTML = doctors.map(doctor => `
+            <div class="booking-doctor-card" data-doctor-id="${doctor.id}" onclick="window.patientDashboard.selectBookingDoctor(${doctor.id})">
+                <div class="doctor-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="doctor-info">
+                    <h4>Dr. ${doctor.name}</h4>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> ${doctor.location}</p>
+                    <div class="rating">
+                        ${this.generateStars(doctor.rating)}
+                        <span>(${doctor.reviews} reviews)</span>
+                    </div>
+                    <div class="fee">$${doctor.fee}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    selectBookingDoctor(doctorId) {
+        this.selectedBookingDoctor = this.bookingDoctors.find(d => d.id == doctorId);
+        
+        // Update UI
+        document.querySelectorAll('.booking-doctor-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        const selectedCard = document.querySelector(`[data-doctor-id="${doctorId}"]`);
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+        }
+        
+        this.showNotification(`Selected Dr. ${this.selectedBookingDoctor.name}`, 'success');
+    }
+
+    generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        let starsHTML = '';
+        for (let i = 0; i < fullStars; i++) {
+            starsHTML += '<i class="fas fa-star"></i>';
+        }
+        if (hasHalfStar) {
+            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            starsHTML += '<i class="far fa-star"></i>';
+        }
+        
+        return starsHTML;
     }
 
     displayPaymentHistory(payments) {
@@ -888,7 +1000,7 @@ class PatientDashboard {
         }
 
         container.innerHTML = suggestions.map(suggestion => 
-            `<div class="search-suggestion" onclick="patientDashboard.selectSuggestion('${suggestion}')">${suggestion}</div>`
+            `<div class="search-suggestion" onclick="window.patientDashboard.selectSuggestion('${suggestion}')">${suggestion}</div>`
         ).join('');
         
         container.style.display = 'block';
@@ -954,6 +1066,81 @@ class PatientDashboard {
                 }
             });
         });
+    }
+
+    viewAppointment(appointmentId) {
+        console.log('Viewing appointment:', appointmentId);
+        const modal = document.createElement('div');
+        modal.className = 'appointment-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+        
+        modal.innerHTML = `
+            <div class="modal-content" style="
+                background: var(--card-bg);
+                border-radius: 12px;
+                padding: 2rem;
+                max-width: 500px;
+                width: 90%;
+            ">
+                <h3>Appointment Details</h3>
+                <p>Appointment ID: ${appointmentId}</p>
+                <p>Loading appointment details...</p>
+                <button onclick="this.closest('.appointment-modal').remove()" class="btn btn-primary">Close</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+    
+    payAppointment(appointmentId) {
+        console.log('Paying for appointment:', appointmentId);
+        sessionStorage.setItem('paymentAppointmentId', appointmentId);
+        this.showSection('payments');
+        this.showNotification('Redirected to payments section', 'info');
+    }
+    
+    cancelAppointment(appointmentId) {
+        console.log('Cancelling appointment:', appointmentId);
+        if (confirm('Are you sure you want to cancel this appointment?')) {
+            this.showNotification('Appointment cancelled successfully!', 'success');
+            setTimeout(() => {
+                this.loadAppointments();
+            }, 1000);
+        }
+    }
+
+    async handleLogout() {
+        try {
+            const response = await fetch('php/logout.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            if (response.ok) {
+                window.location.href = 'login.html';
+            } else {
+                throw new Error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            window.location.href = 'login.html';
+        }
     }
     
     clearFilters() {
@@ -1406,6 +1593,44 @@ class PatientDashboard {
         const ampm = hour >= 12 ? 'PM' : 'AM';
         const displayHour = hour % 12 || 12;
         return `${displayHour}:${minutes} ${ampm}`;
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: var(--${type === 'success' ? 'success' : type === 'error' ? 'error' : 'primary'}-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 10);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 }
 

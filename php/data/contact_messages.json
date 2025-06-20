@@ -10,7 +10,7 @@
         "status": "unread",
         "timestamp": "2025-06-20 09:30:00",
         "ip_address": "192.168.1.100",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36"
     },
     {
         "id": "msg_002",
@@ -23,7 +23,7 @@
         "status": "read",
         "timestamp": "2025-06-20 08:15:00",
         "ip_address": "192.168.1.101",
-        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+        "user_agent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36"
     },
     {
         "id": "msg_003",
@@ -36,7 +36,7 @@
         "status": "replied",
         "timestamp": "2025-06-19 16:45:00",
         "ip_address": "192.168.1.102",
-        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
+        "user_agent": "Mozilla\/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit\/605.1.15",
         "reply": {
             "message": "Hello Emily, we can help you with your prescription refill. Please call our pharmacy department at 555-0100 during business hours.",
             "replied_by": "Admin",
@@ -54,7 +54,7 @@
         "status": "unread",
         "timestamp": "2025-06-20 07:20:00",
         "ip_address": "192.168.1.103",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36"
     },
     {
         "id": "msg_005",
@@ -67,6 +67,36 @@
         "status": "read",
         "timestamp": "2025-06-19 14:30:00",
         "ip_address": "192.168.1.104",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36"
+    },
+    {
+        "id": "MSG-20250620-338170",
+        "type": "contact",
+        "from_name": "Test User",
+        "from_email": "test@example.com",
+        "from_phone": "555-123-4567",
+        "subject": "general",
+        "message": "This is a test message to verify the contact form functionality.",
+        "status": "unread",
+        "priority": "normal",
+        "timestamp": "2025-06-20 00:58:07",
+        "created_at": 1750395487,
+        "ip_address": "127.0.0.1",
+        "user_agent": "curl\/8.11.1"
+    },
+    {
+        "id": "MSG-20250620-462476",
+        "type": "contact",
+        "from_name": "John Doe",
+        "from_email": "john@example.com",
+        "from_phone": "555-0123",
+        "subject": "support",
+        "message": "Testing the contact form submission functionality.",
+        "status": "unread",
+        "priority": "high",
+        "timestamp": "2025-06-20 00:59:12",
+        "created_at": 1750395552,
+        "ip_address": "127.0.0.1",
+        "user_agent": "curl\/8.11.1"
     }
 ]

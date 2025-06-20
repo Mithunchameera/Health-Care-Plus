@@ -1394,20 +1394,20 @@
                         </div>
                     </div>
                     <div class="btn-group">
-                        <a href="#book-appointment" class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="window.patientDashboard.showSection('book-appointment')">
                             <i class="fas fa-plus"></i> Book New Appointment
-                        </a>
-                        <a href="#appointments" class="btn btn-secondary">
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.patientDashboard.showSection('appointments')">
                             <i class="fas fa-list"></i> View All Appointments
-                        </a>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Quick Actions -->
                 <div class="quick-actions">
-                    <a href="#book-appointment" class="action-btn">
+                    <a href="#appointments" class="action-btn book-new-appointment">
                         <i class="fas fa-calendar-plus"></i>
-                        Book Appointment
+                        My Appointments
                     </a>
                     <a href="#doctors" class="action-btn">
                         <i class="fas fa-search"></i>

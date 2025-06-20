@@ -55,24 +55,38 @@ class ContactFormManager {
 
     async handleSubmit(e) {
         e.preventDefault();
+        console.log('Form submission started');
         
-        if (this.isSubmitting) return;
+        if (this.isSubmitting) {
+            console.log('Already submitting, ignoring');
+            return;
+        }
         
         if (!this.validateForm()) {
-            this.showNotification('Please fix the errors in the form', 'error');
+            console.log('Form validation failed');
+            this.showNotification('Please fill in all required fields correctly', 'error');
             return;
         }
 
         this.isSubmitting = true;
         this.showLoading();
+        console.log('Loading state shown');
 
         try {
             const formData = this.collectFormData();
+            console.log('Form data collected:', formData);
+            
             const response = await this.submitMessage(formData);
+            console.log('Response received:', response);
             
             if (response.success) {
+                console.log('Success response, showing success message');
                 this.showSuccessMessage(response);
-                this.resetForm();
+                // Reset form after successful submission
+                setTimeout(() => {
+                    this.resetForm();
+                    console.log('Form reset completed after successful submission');
+                }, 1000);
             } else {
                 throw new Error(response.error || 'Failed to send message');
             }
@@ -82,6 +96,7 @@ class ContactFormManager {
         } finally {
             this.isSubmitting = false;
             this.hideLoading();
+            console.log('Submission completed, loading state hidden');
         }
     }
 
@@ -97,6 +112,8 @@ class ContactFormManager {
     }
 
     async submitMessage(data) {
+        console.log('Submitting contact form data:', data);
+        
         const response = await fetch('php/contact-handler.php', {
             method: 'POST',
             headers: {
@@ -105,22 +122,44 @@ class ContactFormManager {
             body: JSON.stringify(data)
         });
 
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        console.log('Response data:', result);
+        return result;
     }
 
     validateForm() {
         let isValid = true;
         const requiredFields = this.form.querySelectorAll('[required]');
         
+        // Clear all existing errors first
+        const existingErrors = this.form.querySelectorAll('.field-error');
+        existingErrors.forEach(error => error.remove());
+        
+        const errorFields = this.form.querySelectorAll('.error');
+        errorFields.forEach(field => field.classList.remove('error'));
+        
         requiredFields.forEach(field => {
             if (!this.validateField(field)) {
                 isValid = false;
             }
         });
+
+        if (!isValid) {
+            // Scroll to first error field
+            const firstErrorField = this.form.querySelector('.error');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstErrorField.focus();
+            }
+        }
 
         return isValid;
     }
@@ -140,10 +179,14 @@ class ContactFormManager {
             errorMessage = 'Please enter a valid email address';
             isValid = false;
         }
-        // Phone validation
-        else if (field.type === 'tel' && value && value.length < 10) {
-            errorMessage = 'Please enter a valid phone number';
-            isValid = false;
+        // Phone validation - more flexible for different formats
+        else if (field.type === 'tel' && value) {
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/; // Basic international format
+            const digitsOnly = value.replace(/\D/g, '');
+            if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+                errorMessage = 'Please enter a valid phone number (10-15 digits)';
+                isValid = false;
+            }
         }
         // Message length validation
         else if (field.name === 'message' && value && value.length < 10) {
@@ -190,15 +233,22 @@ class ContactFormManager {
     }
 
     formatPhoneNumber(input) {
-        let value = input.value.replace(/\D/g, '');
-        if (value.length >= 10) {
-            value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-        } else if (value.length >= 6) {
-            value = value.replace(/(\d{3})(\d{3})/, '($1) $2-');
-        } else if (value.length >= 3) {
-            value = value.replace(/(\d{3})/, '($1) ');
+        // Allow more flexible phone number formats
+        let value = input.value;
+        
+        // Only format if it looks like a US number (starts with digit, no country code)
+        if (/^\d/.test(value) && !value.startsWith('+')) {
+            value = value.replace(/\D/g, '');
+            if (value.length >= 10) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 6) {
+                value = value.replace(/(\d{3})(\d{3})/, '($1) $2-');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{3})/, '($1) ');
+            }
+            input.value = value;
         }
-        input.value = value;
+        // For international numbers or other formats, leave as-is
     }
 
     showLoading() {
@@ -216,37 +266,161 @@ class ContactFormManager {
     }
 
     showSuccessMessage(response) {
+        console.log('Creating success modal');
+        
+        // Remove any existing modals first
+        const existingModals = document.querySelectorAll('.success-modal');
+        existingModals.forEach(modal => modal.remove());
+        
         // Create success modal
         const modal = document.createElement('div');
         modal.className = 'success-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        
         modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <div class="success-icon">
+            <div class="modal-overlay" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(5px);
+            "></div>
+            <div class="modal-content" style="
+                position: relative;
+                background: var(--card-bg, #ffffff);
+                color: var(--text-color, #333333);
+                padding: 2rem;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+                animation: modalSlideIn 0.3s ease-out;
+            ">
+                <div class="success-icon" style="
+                    font-size: 4rem;
+                    color: #22c55e;
+                    margin-bottom: 1rem;
+                ">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h3>Message Sent Successfully!</h3>
-                <p>Thank you for contacting us. We have received your message and will respond within 24 hours.</p>
-                <p><strong>Message ID:</strong> ${response.message_id}</p>
-                <div class="modal-actions">
-                    <button class="btn btn-primary" onclick="this.closest('.success-modal').remove()">
+                <h3 style="
+                    margin-bottom: 1rem;
+                    color: var(--text-color, #333333);
+                    font-size: 1.5rem;
+                ">Message Sent Successfully!</h3>
+                <p style="
+                    margin-bottom: 1rem;
+                    color: var(--text-secondary, #666666);
+                    line-height: 1.5;
+                ">Thank you for contacting us. We have received your message and will respond within 24 hours.</p>
+                <p style="
+                    margin-bottom: 2rem;
+                    color: var(--text-color, #333333);
+                    font-weight: 500;
+                "><strong>Message ID:</strong> ${response.message_id}</p>
+                <div class="modal-actions" style="
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                ">
+                    <button class="btn btn-primary close-modal" style="
+                        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                        color: white;
+                        border: none;
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+                    ">
                         Close
                     </button>
-                    <a href="dashboard-admin.html?tab=messages" class="btn btn-secondary">
+                    <a href="dashboard-admin.html?tab=messages" class="btn btn-secondary" style="
+                        background: transparent;
+                        color: var(--primary-color, #3b82f6);
+                        border: 2px solid var(--primary-color, #3b82f6);
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+                        display: inline-block;
+                    ">
                         View in Admin Dashboard
                     </a>
                 </div>
             </div>
         `;
         
-        document.body.appendChild(modal);
+        // Add animation keyframes to document
+        if (!document.querySelector('#modal-animations')) {
+            const style = document.createElement('style');
+            style.id = 'modal-animations';
+            style.textContent = `
+                @keyframes modalSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-50px) scale(0.9);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
         
-        // Auto-remove after 10 seconds
+        document.body.appendChild(modal);
+        console.log('Success modal added to DOM');
+        
+        // Add close button event listener
+        const closeButton = modal.querySelector('.close-modal');
+        closeButton.addEventListener('click', () => {
+            console.log('Close button clicked');
+            modal.remove();
+        });
+        
+        // Close on overlay click
+        const overlay = modal.querySelector('.modal-overlay');
+        overlay.addEventListener('click', () => {
+            console.log('Overlay clicked');
+            modal.remove();
+        });
+        
+        // Close on Escape key
+        const handleKeyPress = (e) => {
+            if (e.key === 'Escape') {
+                console.log('Escape key pressed');
+                modal.remove();
+                document.removeEventListener('keydown', handleKeyPress);
+            }
+        };
+        document.addEventListener('keydown', handleKeyPress);
+        
+        // Auto-remove after 15 seconds
         setTimeout(() => {
             if (modal.parentNode) {
+                console.log('Auto-removing modal after timeout');
                 modal.remove();
             }
-        }, 10000);
+        }, 15000);
+        
+        console.log('Success modal setup completed');
     }
 
     resetForm() {
@@ -256,6 +430,8 @@ class ContactFormManager {
         
         const errorFields = this.form.querySelectorAll('.error');
         errorFields.forEach(field => field.classList.remove('error'));
+        
+        console.log('Form reset completed');
     }
 
     showNotification(message, type = 'info') {
