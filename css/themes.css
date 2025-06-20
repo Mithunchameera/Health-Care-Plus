@@ -396,6 +396,25 @@ select {
     -ms-appearance: none !important;
 }
 
+/* Force white calendar icon in all themes */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100) contrast(100%) !important;
+    -webkit-filter: invert(1) brightness(100) contrast(100%) !important;
+    color: white !important;
+    background: transparent !important;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="morning"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="afternoon"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="evening"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="night"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100) contrast(100%) !important;
+    -webkit-filter: invert(1) brightness(100) contrast(100%) !important;
+    color: white !important;
+}
+
 /* Dark theme universal dropdown styling */
 [data-theme="dark"] select,
 [data-theme="dark"] select[class*="dropdown"],

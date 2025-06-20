@@ -452,12 +452,12 @@ class PatientDashboard {
     }
 
     async cancelAppointment(appointmentId) {
-        if (!confirm('Are you sure you want to cancel this appointment?')) {
+        if (!confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
             return;
         }
         
         try {
-            const response = await fetch('php/appointments-api.php?action=cancel_appointment', {
+            const response = await fetch('/php/appointment-confirmation.php?action=cancel_appointment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -467,24 +467,45 @@ class PatientDashboard {
                 })
             });
             
-            const data = await response.json();
+            const result = await response.json();
             
-            if (data.success) {
+            if (response.ok && result.success) {
                 this.showNotification('Appointment cancelled successfully', 'success');
-                this.loadAppointments();
-                this.loadDashboardData();
+                await this.loadAppointments();
+                await this.loadDashboardData();
             } else {
-                this.showNotification(data.error || 'Failed to cancel appointment', 'error');
+                throw new Error(result.error || 'Failed to cancel appointment');
             }
         } catch (error) {
-            console.error('Failed to cancel appointment:', error);
-            this.showNotification('Failed to cancel appointment', 'error');
+            console.error('Error cancelling appointment:', error);
+            this.showNotification('Failed to cancel appointment: ' + error.message, 'error');
         }
     }
 
     async payAppointment(appointmentId) {
-        // Redirect to payment page or open payment modal
-        window.location.href = `payment.html?appointment=${appointmentId}`;
+        try {
+            // Get appointment details first
+            const response = await fetch(`/php/appointment-confirmation.php?action=get_patient_appointments&patient_email=${encodeURIComponent(this.getCurrentUserEmail())}`);
+            const appointments = await response.json();
+            const appointment = appointments.find(a => a.id == appointmentId);
+            
+            if (appointment) {
+                // Store appointment data for payment page
+                sessionStorage.setItem('pendingPayment', JSON.stringify({
+                    appointmentId: appointmentId,
+                    appointment: appointment,
+                    amount: 150 // Default consultation fee
+                }));
+                
+                // Redirect to payment page
+                window.location.href = `payment.html?appointment=${appointmentId}`;
+            } else {
+                this.showNotification('Appointment not found', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading appointment for payment:', error);
+            this.showNotification('Failed to load appointment details', 'error');
+        }
     }
 
     showAppointmentDetails(appointment) {
@@ -1292,48 +1313,51 @@ class PatientDashboard {
             return;
         }
 
-        const visitReason = document.getElementById('visit-reason').value;
-        
-        const bookingData = {
-            doctor_id: this.selectedDoctor.id,
-            appointment_date: this.selectedDate,
-            appointment_time: this.selectedTime,
-            reason: visitReason,
-            patient_name: this.currentUser.full_name,
-            patient_email: this.currentUser.email,
-            patient_phone: this.currentUser.phone
-        };
+        // Check if terms are agreed
+        const termsCheckbox = document.getElementById('terms-agreement');
+        if (!termsCheckbox || !termsCheckbox.checked) {
+            this.showNotification('Please agree to the terms and conditions', 'error');
+            return;
+        }
 
+        const visitReason = document.getElementById('visit-reason')?.value || 'General consultation';
+        
         try {
-            const response = await fetch('php/booking-handler.php', {
+            const response = await fetch('/php/appointment-confirmation.php?action=confirm_appointment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(bookingData)
+                body: JSON.stringify({
+                    doctor_id: this.selectedDoctor.id,
+                    appointment_date: this.selectedDate,
+                    appointment_time: this.selectedTime,
+                    appointment_type: 'General Consultation',
+                    notes: visitReason
+                })
             });
 
-            const data = await response.json();
+            const result = await response.json();
             
-            if (data.success) {
-                // Store booking data in session storage for payment page
-                sessionStorage.setItem('pendingBooking', JSON.stringify({
-                    bookingId: data.booking_id,
-                    doctor: this.selectedDoctor,
-                    date: this.selectedDate,
-                    time: this.selectedTime,
-                    reason: visitReason,
-                    fee: this.selectedDoctor.fee
-                }));
+            if (response.ok && result.success) {
+                // Show success message
+                this.showSuccessMessage(result.booking_reference, result.appointment);
                 
-                // Redirect to payment page
-                window.location.href = 'payment.html';
+                // Reset booking
+                this.resetBooking();
+                
+                // Refresh appointments if viewing that section
+                if (this.currentSection === 'appointments') {
+                    await this.loadAppointments();
+                }
+                
+                this.showNotification('Appointment confirmed successfully!', 'success');
             } else {
-                this.showNotification(data.error || 'Booking failed', 'error');
+                throw new Error(result.error || 'Booking failed');
             }
         } catch (error) {
             console.error('Booking error:', error);
-            this.showNotification('Booking failed. Please try again.', 'error');
+            this.showNotification('Failed to book appointment: ' + error.message, 'error');
         }
     }
 

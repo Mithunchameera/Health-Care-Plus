@@ -1300,6 +1300,9 @@
             <div class="nav-menu">
                 <a href="index.html" class="nav-link">Home</a>
                 <span class="nav-link" id="user-name">Patient Dashboard</span>
+                <button class="btn btn-primary" onclick="window.quickActions ? quickActions.toggleQuickActions() : console.log('Quick actions not loaded')" style="margin-right: 1rem;">
+                    <i class="fas fa-plus"></i> Quick Action
+                </button>
                 <button id="logout-btn" class="btn btn-outline">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
@@ -1326,6 +1329,10 @@
                     </a></li>
                     <li><a href="#doctors" class="sidebar-link" data-section="doctors">
                         <i class="fas fa-user-md"></i> Find Doctors
+                    </a></li>
+                    <li><a href="#messages" class="sidebar-link" data-section="messages">
+                        <i class="fas fa-comments"></i> Messages
+                        <span id="messages-unread-badge" class="unread-badge" style="display: none;">0</span>
                     </a></li>
                     <li><a href="#payments" class="sidebar-link" data-section="payments">
                         <i class="fas fa-credit-card"></i> Payments
@@ -1806,6 +1813,55 @@
                 </div>
             </section>
 
+            <!-- Messages Section -->
+            <section id="messages-section" class="content-section" style="display: none;">
+                <div id="messaging-hub" class="messaging-hub">
+                    <div class="messaging-layout">
+                        <!-- Conversations Sidebar -->
+                        <div class="conversations-sidebar">
+                            <div class="conversations-header">
+                                <h2>Messages</h2>
+                                <div class="search-container">
+                                    <input type="text" id="conversation-search" placeholder="Search conversations..." class="search-input">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                            <div id="conversations-list" class="conversations-list">
+                                <!-- Conversations will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Chat Area -->
+                        <div class="chat-container">
+                            <div id="no-conversation-selected" class="no-conversation-selected">
+                                <i class="fas fa-comments"></i>
+                                <h3>Select a conversation</h3>
+                                <p>Choose a conversation from the left to start messaging</p>
+                            </div>
+
+                            <div id="chat-area" class="chat-area" style="display: none;">
+                                <div id="chat-header" class="chat-header">
+                                    <!-- Chat header will be populated dynamically -->
+                                </div>
+
+                                <div id="messages-container" class="messages-container">
+                                    <!-- Messages will be loaded here -->
+                                </div>
+
+                                <div class="message-input-container">
+                                    <div class="message-input-wrapper">
+                                        <textarea id="message-input" placeholder="Type your message..." rows="1"></textarea>
+                                        <button id="send-message-btn" class="send-btn">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Profile Section -->
             <section id="profile-section" class="content-section" style="display: none;">
                 <h2>My Profile</h2>
@@ -1853,7 +1909,6 @@
                     <div class="form-group">
                         <label for="profile-store-location">Preferred Store/Pharmacy Location</label>
                         <div class="input-wrapper">
-                            <i class="fas fa-store"></i>
                             <select id="profile-store-location" class="location-dropdown" required>
                                 <option value="">Select a store location</option>
                                 <option value="downtown-pharmacy">Downtown Pharmacy - 456 Main St</option>
@@ -1863,6 +1918,7 @@
                                 <option value="eastend-medical">East End Medical - 987 East Dr</option>
                                 <option value="southgate-health">Southgate Health Store - 159 South Gate</option>
                             </select>
+                            <i class="fas fa-store"></i>
                         </div>
                     </div>
                     <div class="form-group">
@@ -1887,5 +1943,7 @@
     <script src="js/theme-manager.js"></script>
     <script src="js/patient-dashboard.js"></script>
     <script src="js/patient-dashboard-doctors.js"></script>
+    <script src="js/messaging-hub.js"></script>
+    <script src="js/quick-actions.js"></script>
 </body>
 </html>

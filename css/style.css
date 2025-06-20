@@ -5,6 +5,17 @@
     box-sizing: border-box;
 }
 
+/* Remove any list markers or pseudo-elements that could create visual artifacts */
+*, *::before, *::after {
+    list-style: none !important;
+}
+
+ul, ol, li {
+    list-style: none !important;
+    list-style-type: none !important;
+    list-style-image: none !important;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -2839,6 +2850,84 @@ select:not(.input-group select) {
     border: 1px solid var(--border-color);
 }
 
+/* Date Input Calendar Icon Styling */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 3rem 0.75rem 0.75rem;
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px 20px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+}
+
+input[type="date"]:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Dark theme date input adjustments */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0) brightness(3) contrast(100%);
+}
+
+/* Light theme - ensure white calendar icon */
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="morning"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="afternoon"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2) contrast(100%);
+}
+
+/* Additional fallback for all themes - High priority */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: white !important;
+    background-color: transparent !important;
+    -webkit-filter: invert(1) brightness(100) contrast(100%) !important;
+    filter: invert(1) brightness(100) contrast(100%) !important;
+    background-image: none !important;
+}
+
+/* Dark theme calendar icon - use darker stroke */
+[data-theme="dark"] input[type="date"] {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3e%3c/rect%3e%3cline x1='16' y1='2' x2='16' y2='6'%3e%3c/line%3e%3cline x1='8' y1='2' x2='8' y2='6'%3e%3c/line%3e%3cline x1='3' y1='10' x2='21' y2='10'%3e%3c/line%3e%3c/svg%3e");
+}
+
+/* Firefox date input styling */
+input[type="date"]::-moz-calendar-picker-indicator {
+    filter: invert(1) brightness(2) contrast(100%);
+    color: white;
+}
+
+/* Microsoft Edge date input styling */
+input[type="date"]::-ms-calendar-picker-indicator {
+    filter: invert(1) brightness(2) contrast(100%);
+    color: white;
+}
+
 /* Password Strength */
 .password-strength {
     margin-top: 0.5rem;
@@ -4552,9 +4641,27 @@ select:not(.input-group select) {
     position: relative;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
 }
 
-.input-wrapper i {
+.input-wrapper select {
+    flex: 1;
+}
+
+.input-wrapper .fas.fa-store {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    order: 2;
+}
+
+.input-wrapper .fas.fa-store::before,
+.input-wrapper .fas.fa-store::after {
+    display: none !important;
+    content: none !important;
+}
+
+.input-wrapper i:not(.fa-store) {
     position: absolute;
     left: 1rem;
     color: var(--text-muted);
@@ -4562,10 +4669,14 @@ select:not(.input-group select) {
     z-index: 2;
 }
 
-.input-wrapper input,
-.input-wrapper select {
+.input-wrapper input {
     width: 100%;
     padding: 0.875rem 1rem 0.875rem 2.75rem;
+}
+
+.input-wrapper select {
+    width: 100%;
+    padding: 0.875rem 3rem 0.875rem 1rem;
     border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 1rem;
