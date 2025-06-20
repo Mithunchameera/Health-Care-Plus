@@ -179,6 +179,7 @@
     </nav>
 
     <div class="success-container">
+        <div id="success-video-background"></div>
         <div class="success-icon">
             <i class="fas fa-check"></i>
         </div>
@@ -259,6 +260,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script>
         // Generate unique confirmation ID
         function generateConfirmationId() {
@@ -283,6 +286,14 @@
                     window.location.href = 'dashboard-patient.html';
                 }
             }, 30000);
+            
+            // Initialize Three.js video background
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('success-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
         });
     </script>
 </body>

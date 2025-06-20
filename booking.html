@@ -32,6 +32,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <div id="booking-video-background"></div>
         <div class="container">
             <div class="booking-container-modern">
                 <div class="booking-header-modern">
@@ -393,6 +394,8 @@
     </div>
 
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script src="js/booking.js"></script>
     <script>
@@ -404,6 +407,16 @@
             }));
             window.location.href = 'dashboard-patient.html?tab=appointments';
         }
+        
+        // Initialize Three.js video background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('booking-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
+        });
     </script>
 </body>
 </html>

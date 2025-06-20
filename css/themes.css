@@ -1,84 +1,129 @@
-/* Theme Variables - Default Dark Theme */
+/* Theme Variables - Blue and White Theme */
 :root {
-    /* Dark Theme (Default) */
-    --primary-color: #4dabf7;
-    --primary-hover: #339af0;
-    --primary-light: rgba(77, 171, 247, 0.15);
-    --secondary-color: #adb5bd;
-    --secondary-light: rgba(173, 181, 189, 0.15);
-    --success-color: #51cf66;
-    --success-hover: #40c057;
-    --success-light: rgba(81, 207, 102, 0.15);
-    --error-color: #ff6b6b;
-    --error-light: rgba(255, 107, 107, 0.15);
-    --warning-color: #ffd43b;
-    --info-color: #22d3ee;
+    /* Blue and White Theme (Default) */
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.1);
+    --secondary-color: #3b82f6;
+    --secondary-light: rgba(59, 130, 246, 0.1);
+    --success-color: #1d4ed8;
+    --success-hover: #1e40af;
+    --success-light: rgba(29, 78, 216, 0.1);
+    --error-color: #dc2626;
+    --error-light: rgba(220, 38, 38, 0.1);
+    --warning-color: #3b82f6;
+    --info-color: #0ea5e9;
     
-    /* Background Colors */
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --nav-bg: rgba(18, 18, 18, 0.95);
-    --footer-bg: #0d1117;
+    /* Background Colors - White Base */
+    --bg-color: #ffffff;
+    --card-bg: #f8fafc;
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --footer-bg: #1e40af;
     
     /* Text Colors */
-    --text-color: #e9ecef;
-    --text-secondary: #adb5bd;
-    --footer-text: #e9ecef;
-    --footer-text-secondary: rgba(233, 236, 239, 0.7);
+    --text-color: #1e293b;
+    --text-secondary: #475569;
+    --footer-text: #ffffff;
+    --footer-text-secondary: rgba(255, 255, 255, 0.8);
     
     /* Border and Shadow */
-    --border-color: #343a40;
-    --shadow-color: rgba(0, 0, 0, 0.3);
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(59, 130, 246, 0.1);
     
-    /* Healthcare specific colors */
-    --medical-blue: #4dabf7;
-    --medical-green: #51cf66;
-    --medical-red: #ff6b6b;
-    --medical-orange: #ffa94d;
+    /* Healthcare specific colors - Blue variations */
+    --medical-blue: #2563eb;
+    --medical-green: #1d4ed8;
+    --medical-red: #dc2626;
+    --medical-orange: #3b82f6;
 }
 
-/* Dark Theme */
+/* Light Theme (Alternative Blue and White) */
+[data-theme="light"] {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.1);
+    --secondary-color: #64748b;
+    --secondary-light: rgba(100, 116, 139, 0.1);
+    --success-color: #1d4ed8;
+    --success-hover: #1e40af;
+    --success-light: rgba(29, 78, 216, 0.1);
+    --error-color: #dc2626;
+    --error-light: rgba(220, 38, 38, 0.1);
+    --warning-color: #3b82f6;
+    --info-color: #0ea5e9;
+    
+    /* Background Colors - Pure White */
+    --bg-color: #ffffff;
+    --card-bg: #f8fafc;
+    --nav-bg: rgba(255, 255, 255, 0.98);
+    --footer-bg: #1e40af;
+    
+    /* Text Colors */
+    --text-color: #1e293b;
+    --text-secondary: #475569;
+    --footer-text: #ffffff;
+    --footer-text-secondary: rgba(255, 255, 255, 0.8);
+    
+    /* Border and Shadow */
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(37, 99, 235, 0.1);
+    
+    /* Healthcare specific colors for light theme */
+    --medical-blue: #2563eb;
+    --medical-green: #1d4ed8;
+    --medical-red: #dc2626;
+    --medical-orange: #3b82f6;
+    
+    /* About page specific light theme colors */
+    --hero-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    --section-bg: #ffffff;
+    --card-hover-bg: #f8fafc;
+    --timeline-bg: #f1f5f9;
+    --accent-glow: rgba(37, 99, 235, 0.1);
+}
+
+/* Dark Theme (Blue and White Dark Variant) */
 [data-theme="dark"] {
     --primary-color: #3b82f6;
     --primary-hover: #2563eb;
     --primary-light: rgba(59, 130, 246, 0.1);
     --secondary-color: #64748b;
     --secondary-light: rgba(100, 116, 139, 0.1);
-    --success-color: #10b981;
-    --success-hover: #059669;
-    --success-light: rgba(16, 185, 129, 0.1);
-    --error-color: #ef4444;
-    --error-light: rgba(239, 68, 68, 0.1);
-    --warning-color: #f59e0b;
-    --info-color: #06b6d4;
+    --success-color: #3b82f6;
+    --success-hover: #2563eb;
+    --success-light: rgba(59, 130, 246, 0.1);
+    --error-color: #dc2626;
+    --error-light: rgba(220, 38, 38, 0.1);
+    --warning-color: #60a5fa;
+    --info-color: #0ea5e9;
     
-    /* Background Colors - Much Darker */
-    --bg-color: #0a0a0a;
-    --card-bg: #111111;
-    --nav-bg: rgba(10, 10, 10, 0.98);
-    --footer-bg: #050505;
+    /* Background Colors - Dark Blue Scheme */
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --nav-bg: rgba(15, 23, 42, 0.98);
+    --footer-bg: #0c1324;
     
     /* Text Colors */
     --text-color: #f8fafc;
-    --text-secondary: #94a3b8;
+    --text-secondary: #cbd5e1;
     --footer-text: #f8fafc;
-    --footer-text-secondary: rgba(248, 250, 252, 0.6);
+    --footer-text-secondary: rgba(248, 250, 252, 0.8);
     
     /* Border and Shadow */
-    --border-color: #1e293b;
-    --shadow-color: rgba(0, 0, 0, 0.5);
+    --border-color: #334155;
+    --shadow-color: rgba(0, 0, 0, 0.3);
     
     /* Healthcare specific colors for dark theme */
     --medical-blue: #3b82f6;
-    --medical-green: #10b981;
-    --medical-red: #ef4444;
-    --medical-orange: #f59e0b;
+    --medical-green: #60a5fa;
+    --medical-red: #dc2626;
+    --medical-orange: #60a5fa;
     
     /* About page specific dark theme colors */
-    --hero-bg: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-    --section-bg: #0d0d0d;
-    --card-hover-bg: #1a1a1a;
-    --timeline-bg: #0f0f0f;
+    --hero-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --section-bg: #1e293b;
+    --card-hover-bg: #334155;
+    --timeline-bg: #1e293b;
     --accent-glow: rgba(59, 130, 246, 0.2);
 }
 

@@ -849,6 +849,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <div id="doctor-video-background"></div>
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="content-section active">
                 <div class="dashboard-header">
@@ -1219,7 +1220,20 @@
     </div>
 
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script src="js/doctor-dashboard.js"></script>
+    <script>
+        // Initialize Three.js video background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('doctor-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

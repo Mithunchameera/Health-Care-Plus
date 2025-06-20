@@ -25,78 +25,78 @@ class HealthcareVideoBackground {
     getThemeColors() {
         return {
             light: {
-                background: new THREE.Color(0xf8fafc),
+                background: new THREE.Color(0xffffff),
                 particles: [
-                    new THREE.Color(0x0ea5e9), // Blue
-                    new THREE.Color(0x10b981), // Green
-                    new THREE.Color(0x8b5cf6), // Purple
-                    new THREE.Color(0x06b6d4)  // Cyan
+                    new THREE.Color(0x2563eb), // Blue primary
+                    new THREE.Color(0x3b82f6), // Blue secondary
+                    new THREE.Color(0x1d4ed8), // Blue dark
+                    new THREE.Color(0x60a5fa)  // Blue light
                 ],
-                medical: new THREE.Color(0x10b981),
-                ambient: new THREE.Color(0x94a3b8),
+                medical: new THREE.Color(0x2563eb),
+                ambient: new THREE.Color(0xe2e8f0),
                 lights: [
-                    { color: 0x10b981, intensity: 0.8 },
-                    { color: 0x0ea5e9, intensity: 0.6 }
+                    { color: 0x2563eb, intensity: 0.8 },
+                    { color: 0x3b82f6, intensity: 0.6 }
                 ]
             },
             dark: {
                 background: new THREE.Color(0x0f172a),
                 particles: [
-                    new THREE.Color(0x38bdf8), // Light blue
-                    new THREE.Color(0x34d399), // Light green
-                    new THREE.Color(0xa78bfa), // Light purple
-                    new THREE.Color(0x22d3ee)  // Light cyan
+                    new THREE.Color(0x3b82f6), // Blue primary
+                    new THREE.Color(0x60a5fa), // Blue light
+                    new THREE.Color(0x2563eb), // Blue secondary
+                    new THREE.Color(0x93c5fd)  // Blue lighter
                 ],
-                medical: new THREE.Color(0x34d399),
+                medical: new THREE.Color(0x3b82f6),
                 ambient: new THREE.Color(0x1e293b),
                 lights: [
-                    { color: 0x34d399, intensity: 1.2 },
-                    { color: 0x38bdf8, intensity: 1.0 }
+                    { color: 0x3b82f6, intensity: 1.2 },
+                    { color: 0x60a5fa, intensity: 1.0 }
                 ]
             },
             morning: {
-                background: new THREE.Color(0xfef3c7),
+                background: new THREE.Color(0xffffff),
                 particles: [
-                    new THREE.Color(0xf59e0b), // Amber
-                    new THREE.Color(0xef4444), // Red
-                    new THREE.Color(0xf97316), // Orange
-                    new THREE.Color(0xeab308)  // Yellow
+                    new THREE.Color(0x2563eb), // Blue primary
+                    new THREE.Color(0x3b82f6), // Blue secondary
+                    new THREE.Color(0x60a5fa), // Blue light
+                    new THREE.Color(0x1d4ed8)  // Blue dark
                 ],
-                medical: new THREE.Color(0xf59e0b),
-                ambient: new THREE.Color(0xfbbf24),
+                medical: new THREE.Color(0x2563eb),
+                ambient: new THREE.Color(0xdbeafe),
                 lights: [
-                    { color: 0xf59e0b, intensity: 1.0 },
-                    { color: 0xef4444, intensity: 0.8 }
+                    { color: 0x2563eb, intensity: 1.0 },
+                    { color: 0x3b82f6, intensity: 0.8 }
                 ]
             },
             afternoon: {
-                background: new THREE.Color(0xdbeafe),
+                background: new THREE.Color(0xf8fafc),
                 particles: [
                     new THREE.Color(0x3b82f6), // Blue
-                    new THREE.Color(0x06b6d4), // Cyan
-                    new THREE.Color(0x8b5cf6), // Purple
-                    new THREE.Color(0x10b981)  // Green
+                    new THREE.Color(0x2563eb), // Blue primary
+                    new THREE.Color(0x60a5fa), // Blue light
+                    new THREE.Color(0x1d4ed8)  // Blue dark
                 ],
                 medical: new THREE.Color(0x3b82f6),
-                ambient: new THREE.Color(0x60a5fa),
+                ambient: new THREE.Color(0xe2e8f0),
                 lights: [
                     { color: 0x3b82f6, intensity: 1.0 },
-                    { color: 0x10b981, intensity: 0.9 }
+                    { color: 0x2563eb, intensity: 0.9 }
                 ]
             },
             evening: {
-                background: new THREE.Color(0x1e1b4b),
+                background: new THREE.Color(0x0f172a),
                 particles: [
-                    new THREE.Color(0x8b5cf6), // Purple
-                    new THREE.Color(0x06b6d4), // Cyan
-                    new THREE.Color(0x10b981), // Green
-                    new THREE.Color(0x3b82f6)  // Blue
+                    new THREE.Color(0x60a5fa), // Blue light
+                    new THREE.Color(0x3b82f6), // Blue
+                    new THREE.Color(0x93c5fd), // Blue lighter
+                    new THREE.Color(0x2563eb)  // Blue primary
                 ],
-                medical: new THREE.Color(0x8b5cf6),
-                ambient: new THREE.Color(0x312e81),
+                medical: new THREE.Color(0x60a5fa),
+                ambient: new THREE.Color(0x1e293b),
                 lights: [
-                    { color: 0x8b5cf6, intensity: 1.1 },
-                    { color: 0x06b6d4, intensity: 0.9 }
+                    { color: 0x60a5fa, intensity: 1.1 },
+                    { color: 0x3b82f6, intensity: 0.9 }
                 ]
             },
             night: {

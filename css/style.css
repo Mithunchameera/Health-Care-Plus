@@ -25,26 +25,158 @@ html {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Page Entrance Animations */
+.page-entrance {
+    animation: pageEntrance 1s ease-out;
+}
+
+.nav-entrance {
+    animation: navSlideDown 0.8s ease-out;
+}
+
+.content-entrance {
+    animation: contentFadeIn 1.2s ease-out;
+}
+
+/* Element Animations */
+.animate-in {
+    opacity: 0;
+    transform: translateY(30px);
+    animation-fill-mode: forwards;
+}
+
 .fade-in {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
 .slide-in-up {
-    animation: slideInUp 0.6s ease-out;
+    animation: slideInUp 0.6s ease-out forwards;
 }
 
 .slide-in-right {
-    animation: slideInRight 0.6s ease-out;
+    animation: slideInRight 0.7s ease-out forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.7s ease-out forwards;
+}
+
+.scale-in {
+    animation: scaleIn 0.6s ease-out forwards;
+}
+
+.bounce-in {
+    animation: bounceIn 0.8s ease-out forwards;
+}
+
+.rotate-in {
+    animation: rotateIn 0.6s ease-out forwards;
 }
 
 .highlight-focus {
     animation: highlightFocus 1s ease-out;
 }
 
+/* Input Animations */
+.input-entrance {
+    animation: inputSlideIn 0.4s ease-out forwards;
+}
+
+.input-focused {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+.input-filled .floating-label {
+    transform: translateY(-20px) scale(0.8);
+    color: var(--primary-color);
+}
+
+/* Hover Animations */
+.hover-animate {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-animate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+}
+
+/* Loading Animations */
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+.shimmer {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+}
+
+/* Navigation Animations */
+.menu-open {
+    animation: menuSlideIn 0.3s ease-out;
+}
+
+.toggle-active {
+    animation: toggleRotate 0.3s ease-out;
+}
+
+.sidebar-open {
+    animation: sidebarSlideIn 0.4s ease-out;
+}
+
+/* Comprehensive Animation Keyframes */
+@keyframes pageEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes navSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -55,7 +187,7 @@ html {
 @keyframes slideInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(50px);
     }
     to {
         opacity: 1;
@@ -66,7 +198,69 @@ html {
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounceIn {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes rotateIn {
+    from {
+        opacity: 0;
+        transform: rotate(-200deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes inputSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
     }
     to {
         opacity: 1;
@@ -76,13 +270,86 @@ html {
 
 @keyframes highlightFocus {
     0% {
-        box-shadow: 0 0 0 0 var(--primary-color);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
     }
     50% {
-        box-shadow: 0 0 0 8px rgba(var(--primary-rgb), 0.3);
+        box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.2);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes menuSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toggleRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes sidebarSlideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
     }
 }
 
@@ -315,12 +582,12 @@ body {
 }
 
 .btn-success {
-    background: var(--success-color);
+    background: #2563eb;
     color: white;
 }
 
 .btn-success:hover {
-    background: var(--success-hover);
+    background: #1d4ed8;
 }
 
 .btn-full {
@@ -818,14 +1085,14 @@ body {
 }
 
 .btn-secondary {
-    background: transparent;
-    color: white;
-    border-color: rgba(255, 255, 255, 0.3);
+    background: white;
+    color: #2563eb;
+    border-color: #2563eb;
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: white;
+    background: #eff6ff;
+    border-color: #1d4ed8;
 }
 
 /* Modern Mission & Vision Section */
@@ -2046,10 +2313,10 @@ select option:selected {
 .search-filters select:hover,
 .dashboard-filters select:hover {
     border-color: var(--primary-color);
-    background: linear-gradient(145deg, #ffffff 0%, #ecfdf5 100%);
+    background: linear-gradient(145deg, #ffffff 0%, #eff6ff 100%);
     transform: translateY(-2px);
-    box-shadow: 0 5px 16px rgba(var(--primary-rgb), 0.18), 0 3px 6px rgba(0, 0, 0, 0.1);
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    box-shadow: 0 5px 16px rgba(37, 99, 235, 0.18), 0 3px 6px rgba(0, 0, 0, 0.1);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 .filter-group select:focus,
@@ -2057,10 +2324,10 @@ select option:selected {
 .dashboard-filters select:focus {
     outline: none;
     border-color: var(--primary-color);
-    background: linear-gradient(145deg, #ffffff 0%, #ecfdf5 100%);
-    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15), 0 5px 16px rgba(var(--primary-rgb), 0.2);
+    background: linear-gradient(145deg, #ffffff 0%, #eff6ff 100%);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 5px 16px rgba(37, 99, 235, 0.2);
     transform: translateY(-1px);
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 .filter-group select option,
@@ -2077,7 +2344,7 @@ select option:selected {
 .filter-group select option:hover,
 .search-filters select option:hover,
 .dashboard-filters select option:hover {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     color: var(--primary-color);
     font-weight: 600;
 }
@@ -2085,7 +2352,7 @@ select option:selected {
 .filter-group select option:checked,
 .search-filters select option:checked,
 .dashboard-filters select option:checked {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #059669 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
     color: white;
     font-weight: 600;
 }
@@ -2948,19 +3215,19 @@ input[type="date"]::-ms-calendar-picker-indicator {
 }
 
 .strength-fill.weak {
-    background: #ff4757;
+    background: #dc2626;
 }
 
 .strength-fill.medium {
-    background: #ffa502;
+    background: #3b82f6;
 }
 
 .strength-fill.strong {
-    background: #2ed573;
+    background: #2563eb;
 }
 
 .strength-fill.very-strong {
-    background: #0984e3;
+    background: #1d4ed8;
 }
 
 .strength-text {

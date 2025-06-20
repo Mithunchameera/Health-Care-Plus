@@ -1346,6 +1346,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <div id="patient-video-background"></div>
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="content-section active">
                 <div class="dashboard-header">
@@ -1941,9 +1942,22 @@
 
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/patient-dashboard.js"></script>
     <script src="js/patient-dashboard-doctors.js"></script>
     <script src="js/messaging-hub.js"></script>
     <script src="js/quick-actions.js"></script>
+    <script>
+        // Initialize Three.js video background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('patient-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -197,6 +197,7 @@
     </nav>
 
     <div class="payment-container">
+        <div id="payment-video-background"></div>
         <div class="payment-header">
             <h1>Complete Payment</h1>
             <p>Secure payment for your medical appointment</p>
@@ -365,6 +366,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/payment.js"></script>
     <script>
         let selectedMethod = 'card';
@@ -464,6 +467,16 @@
 
         // Initialize
         loadAppointmentData();
+        
+        // Initialize Three.js video background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('payment-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
+        });
     </script>
 </body>
 </html>

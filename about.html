@@ -35,6 +35,7 @@
 
     <!-- Hero Section -->
     <section class="about-hero-modern">
+        <div id="about-video-background"></div>
         <div class="hero-bg-elements">
             <div class="floating-shape shape-1"></div>
             <div class="floating-shape shape-2"></div>
@@ -396,12 +397,22 @@
     </footer>
 
     <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize back to top button
             if (typeof initializeBackToTop === 'function') {
                 initializeBackToTop();
+            }
+            
+            // Initialize Three.js video background
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('about-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
             }
         });
     </script>
