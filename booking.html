@@ -7,8 +7,284 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/themes.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .booking-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .booking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .booking-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        .step.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .step i {
+            margin-right: 0.5rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .doctor-card {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .doctor-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .doctor-name {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .doctor-specialty {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-rating {
+            display: flex;
+            align-items: center;
+            color: #fbbf24;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .calendar-day:hover {
+            border-color: var(--primary-color);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .calendar-day.disabled {
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-color);
+        }
+
+        .time-slot.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .summary-value {
+            color: var(--text-secondary);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-<body data-theme="dark">
+<body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -33,431 +309,356 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div id="booking-video-background"></div>
         <div class="container">
-            <div class="booking-container-modern">
-                <div class="booking-header-modern">
-                    <div class="header-content">
-                        <h1><i class="fas fa-calendar-plus"></i> Book Your Appointment</h1>
-                        <p>Experience seamless healthcare booking with our modern appointment system</p>
+            <div class="booking-container">
+                <div class="booking-header">
+                    <h1><i class="fas fa-calendar-plus"></i> Book Your Appointment</h1>
+                    <p>Schedule your visit with our healthcare professionals</p>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="booking-steps">
+                    <div class="step active" data-step="1">
+                        <i class="fas fa-user-md"></i>
+                        <span>Choose Doctor</span>
+                    </div>
+                    <div class="step" data-step="2">
+                        <i class="fas fa-calendar"></i>
+                        <span>Select Date</span>
+                    </div>
+                    <div class="step" data-step="3">
+                        <i class="fas fa-user"></i>
+                        <span>Your Details</span>
+                    </div>
+                    <div class="step" data-step="4">
+                        <i class="fas fa-check"></i>
+                        <span>Confirm</span>
                     </div>
                 </div>
 
-                <!-- Enhanced Progress Steps -->
-                <div class="progress-wrapper">
-                    <div class="progress-track">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <div class="step-indicators">
-                        <div class="step-item active" data-step="1">
-                            <div class="step-circle">
-                                <i class="fas fa-user-md"></i>
+                <!-- Step 1: Doctor Selection -->
+                <div id="step-1" class="step-content">
+                    <div class="form-section">
+                        <h3>Choose Your Doctor</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="specialty">Specialty</label>
+                                <select id="specialty">
+                                    <option value="">All Specialties</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="Pediatrics">Pediatrics</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                </select>
                             </div>
-                            <span class="step-title">Doctor</span>
-                        </div>
-                        <div class="step-item" data-step="2">
-                            <div class="step-circle">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <span class="step-title">Schedule</span>
-                        </div>
-                        <div class="step-item" data-step="3">
-                            <div class="step-circle">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="step-title">Details</span>
-                        </div>
-                        <div class="step-item" data-step="4">
-                            <div class="step-circle">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <span class="step-title">Confirm</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 1: Enhanced Doctor Selection -->
-                <div class="booking-step-modern active" id="step-1">
-                    <div class="step-card">
-                        <div class="card-header">
-                            <h2><i class="fas fa-stethoscope"></i> Choose Your Doctor</h2>
-                            <p>Find the perfect healthcare provider for your needs</p>
-                        </div>
-                        
-                        <!-- Advanced Search Interface -->
-                        <div class="search-section">
-                            <div class="search-bar-modern">
-                                <div class="search-input-wrapper">
-                                    <i class="fas fa-search search-icon"></i>
-                                    <input type="text" id="doctor-search" placeholder="Search doctors by name, specialty, or location..." class="search-input-modern">
-                                </div>
-                                <button type="button" class="filter-toggle-btn" id="filterToggle">
-                                    <i class="fas fa-sliders-h"></i>
-                                    Filters
-                                </button>
-                            </div>
-                            
-                            <div class="filter-panel" id="filterPanel">
-                                <div class="filter-row">
-                                    <div class="filter-col">
-                                        <label class="filter-label">
-                                            <i class="fas fa-user-md"></i>
-                                            Specialty
-                                        </label>
-                                        <select id="specialty-filter" class="filter-select specialty-dropdown">
-                                            <option value="">All Specialties</option>
-                                            <option value="Cardiology">Cardiology</option>
-                                            <option value="Neurology">Neurology</option>
-                                            <option value="Pediatrics">Pediatrics</option>
-                                            <option value="Orthopedics">Orthopedics</option>
-                                            <option value="Dermatology">Dermatology</option>
-                                            <option value="Internal Medicine">Internal Medicine</option>
-                                            <option value="Obstetrics & Gynecology">OB/GYN</option>
-                                            <option value="Psychiatry">Psychiatry</option>
-                                        </select>
-                                    </div>
-                                    <div class="filter-col">
-                                        <label class="filter-label">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            Location
-                                        </label>
-                                        <select id="location-filter" class="filter-select location-dropdown">
-                                            <option value="">All Locations</option>
-                                            <option value="Downtown">Downtown</option>
-                                            <option value="Uptown">Uptown</option>
-                                            <option value="Westside">Westside</option>
-                                            <option value="Eastside">Eastside</option>
-                                            <option value="Central">Central</option>
-                                        </select>
-                                    </div>
-                                    <div class="filter-col">
-                                        <label class="filter-label">
-                                            <i class="fas fa-star"></i>
-                                            Rating
-                                        </label>
-                                        <select id="rating-filter" class="filter-select filter-dropdown">
-                                            <option value="">Any Rating</option>
-                                            <option value="4.5">4.5+ Stars</option>
-                                            <option value="4.0">4.0+ Stars</option>
-                                            <option value="3.5">3.5+ Stars</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <select id="location">
+                                    <option value="">All Locations</option>
+                                    <option value="Downtown">Downtown</option>
+                                    <option value="Uptown">Uptown</option>
+                                    <option value="Westside">Westside</option>
+                                </select>
                             </div>
                         </div>
-                        
-                        <!-- Selected Doctor Display -->
-                        <div id="selected-doctor" class="selected-doctor-modern" style="display: none;">
-                            <div class="selected-badge">
-                                <i class="fas fa-check-circle"></i>
-                                Selected Doctor
-                            </div>
-                            <div class="selected-doctor-info"></div>
-                            <button type="button" class="btn-change-doctor" onclick="clearDoctorSelection()">
-                                <i class="fas fa-exchange-alt"></i>
-                                Change Doctor
-                            </button>
-                        </div>
-
-                        <!-- Doctor Cards Grid -->
-                        <div id="doctors-container" class="doctors-grid-modern">
-                            <div class="loading-spinner-modern">
-                                <div class="spinner-circle"></div>
-                                <p>Finding available doctors...</p>
-                            </div>
+                        <div class="doctor-grid" id="doctors-list">
+                            <!-- Doctors will be loaded here -->
                         </div>
                     </div>
-                </div>
-                </div>
-
-                <!-- Step 2: Enhanced Schedule Selection -->
-                <div class="booking-step-modern" id="step-2">
-                    <div class="step-card">
-                        <div class="card-header">
-                            <h2><i class="fas fa-calendar-check"></i> Select Your Schedule</h2>
-                            <p>Choose your preferred date and time</p>
-                        </div>
-                        
-                        <div class="schedule-container">
-                            <div class="calendar-modern">
-                                <div class="calendar-header-modern">
-                                    <button type="button" id="prev-month" class="calendar-nav-btn">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                    <div class="calendar-title-modern">
-                                        <h3 id="current-month">June 2025</h3>
-                                    </div>
-                                    <button type="button" id="next-month" class="calendar-nav-btn">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
-                                </div>
-                                <div class="calendar-weekdays">
-                                    <div class="weekday">Sun</div>
-                                    <div class="weekday">Mon</div>
-                                    <div class="weekday">Tue</div>
-                                    <div class="weekday">Wed</div>
-                                    <div class="weekday">Thu</div>
-                                    <div class="weekday">Fri</div>
-                                    <div class="weekday">Sat</div>
-                                </div>
-                                <div class="calendar-grid-modern" id="calendar-grid">
-                                    <!-- Calendar will be populated by JavaScript -->
-                                </div>
-                            </div>
-                            
-                            <div class="time-selection-modern">
-                                <div class="time-header">
-                                    <h3><i class="fas fa-clock"></i> Available Times</h3>
-                                    <div class="selected-date-display" id="selected-date-display">
-                                        Select a date to view available times
-                                    </div>
-                                </div>
-                                <div id="time-slots" class="time-slots-modern">
-                                    <div class="time-placeholder">
-                                        <i class="fas fa-calendar-day"></i>
-                                        <p>Please select a date first</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Enhanced Patient Details -->
-                <div class="booking-step-modern" id="step-3">
-                    <div class="step-card">
-                        <div class="card-header">
-                            <h2><i class="fas fa-user-edit"></i> Your Information</h2>
-                            <p>Please provide your details for the appointment</p>
-                        </div>
-                        
-                        <form id="patient-form" class="patient-form-modern">
-                            <div class="form-sections">
-                                <div class="form-section">
-                                    <h3><i class="fas fa-id-card"></i> Personal Information</h3>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="patient-name" class="form-label">
-                                                Full Name <span class="required">*</span>
-                                            </label>
-                                            <input type="text" id="patient-name" name="patient_name" class="form-input" required>
-                                            <span class="field-icon"><i class="fas fa-user"></i></span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                
-                                <div class="form-section">
-                                    <h3><i class="fas fa-phone"></i> Contact Information</h3>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="patient-email" class="form-label">
-                                                Email Address <span class="required">*</span>
-                                            </label>
-                                            <input type="email" id="patient-email" name="patient_email" class="form-input" required>
-                                            <span class="field-icon"><i class="fas fa-envelope"></i></span>
-                                        </div>
-                                        <div class="form-field">
-                                            <label for="patient-phone" class="form-label">
-                                                Phone Number <span class="required">*</span>
-                                            </label>
-                                            <input type="tel" id="patient-phone" name="patient_phone" class="form-input" required>
-                                            <span class="field-icon"><i class="fas fa-phone"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-field full-width">
-                                        <label for="patient-address" class="form-label">Address</label>
-                                        <textarea id="patient-address" name="patient_address" class="form-textarea" rows="3" placeholder="Your home address"></textarea>
-                                        <span class="field-icon"><i class="fas fa-map-marker-alt"></i></span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-section">
-                                    <h3><i class="fas fa-heart"></i> Medical Information</h3>
-                                    <div class="form-row">
-                                        <div class="form-field">
-                                            <label for="emergency-contact" class="form-label">Emergency Contact</label>
-                                            <input type="tel" id="emergency-contact" name="emergency_contact" class="form-input" placeholder="Emergency contact number">
-                                            <span class="field-icon"><i class="fas fa-exclamation-triangle"></i></span>
-                                        </div>
-                                        <div class="form-field">
-                                            <label for="insurance-number" class="form-label">Insurance Number</label>
-                                            <input type="text" id="insurance-number" name="insurance_number" class="form-input" placeholder="Insurance policy number">
-                                            <span class="field-icon"><i class="fas fa-shield-alt"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-field full-width">
-                                        <label for="reason" class="form-label">Reason for Visit</label>
-                                        <textarea id="reason" name="reason" class="form-textarea" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
-                                        <span class="field-icon"><i class="fas fa-notes-medical"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Terms and Conditions Agreement -->
-                            <div class="terms-agreement-section">
-                                <div class="terms-container">
-                                    <div class="checkbox-wrapper-modern">
-                                        <input type="checkbox" id="terms-agreement" name="terms_agreement" required>
-                                        <label for="terms-agreement" class="checkbox-label-modern">
-                                            <span class="checkbox-custom">
-                                                <i class="fas fa-check checkbox-icon"></i>
-                                            </span>
-                                            <span class="checkbox-text">
-                                                I agree to the 
-                                                <a href="#" class="terms-link" onclick="openTermsModal()">Terms and Conditions</a> 
-                                                and understand the 
-                                                <a href="#" class="terms-link" onclick="openCancellationModal()">cancellation policy</a>
-                                            </span>
-                                        </label>
-                                    </div>
-                                    
-                                    <div class="checkbox-wrapper-modern">
-                                        <input type="checkbox" id="privacy-agreement" name="privacy_agreement" required>
-                                        <label for="privacy-agreement" class="checkbox-label-modern">
-                                            <span class="checkbox-custom">
-                                                <i class="fas fa-check checkbox-icon"></i>
-                                            </span>
-                                            <span class="checkbox-text">
-                                                I understand and agree to the 
-                                                <a href="#" class="terms-link" onclick="openPrivacyModal()">Privacy Policy</a> 
-                                                regarding my medical information
-                                            </span>
-                                        </label>
-                                    </div>
-                                    
-                                    <div class="checkbox-wrapper-modern optional">
-                                        <input type="checkbox" id="marketing-agreement" name="marketing_agreement">
-                                        <label for="marketing-agreement" class="checkbox-label-modern">
-                                            <span class="checkbox-custom">
-                                                <i class="fas fa-check checkbox-icon"></i>
-                                            </span>
-                                            <span class="checkbox-text">
-                                                I would like to receive appointment reminders and health tips via email
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Step 4: Enhanced Confirmation -->
-                <div class="booking-step-modern" id="step-4">
-                    <div class="step-card">
-                        <div class="card-header">
-                            <h2><i class="fas fa-clipboard-check"></i> Confirm Your Appointment</h2>
-                            <p>Review your appointment details before confirming</p>
-                        </div>
-                        
-                        <div class="confirmation-container">
-                            <div class="appointment-summary-modern">
-                                <div id="appointment-summary-content" class="summary-content">
-                                    <!-- Summary will be populated by JavaScript -->
-                                </div>
-                            </div>
-                            
-                            <div class="terms-section-modern">
-                                <div class="terms-checkbox">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" id="terms-checkbox" required>
-                                        <span class="checkmark-modern"></span>
-                                        <span class="checkbox-text">
-                                            I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Enhanced Navigation -->
-                <div class="booking-navigation-modern">
-                    <button type="button" id="prev-step" class="nav-btn nav-btn-secondary" style="display: none;">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Previous</span>
-                    </button>
                     
-                    <button type="button" id="next-step" class="nav-btn nav-btn-primary">
-                        <span>Continue</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <div class="btn-group">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="nextStep()" disabled id="next-1">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Date & Time Selection -->
+                <div id="step-2" class="step-content hidden">
+                    <div class="form-section">
+                        <h3>Select Date & Time</h3>
+                        <div class="calendar-grid" id="calendar">
+                            <!-- Calendar will be generated here -->
+                        </div>
+                        <div class="time-slots" id="time-slots">
+                            <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">
+                                Please select a date first
+                            </p>
+                        </div>
+                    </div>
                     
-                    <button type="button" id="confirm-booking" class="nav-btn nav-btn-success" style="display: none;">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Confirm Booking</span>
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="nextStep()" disabled id="next-2">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Patient Details -->
+                <div id="step-3" class="step-content hidden">
+                    <div class="form-section">
+                        <h3>Your Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="patient-name">Full Name *</label>
+                                <input type="text" id="patient-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-email">Email Address *</label>
+                                <input type="email" id="patient-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-phone">Phone Number *</label>
+                                <input type="tel" id="patient-phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-age">Age</label>
+                                <input type="number" id="patient-age" min="1" max="120">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reason">Reason for Visit</label>
+                            <textarea id="reason" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="nextStep()" id="next-3">
+                            Review <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div id="step-4" class="step-content hidden">
+                    <div class="form-section">
+                        <h3>Confirm Your Appointment</h3>
+                        <div class="summary-card" id="booking-summary">
+                            <!-- Summary will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="confirmBooking()">
+                            <i class="fas fa-check-circle"></i> Confirm Appointment
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Enhanced Success Modal -->
-    <div id="success-modal" class="modal-modern">
-        <div class="modal-overlay"></div>
-        <div class="modal-content-modern">
-            <div class="modal-header-modern">
-                <div class="success-animation">
-                    <div class="checkmark-circle">
-                        <div class="checkmark-stem"></div>
-                        <div class="checkmark-kick"></div>
+    <!-- JavaScript -->
+    <script src="js/theme-manager.js"></script>
+    <script>
+        let currentStep = 1;
+        let selectedDoctor = null;
+        let selectedDate = null;
+        let selectedTime = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctors();
+            generateCalendar();
+        });
+
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show current step
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            
+            // Update step indicators
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                stepEl.classList.remove('active');
+                if (index + 1 === step) {
+                    stepEl.classList.add('active');
+                }
+            });
+
+            // Update summary if on confirmation step
+            if (step === 4) {
+                updateSummary();
+            }
+        }
+
+        function loadDoctors() {
+            const doctors = [
+                { id: 1, name: "Dr. Sarah Johnson", specialty: "Cardiology", location: "Downtown", rating: 4.8 },
+                { id: 2, name: "Dr. Michael Chen", specialty: "Neurology", location: "Uptown", rating: 4.9 },
+                { id: 3, name: "Dr. Emily Davis", specialty: "Pediatrics", location: "Westside", rating: 4.7 },
+                { id: 4, name: "Dr. Robert Wilson", specialty: "Orthopedics", location: "Downtown", rating: 4.6 },
+                { id: 5, name: "Dr. Lisa Anderson", specialty: "Dermatology", location: "Uptown", rating: 4.8 }
+            ];
+
+            const container = document.getElementById('doctors-list');
+            container.innerHTML = doctors.map(doctor => `
+                <div class="doctor-card" onclick="selectDoctor(${doctor.id})">
+                    <div class="doctor-name">Dr. ${doctor.name.split(' ').slice(1).join(' ')}</div>
+                    <div class="doctor-specialty">${doctor.specialty}</div>
+                    <div class="doctor-rating">
+                        ${'★'.repeat(Math.floor(doctor.rating))} ${doctor.rating}
                     </div>
                 </div>
-                <h2>Appointment Confirmed!</h2>
-                <p>Your appointment has been successfully booked</p>
-            </div>
-            <div class="modal-body-modern">
-                <div id="booking-confirmation" class="confirmation-details">
-                    <!-- Confirmation details will be populated here -->
-                </div>
-                <div class="next-steps">
-                    <h3><i class="fas fa-info-circle"></i> What's Next?</h3>
-                    <ul class="next-steps-list">
-                        <li><i class="fas fa-envelope"></i> You'll receive a confirmation email</li>
-                        <li><i class="fas fa-bell"></i> We'll send you a reminder before your appointment</li>
-                        <li><i class="fas fa-mobile-alt"></i> Access your appointment details in the patient dashboard</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-actions-modern">
-                <button type="button" class="btn-modern btn-primary-modern" onclick="viewMyAppointments()">
-                    <i class="fas fa-calendar-alt"></i>
-                    View My Appointments
-                </button>
-                <button type="button" class="btn-modern btn-secondary-modern" onclick="window.location.href='index.html'">
-                    <i class="fas fa-home"></i>
-                    Back to Home
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/theme-manager.js"></script>
-    <script src="js/enhanced-animations.js"></script>
-    <script src="js/three-video-background.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/booking.js"></script>
-    <script>
-        // Global function for appointment navigation
-        function viewMyAppointments() {
-            localStorage.setItem('recentBooking', JSON.stringify({
-                reference: window.currentBookingReference || 'NEW-BOOKING',
-                timestamp: new Date().toISOString()
-            }));
-            window.location.href = 'dashboard-patient.html?tab=appointments';
+            `).join('');
         }
-        
-        // Initialize Three.js video background
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
-                const videoContainer = document.getElementById('booking-video-background');
-                if (videoContainer) {
-                    new HealthcareVideoBackground(videoContainer);
-                }
+
+        function selectDoctor(doctorId) {
+            // Remove previous selection
+            document.querySelectorAll('.doctor-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            event.target.closest('.doctor-card').classList.add('selected');
+            selectedDoctor = doctorId;
+            
+            // Enable next button
+            document.getElementById('next-1').disabled = false;
+        }
+
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            // Add headers
+            const headers = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            headers.forEach(header => {
+                const headerEl = document.createElement('div');
+                headerEl.className = 'calendar-header';
+                headerEl.textContent = header;
+                calendar.appendChild(headerEl);
+            });
+
+            // Add empty cells for the start of the month
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day disabled';
+                calendar.appendChild(emptyDay);
             }
-        });
+
+            // Add days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                
+                const date = new Date(today.getFullYear(), today.getMonth(), day);
+                if (date < today) {
+                    dayEl.classList.add('disabled');
+                } else {
+                    dayEl.onclick = () => selectDate(day);
+                }
+                
+                calendar.appendChild(dayEl);
+            }
+        }
+
+        function selectDate(day) {
+            // Remove previous selection
+            document.querySelectorAll('.calendar-day').forEach(dayEl => {
+                dayEl.classList.remove('selected');
+            });
+            
+            // Add selection
+            event.target.classList.add('selected');
+            selectedDate = day;
+            
+            // Load time slots
+            loadTimeSlots();
+        }
+
+        function loadTimeSlots() {
+            const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
+            const container = document.getElementById('time-slots');
+            
+            container.innerHTML = timeSlots.map(time => `
+                <div class="time-slot" onclick="selectTime('${time}')">${time}</div>
+            `).join('');
+        }
+
+        function selectTime(time) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection
+            event.target.classList.add('selected');
+            selectedTime = time;
+            
+            // Enable next button
+            document.getElementById('next-2').disabled = false;
+        }
+
+        function updateSummary() {
+            const doctors = {
+                1: "Dr. Sarah Johnson - Cardiology",
+                2: "Dr. Michael Chen - Neurology", 
+                3: "Dr. Emily Davis - Pediatrics",
+                4: "Dr. Robert Wilson - Orthopedics",
+                5: "Dr. Lisa Anderson - Dermatology"
+            };
+
+            const summary = document.getElementById('booking-summary');
+            summary.innerHTML = `
+                <div class="summary-item">
+                    <span class="summary-label">Doctor:</span>
+                    <span class="summary-value">${doctors[selectedDoctor] || 'Not selected'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Date:</span>
+                    <span class="summary-value">${selectedDate ? `${selectedDate} ${new Date().toLocaleDateString('en', {month: 'long', year: 'numeric'})}` : 'Not selected'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time:</span>
+                    <span class="summary-value">${selectedTime || 'Not selected'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Patient:</span>
+                    <span class="summary-value">${document.getElementById('patient-name').value || 'Not entered'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Phone:</span>
+                    <span class="summary-value">${document.getElementById('patient-phone').value || 'Not entered'}</span>
+                </div>
+            `;
+        }
+
+        function confirmBooking() {
+            alert('Appointment booked successfully! You will receive a confirmation email shortly.');
+            // Here you would normally send the data to your backend
+        }
     </script>
 </body>
 </html>

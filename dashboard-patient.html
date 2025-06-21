@@ -1199,10 +1199,29 @@
             cursor: not-allowed;
         }
 
+        .datetime-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
         .timeslots-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 0.5rem;
+        }
+
+        .timeslots-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .timeslots-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
         }
 
         .timeslot {
@@ -1965,7 +1984,7 @@
                     <li><a href="javascript:void(0)" class="sidebar-link active" data-section="dashboard">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a></li>
-                    <li><a href="booking.html" class="sidebar-link">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="booking">
                         <i class="fas fa-calendar-plus"></i> Book Appointment
                     </a></li>
                     <li><a href="javascript:void(0)" class="sidebar-link" data-section="appointments">
@@ -2881,6 +2900,198 @@
                 </div>
             </section>
 
+            <!-- Book Appointment Section -->
+            <section id="booking-section" class="content-section" style="display: none;">
+                <div class="booking-header">
+                    <h2><i class="fas fa-calendar-plus"></i> Book Your Appointment</h2>
+                    <p>Schedule your visit with our healthcare professionals</p>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="booking-progress-container">
+                    <div class="booking-progress">
+                        <div class="progress-step active" data-step="1">
+                            <div class="step-circle">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Choose Doctor</div>
+                                <div class="step-desc">Select your healthcare provider</div>
+                            </div>
+                        </div>
+                        <div class="progress-connector"></div>
+                        <div class="progress-step" data-step="2">
+                            <div class="step-circle">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Select Date</div>
+                                <div class="step-desc">Choose appointment time</div>
+                            </div>
+                        </div>
+                        <div class="progress-connector"></div>
+                        <div class="progress-step" data-step="3">
+                            <div class="step-circle">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Your Details</div>
+                                <div class="step-desc">Provide information</div>
+                            </div>
+                        </div>
+                        <div class="progress-connector"></div>
+                        <div class="progress-step" data-step="4">
+                            <div class="step-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Confirm</div>
+                                <div class="step-desc">Review and confirm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Doctor Selection -->
+                <div id="booking-step-1" class="booking-step active">
+                    <div class="step-header">
+                        <h3>Choose Your Doctor</h3>
+                        <p>Find the perfect healthcare provider for your needs</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="booking-specialty">Specialty</label>
+                            <select id="booking-specialty" onchange="filterBookingDoctors()">
+                                <option value="">All Specialties</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Neurology">Neurology</option>
+                                <option value="Pediatrics">Pediatrics</option>
+                                <option value="Orthopedics">Orthopedics</option>
+                                <option value="Dermatology">Dermatology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="booking-location">Location</label>
+                            <select id="booking-location" onchange="filterBookingDoctors()">
+                                <option value="">All Locations</option>
+                                <option value="Downtown">Downtown</option>
+                                <option value="Uptown">Uptown</option>
+                                <option value="Westside">Westside</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-doctors-grid" id="booking-doctors-list">
+                        <!-- Doctors will be loaded here -->
+                    </div>
+                    
+                    <div class="btn-group">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="nextBookingStep()" disabled id="booking-next-1">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Date & Time Selection -->
+                <div id="booking-step-2" class="booking-step">
+                    <div class="step-header">
+                        <h3>Select Date & Time</h3>
+                        <p>Choose your preferred appointment schedule</p>
+                    </div>
+                    
+                    <div class="datetime-container">
+                        <div class="calendar-section">
+                            <h4>Choose Date</h4>
+                            <div class="calendar-grid" id="booking-calendar">
+                                <!-- Calendar will be generated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="timeslots-section">
+                            <h4>Available Times</h4>
+                            <div class="timeslots-grid" id="booking-time-slots">
+                                <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">
+                                    Please select a date first
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevBookingStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="nextBookingStep()" disabled id="booking-next-2">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Patient Details -->
+                <div id="booking-step-3" class="booking-step">
+                    <div class="step-header">
+                        <h3>Your Information</h3>
+                        <p>Please provide your details for the appointment</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="booking-patient-name">Full Name *</label>
+                            <input type="text" id="booking-patient-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="booking-patient-email">Email Address *</label>
+                            <input type="email" id="booking-patient-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="booking-patient-phone">Phone Number *</label>
+                            <input type="tel" id="booking-patient-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="booking-patient-age">Age</label>
+                            <input type="number" id="booking-patient-age" min="1" max="120">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-reason">Reason for Visit</label>
+                        <textarea id="booking-reason" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevBookingStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="nextBookingStep()" id="booking-next-3">
+                            Review <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div id="booking-step-4" class="booking-step">
+                    <div class="step-header">
+                        <h3>Confirm Your Appointment</h3>
+                        <p>Review your booking details before confirming</p>
+                    </div>
+                    
+                    <div class="confirmation-card" id="booking-summary">
+                        <!-- Summary will be populated here -->
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="prevBookingStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="confirmBookingAppointment()">
+                            <i class="fas fa-check-circle"></i> Confirm Appointment
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Profile Section -->
             <section id="profile-section" class="content-section" style="display: none;">
                 <h2>My Profile</h2>
@@ -2974,6 +3185,284 @@
                 if (videoContainer) {
                     new HealthcareVideoBackground(videoContainer);
                 }
+            }
+        });
+
+        // Booking functionality
+        let currentBookingStep = 1;
+        let selectedBookingDoctor = null;
+        let selectedBookingDate = null;
+        let selectedBookingTime = null;
+
+        function nextBookingStep() {
+            if (currentBookingStep < 4) {
+                currentBookingStep++;
+                showBookingStep(currentBookingStep);
+            }
+        }
+
+        function prevBookingStep() {
+            if (currentBookingStep > 1) {
+                currentBookingStep--;
+                showBookingStep(currentBookingStep);
+            }
+        }
+
+        function showBookingStep(step) {
+            // Hide all booking steps
+            document.querySelectorAll('.booking-step').forEach(stepEl => {
+                stepEl.classList.remove('active');
+            });
+            
+            // Show current step
+            document.getElementById(`booking-step-${step}`).classList.add('active');
+            
+            // Update progress indicators
+            document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+                stepEl.classList.remove('active', 'completed');
+                if (index + 1 === step) {
+                    stepEl.classList.add('active');
+                } else if (index + 1 < step) {
+                    stepEl.classList.add('completed');
+                }
+            });
+
+            // Update progress connectors
+            document.querySelectorAll('.progress-connector').forEach((connector, index) => {
+                connector.classList.remove('active');
+                if (index + 1 < step) {
+                    connector.classList.add('active');
+                }
+            });
+
+            // Load step-specific data
+            if (step === 1) {
+                loadBookingDoctors();
+            } else if (step === 2) {
+                generateBookingCalendar();
+            } else if (step === 4) {
+                updateBookingSummary();
+            }
+        }
+
+        function loadBookingDoctors() {
+            const doctors = [
+                { id: 1, name: "Dr. Sarah Johnson", specialty: "Cardiology", location: "Downtown", rating: 4.8, fee: 150 },
+                { id: 2, name: "Dr. Michael Chen", specialty: "Neurology", location: "Uptown", rating: 4.9, fee: 200 },
+                { id: 3, name: "Dr. Emily Davis", specialty: "Pediatrics", location: "Westside", rating: 4.7, fee: 120 },
+                { id: 4, name: "Dr. Robert Wilson", specialty: "Orthopedics", location: "Downtown", rating: 4.6, fee: 180 },
+                { id: 5, name: "Dr. Lisa Anderson", specialty: "Dermatology", location: "Uptown", rating: 4.8, fee: 140 }
+            ];
+
+            const container = document.getElementById('booking-doctors-list');
+            container.innerHTML = doctors.map(doctor => `
+                <div class="doctor-card" onclick="selectBookingDoctor(${doctor.id})" data-doctor-id="${doctor.id}">
+                    <div class="doctor-photo">
+                        <div class="doctor-initials">${doctor.name.split(' ').map(n => n[0]).join('')}</div>
+                    </div>
+                    <div class="doctor-info">
+                        <h4>${doctor.name}</h4>
+                        <p class="specialty">${doctor.specialty}</p>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> ${doctor.location}</p>
+                        <div class="doctor-rating">
+                            ${'★'.repeat(Math.floor(doctor.rating))} ${doctor.rating}
+                        </div>
+                        <div class="doctor-fee">
+                            <span class="fee-label">Consultation Fee</span>
+                            <span class="fee-amount">$${doctor.fee}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectBookingDoctor(doctorId) {
+            // Remove previous selection
+            document.querySelectorAll('.booking-doctors-grid .doctor-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            document.querySelector(`[data-doctor-id="${doctorId}"]`).classList.add('selected');
+            selectedBookingDoctor = doctorId;
+            
+            // Enable next button
+            document.getElementById('booking-next-1').disabled = false;
+        }
+
+        function generateBookingCalendar() {
+            const calendar = document.getElementById('booking-calendar');
+            calendar.innerHTML = '';
+            
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            // Add headers
+            const headers = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            headers.forEach(header => {
+                const headerEl = document.createElement('div');
+                headerEl.className = 'calendar-day-header';
+                headerEl.textContent = header;
+                calendar.appendChild(headerEl);
+            });
+
+            // Add empty cells for the start of the month
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day disabled';
+                calendar.appendChild(emptyDay);
+            }
+
+            // Add days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                
+                const date = new Date(today.getFullYear(), today.getMonth(), day);
+                if (date < today) {
+                    dayEl.classList.add('disabled');
+                } else {
+                    dayEl.onclick = () => selectBookingDate(day);
+                }
+                
+                calendar.appendChild(dayEl);
+            }
+        }
+
+        function selectBookingDate(day) {
+            // Remove previous selection
+            document.querySelectorAll('#booking-calendar .calendar-day').forEach(dayEl => {
+                dayEl.classList.remove('selected');
+            });
+            
+            // Add selection
+            event.target.classList.add('selected');
+            selectedBookingDate = day;
+            
+            // Load time slots
+            loadBookingTimeSlots();
+        }
+
+        function loadBookingTimeSlots() {
+            const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
+            const container = document.getElementById('booking-time-slots');
+            
+            container.innerHTML = timeSlots.map(time => `
+                <div class="timeslot" onclick="selectBookingTime('${time}')">${time}</div>
+            `).join('');
+        }
+
+        function selectBookingTime(time) {
+            // Remove previous selection
+            document.querySelectorAll('.timeslot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection
+            event.target.classList.add('selected');
+            selectedBookingTime = time;
+            
+            // Enable next button
+            document.getElementById('booking-next-2').disabled = false;
+        }
+
+        function updateBookingSummary() {
+            const doctors = {
+                1: { name: "Dr. Sarah Johnson", specialty: "Cardiology", fee: 150 },
+                2: { name: "Dr. Michael Chen", specialty: "Neurology", fee: 200 },
+                3: { name: "Dr. Emily Davis", specialty: "Pediatrics", fee: 120 },
+                4: { name: "Dr. Robert Wilson", specialty: "Orthopedics", fee: 180 },
+                5: { name: "Dr. Lisa Anderson", specialty: "Dermatology", fee: 140 }
+            };
+
+            const doctor = doctors[selectedBookingDoctor];
+            const summary = document.getElementById('booking-summary');
+            
+            summary.innerHTML = `
+                <div class="detail-section">
+                    <h4>Doctor Information</h4>
+                    <div class="doctor-card-mini">
+                        <div class="doctor-avatar">${doctor.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="doctor-details">
+                            <h4>${doctor.name}</h4>
+                            <p class="specialty">${doctor.specialty}</p>
+                        </div>
+                        <div class="doctor-fee">
+                            <span class="fee-label">Fee</span>
+                            <span class="fee-amount">$${doctor.fee}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Appointment Details</h4>
+                    <div class="appointment-info">
+                        <div class="info-row">
+                            <i class="fas fa-calendar"></i>
+                            <span>${selectedBookingDate ? `${selectedBookingDate} ${new Date().toLocaleDateString('en', {month: 'long', year: 'numeric'})}` : 'Not selected'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-clock"></i>
+                            <span>${selectedBookingTime || 'Not selected'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Patient Information</h4>
+                    <div class="appointment-info">
+                        <div class="info-row">
+                            <i class="fas fa-user"></i>
+                            <span>${document.getElementById('booking-patient-name').value || 'Not entered'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-phone"></i>
+                            <span>${document.getElementById('booking-patient-phone').value || 'Not entered'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-envelope"></i>
+                            <span>${document.getElementById('booking-patient-email').value || 'Not entered'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function confirmBookingAppointment() {
+            // Show success message
+            if (typeof patientDashboard !== 'undefined' && patientDashboard.showNotification) {
+                patientDashboard.showNotification('Appointment booked successfully! You will receive a confirmation email shortly.', 'success');
+            } else {
+                alert('Appointment booked successfully! You will receive a confirmation email shortly.');
+            }
+            
+            // Reset booking form
+            currentBookingStep = 1;
+            selectedBookingDoctor = null;
+            selectedBookingDate = null;
+            selectedBookingTime = null;
+            
+            // Go back to dashboard
+            setTimeout(() => {
+                if (typeof patientDashboard !== 'undefined' && patientDashboard.showSection) {
+                    patientDashboard.showSection('dashboard');
+                }
+            }, 2000);
+        }
+
+        function filterBookingDoctors() {
+            // Filter functionality can be added here
+            loadBookingDoctors();
+        }
+
+        // Initialize booking when the section is shown
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're showing the booking section on load
+            const bookingSection = document.getElementById('booking-section');
+            if (bookingSection && !bookingSection.style.display === 'none') {
+                showBookingStep(1);
             }
         });
     </script>

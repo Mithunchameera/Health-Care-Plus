@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/dashboard-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            top: 70px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            background: var(--bg-color);
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .booking-progress-container {
+            background: var(--card-bg);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .booking-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -50%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 1;
+        }
+
+        .progress-step.active:not(:last-child)::after,
+        .progress-step.completed:not(:last-child)::after {
+            background: var(--primary-color);
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-right: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step.active .step-circle,
+        .progress-step.completed .step-circle {
+            background: var(--primary-color);
+        }
+
+        .step-content {
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 2px;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title h2 {
+            color: var(--text-color);
+            margin: 0 0 0 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .step-header {
+            margin-bottom: 2rem;
+        }
+
+        .step-header h2 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .step-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .doctor-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .doctor-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .doctor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .doctor-info h3 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+        }
+
+        .doctor-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .doctor-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+            margin-right: 0.5rem;
+        }
+
+        .calendar-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .calendar-section,
+        .time-section {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .calendar-day:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .time-slot:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .time-slot.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .summary-value {
+            color: var(--text-secondary);
+        }
+
+        .step-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .booking-step {
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Navigation -->
+    <nav class="navbar" style="position: fixed; top: 0; width: 100%; z-index: 1001;">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HealthCare+</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="find-doctors.html" class="nav-link">Find Doctors</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="patient-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" class="active"><i class="fas fa-calendar-plus"></i> Book Appointment</a></li>
+                <li><a href="find-doctors.html"><i class="fas fa-user-md"></i> Find Doctors</a></li>
+                <li><a href="#" onclick="showStep(1)"><i class="fas fa-stethoscope"></i> Choose Doctor</a></li>
+                <li><a href="#" onclick="showStep(2)"><i class="fas fa-calendar-check"></i> Select Date & Time</a></li>
+                <li><a href="#" onclick="showStep(3)"><i class="fas fa-user-edit"></i> Your Details</a></li>
+                <li><a href="#" onclick="showStep(4)"><i class="fas fa-check-circle"></i> Confirm Booking</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact Support</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Progress Bar -->
+            <div class="booking-progress-container">
+                <div class="booking-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-title">Choose Doctor</div>
+                            <div class="step-desc">Select your healthcare provider</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-title">Date & Time</div>
+                            <div class="step-desc">Pick your schedule</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-title">Your Details</div>
+                            <div class="step-desc">Enter information</div>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-circle">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-title">Confirm</div>
+                            <div class="step-desc">Review & confirm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Selection Section -->
+            <section id="doctor-selection" class="content-section">
+                <div class="section-title">
+                    <i class="fas fa-stethoscope"></i>
+                    <h2>Choose Your Doctor</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="specialty">Specialty</label>
+                        <select id="specialty" onchange="filterDoctors()">
+                            <option value="">All Specialties</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Dermatology">Dermatology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location" onchange="filterDoctors()">
+                            <option value="">All Locations</option>
+                            <option value="Downtown">Downtown</option>
+                            <option value="Uptown">Uptown</option>
+                            <option value="Westside">Westside</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="doctors-list" class="doctors-grid">
+                    <!-- Doctors will be populated here -->
+                </div>
+                
+                <div class="step-actions">
+                    <div></div>
+                    <button type="button" class="btn btn-primary" onclick="showSection('date-time')" disabled id="next-step-1">
+                        Continue to Date & Time <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Date & Time Selection Section -->
+            <section id="date-time" class="content-section" style="display: none;">
+                <div class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    <h2>Select Date & Time</h2>
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-section">
+                        <h3>Choose Date</h3>
+                        <div id="calendar" class="calendar-grid">
+                            <!-- Calendar will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="time-section">
+                        <h3>Available Times</h3>
+                        <div id="time-slots" class="time-slots">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 20px; grid-column: 1 / -1;">
+                                Please select a date first
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-actions">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('doctor-selection')">
+                        <i class="fas fa-arrow-left"></i> Back to Doctor Selection
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="showSection('patient-details')" disabled id="next-step-2">
+                        Continue to Details <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Patient Details Section -->
+            <section id="patient-details" class="content-section" style="display: none;">
+                <div class="section-title">
+                    <i class="fas fa-user-edit"></i>
+                    <h2>Your Information</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="patient-name">Full Name *</label>
+                        <input type="text" id="patient-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-email">Email Address *</label>
+                        <input type="email" id="patient-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-phone">Phone Number *</label>
+                        <input type="tel" id="patient-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-age">Age</label>
+                        <input type="number" id="patient-age" min="1" max="120">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Reason for Visit</label>
+                    <textarea id="reason" rows="4" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                </div>
+                
+                <div class="step-actions">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('date-time')">
+                        <i class="fas fa-arrow-left"></i> Back to Date & Time
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="showSection('confirmation')" id="next-step-3">
+                        Review Booking <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Confirmation Section -->
+            <section id="confirmation" class="content-section" style="display: none;">
+                <div class="section-title">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Confirm Your Appointment</h2>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-item">
+                        <span class="summary-label">Doctor:</span>
+                        <span class="summary-value" id="summary-doctor">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Specialty:</span>
+                        <span class="summary-value" id="summary-specialty">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Date:</span>
+                        <span class="summary-value" id="summary-date">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Time:</span>
+                        <span class="summary-value" id="summary-time">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Patient:</span>
+                        <span class="summary-value" id="summary-patient">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Phone:</span>
+                        <span class="summary-value" id="summary-phone">-</span>
+                    </div>
+                </div>
+                
+                <div class="step-actions">
+                    <button type="button" class="btn btn-secondary" onclick="showSection('patient-details')">
+                        <i class="fas fa-arrow-left"></i> Back to Details
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="confirmBooking()">
+                        <i class="fas fa-calendar-check"></i> Confirm Appointment
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/theme-manager.js"></script>
+    <script>
+        let currentStep = 1;
+        let selectedDoctor = null;
+        let selectedDate = null;
+        let selectedTime = null;
+
+        const doctors = [
+            {
+                id: 1,
+                name: "Dr. Sarah Johnson",
+                specialty: "Cardiology",
+                location: "Downtown",
+                rating: 4.9,
+                avatar: "SJ"
+            },
+            {
+                id: 2,
+                name: "Dr. Michael Chen",
+                specialty: "Neurology",
+                location: "Uptown",
+                rating: 4.8,
+                avatar: "MC"
+            },
+            {
+                id: 3,
+                name: "Dr. Emily Rodriguez",
+                specialty: "Pediatrics",
+                location: "Westside",
+                rating: 4.9,
+                avatar: "ER"
+            },
+            {
+                id: 4,
+                name: "Dr. David Wilson",
+                specialty: "Orthopedics",
+                location: "Downtown",
+                rating: 4.7,
+                avatar: "DW"
+            },
+            {
+                id: 5,
+                name: "Dr. Lisa Thompson",
+                specialty: "Dermatology",
+                location: "Uptown",
+                rating: 4.8,
+                avatar: "LT"
+            }
+        ];
+
+        function loadDoctors() {
+            const doctorsList = document.getElementById('doctors-list');
+            doctorsList.innerHTML = '';
+            
+            doctors.forEach(doctor => {
+                const doctorCard = document.createElement('div');
+                doctorCard.className = 'doctor-card';
+                doctorCard.onclick = () => selectDoctor(doctor);
+                
+                doctorCard.innerHTML = `
+                    <div class="doctor-header">
+                        <div class="doctor-avatar">${doctor.avatar}</div>
+                        <div class="doctor-info">
+                            <h3>${doctor.name}</h3>
+                            <p>${doctor.specialty} • ${doctor.location}</p>
+                        </div>
+                    </div>
+                    <div class="doctor-rating">
+                        <div class="stars">
+                            ${'★'.repeat(Math.floor(doctor.rating))}
+                        </div>
+                        <span>${doctor.rating} rating</span>
+                    </div>
+                `;
+                
+                doctorsList.appendChild(doctorCard);
+            });
+        }
+
+        function selectDoctor(doctor) {
+            selectedDoctor = doctor;
+            document.querySelectorAll('.doctor-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('next-step-1').disabled = false;
+        }
+
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            
+            const today = new Date();
+            
+            for (let i = 1; i <= 30; i++) {
+                const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = date.getDate();
+                dayElement.onclick = () => selectDate(date);
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        function selectDate(date) {
+            selectedDate = date;
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            generateTimeSlots();
+        }
+
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('time-slots');
+            const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+            
+            timeSlotsContainer.innerHTML = '';
+            timeSlots.forEach(time => {
+                const slot = document.createElement('div');
+                slot.className = 'time-slot';
+                slot.textContent = time;
+                slot.onclick = () => selectTime(time);
+                timeSlotsContainer.appendChild(slot);
+            });
+        }
+
+        function selectTime(time) {
+            selectedTime = time;
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('next-step-2').disabled = false;
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).style.display = 'block';
+            
+            // Update progress bar
+            const stepMap = {
+                'doctor-selection': 1,
+                'date-time': 2,
+                'patient-details': 3,
+                'confirmation': 4
+            };
+            
+            const currentStepNum = stepMap[sectionName];
+            
+            document.querySelectorAll('.progress-step').forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.dataset.step) < currentStepNum) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+            
+            document.querySelector(`[data-step="${currentStepNum}"]`).classList.add('active');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const sidebarLinks = {
+                'doctor-selection': document.querySelector('[onclick*="showStep(1)"]'),
+                'date-time': document.querySelector('[onclick*="showStep(2)"]'),
+                'patient-details': document.querySelector('[onclick*="showStep(3)"]'),
+                'confirmation': document.querySelector('[onclick*="showStep(4)"]')
+            };
+            
+            if (sidebarLinks[sectionName]) {
+                sidebarLinks[sectionName].classList.add('active');
+            }
+            
+            if (sectionName === 'confirmation') {
+                updateSummary();
+            }
+        }
+        
+        function showStep(stepNum) {
+            const sections = ['doctor-selection', 'date-time', 'patient-details', 'confirmation'];
+            if (stepNum >= 1 && stepNum <= 4) {
+                showSection(sections[stepNum - 1]);
+            }
+        }
+
+        function updateSummary() {
+            document.getElementById('summary-doctor').textContent = selectedDoctor ? selectedDoctor.name : '-';
+            document.getElementById('summary-specialty').textContent = selectedDoctor ? selectedDoctor.specialty : '-';
+            document.getElementById('summary-date').textContent = selectedDate ? selectedDate.toLocaleDateString() : '-';
+            document.getElementById('summary-time').textContent = selectedTime || '-';
+            document.getElementById('summary-patient').textContent = document.getElementById('patient-name').value || '-';
+            document.getElementById('summary-phone').textContent = document.getElementById('patient-phone').value || '-';
+        }
+
+        function confirmBooking() {
+            alert('Appointment booked successfully! You will receive a confirmation email shortly.');
+            window.location.href = 'patient-dashboard.html';
+        }
+
+        function filterDoctors() {
+            loadDoctors();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctors();
+            generateCalendar();
+        });
+    </script>
+</body>
+</html>
