@@ -781,7 +781,12 @@ class PatientDashboard {
     }
 
     bookAppointment(doctorId) {
-        window.location.href = `booking.html?doctor=${doctorId}`;
+        // Navigate to booking page with doctor pre-selection
+        if (doctorId) {
+            window.location.href = `booking.html?doctor=${doctorId}`;
+        } else {
+            window.location.href = 'booking.html';
+        }
     }
 
     viewDoctorProfile(doctorId) {

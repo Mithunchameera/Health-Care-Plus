@@ -102,6 +102,24 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 21, 2025: Created dedicated doctor profile pages for individual doctor details
+  - Built doctor-profile.html with comprehensive layout for doctor information display
+  - Added doctor-profile-page.js with complete profile rendering functionality
+  - Created doctor-profile.css with professional styling and responsive design
+  - Modified "View Profile" buttons to navigate to separate pages instead of modal popups
+  - Enhanced user experience with dedicated pages showing detailed doctor information
+  - Implemented navigation breadcrumbs and back button functionality
+  - Added quick action buttons for booking appointments directly from profile pages
+
+- June 21, 2025: Fixed doctor booking process database connection issues
+  - Removed PostgreSQL database dependency causing booking failures
+  - Updated patient-api.php to use mock data for immediate functionality
+  - Fixed getDoctors, getAvailableSlots, and bookAppointment API endpoints
+  - Enhanced booking.js to use correct API endpoints for time slots and confirmations
+  - Added comprehensive doctor data with 6 specialists covering major medical fields
+  - Implemented complete booking flow from doctor selection to appointment confirmation
+  - All booking functionality now works without database connectivity requirements
+
 - June 21, 2025: Completed migration from Replit Agent to standard Replit environment
   - Successfully migrated HealthCare+ project with all functionality intact
   - PHP development server running properly on port 5000

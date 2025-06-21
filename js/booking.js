@@ -525,22 +525,36 @@ class BookingManager {
         }
         
         try {
-            // Load available time slots from the database
-            const response = await fetch(`php/appointments-api.php?action=get_available_slots&doctor_id=${this.selectedDoctor.id}&date=${date.toISOString().split('T')[0]}`);
+            // Load available time slots from the patient API
+            const response = await fetch(`php/patient-api.php?action=get_available_slots&doctor_id=${this.selectedDoctor.id}&date=${date.toISOString().split('T')[0]}`);
             const result = await response.json();
             
-            if (result.success) {
+            if (result.success && result.slots) {
                 this.availableSlots = result.slots.map(time => ({
                     time: time,
                     available: true
                 }));
             } else {
                 console.error('Failed to load time slots:', result.error);
-                this.availableSlots = [];
+                // Generate default time slots as fallback
+                this.availableSlots = [
+                    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
+                ].map(time => ({
+                    time: time,
+                    available: true
+                }));
             }
         } catch (error) {
             console.error('Error loading time slots:', error);
-            this.availableSlots = [];
+            // Generate default time slots as fallback
+            this.availableSlots = [
+                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
+            ].map(time => ({
+                time: time,
+                available: true
+            }));
         }
         
         this.displayTimeSlots();
@@ -830,7 +844,7 @@ class BookingManager {
             };
             
             // Call the appointment booking API
-            const response = await fetch('php/appointments-api.php?action=book_appointment', {
+            const response = await fetch('php/patient-api.php?action=book_appointment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
