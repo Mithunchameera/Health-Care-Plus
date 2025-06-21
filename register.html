@@ -7,352 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/themes.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .register-page {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .register-page::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
-            pointer-events: none;
-        }
-        
-        .floating-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
-            animation: float 20s ease-in-out infinite;
-        }
-        
-        .shape-1 {
-            width: 200px;
-            height: 200px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-        
-        .shape-2 {
-            width: 150px;
-            height: 150px;
-            top: 60%;
-            right: 15%;
-            animation-delay: -7s;
-        }
-        
-        .shape-3 {
-            width: 100px;
-            height: 100px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: -14s;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(120deg); }
-            66% { transform: translateY(15px) rotate(240deg); }
-        }
-        
-        .register-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 3rem;
-            box-shadow: 
-                0 32px 64px rgba(0, 0, 0, 0.3),
-                0 16px 32px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            width: 100%;
-            max-width: 600px;
-            position: relative;
-            z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .register-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-        
-        .register-header::after {
-            content: '';
-            position: absolute;
-            bottom: -1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, #2563eb, #3b82f6);
-            border-radius: 2px;
-        }
-        
-        .register-header .icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
-            position: relative;
-        }
-        
-        .register-header .icon i {
-            font-size: 2rem;
-            color: white;
-            line-height: 1;
-            text-align: center;
-        }
-        
-        .register-header h1 {
-            color: #1e293b;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #1e293b, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .register-header p {
-            color: #64748b;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            color: #374151;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .section-title i {
-            color: #2563eb;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        
-        .form-group label {
-            display: block;
-            color: #374151;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-        
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .input-wrapper i {
-            position: absolute;
-            left: 1rem;
-            color: #9ca3af;
-            z-index: 2;
-            transition: color 0.3s ease;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #2563eb;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .input-wrapper:focus-within i {
-            color: #2563eb;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-        
-        .password-strength {
-            margin-top: 0.5rem;
-        }
-        
-        .strength-bar {
-            height: 4px;
-            background: #e5e7eb;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-        
-        .strength-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e);
-            transition: width 0.3s ease;
-        }
-        
-        .strength-text {
-            font-size: 0.8rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-        
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            color: white;
-            border: none;
-            padding: 1.25rem 2rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            margin-top: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
-        }
-        
-        .login-link {
-            text-align: center;
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(248, 250, 252, 0.8);
-            border-radius: 12px;
-            border: 1px solid rgba(226, 232, 240, 0.5);
-        }
-        
-        .login-link a {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-        
-        .login-link a:hover {
-            color: #1d4ed8;
-            text-decoration: underline;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .feature {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(248, 250, 252, 0.5);
-            border-radius: 8px;
-            border: 1px solid rgba(226, 232, 240, 0.3);
-        }
-        
-        .feature i {
-            color: #2563eb;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature span {
-            display: block;
-            font-size: 0.8rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            .register-container {
-                padding: 2rem;
-                margin: 1rem;
-            }
-            .register-header h1 {
-                font-size: 2rem;
-            }
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 </head>
 <body data-theme="dark">
     <!-- Navigation -->
@@ -363,10 +18,20 @@
                 <span>HealthCare+</span>
             </div>
             <div class="nav-menu">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="about.html" class="nav-link">About Us</a>
-                <a href="contact.html" class="nav-link">Contact Us</a>
-                <a href="login.html" class="nav-link">Login</a>
+                <a href="index.html" class="nav-link" data-translate="home">Home</a>
+                <a href="about.html" class="nav-link" data-translate="about_us">About Us</a>
+                <a href="contact.html" class="nav-link" data-translate="contact_us">Contact Us</a>
+                <a href="login.html" class="nav-link" data-translate="login">Login</a>
+                <div class="language-selector">
+                    <button id="language-toggle" class="language-toggle" aria-label="Change language">
+                        <i class="fas fa-globe"></i>
+                        <span id="current-language">EN</span>
+                    </button>
+                    <div id="language-dropdown" class="language-dropdown">
+                        <a href="#" class="language-option" data-lang="en">English</a>
+                        <a href="#" class="language-option" data-lang="si">සිංහල</a>
+                    </div>
+                </div>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -379,177 +44,181 @@
         </div>
     </nav>
 
-    <!-- Register Section -->
-    <section class="register-page">
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
+    <!-- Modern Register Section -->
+    <section class="modern-auth-section">
+        <div id="register-video-background"></div>
+        <div class="auth-background">
+            <div class="auth-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
         </div>
         
-        <div class="register-container">
-            <div class="register-header">
-                <div class="icon">
-                    <i class="fas fa-user-plus"></i>
+        <div class="modern-auth-container">
+            <div class="modern-auth-card register-card">
+                <!-- Header -->
+                <div class="modern-auth-header">
+                    <div class="brand-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <h1>Create Your Account</h1>
+                    <p>Join thousands of patients managing their health</p>
                 </div>
-                <h1>Create Your Account</h1>
-                <p>Join thousands of patients managing their health with HealthCare+</p>
-            </div>
 
-            <form id="registerForm" method="POST" action="php/auth.php">
-                <input type="hidden" name="action" value="register">
-                
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-user-circle"></i>
-                        Personal Information
-                    </div>
+                <!-- Register Form -->
+                <form id="registerForm" class="modern-auth-form" method="POST" action="php/auth.php">
+                    <input type="hidden" name="action" value="register">
                     
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <div class="input-wrapper">
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="text" id="firstName" name="firstName" class="floating-input" placeholder=" " required>
+                            <label for="firstName" class="floating-label">
                                 <i class="fas fa-user"></i>
-                                <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
-                            </div>
+                                First Name
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="text" id="lastName" name="lastName" class="floating-input" placeholder=" " required>
+                            <label for="lastName" class="floating-label">
+                                <i class="fas fa-user"></i>
+                                Last Name
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <div class="input-wrapper">
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="email" id="email" name="email" class="floating-input" placeholder=" " required>
+                            <label for="email" class="floating-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="tel" id="phone" name="phone" class="floating-input" placeholder=" " required>
+                            <label for="phone" class="floating-label">
                                 <i class="fas fa-phone"></i>
-                                <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dateOfBirth">Date of Birth</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-calendar-alt"></i>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
-                            </div>
+                                Phone Number
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-venus-mars"></i>
-                            <select id="gender" name="gender" required>
-                                <option value="">Select your gender</option>
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" class="floating-input" placeholder=" " required>
+                            <label for="dateOfBirth" class="floating-label">
+                                <i class="fas fa-calendar"></i>
+                                Date of Birth
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <select id="gender" name="gender" class="floating-input" required>
+                                <option value=""></option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
-                                <option value="prefer_not_to_say">Prefer not to say</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
                             </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-shield-alt"></i>
-                        Security Information
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
-                        </div>
-                        <div class="password-strength">
-                            <div class="strength-bar">
-                                <div class="strength-fill"></div>
-                            </div>
-                            <div class="strength-text">Password strength: Weak</div>
+                            <label for="gender" class="floating-label">
+                                <i class="fas fa-venus-mars"></i>
+                                Gender
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="password" id="password" name="password" class="floating-input" placeholder=" " required>
+                            <label for="password" class="floating-label">
+                                <i class="fas fa-lock"></i>
+                                Password
+                            </label>
+                            <button type="button" class="modern-password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-user-plus"></i>
-                    Create Account
-                </button>
+                    <div class="modern-form-group">
+                        <div class="floating-label-group">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="floating-input" placeholder=" " required>
+                            <label for="confirmPassword" class="floating-label">
+                                <i class="fas fa-lock"></i>
+                                Confirm Password
+                            </label>
+                            <button type="button" class="modern-password-toggle" onclick="togglePassword('confirmPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Secure & Private</span>
+                    <div class="modern-form-options">
+                        <label class="modern-checkbox">
+                            <input type="checkbox" name="terms" required>
+                            <span class="checkmark">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            I agree to the <a href="#" class="modern-link">Terms of Service</a> and <a href="#" class="modern-link">Privacy Policy</a>
+                        </label>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <span>24/7 Support</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-star"></i>
-                        <span>Expert Doctors</span>
-                    </div>
-                </div>
 
-                <div class="login-link">
-                    Already have an account? <a href="login.html">Sign in here</a>
-                </div>
-            </form>
+                    <button type="submit" class="modern-btn modern-btn-primary">
+                        <span>Create Account</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <div class="modern-auth-footer">
+                        <p>Already have an account? <a href="login.html" class="modern-link">Sign in here</a></p>
+                    </div>
+                </form>
+            </div>
         </div>
     </section>
 
+
+
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/auto-scroll-manager.js"></script>
+    <script src="js/language-manager.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // Password strength checker
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const strengthBar = document.querySelector('.strength-fill');
-            const strengthText = document.querySelector('.strength-text');
-            
-            const strength = calculatePasswordStrength(password);
-            strengthBar.style.width = strength.percentage + '%';
-            strengthText.textContent = 'Password strength: ' + strength.text;
+        // Initialize Three.js video background for register page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ThreeVideoBackground !== 'undefined') {
+                const videoBackground = new ThreeVideoBackground();
+                videoBackground.init('register-video-background');
+            }
         });
 
-        function calculatePasswordStrength(password) {
-            let score = 0;
-            if (password.length >= 8) score++;
-            if (/[a-z]/.test(password)) score++;
-            if (/[A-Z]/.test(password)) score++;
-            if (/\d/.test(password)) score++;
-            if (/[^a-zA-Z\d]/.test(password)) score++;
+        // Password toggle function (matching login page)
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = field.nextElementSibling.nextElementSibling;
+            const icon = button.querySelector('i');
             
-            const strengthLevels = [
-                { percentage: 20, text: 'Very Weak' },
-                { percentage: 40, text: 'Weak' },
-                { percentage: 60, text: 'Medium' },
-                { percentage: 80, text: 'Strong' },
-                { percentage: 100, text: 'Very Strong' }
-            ];
-            
-            return strengthLevels[score] || strengthLevels[0];
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         // Enhanced form validation
@@ -557,11 +226,11 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
+            const terms = document.querySelector('input[name="terms"]').checked;
             
-            if (!isValidEmail(email)) {
+            if (!terms) {
                 e.preventDefault();
-                showNotification('Please enter a valid email address', 'error');
+                showNotification('Please accept the Terms of Service and Privacy Policy', 'error');
                 return;
             }
             
@@ -577,56 +246,17 @@
                 return;
             }
 
+            // Success notification
             showNotification('Creating your account...', 'success');
         });
 
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
         function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'error' ? '#ef4444' : '#22c55e'};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                z-index: 1000;
-                font-weight: 600;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            if (typeof showNotification !== 'undefined') {
+                showNotification(message, type);
+            } else {
+                alert(message);
+            }
         }
-
-        // Initialize animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add smooth entrance animation
-            const container = document.querySelector('.register-container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
-            
-            setTimeout(() => {
-                container.style.transition = 'all 0.6s ease';
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 200);
-        });
     </script>
 </body>
 </html>
