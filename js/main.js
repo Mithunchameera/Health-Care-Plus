@@ -327,32 +327,10 @@ function clearValidationError(input) {
     clearInputError(input);
 }
 
-// Authentication status check
+// Authentication status check - disabled automatic redirections
 async function checkAuthStatus() {
-    try {
-        const response = await fetch('php/session-handler.php');
-        const data = await response.json();
-        
-        if (data.authenticated) {
-            // Check if we're on the home page and redirect to dashboard
-            const currentPage = window.location.pathname;
-            if (currentPage === '/' || currentPage === '/index.html' || currentPage.endsWith('index.html')) {
-                // Redirect to appropriate dashboard based on user role
-                if (data.user.role === 'admin') {
-                    window.location.href = 'dashboard-admin.html';
-                } else if (data.user.role === 'doctor') {
-                    window.location.href = 'dashboard-doctor.html';
-                } else {
-                    window.location.href = 'dashboard-patient.html';
-                }
-                return;
-            }
-            
-            updateUIForAuthenticatedUser(data.user);
-        }
-    } catch (error) {
-        console.log('Auth check failed:', error);
-    }
+    // No automatic authentication checks or redirections in demo mode
+    // Users can navigate freely without forced page changes
 }
 
 function updateUIForAuthenticatedUser(user) {

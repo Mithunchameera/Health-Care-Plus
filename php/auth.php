@@ -28,7 +28,9 @@ class AuthHandler {
     }
     
     private function handlePostRequest() {
-        $action = $_POST['action'] ?? '';
+        // Handle JSON requests
+        $input = json_decode(file_get_contents('php://input'), true);
+        $action = $input['action'] ?? $_POST['action'] ?? '';
         
         switch ($action) {
             case 'login':
@@ -191,6 +193,13 @@ class AuthHandler {
                 'httponly' => true,
                 'samesite' => 'Lax'
             ]);
+            
+            // Clear session from mock storage
+            $mockStorage = MockDataStorage::getInstance();
+            $sessionId = $_COOKIE['session_id'] ?? '';
+            if ($sessionId) {
+                $mockStorage->clearSession($sessionId);
+            }
             
             sendResponse([
                 'success' => true,

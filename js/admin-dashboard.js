@@ -49,33 +49,15 @@ class AdminDashboard {
     }
 
     async checkAuthentication() {
-        try {
-            const response = await fetch('php/session-auth.php?check_auth=1');
-            if (!response.ok) {
-                throw new Error('Authentication check failed');
-            }
-            
-            const data = await response.json();
-            
-            if (!data.authenticated || !['admin', 'staff'].includes(data.user.role)) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            this.currentUser = data.user;
-            this.updateUserDisplay();
-        } catch (error) {
-            console.error('Authentication check failed:', error);
-            // Use demo user for demo environment
-            this.currentUser = {
-                id: 1,
-                first_name: 'Admin',
-                last_name: 'User',
-                email: 'admin@healthcareplus.com',
-                role: 'admin'
-            };
-            this.updateUserDisplay();
-        }
+        // Use demo data for demo environment - no automatic redirections
+        this.currentUser = {
+            id: 1,
+            first_name: 'Admin',
+            last_name: 'User',
+            email: 'admin@healthcareplus.com',
+            role: 'admin'
+        };
+        this.updateUserDisplay();
     }
 
     updateUserDisplay() {
@@ -933,22 +915,26 @@ class AdminDashboard {
     // Event handlers
     async handleLogout() {
         try {
+            // Set flags to allow staying on home page after logout
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            
             const response = await fetch('php/auth.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: 'action=logout'
+                body: JSON.stringify({ action: 'logout' })
             });
             
-            const data = await response.json();
-            
-            if (data.success) {
-                window.location.href = 'login.html';
-            }
+            // Redirect to home page instead of login
+            window.location.href = 'index.html';
         } catch (error) {
             console.error('Logout failed:', error);
-            window.location.href = 'login.html';
+            // Ensure flags are set even on error
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            window.location.href = 'index.html';
         }
     }
 

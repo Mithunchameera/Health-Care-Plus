@@ -66,33 +66,15 @@ class DoctorDashboard {
     }
 
     async checkAuthentication() {
-        try {
-            const response = await fetch('php/session-auth.php?check_auth=1');
-            if (!response.ok) {
-                throw new Error('Authentication check failed');
-            }
-            
-            const data = await response.json();
-            
-            if (!data.authenticated || data.user.role !== 'doctor') {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            this.currentUser = data.user;
-            this.updateUserDisplay();
-        } catch (error) {
-            console.error('Authentication check failed:', error);
-            // Use demo user for demo environment
-            this.currentUser = {
-                id: 1,
-                first_name: 'Dr. Sarah',
-                last_name: 'Johnson',
-                email: 'dr.johnson@healthcareplus.com',
-                role: 'doctor'
-            };
-            this.updateUserDisplay();
-        }
+        // Use demo data for demo environment - no authentication checks or redirections
+        this.currentUser = {
+            id: 1,
+            first_name: 'Dr. Sarah',
+            last_name: 'Johnson',
+            email: 'dr.johnson@healthcareplus.com',
+            role: 'doctor'
+        };
+        this.updateUserDisplay();
     }
 
     updateUserDisplay() {
@@ -313,22 +295,13 @@ class DoctorDashboard {
     }
 
     async loadDashboardStats() {
-        try {
-            const response = await fetch('php/doctor-api.php?action=get_stats');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.updateStatsDisplay(data.stats);
-            }
-        } catch (error) {
-            console.error('Failed to load stats:', error);
-            this.updateStatsDisplay({
-                today_appointments: 8,
-                total_patients: 156,
-                upcoming_count: 3,
-                doctor_rating: 4.8
-            });
-        }
+        // Use demo data directly to avoid authentication calls
+        this.updateStatsDisplay({
+            today_appointments: 8,
+            total_patients: 156,
+            upcoming_count: 3,
+            doctor_rating: 4.8
+        });
     }
 
     updateStatsDisplay(stats) {
@@ -348,20 +321,25 @@ class DoctorDashboard {
     }
 
     async loadTodayAppointments() {
-        try {
-            const response = await fetch('php/doctor-api.php?action=get_today_appointments');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayTodayAppointments(data.appointments);
-            } else {
-                // Show empty state when no data available
-                this.displayTodayAppointments([]);
+        // Use demo data directly to avoid authentication calls
+        this.displayTodayAppointments([
+            {
+                id: 1,
+                patient_name: 'John Smith',
+                time: '09:00',
+                type: 'Consultation',
+                status: 'confirmed',
+                patient_phone: '(555) 123-4567'
+            },
+            {
+                id: 2,
+                patient_name: 'Mary Johnson',
+                time: '10:30',
+                type: 'Follow-up',
+                status: 'confirmed',
+                patient_phone: '(555) 987-6543'
             }
-        } catch (error) {
-            console.error('Failed to load today appointments:', error);
-            this.displayTodayAppointments([]);
-        }
+        ]);
     }
 
     displayTodayAppointments(appointments) {
@@ -421,16 +399,19 @@ class DoctorDashboard {
     }
 
     async loadAllAppointments() {
-        try {
-            const response = await fetch('php/doctor-api.php?action=get_appointments');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayAppointmentsTable(data.appointments);
+        // Use demo data to avoid authentication calls
+        this.displayAppointmentsTable([
+            {
+                id: 1,
+                date: '2025-06-21',
+                time: '09:00',
+                patient_name: 'John Smith',
+                patient_phone: '(555) 123-4567',
+                patient_id: 1,
+                type: 'Consultation',
+                status: 'confirmed'
             }
-        } catch (error) {
-            console.error('Failed to load appointments:', error);
-        }
+        ]);
     }
 
     displayAppointmentsTable(appointments) {
@@ -456,17 +437,18 @@ class DoctorDashboard {
     }
 
     async loadPatients() {
-        try {
-            const response = await fetch('php/doctor-api.php?action=get_patients');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.patients = data.patients;
-                this.displayPatients(this.patients);
+        // Use demo data to avoid authentication calls
+        this.patients = [
+            {
+                id: 1,
+                first_name: 'John',
+                last_name: 'Smith',
+                email: 'john.smith@email.com',
+                phone: '(555) 123-4567',
+                date_of_birth: '1985-03-15'
             }
-        } catch (error) {
-            console.error('Failed to load patients:', error);
-        }
+        ];
+        this.displayPatients(this.patients);
     }
 
     displayPatients(patients) {
@@ -492,16 +474,14 @@ class DoctorDashboard {
     }
 
     async loadWeeklySchedule() {
-        try {
-            const response = await fetch('php/doctor-api.php?action=get_weekly_schedule');
-            const data = await response.json();
-            
-            if (data.success) {
-                this.displayWeeklySchedule(data.schedule);
-            }
-        } catch (error) {
-            console.error('Failed to load weekly schedule:', error);
-        }
+        // Use demo data to avoid authentication calls
+        this.displayWeeklySchedule({
+            Monday: ['09:00', '10:00', '11:00'],
+            Tuesday: ['09:00', '10:00'],
+            Wednesday: ['14:00', '15:00', '16:00'],
+            Thursday: ['09:00', '10:00', '11:00', '14:00'],
+            Friday: ['09:00', '10:00']
+        });
     }
 
     displayWeeklySchedule(schedule) {
@@ -796,22 +776,26 @@ class DoctorDashboard {
 
     async handleLogout() {
         try {
+            // Set flags to allow staying on home page after logout
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            
             const response = await fetch('php/auth.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: 'action=logout'
+                body: JSON.stringify({ action: 'logout' })
             });
             
-            const data = await response.json();
-            
-            if (data.success) {
-                window.location.href = 'login.html';
-            }
+            // Redirect to home page instead of login
+            window.location.href = 'index.html';
         } catch (error) {
             console.error('Logout failed:', error);
-            window.location.href = 'login.html';
+            // Ensure flags are set even on error
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            window.location.href = 'index.html';
         }
     }
 

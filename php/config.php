@@ -597,6 +597,10 @@ class MockDataStorage {
         return false;
     }
     
+    public function clearSession($sessionId) {
+        return $this->destroySession($sessionId);
+    }
+    
     public function getAppointments() {
         return $this->appointments;
     }

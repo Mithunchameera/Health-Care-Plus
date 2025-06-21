@@ -68,41 +68,132 @@ class BookingManager {
     }
     
     async loadDoctors() {
-        try {
-            const response = await fetch('php/doctors.php');
-            const data = await response.json();
-            
-            if (data.error) {
-                this.showError('Failed to load doctors: ' + data.error);
-                return;
+        // Load all 10 doctors for appointment booking
+        this.doctors = [
+            {
+                id: 1,
+                name: "Dr. Sarah Johnson",
+                specialty: "Cardiologist",
+                experience: 15,
+                rating: 4.9,
+                reviews: 234,
+                fee: 150,
+                available: true
+            },
+            {
+                id: 2,
+                name: "Dr. Michael Chen",
+                specialty: "Orthopedic Surgeon",
+                experience: 12,
+                rating: 4.8,
+                reviews: 189,
+                fee: 180,
+                available: true
+            },
+            {
+                id: 3,
+                name: "Dr. Emily Rodriguez",
+                specialty: "Pediatrician",
+                experience: 8,
+                rating: 4.7,
+                reviews: 156,
+                fee: 120,
+                available: true
+            },
+            {
+                id: 4,
+                name: "Dr. David Wilson",
+                specialty: "Dermatologist",
+                experience: 10,
+                rating: 4.6,
+                reviews: 142,
+                fee: 140,
+                available: true
+            },
+            {
+                id: 5,
+                name: "Dr. Lisa Anderson",
+                specialty: "Neurologist",
+                experience: 14,
+                rating: 4.9,
+                reviews: 198,
+                fee: 170,
+                available: true
+            },
+            {
+                id: 6,
+                name: "Dr. James Thompson",
+                specialty: "General Surgeon",
+                experience: 18,
+                rating: 4.8,
+                reviews: 267,
+                fee: 200,
+                available: true
+            },
+            {
+                id: 7,
+                name: "Dr. Maria Garcia",
+                specialty: "Gynecologist",
+                experience: 11,
+                rating: 4.7,
+                reviews: 178,
+                fee: 160,
+                available: true
+            },
+            {
+                id: 8,
+                name: "Dr. Robert Kim",
+                specialty: "Psychiatrist",
+                experience: 9,
+                rating: 4.6,
+                reviews: 134,
+                fee: 130,
+                available: true
+            },
+            {
+                id: 9,
+                name: "Dr. Jennifer Lee",
+                specialty: "Ophthalmologist",
+                experience: 13,
+                rating: 4.8,
+                reviews: 201,
+                fee: 155,
+                available: true
+            },
+            {
+                id: 10,
+                name: "Dr. Mark Davis",
+                specialty: "Endocrinologist",
+                experience: 16,
+                rating: 4.9,
+                reviews: 223,
+                fee: 165,
+                available: true
             }
-            
-            this.doctors = data.doctors || data;
-            this.displayDoctorList(this.doctors);
-        } catch (error) {
-            console.error('Error loading doctors:', error);
-            this.showError('Failed to load doctors. Please try again.');
-        }
+        ];
+        this.displayDoctorList(this.doctors);
     }
     
     displayDoctorList(doctors) {
-        const doctorList = document.getElementById('doctorList');
+        const doctorList = document.getElementById('doctors-container');
         if (!doctorList) return;
         
         doctorList.innerHTML = doctors.map(doctor => `
             <div class="doctor-card booking-doctor" data-doctor-id="${doctor.id}">
-                <div class="doctor-image">
+                <div class="doctor-header">
                     <div class="doctor-avatar">
                         <i class="fas fa-user-md"></i>
                     </div>
-                    <div class="doctor-status ${doctor.available ? 'available' : 'busy'}">
-                        ${doctor.available ? 'Available' : 'Busy'}
+                    <div class="doctor-basic-info">
+                        <h4 class="doctor-name">${doctor.name}</h4>
+                        <p class="doctor-specialty">${doctor.specialty}</p>
+                        <div class="doctor-status ${doctor.available ? 'available' : 'busy'}">
+                            ${doctor.available ? 'Available' : 'Busy'}
+                        </div>
                     </div>
                 </div>
                 
-                <div class="doctor-info">
-                    <h4 class="doctor-name">Dr. ${doctor.name}</h4>
-                    <p class="doctor-specialty">${doctor.specialty}</p>
+                <div class="doctor-details">
                     <p class="doctor-experience">${doctor.experience} years experience</p>
                     
                     <div class="doctor-rating">
@@ -116,6 +207,10 @@ class BookingManager {
                         <strong>$${doctor.fee}</strong> consultation fee
                     </div>
                 </div>
+                
+                <button class="select-doctor-btn" data-doctor-id="${doctor.id}">
+                    Select Doctor
+                </button>
             </div>
         `).join('');
         

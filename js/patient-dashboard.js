@@ -41,33 +41,15 @@ class PatientDashboard {
     }
 
     async checkAuthentication() {
-        try {
-            const response = await fetch('php/session-auth.php?check_auth=1');
-            if (!response.ok) {
-                throw new Error('Authentication check failed');
-            }
-            
-            const data = await response.json();
-            
-            if (!data.authenticated || data.user.role !== 'patient') {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            this.currentUser = data.user;
-            this.updateUserDisplay();
-        } catch (error) {
-            console.error('Authentication check failed:', error);
-            // Use mock data for demo purposes
-            this.currentUser = {
-                id: 1,
-                first_name: 'John',
-                last_name: 'Doe',
-                email: 'john.doe@example.com',
-                role: 'patient'
-            };
-            this.updateUserDisplay();
-        }
+        // Use demo data for demo environment - no automatic redirections
+        this.currentUser = {
+            id: 1,
+            first_name: 'John',
+            last_name: 'Doe',
+            email: 'john.doe@example.com',
+            role: 'patient'
+        };
+        this.updateUserDisplay();
     }
 
     updateUserDisplay() {
@@ -129,17 +111,21 @@ class PatientDashboard {
     }
 
     setupSidebarNavigation() {
-        const sidebarLinks = document.querySelectorAll('.sidebar-menu a[data-section]');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link[data-section]');
         
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const section = link.dataset.section;
+                console.log('Switching to section:', section);
                 this.showSection(section);
                 
                 // Update active state
                 sidebarLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
+                
+                // Close mobile menu if open
+                this.closeMobileMenu();
             });
         });
 
@@ -193,18 +179,31 @@ class PatientDashboard {
     }
 
     showSection(sectionName) {
-        // Hide all sections
-        const sections = document.querySelectorAll('.dashboard-section');
+        console.log('Showing section:', sectionName);
+        
+        // Hide all sections with better selector
+        const sections = document.querySelectorAll('.content-section');
         sections.forEach(section => {
             section.style.display = 'none';
+            section.classList.remove('active');
         });
 
         // Show selected section
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
             targetSection.style.display = 'block';
+            targetSection.classList.add('active');
             this.loadSectionData(sectionName);
+        } else {
+            console.warn('Section not found:', `${sectionName}-section`);
         }
+    }
+    
+    closeMobileMenu() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        if (sidebar) sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
     }
 
     async loadSectionData(sectionName) {
@@ -428,97 +427,131 @@ class PatientDashboard {
     }
 
     async loadDoctors() {
-        try {
-            const response = await fetch('php/doctors.php');
-            if (!response.ok) {
-                throw new Error('Failed to load doctors');
-            }
-            
-            const doctors = await response.json();
-            this.doctors = doctors;
-            this.filteredDoctors = doctors;
-            this.displayDoctors(doctors);
-            this.populateFilterOptions(doctors);
-        } catch (error) {
-            console.error('Error loading doctors:', error);
-            // Use mock data for demo
-            this.loadMockDoctors();
-        }
-    }
-
-    loadMockDoctors() {
-        // Mock doctors data from config.php
-        const mockDoctors = [
+        // Load all 10 doctors for find doctors page
+        this.doctors = [
             {
                 id: 1,
-                name: 'Sarah Johnson',
-                specialty: 'Cardiology',
-                subspecialties: ['Interventional Cardiology', 'Heart Failure'],
-                education: 'Harvard Medical School',
+                name: "Dr. Sarah Johnson",
+                specialty: "Cardiologist",
                 experience: 15,
-                location: 'Medical Center, Downtown',
-                phone: '+1 (555) 123-4567',
-                email: 'dr.johnson@healthcareplus.com',
-                fee: 250.00,
-                rating: 4.8,
-                reviews: 156,
-                about: 'Dr. Johnson is a board-certified cardiologist with extensive experience in treating heart conditions.',
-                services: ['Cardiac Consultation', 'ECG', 'Stress Testing', 'Heart Surgery'],
-                certifications: ['Board Certified Cardiologist', 'Advanced Cardiac Life Support'],
-                languages: ['English', 'Spanish'],
-                available: true,
-                patients_treated: 2500
+                rating: 4.9,
+                reviews: 234,
+                fee: 150,
+                location: "New York",
+                languages: ["English", "Spanish"]
             },
             {
                 id: 2,
-                name: 'Michael Chen',
-                specialty: 'Neurology',
-                subspecialties: ['Stroke Medicine', 'Epilepsy'],
-                education: 'Johns Hopkins Medical School',
+                name: "Dr. Michael Chen",
+                specialty: "Orthopedic Surgeon",
                 experience: 12,
-                location: 'Neurological Institute, Uptown',
-                phone: '+1 (555) 234-5678',
-                email: 'dr.chen@healthcareplus.com',
-                fee: 300.00,
-                rating: 4.9,
-                reviews: 203,
-                about: 'Dr. Chen specializes in neurological disorders with a focus on stroke prevention and treatment.',
-                services: ['Neurological Consultation', 'EEG', 'Brain Imaging', 'Stroke Treatment'],
-                certifications: ['Board Certified Neurologist', 'Stroke Specialist'],
-                languages: ['English', 'Mandarin'],
-                available: true,
-                patients_treated: 1800
+                rating: 4.8,
+                reviews: 189,
+                fee: 180,
+                location: "Los Angeles",
+                languages: ["English", "Mandarin"]
             },
             {
                 id: 3,
-                name: 'Emily Rodriguez',
-                specialty: 'Pediatrics',
-                subspecialties: ['Pediatric Emergency Medicine', 'Child Development'],
-                education: 'Stanford Medical School',
+                name: "Dr. Emily Rodriguez",
+                specialty: "Pediatrician",
                 experience: 8,
-                location: 'Children\'s Hospital, Westside',
-                phone: '+1 (555) 345-6789',
-                email: 'dr.rodriguez@healthcareplus.com',
-                fee: 180.00,
                 rating: 4.7,
-                reviews: 89,
-                about: 'Dr. Rodriguez is dedicated to providing comprehensive pediatric care for children of all ages.',
-                services: ['Child Health Checkups', 'Vaccinations', 'Developmental Assessment'],
-                certifications: ['Board Certified Pediatrician', 'Pediatric Advanced Life Support'],
-                languages: ['English', 'Spanish'],
-                available: true,
-                patients_treated: 1200
+                reviews: 156,
+                fee: 120,
+                location: "Chicago",
+                languages: ["English", "Spanish"]
+            },
+            {
+                id: 4,
+                name: "Dr. David Wilson",
+                specialty: "Dermatologist",
+                experience: 10,
+                rating: 4.6,
+                reviews: 142,
+                fee: 140,
+                location: "Houston",
+                languages: ["English"]
+            },
+            {
+                id: 5,
+                name: "Dr. Lisa Anderson",
+                specialty: "Neurologist",
+                experience: 14,
+                rating: 4.9,
+                reviews: 198,
+                fee: 170,
+                location: "Miami",
+                languages: ["English", "French"]
+            },
+            {
+                id: 6,
+                name: "Dr. James Thompson",
+                specialty: "General Surgeon",
+                experience: 18,
+                rating: 4.8,
+                reviews: 267,
+                fee: 200,
+                location: "Philadelphia",
+                languages: ["English"]
+            },
+            {
+                id: 7,
+                name: "Dr. Maria Garcia",
+                specialty: "Gynecologist",
+                experience: 11,
+                rating: 4.7,
+                reviews: 178,
+                fee: 160,
+                location: "San Francisco",
+                languages: ["English", "Spanish"]
+            },
+            {
+                id: 8,
+                name: "Dr. Robert Kim",
+                specialty: "Psychiatrist",
+                experience: 9,
+                rating: 4.6,
+                reviews: 134,
+                fee: 130,
+                location: "Seattle",
+                languages: ["English", "Korean"]
+            },
+            {
+                id: 9,
+                name: "Dr. Jennifer Lee",
+                specialty: "Ophthalmologist",
+                experience: 13,
+                rating: 4.8,
+                reviews: 201,
+                fee: 155,
+                location: "Boston",
+                languages: ["English"]
+            },
+            {
+                id: 10,
+                name: "Dr. Mark Davis",
+                specialty: "Endocrinologist",
+                experience: 16,
+                rating: 4.9,
+                reviews: 223,
+                fee: 165,
+                location: "Denver",
+                languages: ["English"]
             }
         ];
+        this.filteredDoctors = this.doctors;
+        this.displayDoctors(this.doctors);
+        this.populateFilterOptions(this.doctors);
+    }
 
-        this.doctors = mockDoctors;
-        this.filteredDoctors = mockDoctors;
-        this.displayDoctors(mockDoctors);
-        this.populateFilterOptions(mockDoctors);
+    loadMockDoctors() {
+        // Complete list of all 10 doctors - no longer using fallback data
+        this.loadDoctors();
     }
 
     displayDoctors(doctors) {
-        const container = document.getElementById('doctors-list');
+        const container = document.getElementById('doctors-container');
         if (!container) return;
 
         if (doctors.length === 0) {
@@ -876,6 +909,10 @@ class PatientDashboard {
 
     async handleLogout() {
         try {
+            // Set flags to allow staying on home page after logout
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            
             const response = await fetch('php/auth.php', {
                 method: 'POST',
                 headers: {
@@ -884,10 +921,14 @@ class PatientDashboard {
                 body: JSON.stringify({ action: 'logout' })
             });
 
-            window.location.href = 'login.html';
+            // Redirect to home page instead of login
+            window.location.href = 'index.html';
         } catch (error) {
             console.error('Logout error:', error);
-            window.location.href = 'login.html';
+            // Ensure flags are set even on error
+            sessionStorage.setItem('allowHomeAccess', 'true');
+            sessionStorage.setItem('skipHomeRedirect', 'true');
+            window.location.href = 'index.html';
         }
     }
 

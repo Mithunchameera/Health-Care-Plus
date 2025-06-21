@@ -41,6 +41,9 @@ switch ($action) {
     case 'update_profile':
         updateProfile();
         break;
+    case 'get_doctors':
+        getDoctors();
+        break;
     default:
         http_response_code(400);
         echo json_encode(['error' => 'Invalid action']);
@@ -228,6 +231,20 @@ function updateProfile() {
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to update profile']);
+    }
+}
+
+function getDoctors() {
+    try {
+        // Use mock data for demo environment - complete doctor list from config
+        $mockStorage = MockDataStorage::getInstance();
+        $doctors = $mockStorage->getDoctors();
+        
+        header('Content-Type: application/json');
+        echo json_encode($doctors);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load doctors']);
     }
 }
 ?>

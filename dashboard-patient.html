@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard | HealthCare+</title>
+    <title>Demo User Dashboard | HealthCare+</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/dashboard-styles.css">
@@ -1299,11 +1299,8 @@
                 <span>HealthCare+</span>
             </div>
             <div class="nav-menu">
-                <a href="index.html" class="nav-link">Home</a>
-                <span class="nav-link" id="user-name">Patient Dashboard</span>
-                <button class="btn btn-primary" onclick="window.quickActions ? quickActions.toggleQuickActions() : console.log('Quick actions not loaded')" style="margin-right: 1rem;">
-                    <i class="fas fa-plus"></i> Quick Action
-                </button>
+                <a href="index.html" class="nav-link" onclick="sessionStorage.setItem('skipHomeRedirect', 'true')">Home</a>
+                <span class="nav-link" id="user-name">Demo User Dashboard</span>
                 <button id="logout-btn" class="btn btn-outline">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
@@ -1319,26 +1316,26 @@
         <aside class="sidebar">
             <nav class="sidebar-nav">
                 <ul class="sidebar-menu">
-                    <li><a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                    <li><a href="javascript:void(0)" class="sidebar-link active" data-section="dashboard">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a></li>
-                    <li><a href="#book-appointment" class="sidebar-link" data-section="book-appointment">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="book-appointment">
                         <i class="fas fa-calendar-plus"></i> Book Appointment
                     </a></li>
-                    <li><a href="#appointments" class="sidebar-link" data-section="appointments">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="appointments">
                         <i class="fas fa-calendar-check"></i> My Appointments
                     </a></li>
-                    <li><a href="#doctors" class="sidebar-link" data-section="doctors">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="doctors">
                         <i class="fas fa-user-md"></i> Find Doctors
                     </a></li>
-                    <li><a href="#messages" class="sidebar-link" data-section="messages">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="messages">
                         <i class="fas fa-comments"></i> Messages
                         <span id="messages-unread-badge" class="unread-badge" style="display: none;">0</span>
                     </a></li>
-                    <li><a href="#payments" class="sidebar-link" data-section="payments">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="payments">
                         <i class="fas fa-credit-card"></i> Payments
                     </a></li>
-                    <li><a href="#profile" class="sidebar-link" data-section="profile">
+                    <li><a href="javascript:void(0)" class="sidebar-link" data-section="profile">
                         <i class="fas fa-user"></i> My Profile
                     </a></li>
                 </ul>
