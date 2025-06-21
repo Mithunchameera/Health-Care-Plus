@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Healthcare Professionals | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .standalone-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .standalone-header h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .search-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .search-bar-advanced {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-input-group {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .filter-select {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .results-header h2 {
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        .results-count {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="standalone-header">
+        <h1><i class="fas fa-user-md"></i> Find Healthcare Professionals</h1>
+    </div>
+
+    <div class="container">
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-bar-advanced">
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="doctor-search" placeholder="Search by doctor name, specialty, or condition..." class="search-input">
+                    </div>
+                    <button type="button" class="search-btn" onclick="findDoctorsManager.applyFilters()">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </div>
+                
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label for="specialty-filter">Specialty</label>
+                        <select id="specialty-filter" class="filter-select">
+                            <option value="">All Specialties</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Orthopedic Surgery">Orthopedic Surgery</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="General Surgery">General Surgery</option>
+                            <option value="Obstetrics & Gynecology">Obstetrics & Gynecology</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                            <option value="Ophthalmology">Ophthalmology</option>
+                            <option value="Gastroenterology">Gastroenterology</option>
+                            <option value="Endocrinology">Endocrinology</option>
+                            <option value="Urology">Urology</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="location-filter">Location</label>
+                        <select id="location-filter" class="filter-select">
+                            <option value="">All Locations</option>
+                            <option value="Downtown">Downtown</option>
+                            <option value="Uptown">Uptown</option>
+                            <option value="Westside">Westside</option>
+                            <option value="Eastside">Eastside</option>
+                            <option value="Central">Central</option>
+                            <option value="Southside">Southside</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="rating-filter">Minimum Rating</label>
+                        <select id="rating-filter" class="filter-select">
+                            <option value="">Any Rating</option>
+                            <option value="4.5">4.5+ Stars</option>
+                            <option value="4.0">4.0+ Stars</option>
+                            <option value="3.5">3.5+ Stars</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="consultation-type-filter">Consultation Type</label>
+                        <select id="consultation-type-filter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="In-person">In-person</option>
+                            <option value="Video Call">Video Call</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <div class="results-header">
+                <h2>Available Doctors</h2>
+                <div class="results-count">
+                    <span id="results-count">Loading doctors...</span>
+                </div>
+            </div>
+            
+            <div class="doctors-grid" id="doctors-grid">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading available doctors...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Doctor Detail Modal -->
+    <div id="doctor-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="doctor-detail-content">
+                <!-- Doctor details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/find-doctors.js"></script>
+    <script>
+        // Initialize Find Doctors Manager
+        let findDoctorsManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            findDoctorsManager = new FindDoctorsManager();
+        });
+    </script>
+</body>
+</html>

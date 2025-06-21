@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .standalone-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .standalone-header h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .booking-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            gap: 0.5rem;
+        }
+
+        .step.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed {
+            background: var(--success-color, #10b981);
+            color: white;
+        }
+
+        .step-content {
+            margin-bottom: 2rem;
+        }
+
+        .step-content.hidden {
+            display: none;
+        }
+
+        .form-section h3 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            margin-bottom: 2rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .doctor-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .doctor-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .doctor-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .calendar-container {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .calendar-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .calendar-day:hover {
+            border-color: var(--primary-color);
+        }
+
+        .calendar-day.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .time-slots-container {
+            margin-top: 2rem;
+        }
+
+        .time-slots-container h4 {
+            color: var(--text-color);
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-color);
+        }
+
+        .time-slot.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .summary-value {
+            color: var(--text-secondary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="standalone-header">
+        <h1><i class="fas fa-calendar-plus"></i> Book Your Appointment</h1>
+    </div>
+
+    <div class="container">
+        <div class="booking-container">
+            <!-- Progress Steps -->
+            <div class="booking-steps">
+                <div class="step active" id="step-1">
+                    <i class="fas fa-user-md"></i>
+                    <span>Select Doctor</span>
+                </div>
+                <div class="step" id="step-2">
+                    <i class="fas fa-calendar"></i>
+                    <span>Choose Date</span>
+                </div>
+                <div class="step" id="step-3">
+                    <i class="fas fa-clock"></i>
+                    <span>Select Time</span>
+                </div>
+                <div class="step" id="step-4">
+                    <i class="fas fa-check"></i>
+                    <span>Confirm</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Select Doctor -->
+            <div class="step-content" id="step-content-1">
+                <div class="form-section">
+                    <h3><i class="fas fa-user-md"></i> Select a Doctor</h3>
+                    <div class="search-box">
+                        <input type="text" id="doctor-search-booking" placeholder="Search doctors by name or specialty..." class="form-control">
+                    </div>
+                    <div class="doctor-grid" id="doctor-list">
+                        <div class="loading-doctors">
+                            <div class="spinner"></div>
+                            <p>Loading doctors...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Select Date -->
+            <div class="step-content hidden" id="step-content-2">
+                <div class="form-section">
+                    <h3><i class="fas fa-calendar"></i> Select Appointment Date</h3>
+                    <div class="selected-doctor-info" id="selected-doctor-info">
+                        <!-- Selected doctor info will be shown here -->
+                    </div>
+                    <div class="calendar-container">
+                        <div class="calendar-navigation">
+                            <button type="button" id="prevMonth" class="btn btn-secondary">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h4 id="currentMonth">Loading...</h4>
+                            <button type="button" id="nextMonth" class="btn btn-secondary">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Calendar will be generated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Select Time -->
+            <div class="step-content hidden" id="step-content-3">
+                <div class="form-section">
+                    <h3><i class="fas fa-clock"></i> Select Time Slot</h3>
+                    <div class="selected-date-info" id="selected-date-info">
+                        <!-- Selected date info will be shown here -->
+                    </div>
+                    <div class="time-slots-container">
+                        <div class="morning-slots">
+                            <h4>Morning</h4>
+                            <div class="time-slots" id="morning-slots"></div>
+                        </div>
+                        <div class="afternoon-slots">
+                            <h4>Afternoon</h4>
+                            <div class="time-slots" id="afternoon-slots"></div>
+                        </div>
+                        <div class="evening-slots">
+                            <h4>Evening</h4>
+                            <div class="time-slots" id="evening-slots"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Confirm -->
+            <div class="step-content hidden" id="step-content-4">
+                <div class="form-section">
+                    <h3><i class="fas fa-check"></i> Confirm Your Appointment</h3>
+                    <div class="summary-card">
+                        <div class="summary-item">
+                            <span class="summary-label">Doctor:</span>
+                            <span class="summary-value" id="confirm-doctor">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Date:</span>
+                            <span class="summary-value" id="confirm-date">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Time:</span>
+                            <span class="summary-value" id="confirm-time">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Consultation Fee:</span>
+                            <span class="summary-value" id="confirm-fee">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patient-name">Patient Name</label>
+                            <input type="text" id="patient-name" placeholder="Enter patient name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patient-phone">Phone Number</label>
+                            <input type="tel" id="patient-phone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="patient-email">Email Address</label>
+                            <input type="email" id="patient-email" placeholder="Enter email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="consultation-type">Consultation Type</label>
+                            <select id="consultation-type" required>
+                                <option value="">Select consultation type</option>
+                                <option value="in-person">In-Person</option>
+                                <option value="video-call">Video Call</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason">Reason for Visit</label>
+                        <textarea id="reason" rows="3" placeholder="Please describe your symptoms or reason for consultation..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medical-history">Medical History (Optional)</label>
+                        <textarea id="medical-history" rows="2" placeholder="Any relevant medical history or current medications..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="btn-group">
+                <button type="button" id="prevBtn" class="btn btn-secondary" disabled>
+                    <i class="fas fa-arrow-left"></i>
+                    Previous
+                </button>
+                <button type="button" id="nextBtn" class="btn btn-primary" disabled>
+                    Next
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="button" id="confirmBtn" class="btn btn-primary hidden">
+                    <i class="fas fa-check"></i>
+                    Confirm Booking
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="booking-success-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Booking Confirmed!</h3>
+            </div>
+            <div class="modal-body">
+                <div class="success-message">
+                    <p>Your appointment has been successfully booked.</p>
+                    <div class="booking-details" id="booking-details">
+                        <!-- Booking details will be shown here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="window.location.href='dashboard-patient.html'">
+                    Go to Dashboard
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='find-doctors-standalone.html'">
+                    Book Another
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/booking.js"></script>
+    <script>
+        // Initialize Booking Manager
+        let bookingManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            bookingManager = new BookingManager();
+        });
+    </script>
+</body>
+</html>

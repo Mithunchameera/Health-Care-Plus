@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Doctors API | HealthCare+</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-result {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .success {
+            border-left: 4px solid #10b981;
+            background: #f0f9ff;
+        }
+        .error {
+            border-left: 4px solid #ef4444;
+            background: #fef2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HealthCare+ Doctors API Test</h1>
+        <p>Testing the comprehensive doctors database with 12 detailed profiles</p>
+        
+        <div class="test-section">
+            <h3>Test 1: Get All Doctors</h3>
+            <button onclick="testGetAllDoctors()">Test Get All Doctors</button>
+            <div id="test1-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: Search by Specialty</h3>
+            <button onclick="testSearchBySpecialty('Cardiology')">Search Cardiology</button>
+            <button onclick="testSearchBySpecialty('Pediatrics')">Search Pediatrics</button>
+            <button onclick="testSearchBySpecialty('Urology')">Search Urology</button>
+            <div id="test2-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Search by Location</h3>
+            <button onclick="testSearchByLocation('Downtown')">Search Downtown</button>
+            <button onclick="testSearchByLocation('Westside')">Search Westside</button>
+            <button onclick="testSearchByLocation('Eastside')">Search Eastside</button>
+            <div id="test3-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 4: Search by Condition</h3>
+            <button onclick="testSearchByQuery('diabetes')">Search Diabetes</button>
+            <button onclick="testSearchByQuery('heart')">Search Heart</button>
+            <button onclick="testSearchByQuery('surgery')">Search Surgery</button>
+            <div id="test4-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 5: Get Doctor Details</h3>
+            <button onclick="testGetDoctorDetails(1)">Get Dr. Johnson Details</button>
+            <button onclick="testGetDoctorDetails(5)">Get Dr. Anderson Details</button>
+            <button onclick="testGetDoctorDetails(12)">Get Dr. Lee Details</button>
+            <div id="test5-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 6: Get Available Slots</h3>
+            <button onclick="testGetAvailableSlots(1)">Get Slots for Dr. Johnson</button>
+            <button onclick="testGetAvailableSlots(3)">Get Slots for Dr. Rodriguez</button>
+            <div id="test6-result" class="test-result"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI(url, testName, resultElementId) {
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.textContent = 'Testing...';
+            resultElement.className = 'test-result';
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultElement.className = 'test-result success';
+                    resultElement.textContent = `✅ ${testName} SUCCESS\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultElement.className = 'test-result error';
+                    resultElement.textContent = `❌ ${testName} FAILED\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.textContent = `❌ ${testName} ERROR\n\n${error.message}`;
+            }
+        }
+        
+        function testGetAllDoctors() {
+            testAPI('php/patient-api.php?action=get_doctors', 'Get All Doctors', 'test1-result');
+        }
+        
+        function testSearchBySpecialty(specialty) {
+            testAPI(`php/patient-api.php?action=get_doctors&specialty=${specialty}`, `Search by Specialty: ${specialty}`, 'test2-result');
+        }
+        
+        function testSearchByLocation(location) {
+            testAPI(`php/patient-api.php?action=get_doctors&location=${location}`, `Search by Location: ${location}`, 'test3-result');
+        }
+        
+        function testSearchByQuery(query) {
+            testAPI(`php/patient-api.php?action=get_doctors&query=${query}`, `Search by Query: ${query}`, 'test4-result');
+        }
+        
+        function testGetDoctorDetails(doctorId) {
+            testAPI(`php/patient-api.php?action=get_doctor_details&doctor_id=${doctorId}`, `Get Doctor Details (ID: ${doctorId})`, 'test5-result');
+        }
+        
+        function testGetAvailableSlots(doctorId) {
+            const today = new Date().toISOString().split('T')[0];
+            testAPI(`php/patient-api.php?action=get_available_slots&doctor_id=${doctorId}&date=${today}`, `Get Available Slots (ID: ${doctorId})`, 'test6-result');
+        }
+        
+        // Auto-run the first test
+        document.addEventListener('DOMContentLoaded', function() {
+            testGetAllDoctors();
+        });
+    </script>
+</body>
+</html>

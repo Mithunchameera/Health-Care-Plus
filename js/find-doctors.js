@@ -34,8 +34,15 @@ class FindDoctorsManager {
 
     async loadDoctors() {
         try {
-            // Comprehensive doctor data
-            this.doctors = [
+            // Load doctors from API
+            const response = await fetch('php/patient-api.php?action=get_doctors');
+            const result = await response.json();
+            
+            if (result.success && result.doctors) {
+                this.doctors = result.doctors;
+            } else {
+                // Fallback to comprehensive doctor data
+                this.doctors = [
                 {
                     id: 1,
                     name: "Dr. Sarah Johnson",
@@ -330,8 +337,13 @@ class FindDoctorsManager {
         }
 
         doctorsGrid.innerHTML = doctors.map(doctor => `
-            <div class="doctor-card-find" data-doctor-id="${doctor.id}">
-                <div class="doctor-card-header">
+            <div class="doctor-card-enhanced" data-doctor-id="${doctor.id}">
+                <div class="availability-indicator ${doctor.available ? 'available' : 'busy'}">
+                    <i class="fas fa-circle"></i>
+                    ${doctor.available ? 'Available' : 'Busy'}
+                </div>
+                
+                <div class="doctor-header">
                     <div class="doctor-avatar">
                         ${doctor.name.split(' ').map(n => n[0]).join('')}
                     </div>
@@ -339,81 +351,61 @@ class FindDoctorsManager {
                         <h3>${doctor.name}</h3>
                         <p class="specialty">${doctor.specialty}</p>
                         <p class="subspecialty">${doctor.subspecialty || ''}</p>
-                        <div class="doctor-meta">
-                            <span class="experience">
-                                <i class="fas fa-graduation-cap"></i>
-                                ${doctor.experience} years
-                            </span>
-                            <span class="location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                ${doctor.location}
-                            </span>
+                        <div class="doctor-rating">
+                            <div class="rating-stars">
+                                ${this.generateStars(doctor.rating)}
+                            </div>
+                            <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
                         </div>
-                    </div>
-                    <div class="doctor-rating">
-                        <div class="rating-stars">
-                            ${this.generateStars(doctor.rating)}
-                        </div>
-                        <span class="rating-text">${doctor.rating} (${doctor.reviews})</span>
                     </div>
                 </div>
 
-                <div class="doctor-card-body">
-                    <div class="hospital-info">
+                <div class="doctor-details">
+                    <div class="detail-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>${doctor.experience} years experience</span>
+                    </div>
+                    <div class="detail-item">
                         <i class="fas fa-hospital"></i>
                         <span>${doctor.hospital}</span>
                     </div>
-
-                    <div class="about-doctor">
-                        <p>${doctor.about}</p>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${doctor.location}</span>
                     </div>
-
-                    <div class="specialties-section">
-                        <h4>Conditions Treated:</h4>
-                        <div class="conditions-tags">
-                            ${doctor.conditions.slice(0, 4).map(condition => 
-                                `<span class="condition-tag">${condition}</span>`
-                            ).join('')}
-                            ${doctor.conditions.length > 4 ? 
-                                `<span class="more-conditions">+${doctor.conditions.length - 4} more</span>` : ''}
-                        </div>
+                    <div class="detail-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>$${doctor.consultation_fee || doctor.fee} consultation</span>
                     </div>
-
-                    <div class="consultation-info">
-                        <div class="consultation-types">
-                            <h4>Available:</h4>
-                            <div class="types-list">
-                                ${doctor.consultationType.map(type => 
-                                    `<span class="consultation-type">${type}</span>`
-                                ).join('')}
-                            </div>
-                        </div>
-                        <div class="next-available">
-                            <i class="fas fa-clock"></i>
-                            <span>Next: ${doctor.nextAvailable}</span>
-                        </div>
+                    <div class="detail-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Next: ${doctor.nextAvailable}</span>
                     </div>
-
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>${doctor.phone}</span>
-                        </div>
-                        <div class="fee-info">
-                            <span class="fee-label">Consultation Fee:</span>
-                            <span class="fee-amount">$${doctor.fee}</span>
-                        </div>
+                    <div class="detail-item">
+                        <i class="fas fa-language"></i>
+                        <span>${doctor.languages.join(', ')}</span>
                     </div>
                 </div>
 
-                <div class="doctor-card-footer">
-                    <button class="btn-view-profile" onclick="findDoctorsManager.viewDoctorProfile(${doctor.id})">
-                        <i class="fas fa-info-circle"></i>
+                <div class="doctor-specialties">
+                    <h4><i class="fas fa-stethoscope"></i> Conditions Treated</h4>
+                    <div class="conditions-tags">
+                        ${doctor.conditions.slice(0, 5).map(condition => 
+                            `<span class="condition-tag">${condition}</span>`
+                        ).join('')}
+                        ${doctor.conditions.length > 5 ? 
+                            `<span class="condition-tag" style="background: var(--primary-color); color: white;">+${doctor.conditions.length - 5} more</span>` : ''}
+                    </div>
+                </div>
+
+                <div class="doctor-actions">
+                    <button class="btn btn-outline view-profile-btn" data-doctor-id="${doctor.id}">
+                        <i class="fas fa-eye"></i>
                         View Profile
                     </button>
-                    <button class="btn-book-appointment" onclick="findDoctorsManager.bookAppointment(${doctor.id})">
+                    <button class="btn btn-primary book-appointment-btn" data-doctor-id="${doctor.id}">
                         <i class="fas fa-calendar-plus"></i>
-                        Book Appointment
+                        Book Now
                     </button>
                 </div>
             </div>

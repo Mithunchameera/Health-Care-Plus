@@ -126,6 +126,16 @@
                         <p>Loading available doctors...</p>
                     </div>
                 </div>
+                
+                <!-- Doctor Detail Modal -->
+                <div id="doctor-detail-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div id="doctor-detail-content">
+                            <!-- Doctor details will be loaded here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -180,5 +190,12 @@
     <script src="js/three-video-background.js"></script>
     <script src="js/main.js"></script>
     <script src="js/find-doctors.js"></script>
+    <script>
+        // Initialize Find Doctors Manager
+        let findDoctorsManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            findDoctorsManager = new FindDoctorsManager();
+        });
+    </script>
 </body>
 </html>

@@ -44,6 +44,15 @@ switch ($action) {
     case 'get_doctors':
         getDoctors();
         break;
+    case 'get_doctor_details':
+        getDoctorDetails();
+        break;
+    case 'get_available_slots':
+        getAvailableSlots();
+        break;
+    case 'book_appointment':
+        bookAppointment();
+        break;
     default:
         http_response_code(400);
         echo json_encode(['error' => 'Invalid action']);
