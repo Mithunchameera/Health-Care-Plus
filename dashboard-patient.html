@@ -13,6 +13,7 @@
             display: flex;
             min-height: 100vh;
             padding-top: 70px;
+            overflow: hidden;
         }
         
         .sidebar {
@@ -27,20 +28,7 @@
             z-index: 1000;
         }
         
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1001;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
+
         
         .sidebar-overlay {
             display: none;
@@ -87,6 +75,11 @@
             flex: 1;
             margin-left: 250px;
             padding: 2rem;
+            background: var(--bg-color);
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         
         .dashboard-header {
@@ -590,9 +583,7 @@
                 padding-top: 60px;
             }
             
-            .mobile-menu-toggle {
-                display: block;
-            }
+
             
             .sidebar {
                 transform: translateX(-100%);
@@ -611,6 +602,7 @@
             .main-content {
                 margin-left: 0;
                 padding: 1rem;
+                height: calc(100vh - 70px);
             }
             
             .dashboard-header {
@@ -782,7 +774,7 @@
         }
 
         .booking-step.active {
-            display: block;
+            display: block !important;
         }
 
         .step-header {
@@ -795,31 +787,9 @@
             margin-bottom: 0.5rem;
         }
 
-        .quick-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            justify-content: center;
-        }
 
-        .filter-chip {
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-color);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
 
-        .filter-chip:hover,
-        .filter-chip.active {
-            border-color: var(--primary-color);
-            background: var(--primary-color);
-            color: white;
-        }
+
 
         /* Enhanced Search Styling */
         .enhanced-search {
@@ -1009,9 +979,142 @@
 
         .booking-doctors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+
+        .doctor-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doctor-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+        }
+
+        .doctor-photo {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+
+        .doctor-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .doctor-initials {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .doctor-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .doctor-info .specialty {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+        }
+
+        .doctor-info .location {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0 0 1rem 0;
+            text-align: center;
+        }
+
+        .doctor-info .location i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .doctor-rating {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-rating .stars {
+            color: #ffd700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .doctor-rating .rating-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .consultation-fee {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .consultation-fee .fee-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .consultation-fee .fee-amount {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .doctor-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-direction: column;
+        }
+
+        .doctor-actions .btn {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .select-doctor-btn {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border: 2px solid var(--primary-color) !important;
+        }
+
+        .select-doctor-btn:hover {
+            background: var(--primary-dark) !important;
+            transform: translateY(-2px);
         }
 
         .booking-doctor-card {
@@ -1284,9 +1387,7 @@
 </head>
 <body data-theme="dark">
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-        <i class="fas fa-bars"></i>
-    </button>
+
     
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -1594,21 +1695,13 @@
                 </div>
 
                 <!-- Step 1: Select Doctor -->
-                <div id="booking-step-1" class="booking-step active">
+                <div id="booking-step-1" class="booking-step active" style="display: block;">
                     <div class="step-header">
                         <h3>Select Your Doctor</h3>
                         <p>Choose from our available healthcare professionals</p>
                     </div>
 
-                    <!-- Quick Filters -->
-                    <div class="quick-filters">
-                        <button class="filter-chip active" data-specialty="all">All Doctors</button>
-                        <button class="filter-chip" data-specialty="Cardiology">Cardiology</button>
-                        <button class="filter-chip" data-specialty="Neurology">Neurology</button>
-                        <button class="filter-chip" data-specialty="Pediatrics">Pediatrics</button>
-                        <button class="filter-chip" data-specialty="Orthopedics">Orthopedics</button>
-                        <button class="filter-chip" data-specialty="Dermatology">Dermatology</button>
-                    </div>
+
 
                     <!-- Search Bar -->
                     <div class="booking-search">
@@ -1647,8 +1740,151 @@
                     </div>
 
                     <!-- Doctors Grid -->
-                    <div id="booking-doctors-grid" class="booking-doctors-grid">
-                        <!-- Doctors will be loaded here -->
+                    <div id="booking-doctors-grid" class="booking-doctors-grid" style="display: grid !important;">
+                        <!-- Sample Doctors for Selection -->
+                        <div class="doctor-card" onclick="selectDoctorForBooking('1', 'Dr. Sarah Johnson', 'Cardiology', 'Downtown Medical Center', '4.8', '156', '$250')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face" alt="Dr. Sarah Johnson" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">SJ</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Sarah Johnson</h4>
+                                <p class="specialty">Cardiology</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Downtown Medical Center</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-text">4.8 (156 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$250</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('1')">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" onclick="selectDoctorForBooking('2', 'Dr. Michael Chen', 'Neurology', 'North Side Clinic', '4.9', '203', '$300')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face" alt="Dr. Michael Chen" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">MC</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Michael Chen</h4>
+                                <p class="specialty">Neurology</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> North Side Clinic</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-text">4.9 (203 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$300</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('2')">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" onclick="selectDoctorForBooking('3', 'Dr. Emily Rodriguez', 'Pediatrics', 'Children\'s Hospital', '4.7', '89', '$200')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1594824475039-b7d047c2c1de?w=150&h=150&fit=crop&crop=face" alt="Dr. Emily Rodriguez" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">ER</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Emily Rodriguez</h4>
+                                <p class="specialty">Pediatrics</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Children's Hospital</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★☆</div>
+                                    <span class="rating-text">4.7 (89 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$200</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('3')">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" onclick="selectDoctorForBooking('4', 'Dr. James Wilson', 'Orthopedics', 'Sports Medicine Center', '4.6', '124', '$275')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face" alt="Dr. James Wilson" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">JW</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. James Wilson</h4>
+                                <p class="specialty">Orthopedics</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Sports Medicine Center</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★☆</div>
+                                    <span class="rating-text">4.6 (124 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$275</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('4')">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" onclick="selectDoctorForBooking('5', 'Dr. Lisa Thompson', 'Dermatology', 'Skin Care Clinic', '4.8', '167', '$225')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=150&h=150&fit=crop&crop=face" alt="Dr. Lisa Thompson" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">LT</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Lisa Thompson</h4>
+                                <p class="specialty">Dermatology</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Skin Care Clinic</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-text">4.8 (167 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$225</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('5')">View Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card" onclick="selectDoctorForBooking('6', 'Dr. Robert Davis', 'Internal Medicine', 'General Health Center', '4.5', '98', '$180')">
+                            <div class="doctor-photo">
+                                <img src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=150&h=150&fit=crop&crop=face" alt="Dr. Robert Davis" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="doctor-initials" style="display: none;">RD</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Robert Davis</h4>
+                                <p class="specialty">Internal Medicine</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> General Health Center</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★☆</div>
+                                    <span class="rating-text">4.5 (98 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$180</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn">Select Doctor</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); viewDoctorProfile('6')">View Profile</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="step-navigation">
@@ -1656,6 +1892,71 @@
                             Next: Choose Time <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
+
+                    <script>
+                    function selectDoctorForBooking(id, name, specialty, location, rating, reviews, fee) {
+                        // Update selected doctor display
+                        document.getElementById('selected-doctor-name').textContent = name;
+                        document.getElementById('selected-doctor-specialty').textContent = specialty;
+                        document.getElementById('selected-doctor-location').textContent = location;
+                        document.getElementById('selected-doctor-fee').textContent = fee;
+                        document.getElementById('selected-doctor-reviews').textContent = `(${reviews} reviews)`;
+                        
+                        // Generate star rating
+                        const stars = generateStarRating(parseFloat(rating));
+                        document.getElementById('selected-doctor-rating').innerHTML = stars;
+                        
+                        // Show selected doctor card and hide grid
+                        document.getElementById('selected-doctor-display').style.display = 'block';
+                        document.getElementById('booking-doctors-grid').style.display = 'none';
+                        
+                        // Enable next button
+                        document.getElementById('next-to-time').disabled = false;
+                        
+                        // Store selected doctor data
+                        window.selectedDoctor = { id, name, specialty, location, rating, reviews, fee };
+                    }
+
+                    function clearDoctorSelection() {
+                        // Hide selected doctor card and show grid
+                        document.getElementById('selected-doctor-display').style.display = 'none';
+                        document.getElementById('booking-doctors-grid').style.display = 'grid';
+                        
+                        // Disable next button
+                        document.getElementById('next-to-time').disabled = true;
+                        
+                        // Clear selected doctor data
+                        window.selectedDoctor = null;
+                    }
+
+                    function generateStarRating(rating) {
+                        const fullStars = Math.floor(rating);
+                        const hasHalfStar = rating % 1 >= 0.5;
+                        let stars = '';
+                        
+                        for (let i = 0; i < fullStars; i++) {
+                            stars += '★';
+                        }
+                        
+                        if (hasHalfStar) {
+                            stars += '☆';
+                        }
+                        
+                        const emptyStars = 5 - Math.ceil(rating);
+                        for (let i = 0; i < emptyStars; i++) {
+                            stars += '☆';
+                        }
+                        
+                        return stars;
+                    }
+
+                    function goToTimeSelection() {
+                        if (window.selectedDoctor) {
+                            // Here you would implement the time selection logic
+                            alert('Proceeding to time selection for ' + window.selectedDoctor.name);
+                        }
+                    }
+                    </script>
                 </div>
 
                 <!-- Step 2: Choose Time -->

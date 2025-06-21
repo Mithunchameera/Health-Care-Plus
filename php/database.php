@@ -20,10 +20,18 @@ class Database {
     
     private function connect() {
         try {
+            // Try multiple ways to get database connection info
             $database_url = $_ENV['DATABASE_URL'] ?? getenv('DATABASE_URL');
             
             if (!$database_url) {
-                throw new Exception('DATABASE_URL not found in environment variables');
+                // Fall back to individual environment variables
+                $host = $_ENV['PGHOST'] ?? getenv('PGHOST') ?? 'localhost';
+                $port = $_ENV['PGPORT'] ?? getenv('PGPORT') ?? '5432';
+                $dbname = $_ENV['PGDATABASE'] ?? getenv('PGDATABASE') ?? 'healthcare_plus';
+                $user = $_ENV['PGUSER'] ?? getenv('PGUSER') ?? 'postgres';
+                $password = $_ENV['PGPASSWORD'] ?? getenv('PGPASSWORD') ?? '';
+                
+                $database_url = "postgresql://$user:$password@$host:$port/$dbname";
             }
             
             // Parse the database URL

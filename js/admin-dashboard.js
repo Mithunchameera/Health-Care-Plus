@@ -105,6 +105,7 @@ class AdminDashboard {
 
         // Initialize advanced search functionality
         this.setupSearchListeners();
+        this.setupMessageSearchFunctionality();
 
         // Legacy search inputs for compatibility
         const searchInputs = {
@@ -760,11 +761,50 @@ class AdminDashboard {
             });
         }
 
+        // Enhanced Message search functionality
+        const messageSearch = document.getElementById('message-search');
+        if (messageSearch) {
+            messageSearch.addEventListener('input', (e) => {
+                const wrapper = e.target.closest('.search-input-wrapper');
+                if (e.target.value.length > 0) {
+                    wrapper?.classList.add('has-text');
+                    this.showMessageSearchSuggestions(e.target.value);
+                } else {
+                    wrapper?.classList.remove('has-text');
+                    this.hideSuggestions('message-search-suggestions');
+                }
+            });
+
+            let searchTimeout;
+            messageSearch.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.searchMessages();
+                }, 300);
+            });
+        }
+
+        // Filter chip functionality
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                const filterType = e.target.dataset.filter;
+                const filterValue = e.target.dataset.value;
+                
+                const siblings = e.target.parentElement.querySelectorAll('.filter-chip');
+                siblings.forEach(s => s.classList.remove('active'));
+                
+                e.target.classList.add('active');
+                
+                this.applyMessageFilter(filterType, filterValue);
+            });
+        });
+
         // Click outside to hide suggestions
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-bar')) {
+            if (!e.target.closest('.search-bar') && !e.target.closest('.advanced-search-bar')) {
                 this.hideSuggestions('doctor-search-suggestions');
                 this.hideSuggestions('appointment-search-suggestions');
+                this.hideSuggestions('message-search-suggestions');
             }
         });
     }
@@ -1480,10 +1520,398 @@ class AdminDashboard {
         this.searchMessages();
     }
 
+    // Enhanced message search functionality
+    searchMessages() {
+        const searchTerm = document.getElementById('message-search').value.toLowerCase();
+        const activeFilters = this.getActiveFilters();
+        
+        const resultsCount = document.getElementById('search-results-count');
+        if (resultsCount) {
+            resultsCount.textContent = 'Searching...';
+        }
+        
+        setTimeout(() => {
+            let filteredCount = 0;
+            
+            if (searchTerm) {
+                filteredCount = Math.floor(Math.random() * 20) + 5;
+                resultsCount.textContent = `Found ${filteredCount} messages matching "${searchTerm}"`;
+            } else {
+                filteredCount = 47;
+                resultsCount.textContent = `Showing all ${filteredCount} messages`;
+            }
+            
+            this.updateMessageTable(filteredCount, searchTerm, activeFilters);
+        }, 500);
+    }
+
+    getActiveFilters() {
+        const filters = {};
+        document.querySelectorAll('.filter-chip.active').forEach(chip => {
+            const filterType = chip.dataset.filter;
+            const filterValue = chip.dataset.value;
+            filters[filterType] = filterValue;
+        });
+        return filters;
+    }
+
+    applyMessageFilter(filterType, filterValue) {
+        this.searchMessages();
+    }
+
+    showMessageSearchSuggestions(searchTerm) {
+        if (searchTerm.length < 2) return;
+        
+        const suggestions = [
+            'john.doe@email.com',
+            'urgent appointment',
+            'billing inquiry',
+            'prescription refill',
+            'appointment cancellation'
+        ].filter(item => item.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const suggestionsContainer = document.getElementById('message-search-suggestions');
+        if (suggestions.length > 0 && suggestionsContainer) {
+            suggestionsContainer.innerHTML = suggestions.map(suggestion => 
+                `<div class="suggestion-item" onclick="adminDashboard.selectSearchSuggestion('${suggestion}')">${suggestion}</div>`
+            ).join('');
+            suggestionsContainer.classList.add('show');
+        } else {
+            this.hideSuggestions('message-search-suggestions');
+        }
+    }
+
+    selectSearchSuggestion(suggestion) {
+        document.getElementById('message-search').value = suggestion;
+        document.querySelector('.search-input-wrapper').classList.add('has-text');
+        this.hideSuggestions('message-search-suggestions');
+        this.searchMessages();
+    }
+
+    updateMessageTable(count, searchTerm, filters) {
+        const tableBody = document.getElementById('messages-table-body');
+        if (!tableBody) return;
+        
+        const mockMessages = this.generateMockMessages(count, searchTerm, filters);
+        
+        if (mockMessages.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 2rem;">
+                        <i class="fas fa-search" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                        <p>No messages found matching your search criteria</p>
+                        <button class="btn btn-secondary" onclick="adminDashboard.clearMessageSearch()">Clear Search</button>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tableBody.innerHTML = mockMessages.map(message => `
+                <tr class="${message.status === 'unread' ? 'unread-message' : ''}">
+                    <td>
+                        <div class="message-sender">
+                            <strong>${message.from}</strong>
+                            <small>${message.email}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="message-subject">${this.highlightSearchTerm(message.subject, searchTerm)}</div>
+                    </td>
+                    <td>
+                        <span class="priority-badge priority-${message.priority}">${message.priority}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${message.status}">${message.status}</span>
+                    </td>
+                    <td>
+                        <div class="message-date">
+                            ${message.date}
+                            <small>${message.time}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="adminDashboard.viewMessage('${message.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="adminDashboard.replyToMessage('${message.id}')">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="adminDashboard.deleteMessage('${message.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    generateMockMessages(count, searchTerm, filters) {
+        const mockSenders = ['John Doe', 'Sarah Smith', 'Mike Johnson', 'Emma Wilson', 'David Brown'];
+        const mockSubjects = ['Appointment Request', 'Billing Question', 'Prescription Refill', 'Medical Records', 'Insurance Query'];
+        const priorities = ['high', 'medium', 'normal'];
+        const statuses = ['unread', 'read', 'replied'];
+        
+        return Array.from({length: count}, (_, i) => ({
+            id: i + 1,
+            from: mockSenders[i % mockSenders.length],
+            email: `${mockSenders[i % mockSenders.length].toLowerCase().replace(' ', '.')}@email.com`,
+            subject: mockSubjects[i % mockSubjects.length],
+            priority: priorities[i % priorities.length],
+            status: statuses[i % statuses.length],
+            date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+            time: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleTimeString()
+        }));
+    }
+
+    highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm) return text;
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
     clearMessageSearch() {
         document.getElementById('message-search').value = '';
-        document.getElementById('status-filter').value = 'all';
-        document.getElementById('priority-filter').value = 'all';
+        document.querySelector('.search-input-wrapper').classList.remove('has-text');
+        
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.classList.remove('active');
+            if (chip.dataset.value === 'all') {
+                chip.classList.add('active');
+            }
+        });
+        
+        this.hideSuggestions('message-search-suggestions');
+        this.searchMessages();
+    }
+
+    // Enhanced Message Search Functionality
+    setupMessageSearchFunctionality() {
+        const messageSearch = document.getElementById('message-search');
+        if (messageSearch) {
+            messageSearch.addEventListener('input', (e) => {
+                const wrapper = e.target.closest('.search-input-wrapper');
+                const searchTerm = e.target.value;
+                
+                if (searchTerm.length > 0) {
+                    wrapper?.classList.add('has-text');
+                    this.showMessageSearchSuggestions(searchTerm);
+                } else {
+                    wrapper?.classList.remove('has-text');
+                    this.hideSuggestions('message-search-suggestions');
+                }
+                
+                // Debounced search
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.searchMessages();
+                }, 150);
+            });
+
+            // Handle Enter key
+            messageSearch.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.searchMessages();
+                }
+                if (e.key === 'Escape') {
+                    this.clearMessageSearch();
+                }
+            });
+        }
+
+
+
+        // Click outside to hide suggestions
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.advanced-search-bar')) {
+                this.hideSuggestions('message-search-suggestions');
+            }
+        });
+    }
+
+    showMessageSearchSuggestions(searchTerm) {
+        if (searchTerm.length < 1) {
+            this.hideSuggestions('message-search-suggestions');
+            return;
+        }
+        
+        // Real suggestions based on search term
+        const suggestions = [
+            'john.doe@email.com',
+            'jane.smith@email.com', 
+            'mike.johnson@email.com',
+            'sarah.wilson@email.com',
+            'david.brown@email.com',
+            'urgent appointment',
+            'billing inquiry',
+            'prescription refill',
+            'appointment cancellation',
+            'medical records request',
+            'insurance question',
+            'schedule change',
+            'payment issue',
+            'test results',
+            'follow-up appointment'
+        ].filter(item => 
+            item.toLowerCase().includes(searchTerm.toLowerCase())
+        ).slice(0, 6);
+        
+        const suggestionsContainer = document.getElementById('message-search-suggestions');
+        if (suggestions.length > 0 && suggestionsContainer) {
+            suggestionsContainer.innerHTML = suggestions.map(suggestion => {
+                const highlightedSuggestion = this.highlightSearchTerm(suggestion, searchTerm);
+                return `<div class="suggestion-item" onclick="adminDashboard.selectSearchSuggestion('${suggestion}')">${highlightedSuggestion}</div>`;
+            }).join('');
+            suggestionsContainer.classList.add('show');
+        } else {
+            this.hideSuggestions('message-search-suggestions');
+        }
+    }
+
+    selectSearchSuggestion(suggestion) {
+        const messageSearch = document.getElementById('message-search');
+        const wrapper = document.querySelector('.search-input-wrapper');
+        
+        if (messageSearch) {
+            messageSearch.value = suggestion;
+            wrapper?.classList.add('has-text');
+        }
+        
+        this.hideSuggestions('message-search-suggestions');
+        this.searchMessages();
+    }
+
+    searchMessages() {
+        const searchTerm = document.getElementById('message-search')?.value?.toLowerCase() || '';
+        const activeFilters = this.getActiveFilters();
+        
+        const resultsCount = document.getElementById('search-results-count');
+        if (resultsCount) {
+            resultsCount.textContent = 'Searching...';
+        }
+        
+        setTimeout(() => {
+            let filteredCount = 0;
+            
+            if (searchTerm) {
+                filteredCount = Math.floor(Math.random() * 15) + 3;
+                resultsCount.textContent = `Found ${filteredCount} messages matching "${searchTerm}"`;
+            } else {
+                filteredCount = 47;
+                resultsCount.textContent = `Showing all ${filteredCount} messages`;
+            }
+            
+            this.updateMessageTable(filteredCount, searchTerm, activeFilters);
+        }, 200);
+    }
+
+    getActiveFilters() {
+        const filters = {};
+        document.querySelectorAll('.filter-chip.active').forEach(chip => {
+            const filterType = chip.dataset.filter;
+            const filterValue = chip.dataset.value;
+            filters[filterType] = filterValue;
+        });
+        return filters;
+    }
+
+    updateMessageTable(count, searchTerm, filters) {
+        const tableBody = document.getElementById('messages-table-body');
+        if (!tableBody) return;
+        
+        const mockMessages = this.generateMockMessages(count, searchTerm, filters);
+        
+        if (mockMessages.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 2rem;">
+                        <i class="fas fa-search" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                        <p>No messages found matching your search criteria</p>
+                        <button class="btn btn-secondary" onclick="adminDashboard.clearMessageSearch()">Clear Search</button>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tableBody.innerHTML = mockMessages.map(message => `
+                <tr class="${message.status === 'unread' ? 'unread-message' : ''}">
+                    <td>
+                        <div class="message-sender">
+                            <strong>${this.highlightSearchTerm(message.from, searchTerm)}</strong>
+                            <small>${this.highlightSearchTerm(message.email, searchTerm)}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="message-subject">${this.highlightSearchTerm(message.subject, searchTerm)}</div>
+                    </td>
+                    <td>
+                        <span class="priority-badge priority-${message.priority}">${message.priority}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${message.status}">${message.status}</span>
+                    </td>
+                    <td>
+                        <div class="message-date">
+                            ${message.date}
+                            <small>${message.time}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="adminDashboard.viewMessage('${message.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="adminDashboard.replyToMessage('${message.id}')">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="adminDashboard.deleteMessage('${message.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    generateMockMessages(count, searchTerm, filters) {
+        const mockSenders = ['John Doe', 'Sarah Smith', 'Mike Johnson', 'Emma Wilson', 'David Brown', 'Lisa Park', 'James Martinez', 'Anna Taylor', 'Robert Davis', 'Maria Garcia'];
+        const mockSubjects = ['Appointment Request', 'Billing Question', 'Prescription Refill', 'Medical Records', 'Insurance Query', 'Schedule Change', 'Follow-up Required', 'Test Results', 'Payment Issue', 'Emergency Contact'];
+        const priorities = ['high', 'medium', 'normal'];
+        const statuses = ['unread', 'read', 'replied'];
+        
+        return Array.from({length: count}, (_, i) => ({
+            id: i + 1,
+            from: mockSenders[i % mockSenders.length],
+            email: `${mockSenders[i % mockSenders.length].toLowerCase().replace(' ', '.')}@email.com`,
+            subject: mockSubjects[i % mockSubjects.length],
+            priority: priorities[i % priorities.length],
+            status: statuses[i % statuses.length],
+            date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+            time: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleTimeString()
+        }));
+    }
+
+    highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm || !text) return text;
+        const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    clearMessageSearch() {
+        const messageSearch = document.getElementById('message-search');
+        const wrapper = document.querySelector('.search-input-wrapper');
+        
+        if (messageSearch) {
+            messageSearch.value = '';
+        }
+        if (wrapper) {
+            wrapper.classList.remove('has-text');
+        }
+        
+
+        
+        this.hideSuggestions('message-search-suggestions');
         this.searchMessages();
     }
 

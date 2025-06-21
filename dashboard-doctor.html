@@ -13,6 +13,7 @@
             display: flex;
             min-height: 100vh;
             padding-top: 70px;
+            overflow: hidden;
         }
         
         .sidebar {
@@ -103,6 +104,22 @@
             margin-left: 280px;
             padding: 2rem;
             background: var(--bg-color);
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Ensure smooth scrolling for content */
+        .main-content {
+            scroll-behavior: smooth;
+        }
+
+        /* Fix mobile responsiveness */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
         }
         
         .dashboard-header {
@@ -806,9 +823,7 @@
     </nav>
 
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-        <i class="fas fa-bars"></i>
-    </button>
+
 
     <div class="dashboard-container">
         <!-- Sidebar -->
