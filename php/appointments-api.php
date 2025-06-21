@@ -74,9 +74,9 @@ function bookAppointment($db) {
         
         if (!$patient) {
             // Create new user
-            $user_id = $db->insert(
+            $db->query(
                 "INSERT INTO users (username, email, password_hash, role, first_name, last_name, phone, created_at) 
-                 VALUES (?, ?, ?, 'patient', ?, ?, ?, NOW()) RETURNING id",
+                 VALUES (?, ?, ?, 'patient', ?, ?, ?, NOW())",
                 [
                     strtolower(str_replace(' ', '', $input['patient_name'])),
                     $input['patient_email'],
@@ -87,11 +87,15 @@ function bookAppointment($db) {
                 ]
             );
             
+            $user_id = $db->getConnection()->lastInsertId();
+            
             // Create patient record
-            $patient_id = $db->insert(
-                "INSERT INTO patients (user_id, created_at) VALUES (?, NOW()) RETURNING id",
+            $db->query(
+                "INSERT INTO patients (user_id, created_at) VALUES (?, NOW())",
                 [$user_id]
             );
+            
+            $patient_id = $db->getConnection()->lastInsertId();
         } else {
             $patient_id = $patient['id'];
         }
@@ -118,12 +122,12 @@ function bookAppointment($db) {
         $booking_reference = $db->generateBookingReference();
         
         // Create appointment
-        $appointment_id = $db->insert(
+        $db->query(
             "INSERT INTO appointments (
                 patient_id, doctor_id, appointment_date, appointment_time, 
                 reason_for_visit, consultation_fee, booking_reference, 
                 status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW()) RETURNING id",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW())",
             [
                 $patient_id,
                 $input['doctor_id'],
@@ -134,6 +138,8 @@ function bookAppointment($db) {
                 $booking_reference
             ]
         );
+        
+        $appointment_id = $db->getConnection()->lastInsertId();
         
         // Mark slot as booked
         $db->query(

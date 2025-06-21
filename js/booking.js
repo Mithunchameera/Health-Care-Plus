@@ -1,5 +1,5 @@
 // Booking System JavaScript for HealthCare+ Website
-// Handles multi-step appointment booking process
+// Handles multi-step appointment booking process with database integration
 
 class BookingManager {
     constructor() {
@@ -10,6 +10,7 @@ class BookingManager {
         this.selectedTime = null;
         this.availableSlots = [];
         this.doctors = [];
+        this.displayedMonth = new Date();
         
         this.init();
     }
@@ -18,8 +19,10 @@ class BookingManager {
         this.setupStepNavigation();
         await this.loadDoctors();
         this.setupCalendar();
+        this.setupDoctorSearch();
         this.bindEvents();
         this.checkURLParams();
+        
         // Initialize back to top button
         if (window.HealthCare && window.HealthCare.initializeBackToTop) {
             window.HealthCare.initializeBackToTop();
@@ -48,7 +51,7 @@ class BookingManager {
                 }
             }
             
-            // If not in sessionStorage, find from local doctors array
+            // Find from loaded doctors array
             const doctor = this.doctors.find(d => d.id == doctorId);
             if (doctor) {
                 this.selectDoctor(doctor);
@@ -81,318 +84,228 @@ class BookingManager {
     
     async loadDoctors() {
         try {
-            // Load comprehensive doctor data
-            this.doctors = [
-            {
-                id: 1,
-                name: "Dr. Sarah Johnson",
-                specialty: "Cardiologist",
-                subspecialty: "Interventional Cardiology",
-                experience: 15,
-                rating: 4.9,
-                reviews: 234,
-                fee: 150,
-                available: true,
-                education: "MD - Harvard Medical School",
-                hospital: "City General Hospital",
-                languages: ["English", "Spanish"],
-                about: "Dr. Johnson specializes in advanced cardiac procedures with over 15 years of experience treating complex heart conditions.",
-                conditions: ["Heart Disease", "Hypertension", "Arrhythmia", "Heart Failure"],
-                nextAvailable: "Today 2:00 PM",
-                consultationType: ["In-person", "Video Call"]
-            },
-            {
-                id: 2,
-                name: "Dr. Michael Chen",
-                specialty: "Orthopedic Surgeon",
-                experience: 12,
-                rating: 4.8,
-                reviews: 189,
-                fee: 180,
-                available: true
-            },
-            {
-                id: 3,
-                name: "Dr. Emily Rodriguez",
-                specialty: "Pediatrician",
-                experience: 8,
-                rating: 4.7,
-                reviews: 156,
-                fee: 120,
-                available: true
-            },
-            {
-                id: 4,
-                name: "Dr. David Wilson",
-                specialty: "Dermatologist",
-                experience: 10,
-                rating: 4.6,
-                reviews: 142,
-                fee: 140,
-                available: true
-            },
-            {
-                id: 5,
-                name: "Dr. Lisa Anderson",
-                specialty: "Neurologist",
-                experience: 14,
-                rating: 4.9,
-                reviews: 198,
-                fee: 170,
-                available: true
-            },
-            {
-                id: 6,
-                name: "Dr. James Thompson",
-                specialty: "General Surgeon",
-                experience: 18,
-                rating: 4.8,
-                reviews: 267,
-                fee: 200,
-                available: true
-            },
-            {
-                id: 7,
-                name: "Dr. Maria Garcia",
-                specialty: "Gynecologist",
-                experience: 11,
-                rating: 4.7,
-                reviews: 178,
-                fee: 160,
-                available: true
-            },
-            {
-                id: 8,
-                name: "Dr. Robert Kim",
-                specialty: "Psychiatrist",
-                experience: 9,
-                rating: 4.6,
-                reviews: 134,
-                fee: 130,
-                available: true
-            },
-            {
-                id: 9,
-                name: "Dr. Jennifer Lee",
-                specialty: "Ophthalmologist",
-                experience: 13,
-                rating: 4.8,
-                reviews: 201,
-                fee: 155,
-                available: true
-            },
-            {
-                id: 10,
-                name: "Dr. Mark Davis",
-                specialty: "Endocrinologist",
-                experience: 16,
-                rating: 4.9,
-                reviews: 223,
-                fee: 165,
-                available: true
+            // Load doctors from the database API
+            const response = await fetch('php/patient-api.php?action=get_doctors');
+            const result = await response.json();
+            
+            if (result.success && result.doctors) {
+                this.doctors = result.doctors;
+                console.log('Loaded doctors successfully:', this.doctors.length);
+            } else {
+                console.error('Failed to load doctors:', result.error);
+                this.doctors = [];
             }
-        ];
-            this.displayDoctorList(this.doctors);
         } catch (error) {
-            console.error('Failed to load doctors:', error);
-            this.showError('Failed to load doctors list');
+            console.error('Error loading doctors:', error);
+            this.doctors = [];
         }
+        
+        // Display the list immediately
+        this.displayDoctorList(this.doctors);
     }
     
     displayDoctorList(doctors) {
-        const doctorList = document.getElementById('doctors-container');
+        const doctorList = document.getElementById('doctor-list');
+        
         if (!doctorList) {
-            console.error('Doctors container not found');
+            console.error('Doctor list container not found!');
             return;
         }
         
         if (!doctors || doctors.length === 0) {
             doctorList.innerHTML = `
-                <div class="no-doctors-message">
-                    <div class="no-doctors-icon">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <h3>No Doctors Available</h3>
-                    <p>Please try adjusting your search criteria or contact support.</p>
+                <div class="no-doctors" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <i class="fas fa-user-md" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>No doctors available at this time.</p>
                 </div>
             `;
             return;
         }
         
-        console.log('Displaying doctors:', doctors.length);
-        
         doctorList.innerHTML = doctors.map(doctor => `
-            <div class="doctor-card booking-doctor" data-doctor-id="${doctor.id}">
-                <div class="doctor-header">
-                    <div class="doctor-avatar">
-                        ${doctor.name.split(' ').map(n => n[0]).join('')}
+            <div class="doctor-card" data-doctor-id="${doctor.id}">
+                <div class="doctor-info">
+                    <div class="doctor-header">
+                        <h3>${doctor.name}</h3>
+                        <span class="specialty">${doctor.specialty}</span>
                     </div>
-                    <div class="doctor-basic-info">
-                        <h4 class="doctor-name">${doctor.name}</h4>
-                        <p class="doctor-specialty">${doctor.specialty}</p>
-                        <p class="doctor-subspecialty">${doctor.subspecialty || ''}</p>
-                        <div class="doctor-status ${doctor.available ? 'available' : 'busy'}">
-                            ${doctor.available ? 'Available Today' : 'Busy'}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="doctor-details">
-                    <div class="doctor-meta-info">
-                        <div class="meta-item">
+                    <div class="doctor-details">
+                        <div class="experience">
                             <i class="fas fa-graduation-cap"></i>
-                            <span>${doctor.experience} years experience</span>
+                            ${doctor.experience} years experience
                         </div>
-                        <div class="meta-item">
-                            <i class="fas fa-hospital"></i>
-                            <span>${doctor.hospital || 'Medical Center'}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="doctor-rating">
-                        <div class="stars">
+                        <div class="rating">
                             ${this.generateStars(doctor.rating)}
+                            <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
                         </div>
-                        <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
+                        <div class="fee">
+                            <i class="fas fa-dollar-sign"></i>
+                            Consultation: $${doctor.fee}
+                        </div>
+                        ${doctor.bio ? `<div class="bio">${doctor.bio}</div>` : ''}
+                        ${doctor.languages ? `<div class="languages">Languages: ${doctor.languages.join(', ')}</div>` : ''}
                     </div>
-                    
-                    <div class="doctor-specialties">
-                        ${doctor.conditions ? doctor.conditions.slice(0, 3).map(condition => 
-                            `<span class="specialty-tag">${condition}</span>`
-                        ).join('') : ''}
+                    <div class="doctor-actions">
+                        <button class="btn btn-primary select-doctor-btn" 
+                                data-doctor-id="${doctor.id}">
+                            Select Doctor
+                        </button>
+                        <button class="btn btn-outline view-profile-btn" 
+                                data-doctor-id="${doctor.id}">
+                            View Profile
+                        </button>
                     </div>
-                    
-                    <div class="doctor-fee">
-                        <span class="fee-label">Consultation Fee:</span>
-                        <strong class="fee-amount">$${doctor.fee}</strong>
-                    </div>
-                    
-                    <div class="next-available">
-                        <i class="fas fa-clock"></i>
-                        <span>Next: ${doctor.nextAvailable || 'Contact clinic'}</span>
-                    </div>
-                </div>
-                
-                <div class="doctor-actions">
-                    <button class="btn-view-details" onclick="bookingManager.viewDoctorDetails(${doctor.id})">
-                        <i class="fas fa-info-circle"></i>
-                        View Profile
-                    </button>
-                    <button class="btn-select-doctor" onclick="bookingManager.selectDoctor(${JSON.stringify(doctor).replace(/"/g, '&quot;')})">
-                        <i class="fas fa-calendar-check"></i>
-                        Book Appointment
-                    </button>
                 </div>
             </div>
         `).join('');
         
-        // Add click handlers
-        doctorList.querySelectorAll('.booking-doctor').forEach(card => {
-            card.addEventListener('click', () => {
-                const doctorId = parseInt(card.dataset.doctorId);
-                const doctor = doctors.find(d => d.id === doctorId);
+        this.addDoctorCardStyles();
+        this.setupDoctorEventListeners();
+    }
+    
+    setupDoctorEventListeners() {
+        // Add event listeners for select doctor buttons
+        document.querySelectorAll('.select-doctor-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const doctorId = parseInt(e.target.getAttribute('data-doctor-id'));
+                const doctor = this.doctors.find(d => d.id === doctorId);
                 if (doctor) {
                     this.selectDoctor(doctor);
                 }
             });
         });
+
+        // Add event listeners for view profile buttons
+        document.querySelectorAll('.view-profile-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const doctorId = parseInt(e.target.getAttribute('data-doctor-id'));
+                this.viewDoctorDetails(doctorId);
+            });
+        });
+    }
+
+    addDoctorCardStyles() {
+        if (document.head.querySelector('#doctor-card-styles')) return;
         
-        // Setup search functionality
-        this.setupDoctorSearch();
+        const style = document.createElement('style');
+        style.id = 'doctor-card-styles';
+        style.textContent = `
+            .doctor-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .doctor-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+            }
+            .doctor-card.selected {
+                border-color: var(--primary-color);
+                background: rgba(37, 99, 235, 0.05);
+            }
+            .doctor-header h3 {
+                color: var(--primary-color);
+                margin: 0 0 0.5rem 0;
+            }
+            .specialty {
+                background: var(--primary-color);
+                color: white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+            .doctor-details > div {
+                margin: 0.5rem 0;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-secondary);
+            }
+            .rating .fas {
+                color: #fbbf24;
+            }
+            .bio {
+                font-style: italic;
+                color: var(--text-color);
+                margin: 1rem 0;
+            }
+            .doctor-actions {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            .no-doctors {
+                text-align: center;
+                padding: 3rem;
+                color: var(--text-secondary);
+            }
+            .no-doctors i {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+            }
+        `;
+        document.head.appendChild(style);
     }
     
     setupDoctorSearch() {
-        const searchInput = document.getElementById('doctorSearchInput');
-        if (!searchInput) return;
+        const searchInput = document.getElementById('doctor-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredDoctors = this.doctors.filter(doctor => 
+                    doctor.name.toLowerCase().includes(searchTerm) ||
+                    doctor.specialty.toLowerCase().includes(searchTerm)
+                );
+                this.displayDoctorList(filteredDoctors);
+            });
+        }
         
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredDoctors = this.doctors.filter(doctor => 
-                doctor.name.toLowerCase().includes(searchTerm) ||
-                doctor.specialty.toLowerCase().includes(searchTerm)
-            );
-            this.displayDoctorList(filteredDoctors);
-        });
+        // Add specialty filter
+        const specialtyFilter = document.getElementById('specialty-filter');
+        if (specialtyFilter) {
+            specialtyFilter.addEventListener('change', (e) => {
+                const specialty = e.target.value;
+                const filteredDoctors = specialty === 'all' ? 
+                    this.doctors : 
+                    this.doctors.filter(doctor => doctor.specialty === specialty);
+                this.displayDoctorList(filteredDoctors);
+            });
+        }
     }
     
     selectDoctor(doctor) {
-        console.log('Selecting doctor:', doctor);
         this.selectedDoctor = doctor;
         
-        // Remove any existing selection highlights
-        document.querySelectorAll('.doctor-card.selected').forEach(card => {
+        // Update UI to show selection
+        document.querySelectorAll('.doctor-card').forEach(card => {
             card.classList.remove('selected');
         });
         
-        // Highlight selected doctor card
         const selectedCard = document.querySelector(`[data-doctor-id="${doctor.id}"]`);
         if (selectedCard) {
             selectedCard.classList.add('selected');
         }
         
-        // Update UI with selected doctor info
-        const selectedDoctorDiv = document.getElementById('selectedDoctor');
-        if (selectedDoctorDiv) {
-            selectedDoctorDiv.style.display = 'block';
-            selectedDoctorDiv.innerHTML = `
-                <div class="selected-doctor-info">
-                    <div class="doctor-avatar small">
-                        ${doctor.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div class="selected-info">
-                        <h4>${doctor.name}</h4>
-                        <p>${doctor.specialty}</p>
-                        <p class="fee-info"><strong>$${doctor.fee}</strong> consultation fee</p>
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="bookingManager.clearDoctorSelection()">
-                        <i class="fas fa-edit"></i> Change Doctor
-                    </button>
-                </div>
-            `;
-        }
-        
-        // Hide doctor list container
-        const doctorsContainer = document.getElementById('doctors-container');
-        if (doctorsContainer) {
-            doctorsContainer.style.display = 'none';
-        }
-        
-        // Enable next button and update validation
         this.updateStepValidation();
-        
-        // Show notification
-        this.showNotification(`Selected ${doctor.name} - ${doctor.specialty}`, 'success');
+        this.showNotification(`Selected ${doctor.name} for consultation`, 'success');
     }
     
     clearDoctorSelection() {
         this.selectedDoctor = null;
-        
-        // Remove selection highlights
-        document.querySelectorAll('.doctor-card.selected').forEach(card => {
+        document.querySelectorAll('.doctor-card').forEach(card => {
             card.classList.remove('selected');
         });
-        
-        const selectedDoctorDiv = document.getElementById('selectedDoctor');
-        if (selectedDoctorDiv) {
-            selectedDoctorDiv.style.display = 'none';
-        }
-        
-        const doctorsContainer = document.getElementById('doctors-container');
-        if (doctorsContainer) {
-            doctorsContainer.style.display = 'block';
-        }
-        
         this.updateStepValidation();
     }
     
     setupCalendar() {
-        const currentMonth = document.getElementById('current-month');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
-        const calendarGrid = document.getElementById('calendar-grid');
-        
-        this.currentDate = new Date();
-        this.displayedMonth = new Date();
         
         if (prevMonthBtn) {
             prevMonthBtn.addEventListener('click', () => {
@@ -511,8 +424,25 @@ class BookingManager {
             });
         }
         
-        // Generate realistic time slots for the selected date
-        this.availableSlots = this.generateTimeSlots(date);
+        try {
+            // Load available time slots from the database
+            const response = await fetch(`php/appointments-api.php?action=get_available_slots&doctor_id=${this.selectedDoctor.id}&date=${date.toISOString().split('T')[0]}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                this.availableSlots = result.slots.map(time => ({
+                    time: time,
+                    available: true
+                }));
+            } else {
+                console.error('Failed to load time slots:', result.error);
+                this.availableSlots = [];
+            }
+        } catch (error) {
+            console.error('Error loading time slots:', error);
+            this.availableSlots = [];
+        }
+        
         this.displayTimeSlots();
     }
     
@@ -551,103 +481,47 @@ class BookingManager {
     selectTime(time) {
         this.selectedTime = time;
         
-        // Update UI
+        // Update UI to show selection
         document.querySelectorAll('.time-slot-modern').forEach(slot => {
             slot.classList.remove('selected');
         });
         
-        document.querySelector(`[data-time="${time}"]`).classList.add('selected');
-        
-        this.updateStepValidation();
-    }
-    
-    generateTimeSlots(date) {
-        const slots = [];
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-        
-        // Define working hours based on day
-        const startHour = isWeekend ? 10 : 9; // Later start on weekends
-        const endHour = isWeekend ? 16 : 18; // Earlier end on weekends
-        const slotDuration = 30; // 30-minute slots
-        
-        for (let hour = startHour; hour < endHour; hour++) {
-            for (let minute = 0; minute < 60; minute += slotDuration) {
-                const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                const displayTime = this.formatTime(timeStr);
-                
-                // Randomly make some slots unavailable (simulate real booking scenario)
-                const isAvailable = Math.random() > 0.3; // 70% availability rate
-                
-                // Don't show past times for today
-                const now = new Date();
-                const slotDateTime = new Date(date);
-                slotDateTime.setHours(hour, minute, 0, 0);
-                
-                const isPastTime = date.toDateString() === now.toDateString() && slotDateTime <= now;
-                
-                if (!isPastTime) {
-                    slots.push({
-                        time: displayTime,
-                        value: timeStr,
-                        available: isAvailable
-                    });
-                }
-            }
+        const selectedSlot = document.querySelector(`[data-time="${time}"]`);
+        if (selectedSlot) {
+            selectedSlot.classList.add('selected');
         }
         
-        return slots;
+        this.updateStepValidation();
+        this.showNotification(`Selected time: ${time}`, 'success');
     }
     
     nextStep() {
-        if (!this.validateCurrentStep()) {
-            return;
-        }
+        if (!this.validateCurrentStep()) return;
         
         if (this.currentStep < this.totalSteps) {
             this.currentStep++;
             this.updateStepDisplay();
             this.updateStepIndicator();
-            this.smoothScrollToStep();
+            this.updateNavigationButtons();
             
             if (this.currentStep === 4) {
                 this.updateSummary();
             }
+            
+            // Smooth scroll to the current step
+            setTimeout(() => {
+                this.smoothScrollToStep();
+            }, 200);
         }
     }
-
+    
     smoothScrollToStep() {
-        const currentStepElement = document.querySelector(`.booking-step[data-step="${this.currentStep}"]`);
+        const currentStepElement = document.getElementById(`step${this.currentStep}`);
         if (currentStepElement) {
-            // Add transition effect
-            currentStepElement.style.opacity = '0';
-            currentStepElement.style.transform = 'translateX(30px)';
-            
-            setTimeout(() => {
-                currentStepElement.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-                
-                // Animate in the new step
-                currentStepElement.style.transition = 'all 0.6s ease-out';
-                currentStepElement.style.opacity = '1';
-                currentStepElement.style.transform = 'translateX(0)';
-                
-                // Focus on interactive elements
-                const focusElement = currentStepElement.querySelector('input, select, .doctor-card, .time-slot, .btn-primary');
-                if (focusElement) {
-                    setTimeout(() => {
-                        focusElement.focus();
-                        if (focusElement.scrollIntoView) {
-                            focusElement.scrollIntoView({ 
-                                behavior: 'smooth', 
-                                block: 'center' 
-                            });
-                        }
-                    }, 700);
-                }
-            }, 200);
+            currentStepElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     }
     
@@ -656,6 +530,7 @@ class BookingManager {
             this.currentStep--;
             this.updateStepDisplay();
             this.updateStepIndicator();
+            this.updateNavigationButtons();
         }
     }
     
@@ -714,7 +589,7 @@ class BookingManager {
         if (phoneField && phoneField.value) {
             const phoneRegex = /^[\+]?[1-9][\d]{9,14}$/;
             const cleanPhone = phoneField.value.replace(/\D/g, '');
-            if (!phoneRegex.test(cleanPhone)) {
+            if (cleanPhone.length < 10) {
                 this.showFieldError(phoneField, 'Please enter a valid phone number');
                 isValid = false;
             }
@@ -748,55 +623,102 @@ class BookingManager {
             currentStepElement.style.display = 'block';
         }
         
-        // Update navigation buttons
         this.updateNavigationButtons();
     }
     
     updateStepIndicator() {
-        document.querySelectorAll('.step').forEach((step, index) => {
-            step.classList.remove('active');
-            if (index + 1 === this.currentStep) {
-                step.classList.add('active');
+        for (let i = 1; i <= this.totalSteps; i++) {
+            const indicator = document.querySelector(`.step-indicator[data-step="${i}"]`);
+            if (indicator) {
+                indicator.classList.toggle('active', i === this.currentStep);
+                indicator.classList.toggle('completed', i < this.currentStep);
             }
-        });
+        }
     }
     
     updateNavigationButtons() {
-        const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         const confirmBtn = document.getElementById('confirmBtn');
         
         if (prevBtn) {
-            prevBtn.style.display = this.currentStep > 1 ? 'block' : 'none';
+            prevBtn.style.display = this.currentStep > 1 ? 'inline-block' : 'none';
         }
         
         if (nextBtn) {
-            nextBtn.style.display = this.currentStep < this.totalSteps ? 'block' : 'none';
+            nextBtn.style.display = this.currentStep < this.totalSteps ? 'inline-block' : 'none';
         }
         
         if (confirmBtn) {
-            confirmBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+            confirmBtn.style.display = this.currentStep === this.totalSteps ? 'inline-block' : 'none';
         }
     }
     
     updateStepValidation() {
-        this.updateNavigationButtons();
+        const nextBtn = document.getElementById('nextBtn');
+        if (!nextBtn) return;
+        
+        let isValid = false;
+        
+        switch (this.currentStep) {
+            case 1:
+                isValid = !!this.selectedDoctor;
+                break;
+            case 2:
+                isValid = !!(this.selectedDate && this.selectedTime);
+                break;
+            case 3:
+                isValid = this.validatePatientForm();
+                break;
+            default:
+                isValid = true;
+        }
+        
+        nextBtn.disabled = !isValid;
+        nextBtn.classList.toggle('disabled', !isValid);
     }
     
     updateSummary() {
-        document.getElementById('summaryDoctor').textContent = `Dr. ${this.selectedDoctor.name}`;
-        document.getElementById('summarySpecialty').textContent = this.selectedDoctor.specialty;
-        document.getElementById('summaryDate').textContent = this.selectedDate.toLocaleDateString();
-        document.getElementById('summaryTime').textContent = this.selectedTime;
-        document.getElementById('summaryPatient').textContent = document.getElementById('patientName').value;
-        document.getElementById('summaryFee').textContent = `$${this.selectedDoctor.fee}`;
+        if (!this.selectedDoctor || !this.selectedDate || !this.selectedTime) return;
+        
+        const summaryContent = document.getElementById('summary-content');
+        if (!summaryContent) return;
+        
+        const bookingData = this.collectBookingData();
+        
+        summaryContent.innerHTML = `
+            <div class="summary-section">
+                <h4>Doctor Information</h4>
+                <p><strong>Doctor:</strong> ${this.selectedDoctor.name}</p>
+                <p><strong>Specialty:</strong> ${this.selectedDoctor.specialty}</p>
+                <p><strong>Consultation Fee:</strong> $${this.selectedDoctor.fee}</p>
+            </div>
+            <div class="summary-section">
+                <h4>Appointment Details</h4>
+                <p><strong>Date:</strong> ${this.selectedDate.toLocaleDateString()}</p>
+                <p><strong>Time:</strong> ${this.selectedTime}</p>
+            </div>
+            <div class="summary-section">
+                <h4>Patient Information</h4>
+                <p><strong>Name:</strong> ${bookingData.patientName}</p>
+                <p><strong>Age:</strong> ${bookingData.patientAge}</p>
+                <p><strong>Gender:</strong> ${bookingData.patientGender}</p>
+                <p><strong>Phone:</strong> ${bookingData.patientPhone}</p>
+                <p><strong>Email:</strong> ${bookingData.patientEmail}</p>
+            </div>
+        `;
     }
     
     async confirmBooking() {
+        const confirmBtn = document.getElementById('confirmBtn');
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Booking...';
+        }
+        
         try {
             const bookingData = this.collectBookingData();
             
-            // Prepare API request data
             const appointmentData = {
                 doctor_id: this.selectedDoctor.id,
                 appointment_date: this.selectedDate.toISOString().split('T')[0],
@@ -827,6 +749,11 @@ class BookingManager {
         } catch (error) {
             console.error('Error confirming booking:', error);
             this.showError('Failed to confirm booking. Please try again.');
+        } finally {
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Confirm Booking';
+            }
         }
     }
     
@@ -835,13 +762,13 @@ class BookingManager {
             doctorId: this.selectedDoctor.id,
             date: this.selectedDate.toISOString().split('T')[0],
             time: this.selectedTime,
-            patientName: document.getElementById('patientName').value,
-            patientAge: document.getElementById('patientAge').value,
-            patientGender: document.getElementById('patientGender').value,
-            patientPhone: document.getElementById('patientPhone').value,
-            patientEmail: document.getElementById('patientEmail').value,
-            symptoms: document.getElementById('symptoms').value,
-            medicalHistory: document.getElementById('medicalHistory').value
+            patientName: document.getElementById('patientName')?.value || '',
+            patientAge: document.getElementById('patientAge')?.value || '',
+            patientGender: document.getElementById('patientGender')?.value || '',
+            patientPhone: document.getElementById('patientPhone')?.value || '',
+            patientEmail: document.getElementById('patientEmail')?.value || '',
+            symptoms: document.getElementById('symptoms')?.value || '',
+            medicalHistory: document.getElementById('medicalHistory')?.value || ''
         };
     }
     
@@ -856,7 +783,7 @@ class BookingManager {
                 <p>Your appointment has been successfully booked and saved to your appointments.</p>
                 <div class="booking-details">
                     <p><strong>Booking Reference:</strong> ${bookingReference}</p>
-                    <p><strong>Doctor:</strong> Dr. ${this.selectedDoctor.name}</p>
+                    <p><strong>Doctor:</strong> ${this.selectedDoctor.name}</p>
                     <p><strong>Date:</strong> ${this.selectedDate.toLocaleDateString()}</p>
                     <p><strong>Time:</strong> ${this.selectedTime}</p>
                     <p><strong>Consultation Fee:</strong> $${appointment.consultation_fee}</p>
@@ -870,7 +797,6 @@ class BookingManager {
         `;
     }
     
-    // Utility methods
     bindEvents() {
         const form = document.getElementById('bookingForm');
         if (form) {
@@ -905,228 +831,182 @@ class BookingManager {
     }
     
     isSameDate(date1, date2) {
-        return date1.toDateString() === date2.toDateString();
+        return date1.getFullYear() === date2.getFullYear() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getDate() === date2.getDate();
     }
-
+    
     viewDoctorDetails(doctorId) {
         const doctor = this.doctors.find(d => d.id === doctorId);
         if (!doctor) return;
         
+        // Create and show doctor details modal
         const modal = document.createElement('div');
-        modal.className = 'modal-overlay doctor-details-modal';
+        modal.className = 'doctor-details-modal';
         modal.innerHTML = `
-            <div class="modal-content large-modal">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-user-md"></i> Doctor Profile - ${doctor.name}</h3>
-                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                    <h3>${doctor.name}</h3>
+                    <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="doctor-profile-container">
-                        <div class="doctor-profile-header">
-                            <div class="doctor-avatar-xl">
-                                ${doctor.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div class="doctor-profile-info">
-                                <h2>${doctor.name}</h2>
-                                <p class="doctor-title">${doctor.specialty}</p>
-                                <p class="doctor-subtitle">${doctor.subspecialty || ''}</p>
-                                <div class="doctor-credentials">
-                                    <div class="credential-item">
-                                        <i class="fas fa-graduation-cap"></i>
-                                        <span>${doctor.education || 'Medical Degree'}</span>
-                                    </div>
-                                    <div class="credential-item">
-                                        <i class="fas fa-hospital"></i>
-                                        <span>${doctor.hospital || 'Medical Center'}</span>
-                                    </div>
-                                    <div class="credential-item">
-                                        <i class="fas fa-calendar"></i>
-                                        <span>${doctor.experience} years experience</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="doctor-profile-stats">
-                                <div class="stat-card">
-                                    <div class="stat-number">${doctor.rating}</div>
-                                    <div class="stat-label">Rating</div>
-                                    <div class="stat-stars">${this.generateStars(doctor.rating)}</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-number">${doctor.reviews}</div>
-                                    <div class="stat-label">Reviews</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-number">$${doctor.fee}</div>
-                                    <div class="stat-label">Consultation</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="doctor-profile-content">
-                            <div class="profile-section">
-                                <h4><i class="fas fa-info-circle"></i> About Dr. ${doctor.name.split(' ').slice(-1)[0]}</h4>
-                                <p>${doctor.about || 'Experienced healthcare professional dedicated to providing quality medical care.'}</p>
-                            </div>
-                            
-                            <div class="profile-section">
-                                <h4><i class="fas fa-stethoscope"></i> Conditions Treated</h4>
-                                <div class="conditions-grid">
-                                    ${doctor.conditions ? doctor.conditions.map(condition => 
-                                        `<div class="condition-card">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>${condition}</span>
-                                        </div>`
-                                    ).join('') : '<p>General medical conditions</p>'}
-                                </div>
-                            </div>
-                            
-                            <div class="profile-section">
-                                <h4><i class="fas fa-language"></i> Languages Spoken</h4>
-                                <div class="languages-grid">
-                                    ${doctor.languages ? doctor.languages.map(lang => 
-                                        `<span class="language-badge">${lang}</span>`
-                                    ).join('') : '<span class="language-badge">English</span>'}
-                                </div>
-                            </div>
-                            
-                            <div class="profile-section">
-                                <h4><i class="fas fa-video"></i> Consultation Options</h4>
-                                <div class="consultation-options-detailed">
-                                    ${doctor.consultationType ? doctor.consultationType.map(type => 
-                                        `<div class="consultation-option">
-                                            <i class="fas fa-${type === 'Video Call' ? 'video' : 'user-md'}"></i>
-                                            <span>${type}</span>
-                                        </div>`
-                                    ).join('') : '<div class="consultation-option"><i class="fas fa-user-md"></i><span>In-person consultation</span></div>'}
-                                </div>
-                            </div>
-                            
-                            <div class="profile-section">
-                                <h4><i class="fas fa-clock"></i> Availability</h4>
-                                <div class="availability-info">
-                                    <div class="next-slot">
-                                        <strong>Next Available:</strong> ${doctor.nextAvailable || 'Contact clinic'}
-                                    </div>
-                                    <p>Book your appointment now to secure your preferred time slot.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="doctor-specialty">${doctor.specialty}</div>
+                    <div class="doctor-rating">
+                        ${this.generateStars(doctor.rating)} ${doctor.rating} (${doctor.reviews} reviews)
                     </div>
+                    <div class="doctor-experience">${doctor.experience} years of experience</div>
+                    <div class="consultation-fee">Consultation Fee: $${doctor.fee}</div>
+                    ${doctor.bio ? `<div class="doctor-bio">${doctor.bio}</div>` : ''}
+                    ${doctor.languages ? `<div class="languages">Languages: ${doctor.languages.join(', ')}</div>` : ''}
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Close</button>
-                    <button class="btn btn-primary" onclick="bookingManager.selectDoctor(${JSON.stringify(doctor).replace(/"/g, '&quot;')}); this.closest('.modal-overlay').remove();">
-                        <i class="fas fa-calendar-plus"></i> Book Appointment
-                    </button>
+                    <button class="btn btn-primary" onclick="bookingManager.selectDoctor(${JSON.stringify(doctor).replace(/"/g, '&quot;')}); this.closest('.doctor-details-modal').remove();">Select This Doctor</button>
+                    <button class="btn btn-secondary close-modal">Close</button>
                 </div>
             </div>
         `;
         
         document.body.appendChild(modal);
+        
+        // Add modal styles and event listeners
+        this.addModalStyles();
+        this.setupModalEvents(modal);
+    }
+    
+    addModalStyles() {
+        if (document.head.querySelector('#modal-styles')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'modal-styles';
+        style.textContent = `
+            .doctor-details-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background: var(--card-bg);
+                border-radius: 12px;
+                padding: 2rem;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+            .close-modal {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--text-secondary);
+            }
+            .modal-footer {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    setupModalEvents(modal) {
+        modal.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => modal.remove());
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
     }
     
     showError(message) {
-        if (window.HealthCare && window.HealthCare.showNotification) {
-            window.HealthCare.showNotification(message, 'error');
-        } else {
-            alert(message);
-        }
+        this.showNotification(message, 'error');
     }
     
     showFieldError(field, message) {
-        field.style.borderColor = 'var(--error-color)';
+        this.clearFieldError(field);
         
-        // Remove existing error
-        const existingError = field.parentNode.parentNode.querySelector('.field-error');
-        if (existingError) {
-            existingError.remove();
-        }
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = message;
+        errorDiv.style.color = '#ef4444';
+        errorDiv.style.fontSize = '0.875rem';
+        errorDiv.style.marginTop = '0.25rem';
         
-        const errorElement = document.createElement('div');
-        errorElement.className = 'field-error';
-        errorElement.textContent = message;
-        errorElement.style.color = 'var(--error-color)';
-        errorElement.style.fontSize = '0.8rem';
-        errorElement.style.marginTop = '0.25rem';
-        
-        field.parentNode.parentNode.appendChild(errorElement);
+        field.parentNode.appendChild(errorDiv);
+        field.style.borderColor = '#ef4444';
     }
     
     clearFieldError(field) {
-        field.style.borderColor = 'var(--border-color)';
-        const errorElement = field.parentNode.parentNode.querySelector('.field-error');
-        if (errorElement) {
-            errorElement.remove();
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
         }
+        field.style.borderColor = '';
     }
     
     showNotification(message, type = 'info') {
-        if (window.HealthCare && window.HealthCare.showNotification) {
-            window.HealthCare.showNotification(message, type);
-        } else {
-            // Create a simple notification element
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            // Style the notification
-            Object.assign(notification.style, {
-                position: 'fixed',
-                top: '20px',
-                right: '20px',
-                background: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
-                color: 'white',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                zIndex: '10000',
-                fontSize: '14px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                transform: 'translateX(100%)',
-                transition: 'transform 0.3s ease'
-            });
-            
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        
+        const colors = {
+            info: '#3b82f6',
+            success: '#10b981',
+            error: '#ef4444',
+            warning: '#f59e0b'
+        };
+        
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type]};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
     }
     
     formatTime(timeStr) {
-        const [hours, minutes] = timeStr.split(':');
-        const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-        return `${displayHour}:${minutes} ${ampm}`;
-    }
-    
-    isSameDate(date1, date2) {
-        return date1.getFullYear() === date2.getFullYear() &&
-               date1.getMonth() === date2.getMonth() &&
-               date1.getDate() === date2.getDate();
+        if (!timeStr) return '';
+        
+        try {
+            const [hours, minutes] = timeStr.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${displayHour}:${minutes} ${ampm}`;
+        } catch (error) {
+            return timeStr;
+        }
     }
 }
 
-// Initialize booking manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.querySelector('.booking-container-modern')) {
-        window.bookingManager = new BookingManager();
-    }
+// Initialize the booking manager when the page loads
+let bookingManager;
+document.addEventListener('DOMContentLoaded', () => {
+    bookingManager = new BookingManager();
 });

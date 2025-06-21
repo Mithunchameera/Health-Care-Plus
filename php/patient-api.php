@@ -236,20 +236,65 @@ function updateProfile() {
 
 function getDoctors() {
     try {
-        // Use mock data for demo environment - complete doctor list from config
-        $mockStorage = MockDataStorage::getInstance();
-        $doctors = $mockStorage->getDoctors();
+        $db = Database::getInstance();
+        
+        // Get all available doctors with their details
+        $doctors = $db->fetchAll(
+            "SELECT 
+                d.id,
+                d.specialty,
+                d.license_number,
+                d.experience_years,
+                d.consultation_fee,
+                d.rating,
+                d.total_reviews,
+                d.bio,
+                d.languages,
+                d.certifications,
+                d.hospital_affiliations,
+                d.is_available,
+                u.first_name,
+                u.last_name,
+                u.phone,
+                u.email,
+                u.profile_picture
+             FROM doctors d
+             JOIN users u ON d.user_id = u.id
+             WHERE u.is_active = true
+             ORDER BY d.rating DESC, d.total_reviews DESC"
+        );
+        
+        // Format doctor data for frontend
+        $formattedDoctors = array_map(function($doctor) {
+            return [
+                'id' => $doctor['id'],
+                'name' => 'Dr. ' . $doctor['first_name'] . ' ' . $doctor['last_name'],
+                'specialty' => $doctor['specialty'],
+                'experience' => $doctor['experience_years'],
+                'rating' => (float)$doctor['rating'],
+                'reviews' => $doctor['total_reviews'],
+                'fee' => (float)$doctor['consultation_fee'],
+                'available' => (bool)$doctor['is_available'],
+                'bio' => $doctor['bio'],
+                'phone' => $doctor['phone'],
+                'email' => $doctor['email'],
+                'languages' => $doctor['languages'] ? explode(',', trim($doctor['languages'], '{}')) : ['English'],
+                'certifications' => $doctor['certifications'] ? explode(',', trim($doctor['certifications'], '{}')) : [],
+                'hospitals' => $doctor['hospital_affiliations'] ? explode(',', trim($doctor['hospital_affiliations'], '{}')) : [],
+                'profile_picture' => $doctor['profile_picture']
+            ];
+        }, $doctors);
         
         header('Content-Type: application/json');
         echo json_encode([
             'success' => true,
-            'doctors' => $doctors
+            'doctors' => $formattedDoctors
         ]);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode([
             'success' => false,
-            'error' => 'Failed to load doctors'
+            'error' => 'Failed to load doctors: ' . $e->getMessage()
         ]);
     }
 }

@@ -282,6 +282,101 @@
         .hidden {
             display: none;
         }
+
+        .header-actions {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .back-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .back-btn i {
+            font-size: 0.8rem;
+        }
+
+        /* Bottom Navigation Styles */
+        .bottom-navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-background);
+            border-top: 2px solid var(--border-color);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0.5rem 0;
+        }
+
+        .bottom-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .bottom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .bottom-nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav-btn i {
+            font-size: 1.2rem;
+        }
+
+        .bottom-nav-btn span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .back-to-previous {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .back-to-previous:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Add bottom padding to main content to account for fixed bottom nav */
+        .main-content {
+            padding-bottom: 80px;
+        }
     </style>
 </head>
 <body>
@@ -312,6 +407,11 @@
         <div class="container">
             <div class="booking-container">
                 <div class="booking-header">
+                    <div class="header-actions">
+                        <button class="btn btn-secondary back-btn" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                    </div>
                     <h1><i class="fas fa-calendar-plus"></i> Book Your Appointment</h1>
                     <p>Schedule your visit with our healthcare professionals</p>
                 </div>
@@ -362,14 +462,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="doctor-grid" id="doctors-list">
+                        <div class="doctor-grid" id="doctor-list">
                             <!-- Doctors will be loaded here -->
                         </div>
                     </div>
                     
                     <div class="btn-group">
-                        <div></div>
-                        <button class="btn btn-primary" onclick="nextStep()" disabled id="next-1">
+                        <button class="btn btn-secondary back-btn" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" id="nextBtn" disabled>
                             Next <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -379,21 +481,38 @@
                 <div id="step-2" class="step-content hidden">
                     <div class="form-section">
                         <h3>Select Date & Time</h3>
-                        <div class="calendar-grid" id="calendar">
-                            <!-- Calendar will be generated here -->
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button type="button" id="prev-month" class="btn btn-secondary">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h4 id="current-month"></h4>
+                                <button type="button" id="next-month" class="btn btn-secondary">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid">
+                                <!-- Calendar will be generated here -->
+                            </div>
                         </div>
-                        <div class="time-slots" id="time-slots">
-                            <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">
-                                Please select a date first
-                            </p>
+                        <div class="selected-date-display">
+                            <h4>Selected Date: <span id="selected-date-display">Please select a date</span></h4>
+                        </div>
+                        <div class="time-slots-container">
+                            <h4>Available Time Slots</h4>
+                            <div class="time-slots" id="time-slots">
+                                <p style="text-align: center; color: var(--text-secondary);">
+                                    Please select a date first
+                                </p>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">
+                        <button class="btn btn-secondary" id="prevBtn">
                             <i class="fas fa-arrow-left"></i> Back
                         </button>
-                        <button class="btn btn-primary" onclick="nextStep()" disabled id="next-2">
+                        <button class="btn btn-primary" id="nextBtn" disabled>
                             Next <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -405,33 +524,46 @@
                         <h3>Your Information</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="patient-name">Full Name *</label>
-                                <input type="text" id="patient-name" required>
+                                <label for="patientName">Full Name *</label>
+                                <input type="text" id="patientName" required>
                             </div>
                             <div class="form-group">
-                                <label for="patient-email">Email Address *</label>
-                                <input type="email" id="patient-email" required>
+                                <label for="patientEmail">Email Address *</label>
+                                <input type="email" id="patientEmail" required>
                             </div>
                             <div class="form-group">
-                                <label for="patient-phone">Phone Number *</label>
-                                <input type="tel" id="patient-phone" required>
+                                <label for="patientPhone">Phone Number *</label>
+                                <input type="tel" id="patientPhone" required>
                             </div>
                             <div class="form-group">
-                                <label for="patient-age">Age</label>
-                                <input type="number" id="patient-age" min="1" max="120">
+                                <label for="patientAge">Age</label>
+                                <input type="number" id="patientAge" min="1" max="120">
+                            </div>
+                            <div class="form-group">
+                                <label for="patientGender">Gender</label>
+                                <select id="patientGender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="reason">Reason for Visit</label>
-                            <textarea id="reason" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                            <label for="symptoms">Reason for Visit</label>
+                            <textarea id="symptoms" rows="3" placeholder="Brief description of your symptoms or reason for consultation"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="medicalHistory">Medical History (Optional)</label>
+                            <textarea id="medicalHistory" rows="2" placeholder="Any relevant medical history or allergies"></textarea>
                         </div>
                     </div>
                     
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">
+                        <button class="btn btn-secondary" id="prevBtn">
                             <i class="fas fa-arrow-left"></i> Back
                         </button>
-                        <button class="btn btn-primary" onclick="nextStep()" id="next-3">
+                        <button class="btn btn-primary" id="nextBtn" disabled>
                             Review <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -441,16 +573,16 @@
                 <div id="step-4" class="step-content hidden">
                     <div class="form-section">
                         <h3>Confirm Your Appointment</h3>
-                        <div class="summary-card" id="booking-summary">
+                        <div class="summary-card" id="summary-content">
                             <!-- Summary will be populated here -->
                         </div>
                     </div>
                     
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="prevStep()">
+                        <button class="btn btn-secondary" id="prevBtn">
                             <i class="fas fa-arrow-left"></i> Back
                         </button>
-                        <button class="btn btn-primary" onclick="confirmBooking()">
+                        <button class="btn btn-primary" id="confirmBtn">
                             <i class="fas fa-check-circle"></i> Confirm Appointment
                         </button>
                     </div>
@@ -459,206 +591,35 @@
         </div>
     </main>
 
+    <!-- Bottom Navigation -->
+    <div class="bottom-navigation">
+        <div class="bottom-nav-container">
+            <button class="bottom-nav-btn back-to-home" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="bottom-nav-btn back-to-previous" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+            <button class="bottom-nav-btn find-doctors" onclick="window.location.href='find-doctors.html'">
+                <i class="fas fa-user-md"></i>
+                <span>Find Doctors</span>
+            </button>
+            <button class="bottom-nav-btn contact-us" onclick="window.location.href='contact.html'">
+                <i class="fas fa-phone"></i>
+                <span>Contact</span>
+            </button>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="js/theme-manager.js"></script>
-    <script>
-        let currentStep = 1;
-        let selectedDoctor = null;
-        let selectedDate = null;
-        let selectedTime = null;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDoctors();
-            generateCalendar();
-        });
-
-        function nextStep() {
-            if (currentStep < 4) {
-                currentStep++;
-                showStep(currentStep);
-            }
-        }
-
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        }
-
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            
-            // Show current step
-            document.getElementById(`step-${step}`).classList.remove('hidden');
-            
-            // Update step indicators
-            document.querySelectorAll('.step').forEach((stepEl, index) => {
-                stepEl.classList.remove('active');
-                if (index + 1 === step) {
-                    stepEl.classList.add('active');
-                }
-            });
-
-            // Update summary if on confirmation step
-            if (step === 4) {
-                updateSummary();
-            }
-        }
-
-        function loadDoctors() {
-            const doctors = [
-                { id: 1, name: "Dr. Sarah Johnson", specialty: "Cardiology", location: "Downtown", rating: 4.8 },
-                { id: 2, name: "Dr. Michael Chen", specialty: "Neurology", location: "Uptown", rating: 4.9 },
-                { id: 3, name: "Dr. Emily Davis", specialty: "Pediatrics", location: "Westside", rating: 4.7 },
-                { id: 4, name: "Dr. Robert Wilson", specialty: "Orthopedics", location: "Downtown", rating: 4.6 },
-                { id: 5, name: "Dr. Lisa Anderson", specialty: "Dermatology", location: "Uptown", rating: 4.8 }
-            ];
-
-            const container = document.getElementById('doctors-list');
-            container.innerHTML = doctors.map(doctor => `
-                <div class="doctor-card" onclick="selectDoctor(${doctor.id})">
-                    <div class="doctor-name">Dr. ${doctor.name.split(' ').slice(1).join(' ')}</div>
-                    <div class="doctor-specialty">${doctor.specialty}</div>
-                    <div class="doctor-rating">
-                        ${'★'.repeat(Math.floor(doctor.rating))} ${doctor.rating}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function selectDoctor(doctorId) {
-            // Remove previous selection
-            document.querySelectorAll('.doctor-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            // Add selection to clicked card
-            event.target.closest('.doctor-card').classList.add('selected');
-            selectedDoctor = doctorId;
-            
-            // Enable next button
-            document.getElementById('next-1').disabled = false;
-        }
-
-        function generateCalendar() {
-            const calendar = document.getElementById('calendar');
-            const today = new Date();
-            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-            
-            // Add headers
-            const headers = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            headers.forEach(header => {
-                const headerEl = document.createElement('div');
-                headerEl.className = 'calendar-header';
-                headerEl.textContent = header;
-                calendar.appendChild(headerEl);
-            });
-
-            // Add empty cells for the start of the month
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day disabled';
-                calendar.appendChild(emptyDay);
-            }
-
-            // Add days
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayEl = document.createElement('div');
-                dayEl.className = 'calendar-day';
-                dayEl.textContent = day;
-                
-                const date = new Date(today.getFullYear(), today.getMonth(), day);
-                if (date < today) {
-                    dayEl.classList.add('disabled');
-                } else {
-                    dayEl.onclick = () => selectDate(day);
-                }
-                
-                calendar.appendChild(dayEl);
-            }
-        }
-
-        function selectDate(day) {
-            // Remove previous selection
-            document.querySelectorAll('.calendar-day').forEach(dayEl => {
-                dayEl.classList.remove('selected');
-            });
-            
-            // Add selection
-            event.target.classList.add('selected');
-            selectedDate = day;
-            
-            // Load time slots
-            loadTimeSlots();
-        }
-
-        function loadTimeSlots() {
-            const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
-            const container = document.getElementById('time-slots');
-            
-            container.innerHTML = timeSlots.map(time => `
-                <div class="time-slot" onclick="selectTime('${time}')">${time}</div>
-            `).join('');
-        }
-
-        function selectTime(time) {
-            // Remove previous selection
-            document.querySelectorAll('.time-slot').forEach(slot => {
-                slot.classList.remove('selected');
-            });
-            
-            // Add selection
-            event.target.classList.add('selected');
-            selectedTime = time;
-            
-            // Enable next button
-            document.getElementById('next-2').disabled = false;
-        }
-
-        function updateSummary() {
-            const doctors = {
-                1: "Dr. Sarah Johnson - Cardiology",
-                2: "Dr. Michael Chen - Neurology", 
-                3: "Dr. Emily Davis - Pediatrics",
-                4: "Dr. Robert Wilson - Orthopedics",
-                5: "Dr. Lisa Anderson - Dermatology"
-            };
-
-            const summary = document.getElementById('booking-summary');
-            summary.innerHTML = `
-                <div class="summary-item">
-                    <span class="summary-label">Doctor:</span>
-                    <span class="summary-value">${doctors[selectedDoctor] || 'Not selected'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Date:</span>
-                    <span class="summary-value">${selectedDate ? `${selectedDate} ${new Date().toLocaleDateString('en', {month: 'long', year: 'numeric'})}` : 'Not selected'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Time:</span>
-                    <span class="summary-value">${selectedTime || 'Not selected'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Patient:</span>
-                    <span class="summary-value">${document.getElementById('patient-name').value || 'Not entered'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Phone:</span>
-                    <span class="summary-value">${document.getElementById('patient-phone').value || 'Not entered'}</span>
-                </div>
-            `;
-        }
-
-        function confirmBooking() {
-            alert('Appointment booked successfully! You will receive a confirmation email shortly.');
-            // Here you would normally send the data to your backend
-        }
-    </script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/auto-scroll-manager.js"></script>
+    <script src="js/language-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/booking.js"></script>
 </body>
 </html>
