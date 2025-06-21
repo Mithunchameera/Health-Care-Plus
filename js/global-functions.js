@@ -128,27 +128,8 @@ function viewDoctorProfile(doctorId) {
 function bookAppointment(doctorId) {
     console.log(`Booking appointment with doctor ${doctorId}`);
     
-    // Check if we're on the patient dashboard
-    const currentPage = window.location.pathname;
-    
-    if (currentPage.includes('dashboard-patient.html')) {
-        // If on patient dashboard, show book appointment section
-        if (window.patientDashboard) {
-            window.patientDashboard.showSection('book-appointment');
-            // Store selected doctor ID for the booking section
-            sessionStorage.setItem('selectedDoctorId', doctorId);
-        } else {
-            window.location.href = `booking.html?doctor=${doctorId}`;
-        }
-    } else if (currentPage.includes('booking.html')) {
-        // If already on booking page, select the doctor
-        if (window.selectDoctor) {
-            window.selectDoctor(doctorId);
-        }
-    } else {
-        // From any other page, go to booking
-        window.location.href = `booking.html?doctor=${doctorId}`;
-    }
+    // Always redirect to clean booking page
+    window.location.href = 'booking.html';
 }
 
 // Select doctor (for booking page)

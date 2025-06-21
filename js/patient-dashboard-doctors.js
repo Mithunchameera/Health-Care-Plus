@@ -278,8 +278,8 @@ function toggleView(view) {
 }
 
 function bookAppointment(doctorId) {
-    // Navigate to booking page with pre-selected doctor
-    window.location.href = `booking.html?doctor=${doctorId}`;
+    // Navigate to booking page
+    window.location.href = 'booking.html';
 }
 
 function viewDoctorProfile(doctorId) {

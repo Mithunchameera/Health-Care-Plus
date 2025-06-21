@@ -14,9 +14,9 @@ class BookingManager {
         this.init();
     }
     
-    init() {
+    async init() {
         this.setupStepNavigation();
-        this.loadDoctors();
+        await this.loadDoctors();
         this.setupCalendar();
         this.bindEvents();
         this.checkURLParams();
@@ -37,12 +37,24 @@ class BookingManager {
     
     async preselectDoctor(doctorId) {
         try {
-            const response = await fetch(`php/doctors.php?id=${doctorId}`);
-            const data = await response.json();
+            // First check sessionStorage for doctor data
+            const storedDoctor = sessionStorage.getItem('selectedDoctor');
+            if (storedDoctor) {
+                const doctor = JSON.parse(storedDoctor);
+                if (doctor.id == doctorId) {
+                    this.selectDoctor(doctor);
+                    this.nextStep();
+                    return;
+                }
+            }
             
-            if (!data.error && data.id) {
-                this.selectDoctor(data);
+            // If not in sessionStorage, find from local doctors array
+            const doctor = this.doctors.find(d => d.id == doctorId);
+            if (doctor) {
+                this.selectDoctor(doctor);
                 this.nextStep();
+            } else {
+                console.warn('Doctor not found with ID:', doctorId);
             }
         } catch (error) {
             console.error('Error preselecting doctor:', error);
@@ -304,60 +316,80 @@ class BookingManager {
     }
     
     selectDoctor(doctor) {
+        console.log('Selecting doctor:', doctor);
         this.selectedDoctor = doctor;
         
-        // Update UI
+        // Remove any existing selection highlights
+        document.querySelectorAll('.doctor-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Highlight selected doctor card
+        const selectedCard = document.querySelector(`[data-doctor-id="${doctor.id}"]`);
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+        }
+        
+        // Update UI with selected doctor info
         const selectedDoctorDiv = document.getElementById('selectedDoctor');
         if (selectedDoctorDiv) {
             selectedDoctorDiv.style.display = 'block';
             selectedDoctorDiv.innerHTML = `
                 <div class="selected-doctor-info">
                     <div class="doctor-avatar small">
-                        <i class="fas fa-user-md"></i>
+                        ${doctor.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <div>
-                        <h4>Dr. ${doctor.name}</h4>
+                    <div class="selected-info">
+                        <h4>${doctor.name}</h4>
                         <p>${doctor.specialty}</p>
-                        <p><strong>$${doctor.fee}</strong> consultation fee</p>
+                        <p class="fee-info"><strong>$${doctor.fee}</strong> consultation fee</p>
                     </div>
                     <button type="button" class="btn btn-secondary btn-sm" onclick="bookingManager.clearDoctorSelection()">
-                        Change Doctor
+                        <i class="fas fa-edit"></i> Change Doctor
                     </button>
                 </div>
             `;
         }
         
-        // Hide doctor list
-        const doctorList = document.getElementById('doctorList');
-        if (doctorList) {
-            doctorList.style.display = 'none';
+        // Hide doctor list container
+        const doctorsContainer = document.getElementById('doctors-container');
+        if (doctorsContainer) {
+            doctorsContainer.style.display = 'none';
         }
         
-        // Enable next button
+        // Enable next button and update validation
         this.updateStepValidation();
+        
+        // Show notification
+        this.showNotification(`Selected ${doctor.name} - ${doctor.specialty}`, 'success');
     }
     
     clearDoctorSelection() {
         this.selectedDoctor = null;
+        
+        // Remove selection highlights
+        document.querySelectorAll('.doctor-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
         
         const selectedDoctorDiv = document.getElementById('selectedDoctor');
         if (selectedDoctorDiv) {
             selectedDoctorDiv.style.display = 'none';
         }
         
-        const doctorList = document.getElementById('doctorList');
-        if (doctorList) {
-            doctorList.style.display = 'block';
+        const doctorsContainer = document.getElementById('doctors-container');
+        if (doctorsContainer) {
+            doctorsContainer.style.display = 'block';
         }
         
         this.updateStepValidation();
     }
     
     setupCalendar() {
-        const currentMonth = document.getElementById('currentMonth');
-        const prevMonthBtn = document.getElementById('prevMonth');
-        const nextMonthBtn = document.getElementById('nextMonth');
-        const calendarGrid = document.getElementById('calendarGrid');
+        const currentMonth = document.getElementById('current-month');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const calendarGrid = document.getElementById('calendar-grid');
         
         this.currentDate = new Date();
         this.displayedMonth = new Date();
@@ -380,8 +412,8 @@ class BookingManager {
     }
     
     renderCalendar() {
-        const currentMonth = document.getElementById('currentMonth');
-        const calendarGrid = document.getElementById('calendarGrid');
+        const currentMonth = document.getElementById('current-month');
+        const calendarGrid = document.getElementById('calendar-grid');
         
         if (!currentMonth || !calendarGrid) return;
         
@@ -464,35 +496,33 @@ class BookingManager {
     }
     
     async loadTimeSlots(date) {
-        const timeSlotsContainer = document.getElementById('timeSlots');
+        const timeSlotsContainer = document.getElementById('time-slots');
+        const selectedDateDisplay = document.getElementById('selected-date-display');
+        
         if (!timeSlotsContainer || !this.selectedDoctor) return;
         
-        try {
-            const dateStr = date.toISOString().split('T')[0];
-            const response = await fetch(`php/booking-handler.php?action=getSlots&doctor=${this.selectedDoctor.id}&date=${dateStr}`);
-            const data = await response.json();
-            
-            if (data.error) {
-                this.showError('Failed to load time slots: ' + data.error);
-                return;
-            }
-            
-            this.availableSlots = data.slots || [];
-            this.displayTimeSlots();
-            
-        } catch (error) {
-            console.error('Error loading time slots:', error);
-            this.showError('Failed to load available time slots.');
+        // Update selected date display
+        if (selectedDateDisplay) {
+            selectedDateDisplay.textContent = date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
         }
+        
+        // Generate realistic time slots for the selected date
+        this.availableSlots = this.generateTimeSlots(date);
+        this.displayTimeSlots();
     }
     
     displayTimeSlots() {
-        const timeSlotsContainer = document.getElementById('timeSlots');
+        const timeSlotsContainer = document.getElementById('time-slots');
         if (!timeSlotsContainer) return;
         
         if (this.availableSlots.length === 0) {
             timeSlotsContainer.innerHTML = `
-                <div class="no-slots">
+                <div class="time-placeholder">
                     <i class="fas fa-calendar-times"></i>
                     <p>No available time slots for this date.</p>
                     <p>Please select another date.</p>
@@ -502,15 +532,16 @@ class BookingManager {
         }
         
         timeSlotsContainer.innerHTML = this.availableSlots.map(slot => `
-            <div class="time-slot ${slot.available ? '' : 'unavailable'}" 
+            <div class="time-slot-modern ${slot.available ? 'available' : 'unavailable'}" 
                  data-time="${slot.time}" 
                  ${slot.available ? '' : 'title="This slot is not available"'}>
-                ${slot.time}
+                <div class="time-display">${slot.time}</div>
+                ${slot.available ? '<div class="slot-status">Available</div>' : '<div class="slot-status">Booked</div>'}
             </div>
         `).join('');
         
         // Add click handlers for available slots
-        timeSlotsContainer.querySelectorAll('.time-slot:not(.unavailable)').forEach(slot => {
+        timeSlotsContainer.querySelectorAll('.time-slot-modern.available').forEach(slot => {
             slot.addEventListener('click', () => {
                 this.selectTime(slot.dataset.time);
             });
@@ -521,13 +552,51 @@ class BookingManager {
         this.selectedTime = time;
         
         // Update UI
-        document.querySelectorAll('.time-slot').forEach(slot => {
+        document.querySelectorAll('.time-slot-modern').forEach(slot => {
             slot.classList.remove('selected');
         });
         
         document.querySelector(`[data-time="${time}"]`).classList.add('selected');
         
         this.updateStepValidation();
+    }
+    
+    generateTimeSlots(date) {
+        const slots = [];
+        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        
+        // Define working hours based on day
+        const startHour = isWeekend ? 10 : 9; // Later start on weekends
+        const endHour = isWeekend ? 16 : 18; // Earlier end on weekends
+        const slotDuration = 30; // 30-minute slots
+        
+        for (let hour = startHour; hour < endHour; hour++) {
+            for (let minute = 0; minute < 60; minute += slotDuration) {
+                const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                const displayTime = this.formatTime(timeStr);
+                
+                // Randomly make some slots unavailable (simulate real booking scenario)
+                const isAvailable = Math.random() > 0.3; // 70% availability rate
+                
+                // Don't show past times for today
+                const now = new Date();
+                const slotDateTime = new Date(date);
+                slotDateTime.setHours(hour, minute, 0, 0);
+                
+                const isPastTime = date.toDateString() === now.toDateString() && slotDateTime <= now;
+                
+                if (!isPastTime) {
+                    slots.push({
+                        time: displayTime,
+                        value: timeStr,
+                        available: isAvailable
+                    });
+                }
+            }
+        }
+        
+        return slots;
     }
     
     nextStep() {
@@ -990,11 +1059,74 @@ class BookingManager {
             errorElement.remove();
         }
     }
+    
+    showNotification(message, type = 'info') {
+        if (window.HealthCare && window.HealthCare.showNotification) {
+            window.HealthCare.showNotification(message, type);
+        } else {
+            // Create a simple notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Style the notification
+            Object.assign(notification.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
+                color: 'white',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                zIndex: '10000',
+                fontSize: '14px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                transform: 'translateX(100%)',
+                transition: 'transform 0.3s ease'
+            });
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    }
+    
+    formatTime(timeStr) {
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+        return `${displayHour}:${minutes} ${ampm}`;
+    }
+    
+    isSameDate(date1, date2) {
+        return date1.getFullYear() === date2.getFullYear() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getDate() === date2.getDate();
+    }
 }
 
 // Initialize booking manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.querySelector('.booking-section')) {
+    if (document.querySelector('.booking-container-modern')) {
         window.bookingManager = new BookingManager();
     }
 });

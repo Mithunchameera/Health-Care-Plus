@@ -218,9 +218,6 @@ class PatientDashboard {
             case 'doctors':
                 await this.loadDoctors();
                 break;
-            case 'book-appointment':
-                await this.loadBookingDoctors();
-                break;
             case 'medical-records':
                 await this.loadMedicalRecords();
                 break;
@@ -831,7 +828,7 @@ class PatientDashboard {
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="window.location.href='booking.html?doctor=${doctor.id}'">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='booking.html'">
                                 Book Appointment
                             </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
