@@ -218,6 +218,9 @@ class PatientDashboard {
             case 'doctors':
                 await this.loadDoctors();
                 break;
+            case 'book-appointment':
+                await this.loadBookingDoctors();
+                break;
             case 'medical-records':
                 await this.loadMedicalRecords();
                 break;
@@ -872,6 +875,125 @@ class PatientDashboard {
         });
     }
 
+    viewAppointment(appointmentId) {
+        // Find the appointment in the appointments list
+        const appointment = this.appointments.find(apt => apt.id == appointmentId);
+        
+        if (!appointment) {
+            this.showNotification('Appointment not found', 'error');
+            return;
+        }
+
+        // Create modal HTML
+        const modalHtml = `
+            <div class="modal-overlay" id="appointmentModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+                <div class="modal-content" style="background: var(--card-bg); border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                        <h3 style="margin: 0; color: var(--primary-color);">Appointment Details</h3>
+                        <button class="btn-close" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color);">&times;</button>
+                    </div>
+                    
+                    <div class="appointment-info">
+                        <div class="info-grid" style="display: grid; gap: 1rem;">
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Appointment ID:</span>
+                                <span style="color: var(--text-secondary);">#${appointment.id}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Doctor:</span>
+                                <span style="color: var(--text-secondary);">${appointment.doctor_name || 'Unknown Doctor'}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Specialty:</span>
+                                <span style="color: var(--text-secondary);">${appointment.specialty || 'General'}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Date:</span>
+                                <span style="color: var(--text-secondary);">${this.formatDate(appointment.appointment_date)}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Time:</span>
+                                <span style="color: var(--text-secondary);">${this.formatTime(appointment.appointment_time)}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Status:</span>
+                                <span class="status-badge status-${appointment.status}" style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; text-transform: capitalize;">${this.capitalizeFirst(appointment.status)}</span>
+                            </div>
+                            
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Consultation Fee:</span>
+                                <span style="color: var(--primary-color); font-weight: 600;">$${appointment.consultation_fee || '0.00'}</span>
+                            </div>
+                            
+                            ${appointment.reason_for_visit ? `
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Reason for Visit:</span>
+                                <span style="color: var(--text-secondary);">${appointment.reason_for_visit}</span>
+                            </div>
+                            ` : ''}
+                            
+                            ${appointment.notes ? `
+                            <div class="info-row" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-color);">Notes:</span>
+                                <span style="color: var(--text-secondary);">${appointment.notes}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        ${appointment.status === 'pending' && appointment.payment_status === 'pending' ? `
+                            <button class="btn btn-primary" onclick="payAppointment(${appointment.id})" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                <i class="fas fa-credit-card"></i> Pay Now
+                            </button>
+                        ` : ''}
+                        
+                        ${appointment.status !== 'cancelled' && appointment.status !== 'completed' ? `
+                            <button class="btn btn-secondary" onclick="window.patientDashboard.cancelAppointment(${appointment.id}); document.getElementById('appointmentModal').remove();" style="padding: 0.75rem 1.5rem; background: var(--secondary-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;">
+                                <i class="fas fa-times"></i> Cancel Appointment
+                            </button>
+                        ` : ''}
+                        
+                        <button class="btn btn-outline btn-close" style="padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove any existing modals
+        const existingModal = document.getElementById('appointmentModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Setup close functionality
+        const modal = document.getElementById('appointmentModal');
+        const closeButtons = modal.querySelectorAll('.btn-close');
+        
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.remove();
+            });
+        });
+        
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
     async cancelAppointment(appointmentId) {
         if (!confirm('Are you sure you want to cancel this appointment?')) {
             return;
@@ -1040,6 +1162,241 @@ class PatientDashboard {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
         });
+    }
+    async loadBookingDoctors() {
+        try {
+            const response = await fetch('php/patient-api.php?action=get_doctors');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.doctors = data.doctors;
+                this.displayBookingDoctors();
+            } else {
+                console.error('Failed to load doctors:', data.error);
+                this.displayBookingDoctorsError();
+            }
+        } catch (error) {
+            console.error('Error loading doctors:', error);
+            this.displayBookingDoctorsError();
+        }
+    }
+
+    displayBookingDoctors() {
+        const container = document.getElementById('booking-doctors-grid');
+        if (!container) return;
+
+        if (this.doctors && this.doctors.length > 0) {
+            container.innerHTML = this.doctors.map(doctor => this.createBookingDoctorCard(doctor)).join('');
+        } else {
+            this.displayBookingDoctorsError();
+        }
+    }
+
+    createBookingDoctorCard(doctor) {
+        const initials = doctor.name.split(' ').map(n => n[0]).join('');
+        const stars = this.generateStars(doctor.rating);
+        
+        return `
+            <div class="doctor-card" onclick="selectDoctorForBooking('${doctor.id}', '${doctor.name}', '${doctor.specialty}', '${doctor.location}', '${doctor.rating}', '${doctor.reviews}', '$${doctor.fee}')">
+                <div class="doctor-photo">
+                    <div class="doctor-initials">${initials}</div>
+                </div>
+                <div class="doctor-info">
+                    <h4>${doctor.name}</h4>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <p class="location">${doctor.location}</p>
+                    <div class="rating">
+                        ${stars}
+                        <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <span class="fee-label">Consultation Fee:</span>
+                        <span class="fee-amount">$${doctor.fee}</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-calendar-plus"></i> Select Doctor
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    displayBookingDoctorsError() {
+        const container = document.getElementById('booking-doctors-grid');
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--warning-color); margin-bottom: 1rem;"></i>
+                <h3>Unable to Load Doctors</h3>
+                <p>Please try refreshing the page or contact support if the problem persists.</p>
+                <button class="btn btn-primary" onclick="window.patientDashboard.loadBookingDoctors()">
+                    <i class="fas fa-refresh"></i> Try Again
+                </button>
+            </div>
+        `;
+    }
+
+    selectDoctorForBooking(doctorId, doctorName, specialty, location, rating, reviews, fee) {
+        // Store selected doctor data
+        this.selectedDoctor = {
+            id: doctorId,
+            name: doctorName,
+            specialty: specialty,
+            location: location,
+            rating: rating,
+            reviews: reviews,
+            fee: fee
+        };
+
+        // Update selected doctor display
+        const selectedDisplay = document.getElementById('selected-doctor-display');
+        const doctorsGrid = document.getElementById('booking-doctors-grid');
+        
+        if (selectedDisplay && doctorsGrid) {
+            // Show selected doctor card
+            selectedDisplay.style.display = 'block';
+            doctorsGrid.style.display = 'none';
+            
+            // Update selected doctor information
+            document.getElementById('selected-doctor-name').textContent = doctorName;
+            document.getElementById('selected-doctor-specialty').textContent = specialty;
+            document.getElementById('selected-doctor-location').textContent = location;
+            document.getElementById('selected-doctor-fee').textContent = fee;
+            
+            // Update rating stars
+            const ratingContainer = document.getElementById('selected-doctor-rating');
+            const reviewsContainer = document.getElementById('selected-doctor-reviews');
+            if (ratingContainer) {
+                ratingContainer.innerHTML = this.generateStars(rating);
+            }
+            if (reviewsContainer) {
+                reviewsContainer.textContent = `(${reviews} reviews)`;
+            }
+        }
+
+        // Enable next step
+        this.updateBookingProgress(2);
+        this.showNotification('Doctor selected successfully! Please choose your appointment time.', 'success');
+    }
+
+    clearDoctorSelection() {
+        this.selectedDoctor = null;
+        
+        // Hide selected doctor display and show doctors grid
+        const selectedDisplay = document.getElementById('selected-doctor-display');
+        const doctorsGrid = document.getElementById('booking-doctors-grid');
+        
+        if (selectedDisplay && doctorsGrid) {
+            selectedDisplay.style.display = 'none';
+            doctorsGrid.style.display = 'grid';
+        }
+
+        // Reset booking progress
+        this.updateBookingProgress(1);
+    }
+
+    updateBookingProgress(step) {
+        const progressSteps = document.querySelectorAll('.progress-step');
+        const bookingSteps = document.querySelectorAll('.booking-step');
+        
+        // Update progress indicators
+        progressSteps.forEach((stepElement, index) => {
+            if (index < step) {
+                stepElement.classList.add('active');
+            } else {
+                stepElement.classList.remove('active');
+            }
+        });
+        
+        // Show appropriate booking step
+        bookingSteps.forEach((stepElement, index) => {
+            if (index === step - 1) {
+                stepElement.style.display = 'block';
+                stepElement.classList.add('active');
+            } else {
+                stepElement.style.display = 'none';
+                stepElement.classList.remove('active');
+            }
+        });
+    }
+
+    // Payment functionality
+    payAppointment(appointmentId) {
+        try {
+            // Get appointment details from the appointments list
+            const appointment = this.appointments.find(apt => apt.id == appointmentId);
+            
+            if (!appointment) {
+                this.showNotification('Appointment not found', 'error');
+                return;
+            }
+
+            // Prepare payment data
+            const paymentData = {
+                appointmentId: appointmentId,
+                doctorName: appointment.doctor_name || 'Unknown Doctor',
+                specialty: appointment.specialty || 'General',
+                date: appointment.appointment_date,
+                time: appointment.appointment_time,
+                fee: appointment.consultation_fee || 0,
+                patientName: this.currentUser ? `${this.currentUser.first_name} ${this.currentUser.last_name}` : 'Patient',
+                bookingId: `HC${Date.now()}`
+            };
+
+            // Store payment data in session storage for the payment page
+            sessionStorage.setItem('pendingPayment', JSON.stringify(paymentData));
+            
+            // Redirect to payment page
+            window.location.href = 'payment.html';
+            
+        } catch (error) {
+            console.error('Error initiating payment:', error);
+            this.showNotification('Failed to initiate payment', 'error');
+        }
+    }
+}
+
+// Global functions for onclick handlers
+function payAppointment(appointmentId) {
+    if (window.patientDashboard) {
+        window.patientDashboard.payAppointment(appointmentId);
+    } else {
+        console.error('Patient dashboard not initialized');
+    }
+}
+
+function viewAppointment(appointmentId) {
+    if (window.patientDashboard) {
+        window.patientDashboard.viewAppointment(appointmentId);
+    } else {
+        console.error('Patient dashboard not initialized');
+    }
+}
+
+function cancelAppointment(appointmentId) {
+    if (window.patientDashboard) {
+        window.patientDashboard.cancelAppointment(appointmentId);
+    } else {
+        console.error('Patient dashboard not initialized');
+    }
+}
+
+function selectDoctorForBooking(doctorId, doctorName, specialty, location, rating, reviews, fee) {
+    if (window.patientDashboard) {
+        window.patientDashboard.selectDoctorForBooking(doctorId, doctorName, specialty, location, rating, reviews, fee);
+    } else {
+        console.error('Patient dashboard not initialized');
+    }
+}
+
+function clearDoctorSelection() {
+    if (window.patientDashboard) {
+        window.patientDashboard.clearDoctorSelection();
+    } else {
+        console.error('Patient dashboard not initialized');
     }
 }
 

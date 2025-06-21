@@ -4,16 +4,34 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load booking data from session storage
-    const pendingBooking = sessionStorage.getItem('pendingBooking');
+    // Load booking data from session storage (for new bookings)
+    let pendingBooking = sessionStorage.getItem('pendingBooking');
+    // Load payment data from session storage (for existing appointments)
+    let pendingPayment = sessionStorage.getItem('pendingPayment');
     
-    if (!pendingBooking) {
-        // Redirect to dashboard if no booking data
+    if (!pendingBooking && !pendingPayment) {
+        // Redirect to dashboard if no booking or payment data
         window.location.href = 'dashboard-patient.html';
         return;
     }
     
-    const booking = JSON.parse(pendingBooking);
+    let booking;
+    if (pendingPayment) {
+        // Convert payment data to booking format
+        const paymentData = JSON.parse(pendingPayment);
+        booking = {
+            bookingId: paymentData.bookingId,
+            doctorName: paymentData.doctorName,
+            specialty: paymentData.specialty,
+            date: paymentData.date,
+            time: paymentData.time,
+            fee: paymentData.fee,
+            patientName: paymentData.patientName,
+            appointmentId: paymentData.appointmentId
+        };
+    } else {
+        booking = JSON.parse(pendingBooking);
+    }
     
     // Populate appointment details
     populateAppointmentDetails(booking);
@@ -148,8 +166,9 @@ async function processPayment(booking) {
         // Simulate payment processing
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Clear pending booking
+        // Clear pending booking and payment data
         sessionStorage.removeItem('pendingBooking');
+        sessionStorage.removeItem('pendingPayment');
         
         // Redirect to success page
         window.location.href = 'payment-success.html?booking_id=' + booking.bookingId;

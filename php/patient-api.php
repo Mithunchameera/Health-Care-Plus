@@ -241,10 +241,16 @@ function getDoctors() {
         $doctors = $mockStorage->getDoctors();
         
         header('Content-Type: application/json');
-        echo json_encode($doctors);
+        echo json_encode([
+            'success' => true,
+            'doctors' => $doctors
+        ]);
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'Failed to load doctors']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Failed to load doctors'
+        ]);
     }
 }
 ?>

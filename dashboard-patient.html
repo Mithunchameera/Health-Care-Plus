@@ -1357,6 +1357,551 @@
             font-style: italic;
         }
 
+        /* Appointment Cards Styling */
+        .appointments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .appointment-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+
+        .appointment-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .appointment-date {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 0.75rem;
+            min-width: 70px;
+        }
+
+        .date-day {
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .date-month {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .date-year {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .appointment-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .appointment-status .status-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .appointment-details {
+            padding: 1.5rem;
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .doctor-initials {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .doctor-details h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .doctor-details .specialty {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+            font-size: 0.9rem;
+        }
+
+        .doctor-details .location {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .appointment-fee {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        .fee-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .fee-amount {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .appointment-actions {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .appointment-actions .btn {
+            flex: 1;
+        }
+
+        /* Filter Tabs */
+        .appointment-filters {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .filter-tab.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Enhanced Book Appointment Section */
+        .booking-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .booking-header h2 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .booking-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .booking-doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .booking-search {
+            margin-bottom: 2rem;
+        }
+
+        .booking-search .search-field {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .booking-search .search-field i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .booking-search input {
+            width: 100%;
+            padding: 12px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .booking-search input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(51, 122, 183, 0.1);
+        }
+
+        .selected-doctor-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .selected-doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .selected-doctor-card .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 2rem;
+        }
+
+        .selected-doctor-card .doctor-details h4 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .selected-doctor-card .doctor-details p {
+            color: rgba(255,255,255,0.9);
+            margin: 0.25rem 0;
+        }
+
+        .selected-doctor-card .doctor-rating {
+            color: #ffd700;
+        }
+
+        .selected-doctor-card .doctor-fee {
+            text-align: right;
+        }
+
+        .selected-doctor-card .fee-amount {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Enhanced Booking Progress Styling */
+        .booking-progress-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .booking-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 2;
+        }
+
+        .progress-step .step-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .progress-step.active .step-circle {
+            background: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(51, 122, 183, 0.2);
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--success-color);
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .progress-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--border-color);
+            position: relative;
+            margin: 0 1rem;
+        }
+
+        .progress-connector.active {
+            background: var(--primary-color);
+        }
+
+        /* Enhanced Doctor Cards for Booking */
+        .booking-step {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .booking-step .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .booking-step .step-header h3 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-step .step-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .booking-doctors-grid .doctor-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-doctors-grid .doctor-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .booking-doctors-grid .doctor-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .booking-doctors-grid .doctor-card:hover:before {
+            transform: scaleX(1);
+        }
+
+        .booking-doctors-grid .doctor-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .booking-doctors-grid .doctor-initials {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .booking-doctors-grid .doctor-info {
+            text-align: center;
+        }
+
+        .booking-doctors-grid .doctor-info h4 {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-doctors-grid .specialty {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-doctors-grid .location {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .booking-doctors-grid .rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .booking-doctors-grid .consultation-fee {
+            background: var(--primary-light);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .booking-doctors-grid .fee-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .booking-doctors-grid .fee-amount {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .booking-doctors-grid .doctor-actions {
+            text-align: center;
+        }
+
+        .booking-doctors-grid .doctor-actions .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        /* Global title size standardization */
+        .content-section h2 {
+            font-size: 1.5rem !important;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .booking-progress {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .progress-connector {
+                width: 2px;
+                height: 40px;
+                margin: 0;
+            }
+
+            .progress-step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-content {
+                text-align: center;
+            }
+
+            .booking-doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-section h2 {
+                font-size: 1.3rem !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .datetime-container {
                 grid-template-columns: 1fr;
@@ -1673,24 +2218,50 @@
 
             <!-- Book Appointment Section -->
             <section id="book-appointment-section" class="content-section" style="display: none;">
-                <div class="booking-header">
-                    <h2>Book New Appointment</h2>
-                    <p>Select a doctor and schedule your appointment in a few simple steps</p>
+                <div class="section-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-calendar-plus"></i> Book New Appointment</h2>
+                        <p class="section-description">Schedule your appointment with our healthcare professionals in easy steps</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" onclick="showSection('appointments')">
+                            <i class="fas fa-calendar-check"></i> View My Appointments
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Booking Progress -->
-                <div class="booking-progress">
-                    <div class="progress-step active" data-step="1">
-                        <div class="step-circle">1</div>
-                        <span>Select Doctor</span>
-                    </div>
-                    <div class="progress-step" data-step="2">
-                        <div class="step-circle">2</div>
-                        <span>Choose Time</span>
-                    </div>
-                    <div class="progress-step" data-step="3">
-                        <div class="step-circle">3</div>
-                        <span>Confirm</span>
+                <!-- Enhanced Booking Progress -->
+                <div class="booking-progress-container">
+                    <div class="booking-progress">
+                        <div class="progress-step active" data-step="1">
+                            <div class="step-circle">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="step-content">
+                                <span class="step-title">Select Doctor</span>
+                                <span class="step-desc">Choose your healthcare provider</span>
+                            </div>
+                        </div>
+                        <div class="progress-connector"></div>
+                        <div class="progress-step" data-step="2">
+                            <div class="step-circle">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="step-content">
+                                <span class="step-title">Choose Time</span>
+                                <span class="step-desc">Pick date and time slot</span>
+                            </div>
+                        </div>
+                        <div class="progress-connector"></div>
+                        <div class="progress-step" data-step="3">
+                            <div class="step-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="step-content">
+                                <span class="step-title">Confirm</span>
+                                <span class="step-desc">Review and confirm details</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -2106,7 +2677,7 @@
                         </thead>
                         <tbody id="appointments-table-body">
                             <tr>
-                                <td>June 15, 2025 10:30 AM</td>
+                                <td>June 25, 2025 10:00 AM</td>
                                 <td>Dr. Sarah Johnson</td>
                                 <td>Cardiology</td>
                                 <td><span class="status-badge status-confirmed">Confirmed</span></td>
@@ -2117,10 +2688,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>June 18, 2025 2:00 PM</td>
+                                <td>June 28, 2025 2:30 PM</td>
                                 <td>Dr. Michael Chen</td>
                                 <td>Neurology</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td><span class="status-badge status-scheduled">Scheduled</span></td>
                                 <td>$300.00</td>
                                 <td>
                                     <button class="btn btn-sm btn-primary" onclick="viewAppointment(2)">View</button>
