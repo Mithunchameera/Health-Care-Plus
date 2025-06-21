@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Management | HealthCare+ Doctor Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard-styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HealthCare+</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="dashboard-doctor.html" class="nav-link">Dashboard</a>
+                <a href="doctor-appointments.html" class="nav-link active">Appointments</a>
+                <a href="index.html" class="nav-link">Logout</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="dashboard-container">
+            <!-- Header Section -->
+            <div class="dashboard-header">
+                <div class="header-content">
+                    <h1><i class="fas fa-calendar-check"></i> Appointment Management</h1>
+                    <p>Manage your patient appointments and schedule</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-appointment-btn">
+                        <i class="fas fa-plus"></i> Add Appointment
+                    </button>
+                    <button class="btn btn-outline" id="export-schedule-btn">
+                        <i class="fas fa-download"></i> Export Schedule
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="today-appointments">0</h3>
+                        <p>Today's Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pending-appointments">0</h3>
+                        <p>Pending Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="completed-appointments">0</h3>
+                        <p>Completed Today</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="week-appointments">0</h3>
+                        <p>This Week</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter and Search Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-filter"></i> Filter Appointments</h2>
+                    <div class="view-controls">
+                        <button class="view-btn active" data-view="calendar" id="calendar-view-btn">
+                            <i class="fas fa-calendar"></i> Calendar
+                        </button>
+                        <button class="view-btn" data-view="list" id="list-view-btn">
+                            <i class="fas fa-list"></i> List
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="appointment-search" placeholder="Search by patient name, ID, or phone...">
+                    </div>
+                    <div class="filter-row">
+                        <select id="status-filter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="no-show">No Show</option>
+                        </select>
+                        <select id="date-filter" class="filter-select">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="this-week">This Week</option>
+                            <option value="next-week">Next Week</option>
+                            <option value="this-month">This Month</option>
+                        </select>
+                        <input type="date" id="custom-date-filter" class="filter-select">
+                        <button class="btn btn-outline btn-sm" id="clear-filters-btn">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <div class="dashboard-section" id="calendar-view">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prev-month" class="calendar-nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 id="current-month-year">June 2025</h3>
+                        <button id="next-month" class="calendar-nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div class="weekday">Sun</div>
+                        <div class="weekday">Mon</div>
+                        <div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div>
+                        <div class="weekday">Thu</div>
+                        <div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>
+                    </div>
+                    <div class="calendar-grid" id="appointment-calendar">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div class="dashboard-section" id="list-view" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> Appointment List</h2>
+                    <div class="results-info">
+                        <span id="appointments-count">0 appointments found</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date & Time</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body">
+                            <!-- Appointments will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Today's Schedule Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-day"></i> Today's Schedule</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-sm" id="refresh-schedule-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="timeline-container" id="today-timeline">
+                    <!-- Today's appointments timeline will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Appointment Modal -->
+    <div class="modal" id="appointment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"><i class="fas fa-calendar-plus"></i> Add New Appointment</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="appointment-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patient-select">Patient</label>
+                            <select id="patient-select" required>
+                                <option value="">Select Patient</option>
+                                <!-- Patients will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-date">Date</label>
+                            <input type="date" id="appointment-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-time">Time</label>
+                            <input type="time" id="appointment-time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-duration">Duration (minutes)</label>
+                            <select id="appointment-duration" required>
+                                <option value="30">30 minutes</option>
+                                <option value="45">45 minutes</option>
+                                <option value="60">1 hour</option>
+                                <option value="90">1.5 hours</option>
+                                <option value="120">2 hours</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-type">Appointment Type</label>
+                            <select id="appointment-type" required>
+                                <option value="">Select Type</option>
+                                <option value="consultation">Consultation</option>
+                                <option value="follow-up">Follow-up</option>
+                                <option value="check-up">Check-up</option>
+                                <option value="procedure">Procedure</option>
+                                <option value="surgery">Surgery</option>
+                                <option value="emergency">Emergency</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment-status">Status</label>
+                            <select id="appointment-status" required>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="confirmed">Confirmed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-notes">Notes</label>
+                        <textarea id="appointment-notes" rows="3" placeholder="Additional notes or instructions..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-appointment">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-appointment">Save Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal -->
+    <div class="modal" id="appointment-details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-info-circle"></i> Appointment Details</h3>
+                <button class="modal-close" id="close-details-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="appointment-details-content">
+                    <!-- Appointment details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/doctor-appointments.js"></script>
+</body>
+</html>

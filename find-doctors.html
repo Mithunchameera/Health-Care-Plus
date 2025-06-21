@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Doctors | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HealthCare+</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="find-doctors.html" class="nav-link active">Find Doctors</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="find-doctors-video-background"></div>
+        
+        <!-- Hero Section -->
+        <section class="find-doctors-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1><i class="fas fa-user-md"></i> Find Healthcare Professionals</h1>
+                    <p>Discover qualified doctors and specialists in your area</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-container">
+                    <div class="search-bar-advanced">
+                        <div class="search-input-group">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="doctor-search" placeholder="Search by doctor name, specialty, or condition..." class="search-input">
+                        </div>
+                        <button type="button" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="specialty-filter">Specialty</label>
+                            <select id="specialty-filter" class="filter-select">
+                                <option value="">All Specialties</option>
+                                <option value="Cardiologist">Cardiologist</option>
+                                <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+                                <option value="Pediatrician">Pediatrician</option>
+                                <option value="Dermatologist">Dermatologist</option>
+                                <option value="Neurologist">Neurologist</option>
+                                <option value="General Surgeon">General Surgeon</option>
+                                <option value="Gynecologist">Gynecologist</option>
+                                <option value="Psychiatrist">Psychiatrist</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="location-filter">Location</label>
+                            <select id="location-filter" class="filter-select">
+                                <option value="">All Locations</option>
+                                <option value="Downtown">Downtown</option>
+                                <option value="Uptown">Uptown</option>
+                                <option value="Westside">Westside</option>
+                                <option value="Eastside">Eastside</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="rating-filter">Minimum Rating</label>
+                            <select id="rating-filter" class="filter-select">
+                                <option value="">Any Rating</option>
+                                <option value="4.5">4.5+ Stars</option>
+                                <option value="4.0">4.0+ Stars</option>
+                                <option value="3.5">3.5+ Stars</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="consultation-type-filter">Consultation Type</label>
+                            <select id="consultation-type-filter" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="In-person">In-person</option>
+                                <option value="Video Call">Video Call</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section">
+            <div class="container">
+                <div class="results-header">
+                    <h2>Available Doctors</h2>
+                    <div class="results-count">
+                        <span id="results-count">Loading doctors...</span>
+                    </div>
+                </div>
+                
+                <div class="doctors-grid" id="doctors-grid">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading available doctors...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <p>Your trusted healthcare companion</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="#">Emergency Care</a></li>
+                        <li><a href="#">Health Records</a></li>
+                        <li><a href="#">Telemedicine</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> info@healthcareplus.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Health St, Medical City</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/find-doctors.js"></script>
+</body>
+</html>

@@ -68,17 +68,26 @@ class BookingManager {
     }
     
     async loadDoctors() {
-        // Load all 10 doctors for appointment booking
-        this.doctors = [
+        try {
+            // Load comprehensive doctor data
+            this.doctors = [
             {
                 id: 1,
                 name: "Dr. Sarah Johnson",
                 specialty: "Cardiologist",
+                subspecialty: "Interventional Cardiology",
                 experience: 15,
                 rating: 4.9,
                 reviews: 234,
                 fee: 150,
-                available: true
+                available: true,
+                education: "MD - Harvard Medical School",
+                hospital: "City General Hospital",
+                languages: ["English", "Spanish"],
+                about: "Dr. Johnson specializes in advanced cardiac procedures with over 15 years of experience treating complex heart conditions.",
+                conditions: ["Heart Disease", "Hypertension", "Arrhythmia", "Heart Failure"],
+                nextAvailable: "Today 2:00 PM",
+                consultationType: ["In-person", "Video Call"]
             },
             {
                 id: 2,
@@ -171,30 +180,62 @@ class BookingManager {
                 available: true
             }
         ];
-        this.displayDoctorList(this.doctors);
+            this.displayDoctorList(this.doctors);
+        } catch (error) {
+            console.error('Failed to load doctors:', error);
+            this.showError('Failed to load doctors list');
+        }
     }
     
     displayDoctorList(doctors) {
         const doctorList = document.getElementById('doctors-container');
-        if (!doctorList) return;
+        if (!doctorList) {
+            console.error('Doctors container not found');
+            return;
+        }
+        
+        if (!doctors || doctors.length === 0) {
+            doctorList.innerHTML = `
+                <div class="no-doctors-message">
+                    <div class="no-doctors-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>No Doctors Available</h3>
+                    <p>Please try adjusting your search criteria or contact support.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log('Displaying doctors:', doctors.length);
         
         doctorList.innerHTML = doctors.map(doctor => `
             <div class="doctor-card booking-doctor" data-doctor-id="${doctor.id}">
                 <div class="doctor-header">
                     <div class="doctor-avatar">
-                        <i class="fas fa-user-md"></i>
+                        ${doctor.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div class="doctor-basic-info">
                         <h4 class="doctor-name">${doctor.name}</h4>
                         <p class="doctor-specialty">${doctor.specialty}</p>
+                        <p class="doctor-subspecialty">${doctor.subspecialty || ''}</p>
                         <div class="doctor-status ${doctor.available ? 'available' : 'busy'}">
-                            ${doctor.available ? 'Available' : 'Busy'}
+                            ${doctor.available ? 'Available Today' : 'Busy'}
                         </div>
                     </div>
                 </div>
                 
                 <div class="doctor-details">
-                    <p class="doctor-experience">${doctor.experience} years experience</p>
+                    <div class="doctor-meta-info">
+                        <div class="meta-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>${doctor.experience} years experience</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-hospital"></i>
+                            <span>${doctor.hospital || 'Medical Center'}</span>
+                        </div>
+                    </div>
                     
                     <div class="doctor-rating">
                         <div class="stars">
@@ -203,14 +244,33 @@ class BookingManager {
                         <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
                     </div>
                     
+                    <div class="doctor-specialties">
+                        ${doctor.conditions ? doctor.conditions.slice(0, 3).map(condition => 
+                            `<span class="specialty-tag">${condition}</span>`
+                        ).join('') : ''}
+                    </div>
+                    
                     <div class="doctor-fee">
-                        <strong>$${doctor.fee}</strong> consultation fee
+                        <span class="fee-label">Consultation Fee:</span>
+                        <strong class="fee-amount">$${doctor.fee}</strong>
+                    </div>
+                    
+                    <div class="next-available">
+                        <i class="fas fa-clock"></i>
+                        <span>Next: ${doctor.nextAvailable || 'Contact clinic'}</span>
                     </div>
                 </div>
                 
-                <button class="select-doctor-btn" data-doctor-id="${doctor.id}">
-                    Select Doctor
-                </button>
+                <div class="doctor-actions">
+                    <button class="btn-view-details" onclick="bookingManager.viewDoctorDetails(${doctor.id})">
+                        <i class="fas fa-info-circle"></i>
+                        View Profile
+                    </button>
+                    <button class="btn-select-doctor" onclick="bookingManager.selectDoctor(${JSON.stringify(doctor).replace(/"/g, '&quot;')})">
+                        <i class="fas fa-calendar-check"></i>
+                        Book Appointment
+                    </button>
+                </div>
             </div>
         `).join('');
         
@@ -777,6 +837,123 @@ class BookingManager {
     
     isSameDate(date1, date2) {
         return date1.toDateString() === date2.toDateString();
+    }
+
+    viewDoctorDetails(doctorId) {
+        const doctor = this.doctors.find(d => d.id === doctorId);
+        if (!doctor) return;
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay doctor-details-modal';
+        modal.innerHTML = `
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-user-md"></i> Doctor Profile - ${doctor.name}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="doctor-profile-container">
+                        <div class="doctor-profile-header">
+                            <div class="doctor-avatar-xl">
+                                ${doctor.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div class="doctor-profile-info">
+                                <h2>${doctor.name}</h2>
+                                <p class="doctor-title">${doctor.specialty}</p>
+                                <p class="doctor-subtitle">${doctor.subspecialty || ''}</p>
+                                <div class="doctor-credentials">
+                                    <div class="credential-item">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>${doctor.education || 'Medical Degree'}</span>
+                                    </div>
+                                    <div class="credential-item">
+                                        <i class="fas fa-hospital"></i>
+                                        <span>${doctor.hospital || 'Medical Center'}</span>
+                                    </div>
+                                    <div class="credential-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>${doctor.experience} years experience</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="doctor-profile-stats">
+                                <div class="stat-card">
+                                    <div class="stat-number">${doctor.rating}</div>
+                                    <div class="stat-label">Rating</div>
+                                    <div class="stat-stars">${this.generateStars(doctor.rating)}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number">${doctor.reviews}</div>
+                                    <div class="stat-label">Reviews</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number">$${doctor.fee}</div>
+                                    <div class="stat-label">Consultation</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="doctor-profile-content">
+                            <div class="profile-section">
+                                <h4><i class="fas fa-info-circle"></i> About Dr. ${doctor.name.split(' ').slice(-1)[0]}</h4>
+                                <p>${doctor.about || 'Experienced healthcare professional dedicated to providing quality medical care.'}</p>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h4><i class="fas fa-stethoscope"></i> Conditions Treated</h4>
+                                <div class="conditions-grid">
+                                    ${doctor.conditions ? doctor.conditions.map(condition => 
+                                        `<div class="condition-card">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>${condition}</span>
+                                        </div>`
+                                    ).join('') : '<p>General medical conditions</p>'}
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h4><i class="fas fa-language"></i> Languages Spoken</h4>
+                                <div class="languages-grid">
+                                    ${doctor.languages ? doctor.languages.map(lang => 
+                                        `<span class="language-badge">${lang}</span>`
+                                    ).join('') : '<span class="language-badge">English</span>'}
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h4><i class="fas fa-video"></i> Consultation Options</h4>
+                                <div class="consultation-options-detailed">
+                                    ${doctor.consultationType ? doctor.consultationType.map(type => 
+                                        `<div class="consultation-option">
+                                            <i class="fas fa-${type === 'Video Call' ? 'video' : 'user-md'}"></i>
+                                            <span>${type}</span>
+                                        </div>`
+                                    ).join('') : '<div class="consultation-option"><i class="fas fa-user-md"></i><span>In-person consultation</span></div>'}
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h4><i class="fas fa-clock"></i> Availability</h4>
+                                <div class="availability-info">
+                                    <div class="next-slot">
+                                        <strong>Next Available:</strong> ${doctor.nextAvailable || 'Contact clinic'}
+                                    </div>
+                                    <p>Book your appointment now to secure your preferred time slot.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                    <button class="btn btn-primary" onclick="bookingManager.selectDoctor(${JSON.stringify(doctor).replace(/"/g, '&quot;')}); this.closest('.modal-overlay').remove();">
+                        <i class="fas fa-calendar-plus"></i> Book Appointment
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
     }
     
     showError(message) {

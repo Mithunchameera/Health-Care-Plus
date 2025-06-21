@@ -496,7 +496,7 @@ class AdminDashboard {
                     <div>${patient.phone}</div>
                     <div style="font-size: 0.875rem; color: var(--text-muted);">${patient.email}</div>
                 </td>
-                <td>${this.calculateAge(patient.date_of_birth)}</td>
+                <td>-</td>
                 <td>${patient.last_visit || 'Never'}</td>
                 <td>${patient.total_visits || 0}</td>
                 <td>

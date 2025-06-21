@@ -437,18 +437,57 @@ class DoctorDashboard {
     }
 
     async loadPatients() {
-        // Use demo data to avoid authentication calls
-        this.patients = [
-            {
-                id: 1,
-                first_name: 'John',
-                last_name: 'Smith',
-                email: 'john.smith@email.com',
-                phone: '(555) 123-4567',
-                date_of_birth: '1985-03-15'
+        try {
+            // Load patient data from API
+            const response = await fetch('php/doctor-api.php?action=get_patients');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.patients = data.patients;
+            } else {
+                // Use demo data as fallback
+                this.patients = [
+                    {
+                        id: 1,
+                        first_name: 'John',
+                        last_name: 'Smith',
+                        name: 'John Smith',
+                        email: 'john.smith@email.com',
+                        phone: '(555) 123-4567',
+                        date_of_birth: '1985-03-15',
+                        last_visit: '2024-12-15',
+                        total_visits: 5,
+                        address: '123 Main St, City, State 12345',
+                        gender: 'Male',
+                        blood_type: 'O+',
+                        allergies: 'Penicillin, Shellfish',
+                        emergency_contact: 'Jane Smith - (555) 123-4568',
+                        insurance: 'Blue Cross Blue Shield'
+                    },
+                    {
+                        id: 2,
+                        first_name: 'Sarah',
+                        last_name: 'Johnson',
+                        name: 'Sarah Johnson',
+                        email: 'sarah.johnson@email.com',
+                        phone: '(555) 234-5678',
+                        date_of_birth: '1992-08-22',
+                        last_visit: '2024-12-10',
+                        total_visits: 3,
+                        address: '456 Oak Ave, City, State 12345',
+                        gender: 'Female',
+                        blood_type: 'A+',
+                        allergies: 'None known',
+                        emergency_contact: 'Mike Johnson - (555) 234-5679',
+                        insurance: 'Aetna'
+                    }
+                ];
             }
-        ];
-        this.displayPatients(this.patients);
+            this.displayPatients(this.patients);
+        } catch (error) {
+            console.error('Failed to load patients:', error);
+            this.showNotification('Failed to load patients', 'error');
+        }
     }
 
     displayPatients(patients) {
@@ -457,7 +496,7 @@ class DoctorDashboard {
         
         tbody.innerHTML = patients.map(patient => `
             <tr>
-                <td>${patient.name}</td>
+                <td>${patient.first_name ? (patient.first_name + ' ' + patient.last_name) : patient.name}</td>
                 <td>
                     <div>${patient.phone}</div>
                     <div style="font-size: 0.875rem; color: #666;">${patient.email}</div>
@@ -884,8 +923,36 @@ class DoctorDashboard {
     }
 
     async startConsultation(appointmentId) {
-        this.showNotification('Starting consultation...', 'info');
-        // Implement consultation start logic
+        try {
+            this.showNotification('Loading consultation...', 'info');
+            
+            // Find the appointment to get patient ID
+            const appointment = this.todayAppointments.find(apt => apt.id == appointmentId) ||
+                              this.allAppointments.find(apt => apt.id == appointmentId);
+            
+            if (!appointment) {
+                this.showNotification('Appointment not found', 'error');
+                return;
+            }
+            
+            // Load patient data for consultation
+            const [patientResponse, historyResponse] = await Promise.all([
+                fetch(`php/doctor-api.php?action=get_patient_history&patient_id=${appointment.patient_id}`),
+                fetch(`php/patient-api.php?action=get_medical_records&patient_id=${appointment.patient_id}`)
+            ]);
+            
+            const patientData = await patientResponse.json();
+            const recordsData = await historyResponse.json();
+            
+            if (patientData.success) {
+                this.showConsultationModal(appointment, patientData.patient, patientData.history, recordsData.records || []);
+            } else {
+                this.showNotification('Failed to load patient data', 'error');
+            }
+        } catch (error) {
+            console.error('Error starting consultation:', error);
+            this.showNotification('Failed to start consultation', 'error');
+        }
     }
 
     async confirmAppointment(appointmentId) {
@@ -927,8 +994,74 @@ class DoctorDashboard {
     }
 
     showPatientHistoryModal(patient, history) {
-        // Display patient history in a modal
-        console.log('Patient history:', patient, history);
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay patient-history-modal';
+        modal.innerHTML = `
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-user-md"></i> Patient History - ${patient.name || patient.full_name}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="patient-history-tabs">
+                        <button class="tab-btn active" data-tab="overview">Overview</button>
+                        <button class="tab-btn" data-tab="appointments">Appointments</button>
+                        <button class="tab-btn" data-tab="medical-records">Medical Records</button>
+                        <button class="tab-btn" data-tab="prescriptions">Prescriptions</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="overview-tab">
+                        <div class="patient-overview">
+                            <div class="patient-basic-info">
+                                <div class="patient-avatar">${(patient.name || patient.full_name).charAt(0).toUpperCase()}</div>
+                                <div class="patient-details">
+                                    <h4>${patient.name || patient.full_name}</h4>
+                                    <p><i class="fas fa-phone"></i> ${patient.phone}</p>
+                                    <p><i class="fas fa-envelope"></i> ${patient.email}</p>
+                                    <p><i class="fas fa-map-marker-alt"></i> ${patient.address || 'Address not provided'}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="patient-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">${history.statistics?.total_visits || 0}</span>
+                                    <span class="stat-label">Total Visits</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${history.statistics?.last_visit || 'Never'}</span>
+                                    <span class="stat-label">Last Visit</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">${history.conditions?.length || 0}</span>
+                                    <span class="stat-label">Active Conditions</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="appointments-tab">
+                        <div class="appointments-history">
+                            ${this.renderAppointmentHistory(history.appointments || [])}
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="medical-records-tab">
+                        <div class="medical-records">
+                            ${this.renderMedicalRecords(history.records || [])}
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="prescriptions-tab">
+                        <div class="prescriptions-list">
+                            ${this.renderPrescriptions(history.prescriptions || [])}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        this.setupHistoryModalTabs(modal);
     }
 
     clearAllSlots() {
@@ -1142,15 +1275,382 @@ class DoctorDashboard {
         }
     }
 
-    // Patient Details Methods
+    renderAppointmentHistory(appointments) {
+        if (!appointments || appointments.length === 0) {
+            return '<div class="empty-state"><p>No appointment history available</p></div>';
+        }
+
+        return appointments.map(apt => `
+            <div class="history-item">
+                <div class="history-date">${this.formatDate(apt.date)}</div>
+                <div class="history-content">
+                    <h5>${apt.type} - ${apt.status}</h5>
+                    <p><strong>Doctor:</strong> ${apt.doctor_name || 'Dr. Smith'}</p>
+                    <p><strong>Diagnosis:</strong> ${apt.diagnosis || 'General checkup'}</p>
+                    <p><strong>Notes:</strong> ${apt.notes || 'No additional notes'}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderMedicalRecords(records) {
+        if (!records || records.length === 0) {
+            return '<div class="empty-state"><p>No medical records available</p></div>';
+        }
+
+        return records.map(record => `
+            <div class="record-item">
+                <div class="record-header">
+                    <h5>${record.title || 'Medical Record'}</h5>
+                    <span class="record-date">${this.formatDate(record.date)}</span>
+                </div>
+                <div class="record-content">
+                    <p><strong>Condition:</strong> ${record.condition || 'Not specified'}</p>
+                    <p><strong>Treatment:</strong> ${record.treatment || 'Not specified'}</p>
+                    <p><strong>Notes:</strong> ${record.notes || 'No additional notes'}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderPrescriptions(prescriptions) {
+        if (!prescriptions || prescriptions.length === 0) {
+            return '<div class="empty-state"><p>No prescriptions available</p></div>';
+        }
+
+        return prescriptions.map(prescription => `
+            <div class="prescription-item">
+                <div class="prescription-header">
+                    <h5>${prescription.medication}</h5>
+                    <span class="prescription-status ${prescription.status}">${prescription.status}</span>
+                </div>
+                <div class="prescription-details">
+                    <p><strong>Dosage:</strong> ${prescription.dosage}</p>
+                    <p><strong>Frequency:</strong> ${prescription.frequency}</p>
+                    <p><strong>Duration:</strong> ${prescription.duration}</p>
+                    <p><strong>Prescribed:</strong> ${this.formatDate(prescription.date)}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderPatientHistory(history) {
+        return `
+            <div class="patient-history-overview">
+                <div class="history-section">
+                    <h4>Previous Visits</h4>
+                    ${this.renderAppointmentHistory(history.appointments || [])}
+                </div>
+                
+                <div class="history-section">
+                    <h4>Medical Conditions</h4>
+                    ${history.conditions ? history.conditions.map(condition => `
+                        <div class="condition-item">
+                            <span class="condition-name">${condition.name}</span>
+                            <span class="condition-status ${condition.status}">${condition.status}</span>
+                        </div>
+                    `).join('') : '<p>No active conditions</p>'}
+                </div>
+            </div>
+        `;
+    }
+
+    setupHistoryModalTabs(modal) {
+        const tabBtns = modal.querySelectorAll('.tab-btn');
+        const tabContents = modal.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                btn.classList.add('active');
+                const targetContent = modal.querySelector(`#${targetTab}-tab`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    }
+
+    setupConsultationTabs(modal) {
+        const tabBtns = modal.querySelectorAll('.consultation-tabs .tab-btn');
+        const tabContents = modal.querySelectorAll('.consultation-main .tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                btn.classList.add('active');
+                const targetContent = modal.querySelector(`#${targetTab}-tab`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    }
+
+    formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    // Additional consultation actions
+    async saveConsultation(appointmentId) {
+        try {
+            // Collect consultation data from form
+            const consultationData = {
+                appointment_id: appointmentId,
+                chief_complaint: modal.querySelector('.consultation-form textarea').value,
+                vital_signs: {
+                    blood_pressure: modal.querySelector('input[placeholder="120/80"]').value,
+                    heart_rate: modal.querySelector('input[placeholder="72 bpm"]').value,
+                    temperature: modal.querySelector('input[placeholder="98.6°F"]').value,
+                    weight: modal.querySelector('input[placeholder="70 kg"]').value
+                },
+                assessment: modal.querySelector('.consultation-form textarea:last-of-type').value
+            };
+
+            // Save consultation to backend
+            const response = await fetch('php/doctor-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'save_consultation',
+                    data: consultationData
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.showNotification('Consultation saved successfully', 'success');
+            } else {
+                this.showNotification('Failed to save consultation', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving consultation:', error);
+            this.showNotification('Failed to save consultation', 'error');
+        }
+    }
+
+    async completeAppointment(appointmentId) {
+        try {
+            const response = await fetch('php/doctor-api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'complete_appointment',
+                    appointment_id: appointmentId
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.showNotification('Appointment completed successfully', 'success');
+                document.querySelector('.consultation-modal').remove();
+                this.loadTodayAppointments();
+                this.loadAllAppointments();
+            } else {
+                this.showNotification('Failed to complete appointment', 'error');
+            }
+        } catch (error) {
+            console.error('Error completing appointment:', error);
+            this.showNotification('Failed to complete appointment', 'error');
+        }
+    }
+
+    addPrescription(patientId) {
+        this.showNotification('Prescription module would open here', 'info');
+    }
+
+    addRecord(patientId) {
+        this.showNotification('Medical record module would open here', 'info');
+    }
+
+    scheduleFollowUp(patientId) {
+        this.showNotification('Follow-up scheduling would open here', 'info');
+    }
+
+    // Additional helper methods for patient details
+    getLastVisitDate(history) {
+        if (!history || history.length === 0) return 'Never';
+        const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return this.formatDate(sortedHistory[0].date);
+    }
+
+    renderRecentActivity(history) {
+        if (!history || history.length === 0) {
+            return '<div class="empty-state"><p>No recent activity</p></div>';
+        }
+
+        const recent = history.slice(0, 3);
+        return recent.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-${this.getActivityIcon(activity.type)}"></i>
+                </div>
+                <div class="activity-content">
+                    <span class="activity-title">${activity.type || 'Visit'}</span>
+                    <span class="activity-date">${this.formatDate(activity.date)}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderDetailedMedicalHistory(fullHistory, records) {
+        const combinedHistory = [
+            ...(fullHistory.appointments || []),
+            ...(records || [])
+        ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (combinedHistory.length === 0) {
+            return '<div class="empty-state"><p>No medical history available</p></div>';
+        }
+
+        return combinedHistory.map(item => `
+            <div class="history-timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h5>${item.title || item.type || 'Medical Visit'}</h5>
+                        <span class="timeline-date">${this.formatDate(item.date)}</span>
+                    </div>
+                    <div class="timeline-body">
+                        <p><strong>Condition:</strong> ${item.condition || item.diagnosis || 'General checkup'}</p>
+                        <p><strong>Treatment:</strong> ${item.treatment || item.notes || 'Standard care'}</p>
+                        ${item.doctor_name ? `<p><strong>Doctor:</strong> ${item.doctor_name}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderPatientDocuments(documents) {
+        if (!documents || documents.length === 0) {
+            return '<div class="empty-state"><p>No documents uploaded</p></div>';
+        }
+
+        return documents.map(doc => `
+            <div class="document-item">
+                <div class="document-icon">
+                    <i class="fas fa-file-${this.getDocumentIcon(doc.type)}"></i>
+                </div>
+                <div class="document-info">
+                    <h5>${doc.name}</h5>
+                    <p>Uploaded: ${this.formatDate(doc.upload_date)}</p>
+                    <p>Type: ${doc.type}</p>
+                </div>
+                <div class="document-actions">
+                    <button class="btn btn-sm btn-outline" onclick="doctorDashboard.downloadDocument(${doc.id})">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="doctorDashboard.viewDocument(${doc.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getActivityIcon(type) {
+        const icons = {
+            'consultation': 'stethoscope',
+            'prescription': 'pills',
+            'test': 'vial',
+            'surgery': 'user-md',
+            'checkup': 'heartbeat'
+        };
+        return icons[type] || 'calendar';
+    }
+
+    getDocumentIcon(type) {
+        const icons = {
+            'pdf': 'pdf',
+            'image': 'image',
+            'report': 'chart-bar',
+            'xray': 'x-ray'
+        };
+        return icons[type] || 'file';
+    }
+
+    setupPatientDetailsTabs(modal) {
+        const tabBtns = modal.querySelectorAll('.patient-details-tabs .tab-btn');
+        const tabContents = modal.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                btn.classList.add('active');
+                const targetContent = modal.querySelector(`#${targetTab}-tab`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // Additional patient management methods
+    scheduleNewAppointment(patientId) {
+        this.showNotification('Opening appointment scheduler...', 'info');
+        // In a real app, this would open the appointment scheduling interface
+    }
+
+    addNewPrescription(patientId) {
+        this.showNotification('Opening prescription form...', 'info');
+        // In a real app, this would open the prescription creation form
+    }
+
+    uploadDocument(patientId) {
+        this.showNotification('Opening document upload...', 'info');
+        // In a real app, this would open file upload dialog
+    }
+
+    editPatientInfo(patientId) {
+        this.showNotification('Opening patient editor...', 'info');
+        // In a real app, this would open the patient information editor
+    }
+
+    downloadDocument(documentId) {
+        this.showNotification('Downloading document...', 'info');
+    }
+
+    viewDocument(documentId) {
+        this.showNotification('Opening document viewer...', 'info');
+    }
+
+    // Patient Details Methods for My Patients section
     async viewPatientDetails(patientId) {
         try {
             this.currentPatientId = patientId;
-            document.getElementById('patient-details-modal').style.display = 'block';
+            this.showNotification('Loading patient details...', 'info');
             
             // Load comprehensive patient data
             const [patientResponse, historyResponse, recordsResponse] = await Promise.all([
-                fetch(`php/patient-api.php?action=get_patient_details&patient_id=${patientId}`),
+                fetch(`php/doctor-api.php?action=get_patient_history&patient_id=${patientId}`),
                 fetch(`php/patient-history-api.php?action=get_patient_history&patient_id=${patientId}`),
                 fetch(`php/patient-api.php?action=get_medical_records&patient_id=${patientId}`)
             ]);
@@ -1159,18 +1659,180 @@ class DoctorDashboard {
             const historyData = await historyResponse.json();
             const recordsData = await recordsResponse.json();
             
-            if (patientData.success && historyData.success) {
-                this.displayPatientDetails(patientData.patient, historyData.history, recordsData.records || []);
-                this.setupPatientDetailsTabs();
+            if (patientData.success) {
+                this.showPatientDetailsModal(patientData.patient, patientData.history, historyData.history || {}, recordsData.records || []);
             } else {
                 this.showNotification('Failed to load patient details', 'error');
-                this.closeModal('patient-details-modal');
             }
         } catch (error) {
             console.error('Error loading patient details:', error);
             this.showNotification('Error loading patient details', 'error');
-            this.closeModal('patient-details-modal');
         }
+    }
+
+    showPatientDetailsModal(patient, basicHistory, fullHistory, records) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay patient-details-modal';
+        modal.innerHTML = `
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-user-circle"></i> Patient Details - ${patient.name || patient.full_name}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="patient-details-container">
+                        <div class="patient-summary-card">
+                            <div class="patient-avatar-large">${(patient.name || patient.full_name).charAt(0).toUpperCase()}</div>
+                            <div class="patient-summary-info">
+                                <h2>${patient.name || patient.full_name}</h2>
+                                <div class="patient-meta">
+                                    <span class="patient-id">ID: #${patient.id}</span>
+                                    <span class="patient-status active">Active Patient</span>
+                                </div>
+                                <div class="contact-info">
+                                    <p><i class="fas fa-phone"></i> ${patient.phone}</p>
+                                    <p><i class="fas fa-envelope"></i> ${patient.email}</p>
+                                    <p><i class="fas fa-map-marker-alt"></i> ${patient.address || 'Address not provided'}</p>
+                                </div>
+                            </div>
+                            <div class="patient-quick-stats">
+                                <div class="quick-stat">
+                                    <span class="stat-value">${basicHistory.length || 0}</span>
+                                    <span class="stat-label">Total Visits</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <span class="stat-value">${this.getLastVisitDate(basicHistory)}</span>
+                                    <span class="stat-label">Last Visit</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <span class="stat-value">${records.length || 0}</span>
+                                    <span class="stat-label">Records</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="patient-details-tabs">
+                            <button class="tab-btn active" data-tab="overview">Overview</button>
+                            <button class="tab-btn" data-tab="medical-history">Medical History</button>
+                            <button class="tab-btn" data-tab="appointments">Appointments</button>
+                            <button class="tab-btn" data-tab="prescriptions">Prescriptions</button>
+                            <button class="tab-btn" data-tab="documents">Documents</button>
+                        </div>
+                        
+                        <div class="tab-content active" id="overview-tab">
+                            <div class="overview-grid">
+                                <div class="overview-section">
+                                    <h4><i class="fas fa-user"></i> Personal Information</h4>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>Full Name</label>
+                                            <span>${patient.name || patient.full_name}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Date of Birth</label>
+                                            <span>${patient.date_of_birth || 'Not provided'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Gender</label>
+                                            <span>${patient.gender || 'Not specified'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Blood Type</label>
+                                            <span>${patient.blood_type || 'Not specified'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Emergency Contact</label>
+                                            <span>${patient.emergency_contact || 'Not provided'}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>Insurance</label>
+                                            <span>${patient.insurance || 'Not provided'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="overview-section">
+                                    <h4><i class="fas fa-heart"></i> Health Summary</h4>
+                                    <div class="health-indicators">
+                                        <div class="health-item">
+                                            <span class="health-label">Allergies</span>
+                                            <span class="health-value">${patient.allergies || 'None known'}</span>
+                                        </div>
+                                        <div class="health-item">
+                                            <span class="health-label">Current Medications</span>
+                                            <span class="health-value">${patient.current_medications || 'None'}</span>
+                                        </div>
+                                        <div class="health-item">
+                                            <span class="health-label">Chronic Conditions</span>
+                                            <span class="health-value">${patient.chronic_conditions || 'None'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="overview-section">
+                                    <h4><i class="fas fa-chart-line"></i> Recent Activity</h4>
+                                    <div class="recent-activity">
+                                        ${this.renderRecentActivity(basicHistory)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="medical-history-tab">
+                            <div class="medical-history-section">
+                                <h4>Complete Medical History</h4>
+                                ${this.renderDetailedMedicalHistory(fullHistory, records)}
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="appointments-tab">
+                            <div class="appointments-section">
+                                <div class="section-header">
+                                    <h4>Appointment History</h4>
+                                    <button class="btn btn-primary btn-sm" onclick="doctorDashboard.scheduleNewAppointment(${patient.id})">
+                                        <i class="fas fa-plus"></i> Schedule New
+                                    </button>
+                                </div>
+                                ${this.renderAppointmentHistory(basicHistory)}
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="prescriptions-tab">
+                            <div class="prescriptions-section">
+                                <div class="section-header">
+                                    <h4>Prescription History</h4>
+                                    <button class="btn btn-primary btn-sm" onclick="doctorDashboard.addNewPrescription(${patient.id})">
+                                        <i class="fas fa-plus"></i> Add Prescription
+                                    </button>
+                                </div>
+                                ${this.renderPrescriptions(fullHistory.prescriptions || [])}
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="documents-tab">
+                            <div class="documents-section">
+                                <div class="section-header">
+                                    <h4>Patient Documents</h4>
+                                    <button class="btn btn-primary btn-sm" onclick="doctorDashboard.uploadDocument(${patient.id})">
+                                        <i class="fas fa-upload"></i> Upload Document
+                                    </button>
+                                </div>
+                                ${this.renderPatientDocuments(patient.documents || [])}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                    <button class="btn btn-primary" onclick="doctorDashboard.editPatientInfo(${patient.id})">
+                        <i class="fas fa-edit"></i> Edit Patient Info
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        this.setupPatientDetailsTabs(modal);
     }
 
     displayPatientDetails(patient, history, records) {
@@ -1392,7 +2054,7 @@ class DoctorDashboard {
         const stats = history.statistics;
         
         document.getElementById('history-patient-name').textContent = patient.full_name;
-        document.getElementById('history-patient-age').textContent = `Age: ${this.calculateAge(patient.date_of_birth)}`;
+        document.getElementById('history-patient-age').style.display = 'none';
         document.getElementById('history-patient-gender').textContent = `Gender: ${patient.gender || 'Not specified'}`;
         document.getElementById('history-patient-phone').textContent = `Phone: ${patient.phone}`;
         document.getElementById('history-patient-email').textContent = `Email: ${patient.email}`;
@@ -1605,10 +2267,120 @@ class DoctorDashboard {
     }
 
     // Additional appointment management methods
-    async startConsultation(appointmentId) {
-        this.showNotification('Starting consultation...', 'info');
-        // In a real application, this would open a consultation interface
-        console.log('Starting consultation for appointment:', appointmentId);
+    showConsultationModal(appointment, patient, history, records) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay consultation-modal';
+        modal.innerHTML = `
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-stethoscope"></i> Consultation - ${patient.name || patient.full_name}</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="consultation-container">
+                        <div class="consultation-sidebar">
+                            <div class="patient-quick-info">
+                                <div class="patient-avatar">${(patient.name || patient.full_name).charAt(0).toUpperCase()}</div>
+                                <div class="patient-details">
+                                    <h4>${patient.name || patient.full_name}</h4>
+                                    <p><i class="fas fa-clock"></i> ${appointment.time} - ${appointment.type}</p>
+                                    <p><i class="fas fa-phone"></i> ${patient.phone}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-actions">
+                                <h5>Quick Actions</h5>
+                                <button class="action-btn" onclick="doctorDashboard.addPrescription(${patient.id})">
+                                    <i class="fas fa-pills"></i> Add Prescription
+                                </button>
+                                <button class="action-btn" onclick="doctorDashboard.addRecord(${patient.id})">
+                                    <i class="fas fa-notes-medical"></i> Add Record
+                                </button>
+                                <button class="action-btn" onclick="doctorDashboard.scheduleFollowUp(${patient.id})">
+                                    <i class="fas fa-calendar-plus"></i> Schedule Follow-up
+                                </button>
+                            </div>
+                            
+                            <div class="patient-alerts">
+                                <h5>Alerts</h5>
+                                <div class="alert-item warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Allergic to Penicillin</span>
+                                </div>
+                                <div class="alert-item info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Regular checkup due</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="consultation-main">
+                            <div class="consultation-tabs">
+                                <button class="tab-btn active" data-tab="current">Current Visit</button>
+                                <button class="tab-btn" data-tab="history">Medical History</button>
+                                <button class="tab-btn" data-tab="records">Previous Records</button>
+                            </div>
+                            
+                            <div class="tab-content active" id="current-tab">
+                                <div class="consultation-form">
+                                    <div class="form-section">
+                                        <h4>Chief Complaint</h4>
+                                        <textarea placeholder="Patient's main concern..." rows="3"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h4>Vital Signs</h4>
+                                        <div class="vitals-grid">
+                                            <div class="vital-input">
+                                                <label>Blood Pressure</label>
+                                                <input type="text" placeholder="120/80">
+                                            </div>
+                                            <div class="vital-input">
+                                                <label>Heart Rate</label>
+                                                <input type="text" placeholder="72 bpm">
+                                            </div>
+                                            <div class="vital-input">
+                                                <label>Temperature</label>
+                                                <input type="text" placeholder="98.6°F">
+                                            </div>
+                                            <div class="vital-input">
+                                                <label>Weight</label>
+                                                <input type="text" placeholder="70 kg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h4>Assessment & Plan</h4>
+                                        <textarea placeholder="Diagnosis and treatment plan..." rows="4"></textarea>
+                                    </div>
+                                    
+                                    <div class="consultation-actions">
+                                        <button class="btn btn-success" onclick="doctorDashboard.saveConsultation(${appointment.id})">
+                                            <i class="fas fa-save"></i> Save Consultation
+                                        </button>
+                                        <button class="btn btn-primary" onclick="doctorDashboard.completeAppointment(${appointment.id})">
+                                            <i class="fas fa-check"></i> Complete Appointment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="history-tab">
+                                ${this.renderPatientHistory(history)}
+                            </div>
+                            
+                            <div class="tab-content" id="records-tab">
+                                ${this.renderMedicalRecords(records)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        this.setupConsultationTabs(modal);
     }
 
     async confirmAppointment(appointmentId) {
