@@ -3,218 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in | eChannelling Sri Lanka</title>
-    <meta name="description" content="Sign in to your eChannelling account to manage appointments and access your medical records">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Login | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="contact.html" class="nav-link">Contact Us</a>
+                <a href="login.html" class="nav-link active">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modern Login Section -->
+    <section class="modern-auth-section">
+        <div id="login-video-background"></div>
+        <div class="auth-background">
+            <div class="auth-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+        
+        <div class="modern-auth-container">
+            <div class="modern-auth-card">
+                <!-- Header -->
+                <div class="modern-auth-header">
+                    <div class="brand-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
+                    </div>
+                    <h1>Welcome Back</h1>
+                    <p>Please sign in to your account</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="modern-auth-form" method="POST" action="php/auth.php">
+                    <input type="hidden" name="action" value="login">
+                    
+                    <div class="sleek-form-group">
+                        <div class="sleek-input-wrapper">
+                            <input type="text" id="username" name="username" class="sleek-input" placeholder="Username" required>
+                        </div>
+                    </div>
+
+                    <div class="sleek-form-group">
+                        <div class="sleek-input-wrapper">
+                            <input type="password" id="password" name="password" class="sleek-input" placeholder="Password" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePassword('password')">
+                                <i class="fas fa-eye" id="password-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sleek-form-options">
+                        <label class="sleek-checkbox">
+                            <input type="checkbox" name="remember">
+                            <span class="sleek-checkmark">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="checkbox-text">Remember me</span>
+                        </label>
+                        <a href="forgot-password.html" class="sleek-forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="sleek-btn sleek-btn-primary">
+                        <span>Sign In</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Footer -->
+                <div class="modern-auth-footer">
+                    <p>Don't have an account? <a href="register.html">Create one</a></p>
+                </div>
+
+                <!-- Demo Credentials -->
+                <div id="demo-credentials" class="modern-demo-credentials">
+                    <div class="demo-toggle">
+                        <i class="fas fa-flask"></i>
+                        <span>Try Demo</span>
+                        <i class="fas fa-chevron-down demo-arrow"></i>
+                    </div>
+                    <div class="demo-content">
+                        <div class="demo-tabs">
+                            <button class="demo-tab active" data-role="patient">
+                                <i class="fas fa-user"></i>
+                                Patient
+                            </button>
+                            <button class="demo-tab" data-role="doctor">
+                                <i class="fas fa-user-md"></i>
+                                Doctor
+                            </button>
+                            <button class="demo-tab" data-role="admin">
+                                <i class="fas fa-user-shield"></i>
+                                Admin
+                            </button>
+                        </div>
+                        <div class="demo-credentials-display">
+                            <div class="demo-cred active" data-role="patient">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">patient1</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">password123</span>
+                                </div>
+                            </div>
+                            <div class="demo-cred" data-role="doctor">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">dr.johnson</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">doctor123</span>
+                                </div>
+                            </div>
+                            <div class="demo-cred" data-role="admin">
+                                <div class="cred-item">
+                                    <span class="cred-label">Username:</span>
+                                    <span class="cred-value">admin</span>
+                                </div>
+                                <div class="cred-item">
+                                    <span class="cred-label">Password:</span>
+                                    <span class="cred-value">admin123</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/auto-scroll-manager.js"></script>
+    <script src="js/main.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primaryDarkBlue: '#1e3a8a',
-                        textBlue: '#1e40af'
+        // Check authentication on page load and redirect if already logged in
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('php/session-handler.php');
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    // Hide demo credentials for authenticated users
+                    const demoCredentials = document.getElementById('demo-credentials');
+                    if (demoCredentials) {
+                        demoCredentials.style.display = 'none';
                     }
+                    
+                    // Redirect authenticated users to their dashboard
+                    let dashboardUrl = 'dashboard-patient.html';
+                    switch(data.user.role) {
+                        case 'doctor':
+                            dashboardUrl = 'dashboard-doctor.html';
+                            break;
+                        case 'admin':
+                        case 'staff':
+                            dashboardUrl = 'dashboard-admin.html';
+                            break;
+                        default:
+                            dashboardUrl = 'dashboard-patient.html';
+                    }
+                    window.location.href = dashboardUrl;
                 }
+            } catch (error) {
+                console.log('Auth check failed:', error);
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('username', username);
+                formData.append('password', password);
+                
+                const response = await fetch('php/auth.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    showNotification(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('Login failed. Please try again.', 'error');
+            }
+        });
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentNode.querySelector('.password-toggle i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
             }
         }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Modern demo credentials functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoCredentials = document.getElementById('demo-credentials');
+            const demoToggle = demoCredentials.querySelector('.demo-toggle');
+            const demoTabs = demoCredentials.querySelectorAll('.demo-tab');
+            const demoCreds = demoCredentials.querySelectorAll('.demo-cred');
+
+            // Toggle demo section
+            demoToggle.addEventListener('click', function() {
+                demoCredentials.classList.toggle('active');
+            });
+
+            // Tab switching
+            demoTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    
+                    // Update active tab
+                    demoTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update active credentials
+                    demoCreds.forEach(cred => {
+                        cred.classList.remove('active');
+                        if (cred.dataset.role === role) {
+                            cred.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Auto-fill demo credentials when clicked
+            demoCreds.forEach(credSection => {
+                credSection.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    const usernameInput = document.getElementById('username');
+                    const passwordInput = document.getElementById('password');
+                    
+                    switch(role) {
+                        case 'patient':
+                            usernameInput.value = 'patient1';
+                            passwordInput.value = 'password123';
+                            break;
+                        case 'doctor':
+                            usernameInput.value = 'dr.johnson';
+                            passwordInput.value = 'doctor123';
+                            break;
+                        case 'admin':
+                            usernameInput.value = 'admin';
+                            passwordInput.value = 'admin123';
+                            break;
+                    }
+                    
+                    // Trigger floating label animation
+                    usernameInput.dispatchEvent(new Event('input'));
+                    passwordInput.dispatchEvent(new Event('input'));
+                    
+                    showNotification(`Demo ${role} credentials filled`, 'success');
+                });
+            });
+        });
+        
+        // Initialize Three.js video background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
+                const videoContainer = document.getElementById('login-video-background');
+                if (videoContainer) {
+                    new HealthcareVideoBackground(videoContainer);
+                }
+            }
+        });
     </script>
-    <link rel="stylesheet" href="css/echannelling-signin.css">
-</head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-5 py-3">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                    <a href="index.html">
-                        <img src="images/placeholder-logo.svg" alt="eChannelling" class="h-8 w-auto">
-                    </a>
-                </div>
-                <nav class="hidden lg:flex items-center space-x-8">
-                    <a href="index.html" class="text-gray-600 hover:text-primaryDarkBlue">Home</a>
-                    <a href="find-doctors.html" class="text-gray-600 hover:text-primaryDarkBlue">Find Doctors</a>
-                    <a href="hospitals.html" class="text-gray-600 hover:text-primaryDarkBlue">Hospitals</a>
-                    <a href="specialities.html" class="text-gray-600 hover:text-primaryDarkBlue">Specialities</a>
-                    <a href="about.html" class="text-gray-600 hover:text-primaryDarkBlue">About</a>
-                    <a href="contact.html" class="text-gray-600 hover:text-primaryDarkBlue">Contact</a>
-                </nav>
-                <div class="flex items-center space-x-4">
-                    <a href="/my-appointments" class="text-gray-600 hover:text-primaryDarkBlue text-sm">My Appointments</a>
-                    <a href="https://blogs.echannelling.com/" class="text-gray-600 hover:text-primaryDarkBlue text-sm">Blog</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div class="container mx-auto px-5 py-10">
-            <div class="max-w-4xl mx-auto">
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <!-- Left Side - Hero Content -->
-                    <div class="order-2 lg:order-1">
-                        <div class="text-center lg:text-left">
-                            <h1 class="text-2xl font-semibold text-primaryDarkBlue mt-10 mb-2 lg:text-left text-center">
-                                Welcome to eChannelling
-                            </h1>
-                            <p class="text-textBlue/70 mt-1 text-sm max-w-md">
-                                Sign in to book appointments with qualified doctors across Sri Lanka's largest healthcare network
-                            </p>
-                        </div>
-                        
-                        <!-- Features -->
-                        <div class="mt-8 space-y-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-5 h-5 bg-primaryDarkBlue rounded-full flex items-center justify-center">
-                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">500+ qualified doctors</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-5 h-5 bg-primaryDarkBlue rounded-full flex items-center justify-center">
-                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">50+ hospitals & medical centers</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-5 h-5 bg-primaryDarkBlue rounded-full flex items-center justify-center">
-                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">24/7 online booking</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-5 h-5 bg-primaryDarkBlue rounded-full flex items-center justify-center">
-                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <span class="text-sm text-gray-600">Secure payment processing</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Side - Sign In Form -->
-                    <div class="order-1 lg:order-2">
-                        <div class="bg-white rounded-2xl shadow-xl p-8">
-                            <div class="text-center mb-8">
-                                <h2 class="text-2xl font-semibold text-gray-900 mb-2">Sign in</h2>
-                                <p class="text-gray-600 text-sm">Welcome back! Please sign in to your account</p>
-                            </div>
-
-                            <form id="signin-form" class="space-y-6">
-                                <div>
-                                    <input 
-                                        type="text" 
-                                        class="w-full rounded-xl py-[12px] px-4 text-sm focus:outline-none border border-primaryDarkBlue" 
-                                        placeholder="Enter your Member ID / Email / NIC"
-                                        required
-                                    >
-                                </div>
-
-                                <div class="relative">
-                                    <input 
-                                        type="password" 
-                                        name="password"
-                                        class="w-full pr-14 rounded-xl py-[12px] px-4 text-sm focus:outline-none border border-primaryDarkBlue" 
-                                        placeholder="Enter your password"
-                                        required
-                                    >
-                                    <button type="button" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" onclick="togglePassword(this)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <div class="flex items-center justify-between">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" class="mb-[2px] rounded border-gray-300 text-primaryDarkBlue focus:ring-primaryDarkBlue">
-                                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                                    </label>
-                                    <a href="forgot-password.html" class="text-sm text-primaryDarkBlue hover:underline">Forgot password?</a>
-                                </div>
-
-                                <button 
-                                    type="submit" 
-                                    class="w-full px-7 py-1.5 text-sm bg-primaryDarkBlue text-white px-2 py-1.5 md:py-3 mt-auto rounded-xl text-sm group border border-primaryDarkBlue hover:bg-blue-800 transition-colors"
-                                >
-                                    <span class="flex items-center justify-center">
-                                        Sign in
-                                        <svg class="w-4 group-hover:ml-0 -ml-7 group-hover:opacity-100 opacity-0 duration-200 stroke-current stroke-2 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </form>
-
-                            <div class="mt-5 flex justify-center items-center text-sm font-medium">
-                                <span class="text-gray-600">Don't have an account?</span>
-                                <a href="register.html" class="ml-2 text-primaryDarkBlue font-semibold hover:underline">Sign up</a>
-                            </div>
-
-                            <!-- Mobile number option -->
-                            <div class="mt-5">
-                                <button class="w-full text-center text-sm text-primaryDarkBlue border border-primaryDarkBlue rounded-xl py-3 hover:bg-blue-50 transition-colors">
-                                    Mobile number
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-primaryDarkBlue text-white mt-20">
-        <div class="container mx-auto px-5 py-10">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
-                <div>
-                    <img src="images/placeholder-logo.svg" alt="eChannelling" class="h-8 w-auto mb-4 filter invert">
-                    <p class="text-sm text-blue-200">Sri Lanka's leading healthcare appointment booking platform.</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="find-doctors.html" class="text-blue-200 hover:text-white">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="text-blue-200 hover:text-white">Hospitals</a></li>
-                        <li><a href="specialities.html" class="text-blue-200 hover:text-white">Specialities</a></li>
-                        <li><a href="about.html" class="text-blue-200 hover:text-white">About Us</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">For Patients</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="register.html" class="text-blue-200 hover:text-white">Register</a></li>
-                        <li><a href="login.html" class="text-blue-200 hover:text-white">Sign In</a></li>
-                        <li><a href="/my-appointments" class="text-blue-200 hover:text-white">My Appointments</a></li>
-                        <li><a href="contact.html" class="text-blue-200 hover:text-white">Support</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Contact</h4>
-                    <div class="text-sm text-blue-200 space-y-2">
-                        <p>+94 11 234 5678</p>
-                        <p>info@echannelling.com</p>
-                        <p>Colombo 07, Sri Lanka</p>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-blue-800 mt-8 pt-8 text-center text-sm text-blue-200">
-                <p>&copy; 2025 eChannelling. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/echannelling-signin.js"></script>
 </body>
 </html>

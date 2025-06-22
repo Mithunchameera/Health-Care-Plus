@@ -1,4 +1,4 @@
-modules = ["web", "nodejs-20", "php-8.2", "python-3.11"]
+modules = ["web", "nodejs-20", "php-8.2", "postgresql-16"]
 
 [nix]
 channel = "stable-24_05"
@@ -13,15 +13,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "eChannelling Server"
+args = "Web Server"
 
 [[workflows.workflow]]
-name = "eChannelling Server"
+name = "Web Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "php -S 0.0.0.0:5000 -t ."
+args = "php -S 0.0.0.0:5000"
 waitForPort = 5000
 
 [deployment]

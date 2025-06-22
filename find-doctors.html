@@ -3,242 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Doctors - eChannelling</title>
-    <meta name="description" content="Find and book appointments with qualified doctors across Sri Lanka">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/echannelling-styles.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/doctor-search.css">
+    <title>Find Doctors | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
-                </div>
-                <nav class="main-nav">
-                    <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
-                        <li><a href="about.html" class="nav-link">About</a></li>
-                        <li><a href="contact.html" class="nav-link">Contact</a></li>
-                    </ul>
-                </nav>
-                <div class="header-actions">
-                    <button class="btn-language">EN | සිං</button>
-                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
-                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
-                </div>
-                <div class="mobile-menu-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HealthCare+</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="find-doctors.html" class="nav-link active">Find Doctors</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Search Hero -->
-    <section class="search-hero">
-        <div class="container">
-            <div class="search-hero-content">
-                <h1>Find Your Doctor</h1>
-                <p>Search and book appointments with qualified doctors across Sri Lanka</p>
-                
-                <div class="search-form-container">
-                    <form class="doctor-search-form" id="doctor-search-form">
-                        <div class="search-row">
-                            <div class="search-field">
-                                <select id="speciality-select" class="search-select">
-                                    <option value="">All Specialities</option>
-                                    <option value="cardiology">Cardiology</option>
-                                    <option value="dermatology">Dermatology</option>
-                                    <option value="orthopedic">Orthopedic Surgery</option>
-                                    <option value="pediatrics">Pediatrics</option>
-                                    <option value="general-medicine">General Medicine</option>
-                                    <option value="surgery">General Surgery</option>
-                                    <option value="gynecology">Gynecology</option>
-                                    <option value="psychiatry">Psychiatry</option>
-                                    <option value="ophthalmology">Ophthalmology</option>
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <select id="location-select" class="search-select">
-                                    <option value="">All Locations</option>
-                                    <option value="colombo">Colombo</option>
-                                    <option value="kandy">Kandy</option>
-                                    <option value="galle">Galle</option>
-                                    <option value="negombo">Negombo</option>
-                                    <option value="jaffna">Jaffna</option>
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <input type="text" id="doctor-name-input" class="search-input" placeholder="Doctor name or hospital">
-                            </div>
-                            <button type="submit" class="btn-search-doctors">🔍 Search Doctors</button>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="find-doctors-video-background"></div>
+        
+        <!-- Hero Section -->
+        <section class="find-doctors-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1><i class="fas fa-user-md"></i> Find Healthcare Professionals</h1>
+                    <p>Discover qualified doctors and specialists in your area</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-container">
+                    <div class="search-bar-advanced">
+                        <div class="search-input-group">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="doctor-search" placeholder="Search by doctor name, specialty, or condition..." class="search-input">
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Filters & Results -->
-    <section class="doctors-section">
-        <div class="container">
-            <div class="doctors-layout">
-                <!-- Sidebar Filters -->
-                <aside class="doctors-sidebar">
-                    <div class="filters-container">
-                        <h3>Filter Doctors</h3>
+                        <button type="button" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="specialty-filter">Specialty</label>
+                            <select id="specialty-filter" class="filter-select">
+                                <option value="">All Specialties</option>
+                                <option value="Cardiologist">Cardiologist</option>
+                                <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+                                <option value="Pediatrician">Pediatrician</option>
+                                <option value="Dermatologist">Dermatologist</option>
+                                <option value="Neurologist">Neurologist</option>
+                                <option value="General Surgeon">General Surgeon</option>
+                                <option value="Gynecologist">Gynecologist</option>
+                                <option value="Psychiatrist">Psychiatrist</option>
+                            </select>
+                        </div>
                         
                         <div class="filter-group">
-                            <h4>Availability</h4>
-                            <div class="filter-options">
-                                <label class="filter-option">
-                                    <input type="checkbox" value="today" class="filter-checkbox">
-                                    <span>Available Today</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="tomorrow" class="filter-checkbox">
-                                    <span>Available Tomorrow</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="week" class="filter-checkbox">
-                                    <span>This Week</span>
-                                </label>
-                            </div>
+                            <label for="location-filter">Location</label>
+                            <select id="location-filter" class="filter-select">
+                                <option value="">All Locations</option>
+                                <option value="Downtown">Downtown</option>
+                                <option value="Uptown">Uptown</option>
+                                <option value="Westside">Westside</option>
+                                <option value="Eastside">Eastside</option>
+                            </select>
                         </div>
-
+                        
                         <div class="filter-group">
-                            <h4>Rating</h4>
-                            <div class="filter-options">
-                                <label class="filter-option">
-                                    <input type="checkbox" value="5" class="filter-checkbox">
-                                    <span>⭐⭐⭐⭐⭐ 5 Stars</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="4" class="filter-checkbox">
-                                    <span>⭐⭐⭐⭐ 4+ Stars</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="3" class="filter-checkbox">
-                                    <span>⭐⭐⭐ 3+ Stars</span>
-                                </label>
-                            </div>
+                            <label for="rating-filter">Minimum Rating</label>
+                            <select id="rating-filter" class="filter-select">
+                                <option value="">Any Rating</option>
+                                <option value="4.5">4.5+ Stars</option>
+                                <option value="4.0">4.0+ Stars</option>
+                                <option value="3.5">3.5+ Stars</option>
+                            </select>
                         </div>
-
+                        
                         <div class="filter-group">
-                            <h4>Consultation Fee</h4>
-                            <div class="filter-options">
-                                <label class="filter-option">
-                                    <input type="checkbox" value="low" class="filter-checkbox">
-                                    <span>Under Rs. 2,000</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="medium" class="filter-checkbox">
-                                    <span>Rs. 2,000 - 5,000</span>
-                                </label>
-                                <label class="filter-option">
-                                    <input type="checkbox" value="high" class="filter-checkbox">
-                                    <span>Above Rs. 5,000</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <button class="btn-clear-filters">Clear All Filters</button>
-                    </div>
-                </aside>
-
-                <!-- Main Content -->
-                <main class="doctors-main">
-                    <div class="doctors-header">
-                        <div class="results-info">
-                            <h2 id="results-count">Showing 24 doctors</h2>
-                            <p id="results-description">Find the right doctor for your needs</p>
-                        </div>
-                        <div class="sort-options">
-                            <select id="sort-select" class="sort-select">
-                                <option value="relevance">Sort by Relevance</option>
-                                <option value="rating">Highest Rated</option>
-                                <option value="fee-low">Lowest Fee</option>
-                                <option value="fee-high">Highest Fee</option>
-                                <option value="availability">Availability</option>
+                            <label for="consultation-type-filter">Consultation Type</label>
+                            <select id="consultation-type-filter" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="In-person">In-person</option>
+                                <option value="Video Call">Video Call</option>
                             </select>
                         </div>
                     </div>
-
-                    <div class="doctors-grid" id="doctors-grid">
-                        <!-- Doctor cards will be dynamically loaded here -->
-                    </div>
-
-                    <div class="pagination">
-                        <button class="pagination-btn" id="prev-page">← Previous</button>
-                        <div class="pagination-numbers">
-                            <span class="page-number active">1</span>
-                            <span class="page-number">2</span>
-                            <span class="page-number">3</span>
-                            <span class="pagination-dots">...</span>
-                            <span class="page-number">10</span>
-                        </div>
-                        <button class="pagination-btn" id="next-page">Next →</button>
-                    </div>
-                </main>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section">
+            <div class="container">
+                <div class="results-header">
+                    <h2>Available Doctors</h2>
+                    <div class="results-count">
+                        <span id="results-count">Loading doctors...</span>
+                    </div>
+                </div>
+                
+                <div class="doctors-grid" id="doctors-grid">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading available doctors...</p>
+                    </div>
+                </div>
+                
+                <!-- Doctor Detail Modal -->
+                <div id="doctor-detail-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div id="doctor-detail-content">
+                            <!-- Doctor details will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/placeholder-logo.svg" alt="eChannelling">
+                    <div class="footer-brand">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
                     </div>
-                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with qualified doctors.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">📘</a>
-                        <a href="#" class="social-link">🐦</a>
-                        <a href="#" class="social-link">💼</a>
-                        <a href="#" class="social-link">📷</a>
-                    </div>
+                    <p>Your trusted healthcare companion</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="find-doctors.html">Find Doctors</a></li>
-                        <li><a href="hospitals.html">Hospitals</a></li>
-                        <li><a href="specialities.html">Specialities</a></li>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="about.html">About Us</a></li>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Contact Info</h4>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="find-doctors.html">Book Appointment</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
                     <div class="contact-info">
-                        <p><strong>Phone:</strong> +94 11 234 5678</p>
-                        <p><strong>Email:</strong> info@echannelling.com</p>
-                        <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@healthcareplus.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Medical Center Dr.</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 eChannelling. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
+                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="js/echannelling-main.js"></script>
+    <!-- Scripts -->
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/find-doctors.js"></script>
+    <script>
+        // Initialize Find Doctors Manager
+        let findDoctorsManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            findDoctorsManager = new FindDoctorsManager();
+        });
+    </script>
 </body>
 </html>

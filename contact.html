@@ -3,51 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - eChannelling</title>
-    <meta name="description" content="Get in touch with eChannelling for support, inquiries, or feedback">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/echannelling-styles.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/contact.css">
+    <title>Contact Us | HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
-                </div>
-                <nav class="main-nav">
-                    <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
-                        <li><a href="about.html" class="nav-link">About</a></li>
-                        <li><a href="contact.html" class="nav-link active">Contact</a></li>
-                    </ul>
-                </nav>
-                <div class="header-actions">
-                    <button class="btn-language">EN | සිං</button>
-                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
-                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
-                </div>
-                <div class="mobile-menu-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCare+</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="contact.html" class="nav-link active">Contact Us</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Contact Hero -->
-    <section class="contact-hero">
+    <!-- Page Header -->
+    <section class="page-header">
+        <div id="contact-video-background"></div>
         <div class="container">
             <h1>Contact Us</h1>
-            <p>We're here to help you with any questions or support you need</p>
+            <p>Get in touch with our healthcare support team</p>
         </div>
     </section>
 
@@ -56,109 +48,124 @@
         <div class="container">
             <div class="contact-grid">
                 <!-- Contact Form -->
-                <div class="contact-form-container">
+                <div class="contact-form-section">
                     <h2>Send us a Message</h2>
-                    <form class="contact-form" id="contact-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="first-name">First Name</label>
-                                <input type="text" id="first-name" name="firstName" required class="form-input" placeholder="Your first name">
-                            </div>
-                            <div class="form-group">
-                                <label for="last-name">Last Name</label>
-                                <input type="text" id="last-name" name="lastName" required class="form-input" placeholder="Your last name">
-                            </div>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" required class="form-input" placeholder="your.email@example.com">
+                            <input type="email" id="email" name="email" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+94 XX XXX XXXX">
+                            <input type="tel" id="phone" name="phone">
                         </div>
                         
                         <div class="form-group">
                             <label for="subject">Subject</label>
-                            <select id="subject" name="subject" required class="form-select">
-                                <option value="">Select a topic</option>
+                            <select id="subject" name="subject" class="form-control" required>
+                                <option value="">Select a subject</option>
                                 <option value="general">General Inquiry</option>
                                 <option value="support">Technical Support</option>
-                                <option value="booking">Booking Issues</option>
-                                <option value="doctor">Doctor Registration</option>
-                                <option value="hospital">Hospital Partnership</option>
+                                <option value="billing">Billing Question</option>
+                                <option value="partnership">Partnership</option>
                                 <option value="feedback">Feedback</option>
-                                <option value="other">Other</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="message">Message</label>
-                            <textarea id="message" name="message" required class="form-textarea" rows="6" placeholder="Please provide details about your inquiry..."></textarea>
+                            <textarea id="message" name="message" rows="5" required placeholder="Please describe your inquiry in detail..."></textarea>
                         </div>
                         
-                        <button type="submit" class="btn-submit">Send Message</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
                     </form>
                 </div>
-
+                
                 <!-- Contact Information -->
-                <div class="contact-info-container">
+                <div class="contact-info-section">
                     <h2>Get in Touch</h2>
+                    <p>We're here to help and answer any questions you might have. We look forward to hearing from you.</p>
                     
-                    <div class="contact-info-grid">
-                        <div class="contact-info-card">
-                            <div class="info-icon">📞</div>
-                            <h3>Phone</h3>
-                            <p>+94 11 234 5678</p>
-                            <p class="info-note">Available 24/7 for emergencies</p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Address</h4>
+                                <p>123 Healthcare Avenue<br>Medical City, MC 12345<br>United States</p>
+                            </div>
                         </div>
                         
-                        <div class="contact-info-card">
-                            <div class="info-icon">📧</div>
-                            <h3>Email</h3>
-                            <p>info@echannelling.com</p>
-                            <p class="info-note">We'll respond within 24 hours</p>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Phone</h4>
+                                <p>Main: +1 (555) 123-4567<br>Support: +1 (555) 123-4568<br>Emergency: +1 (555) 911-HELP</p>
+                            </div>
                         </div>
                         
-                        <div class="contact-info-card">
-                            <div class="info-icon">📍</div>
-                            <h3>Address</h3>
-                            <p>No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
-                            <p class="info-note">Visit us Monday - Friday, 9 AM - 5 PM</p>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Email</h4>
+                                <p>General: info@healthcareplus.com<br>Support: support@healthcareplus.com<br>Billing: billing@healthcareplus.com</p>
+                            </div>
                         </div>
                         
-                        <div class="contact-info-card">
-                            <div class="info-icon">💬</div>
-                            <h3>Live Chat</h3>
-                            <p>Available on our website</p>
-                            <p class="info-note">Instant support during business hours</p>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Business Hours</h4>
+                                <p>Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="emergency-notice">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Emergency Notice</h4>
+                        <p>For medical emergencies, please call 911 or visit your nearest emergency room immediately. This contact form is not monitored 24/7.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- FAQ Section -->
-                    <div class="faq-section">
-                        <h3>Frequently Asked Questions</h3>
-                        <div class="faq-list">
-                            <div class="faq-item">
-                                <div class="faq-question">How do I book an appointment?</div>
-                                <div class="faq-answer">You can book appointments through our website or mobile app. Simply search for doctors, select your preferred time slot, and confirm your booking.</div>
-                            </div>
-                            <div class="faq-item">
-                                <div class="faq-question">Can I cancel my appointment?</div>
-                                <div class="faq-answer">Yes, you can cancel appointments up to 2 hours before the scheduled time through your account dashboard or by calling our support team.</div>
-                            </div>
-                            <div class="faq-item">
-                                <div class="faq-question">What payment methods do you accept?</div>
-                                <div class="faq-answer">We accept all major credit cards, debit cards, and online banking payments. Cash payments are also accepted at the hospital.</div>
-                            </div>
-                            <div class="faq-item">
-                                <div class="faq-question">How do doctors join your platform?</div>
-                                <div class="faq-answer">Qualified doctors can apply through our doctor registration portal. Our team will verify credentials and approve applications within 3-5 business days.</div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h4>How do I reset my password?</h4>
+                    <p>You can reset your password by clicking the "Forgot Password" link on the login page and following the instructions sent to your email.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How can I update my profile information?</h4>
+                    <p>Log into your account and navigate to the profile section where you can update your personal information, contact details, and preferences.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Is my health information secure?</h4>
+                    <p>Yes, we use industry-standard encryption and security measures to protect your health information in compliance with HIPAA regulations.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>What if I need to cancel an appointment?</h4>
+                    <p>You can cancel appointments through your patient dashboard or by contacting our support team at least 24 hours in advance.</p>
                 </div>
             </div>
         </div>
@@ -169,47 +176,167 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/placeholder-logo.svg" alt="eChannelling">
+                    <div class="footer-brand">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HealthCare+</span>
                     </div>
-                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with qualified doctors.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">📘</a>
-                        <a href="#" class="social-link">🐦</a>
-                        <a href="#" class="social-link">💼</a>
-                        <a href="#" class="social-link">📷</a>
-                    </div>
+                    <p>Modern healthcare management platform connecting patients with qualified medical professionals.</p>
                 </div>
                 <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
                         <li><a href="find-doctors.html">Find Doctors</a></li>
-                        <li><a href="hospitals.html">Hospitals</a></li>
-                        <li><a href="specialities.html">Specialities</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="find-doctors.html">Book Appointment</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Contact Info</h4>
+                    <h3>Contact Info</h3>
                     <div class="contact-info">
-                        <p><strong>Phone:</strong> +94 11 234 5678</p>
-                        <p><strong>Email:</strong> info@echannelling.com</p>
-                        <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@healthcareplus.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Medical Center Dr.</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 eChannelling. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="terms.html">Terms of Service</a>
-                </div>
+                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="js/echannelling-main.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/three-video-background.js"></script>
+    <script src="js/auto-scroll-manager.js"></script>
     <script src="js/contact.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Enhanced Contact form handling with auto-clear and animations
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Basic form validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            if (!name || !email || !subject || !message) {
+                showNotification('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            // Simulate sending delay for better UX
+            setTimeout(() => {
+                // Show success message
+                showNotification('Thank you for your message. We will get back to you within 24 hours.', 'success');
+                
+                // Auto-clear form with smooth animation
+                clearFormWithAnimation(form);
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Send Message';
+                
+                // Auto scroll to top of form
+                form.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+            }, 1500);
+        });
+        
+        function clearFormWithAnimation(form) {
+            // Fade out form fields
+            const formFields = form.querySelectorAll('input, select, textarea');
+            
+            formFields.forEach((field, index) => {
+                setTimeout(() => {
+                    field.style.transition = 'all 0.3s ease';
+                    field.style.opacity = '0.5';
+                    field.style.transform = 'scale(0.98)';
+                    
+                    setTimeout(() => {
+                        field.value = '';
+                        field.style.opacity = '1';
+                        field.style.transform = 'scale(1)';
+                        
+                        // Add highlight effect to show field is cleared
+                        field.style.borderColor = 'var(--success-color)';
+                        setTimeout(() => {
+                            field.style.borderColor = '';
+                        }, 1000);
+                        
+                    }, 200);
+                }, index * 100);
+            });
+            
+            // Reset select dropdown to default
+            setTimeout(() => {
+                const selectField = form.querySelector('select');
+                if (selectField) {
+                    selectField.selectedIndex = 0;
+                }
+            }, 500);
+        }
+        
+        // Enhanced field interactions with auto-scroll
+        document.querySelectorAll('#contactForm input, #contactForm select, #contactForm textarea').forEach(field => {
+            field.addEventListener('blur', function() {
+                if (this.value && validateField(this)) {
+                    // Auto scroll to next field
+                    const formGroup = this.closest('.form-group');
+                    const nextFormGroup = formGroup.nextElementSibling;
+                    
+                    if (nextFormGroup) {
+                        setTimeout(() => {
+                            nextFormGroup.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                            
+                            const nextField = nextFormGroup.querySelector('input, select, textarea');
+                            if (nextField) {
+                                setTimeout(() => {
+                                    nextField.focus();
+                                }, 500);
+                            }
+                        }, 300);
+                    } else {
+                        // Focus on submit button if last field
+                        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
+                        setTimeout(() => {
+                            submitBtn.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                            submitBtn.focus();
+                        }, 300);
+                    }
+                }
+            });
+        });
+        
+        function validateField(field) {
+            if (field.type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(field.value);
+            }
+            if (field.hasAttribute('required')) {
+                return field.value.trim() !== '';
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
