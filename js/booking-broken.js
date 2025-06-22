@@ -1025,7 +1025,7 @@ class BookingManager {
                 </div>
                 <div class="success-actions">
                     <a href="dashboard-patient.html" class="btn btn-primary">View My Appointments</a>
-                    <a href="booking.html" class="btn btn-secondary">Book Another</a>
+                    <a href="find-doctors.html" class="btn btn-secondary">Book Another</a>
                     <a href="index.html" class="btn btn-outline">Back to Home</a>
                 </div>
             </div>

@@ -113,7 +113,7 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 - June 21, 2025: Fixed booking section display issues and created quick access pages
   - Fixed booking section content display by correcting container ID mismatch between HTML and JavaScript
-  - Updated "Book Now" buttons across all components to navigate to booking.html page
+  - Updated "Book Now" buttons across all components to navigate to find-doctors.html page
   - Created comprehensive quick access service pages: Ministry of Foreign Affairs, Driving License Medical, ePremium Services, eVisa Medical Services, and eHospital
   - Enhanced booking section with immediate doctor card display in patient dashboard
   - All booking navigation now properly redirects to dedicated booking page

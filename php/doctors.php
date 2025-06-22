@@ -348,7 +348,7 @@ class DoctorsHandler {
         $doctor['profileUrl'] = "profile.html?doctor={$doctor['id']}";
         
         // Add booking URL
-        $doctor['bookingUrl'] = "booking.html?doctor={$doctor['id']}";
+        $doctor['bookingUrl'] = "find-doctors.html?doctor={$doctor['id']}";
         
         return $doctor;
     }

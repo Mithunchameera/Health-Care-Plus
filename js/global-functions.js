@@ -129,7 +129,7 @@ function bookAppointment(doctorId) {
     console.log(`Booking appointment with doctor ${doctorId}`);
     
     // Navigate to booking page
-    window.location.href = 'booking.html';
+    window.location.href = 'find-doctors.html';
 }
 
 // Select doctor (for booking page)

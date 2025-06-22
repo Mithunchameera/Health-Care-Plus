@@ -558,7 +558,7 @@ class FindDoctorsManager {
 
     bookAppointment(doctorId) {
         // Navigate to booking page
-        window.location.href = 'booking.html';
+        window.location.href = 'find-doctors.html';
     }
 
     showError(message) {

@@ -183,8 +183,8 @@
                 <div class="footer-section">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="doctors.html">Find Doctors</a></li>
-                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="find-doctors.html">Book Appointment</a></li>
                         <li><a href="register.html">Register</a></li>
                         <li><a href="login.html">Login</a></li>
                     </ul>
@@ -199,7 +199,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 HealthCare+. All rights reserved.</p>
+                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -211,31 +211,8 @@
     <script src="js/language-manager.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // Check authentication on page load and redirect if logged in
+        // Allow users to stay on home page without automatic redirects
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const response = await fetch('php/session-handler.php');
-                const data = await response.json();
-                
-                if (data.authenticated) {
-                    // Redirect authenticated users to their dashboard
-                    let dashboardUrl = 'dashboard-patient.html';
-                    switch(data.user.role) {
-                        case 'doctor':
-                            dashboardUrl = 'dashboard-doctor.html';
-                            break;
-                        case 'admin':
-                        case 'staff':
-                            dashboardUrl = 'dashboard-admin.html';
-                            break;
-                        default:
-                            dashboardUrl = 'dashboard-patient.html';
-                    }
-                    window.location.href = dashboardUrl;
-                }
-            } catch (error) {
-                console.log('Auth check failed:', error);
-            }
             
             // Initialize back to top button
             if (typeof initializeBackToTop === 'function') {

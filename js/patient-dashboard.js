@@ -786,7 +786,7 @@ class PatientDashboard {
 
     bookAppointment(doctorId) {
         // Navigate to booking page
-        window.location.href = 'booking.html';
+        window.location.href = 'find-doctors.html';
     }
 
     viewDoctorProfile(doctorId) {
@@ -833,7 +833,7 @@ class PatientDashboard {
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="window.location.href='booking.html'">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href='find-doctors.html'">
                                 Book Appointment
                             </button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

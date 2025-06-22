@@ -2171,6 +2171,285 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Sleek Login Form Styling */
+.sleek-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.sleek-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.sleek-input {
+    width: 100%;
+    padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.sleek-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+.sleek-input:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: 
+        0 8px 28px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.sleek-input:focus {
+    border-color: #3b82f6;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 
+        0 12px 36px rgba(59, 130, 246, 0.15),
+        0 0 0 4px rgba(59, 130, 246, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.sleek-input:focus::placeholder {
+    opacity: 0.7;
+    transform: translateX(4px);
+}
+
+.input-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+}
+
+.sleek-input-wrapper:focus-within .input-icon {
+    color: #3b82f6;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.password-toggle-btn:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+[data-theme="dark"] .sleek-input {
+    background: rgba(30, 41, 59, 0.9);
+    color: #e2e8f0;
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Remove icon styles since we're not using them in this design */
+.input-icon {
+    display: none;
+}
+
+[data-theme="dark"] .sleek-input::placeholder {
+    color: #64748b;
+}
+
+[data-theme="dark"] .sleek-input:hover {
+    background: rgba(30, 41, 59, 1);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] .sleek-input:focus {
+    background: rgba(30, 41, 59, 1);
+    border-color: #3b82f6;
+}
+
+/* Sleek Form Options */
+.sleek-form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 0.25rem;
+}
+
+.sleek-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.sleek-checkbox input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sleek-checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.sleek-checkmark i {
+    font-size: 0.75rem;
+    color: transparent;
+    transition: color 0.3s ease;
+}
+
+.sleek-checkbox input:checked + .sleek-checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    transform: scale(1.05);
+}
+
+.sleek-checkbox input:checked + .sleek-checkmark i {
+    color: white;
+}
+
+.sleek-forgot-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.sleek-forgot-link:hover {
+    color: #2563eb;
+    transform: translateX(2px);
+}
+
+.sleek-forgot-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+.sleek-forgot-link:hover::after {
+    width: 100%;
+}
+
+/* Sleek Button */
+.sleek-btn {
+    width: 100%;
+    padding: 1.2rem 2rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.sleek-btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 
+        0 8px 32px rgba(59, 130, 246, 0.3),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.sleek-btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        transparent 100%);
+    transition: left 0.5s ease;
+}
+
+.sleek-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 12px 48px rgba(59, 130, 246, 0.4),
+        0 8px 24px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.sleek-btn-primary:hover::before {
+    left: 100%;
+}
+
+.sleek-btn-primary:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.sleek-btn i {
+    transition: transform 0.3s ease;
+}
+
+.sleek-btn:hover i {
+    transform: translateX(4px);
+}
+
+[data-theme="dark"] .sleek-checkmark {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: #64748b;
+}
+
+[data-theme="dark"] .sleek-forgot-link {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .sleek-forgot-link:hover {
+    color: #3b82f6;
+}
+
 .modern-form-group {
     margin-bottom: 1.5rem;
 }
@@ -2182,54 +2461,107 @@ body {
 
 .floating-input {
     width: 100%;
-    padding: 1.25rem 1rem 0.75rem;
-    border: 2px solid var(--border-color);
-    border-radius: 16px;
-    background: var(--bg-color);
+    padding: 1.75rem 1.2rem 0.75rem 3.8rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     color: var(--text-color);
     font-size: 1rem;
-    font-weight: 400;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.04),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.floating-input:hover {
+    border-color: #cbd5e1;
+    background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .floating-input:focus {
-    border-color: var(--primary-color);
+    border-color: #3b82f6;
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
     box-shadow: 
-        0 0 0 3px rgba(59, 130, 246, 0.1),
-        0 8px 25px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+        0 12px 32px rgba(59, 130, 246, 0.15),
+        0 0 0 4px rgba(59, 130, 246, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.floating-input::placeholder {
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .floating-label {
     position: absolute;
-    left: 1rem;
+    left: 3.8rem;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--bg-color);
-    color: var(--text-secondary);
+    background: transparent;
+    color: #64748b;
     font-size: 1rem;
     font-weight: 500;
     pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0 0.5rem;
-    border-radius: 8px;
+    padding: 0;
+    z-index: 2;
+    white-space: nowrap;
 }
 
 .floating-input:focus + .floating-label,
 .floating-input:not(:placeholder-shown) + .floating-label {
     top: 0;
-    transform: translateY(-50%);
-    font-size: 0.85rem;
-    color: var(--primary-color);
-    background: var(--card-bg);
+    left: 1.2rem;
+    transform: translateY(-50%) scale(0.85);
+    color: #3b82f6;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 1) 10%, 
+        rgba(248, 250, 252, 1) 50%, 
+        rgba(255, 255, 255, 1) 90%, 
+        rgba(255, 255, 255, 0) 100%);
+    padding: 0 0.75rem;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
 .floating-label i {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    position: absolute;
+    left: -2.8rem;
+    color: #94a3b8;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 3;
+}
+
+.floating-input:focus + .floating-label i {
+    color: #3b82f6;
+    transform: scale(1.15);
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.floating-input:hover + .floating-label i {
+    color: #64748b;
+    transform: scale(1.08);
+}
+
+.floating-input:focus + .floating-label i,
+.floating-input:not(:placeholder-shown) + .floating-label i {
+    left: -1.5rem;
+    color: #3b82f6;
 }
 
 .input-group {
@@ -2240,25 +2572,49 @@ body {
 
 .input-group i {
     position: absolute;
-    left: 1.5rem;
-    color: var(--text-secondary);
+    left: 1.2rem;
+    color: #94a3b8;
     z-index: 2;
     font-size: 1.1rem;
-    transition: color 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 1rem 3.5rem 1rem 4rem;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--bg-color);
+    padding: 1.2rem 1.2rem 1.2rem 3.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     color: var(--text-color);
     font-size: 1rem;
-    font-weight: 400;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.input-group input:hover,
+.input-group select:hover {
+    border-color: #cbd5e1;
+    background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #ffffff;
+    box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.15),
+        0 0 0 4px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
+.input-group:focus-within i {
+    color: #3b82f6;
+    transform: scale(1.1);
 }
 
 .input-group select {
@@ -5182,8 +5538,82 @@ input[type="date"]::-ms-calendar-picker-indicator {
     display: block;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-size: 0.95rem;
+}
+
+/* Enhanced Input Styling for All Forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 1.3rem 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.04),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
+    position: relative;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="tel"]:hover,
+input[type="number"]:hover,
+textarea:hover {
+    border-color: #cbd5e1;
+    background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+    box-shadow: 
+        0 12px 32px rgba(59, 130, 246, 0.15),
+        0 0 0 4px rgba(59, 130, 246, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="number"]::placeholder,
+textarea::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus::placeholder,
+input[type="email"]:focus::placeholder,
+input[type="password"]:focus::placeholder,
+input[type="tel"]:focus::placeholder,
+input[type="number"]:focus::placeholder,
+textarea:focus::placeholder {
+    opacity: 0.7;
+    transform: translateX(4px);
 }
 
 .input-wrapper {
@@ -5191,26 +5621,58 @@ input[type="date"]::-ms-calendar-picker-indicator {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: rgba(255, 255, 255, 0.8);
-    border: 2px solid rgba(37, 99, 235, 0.1);
-    border-radius: 16px;
-    padding: 0.75rem 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1rem 1.2rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.04),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.input-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(59, 130, 246, 0.05) 50%, 
+        transparent 100%);
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
 }
 
 [data-theme="dark"] .input-wrapper {
-    background: rgba(15, 23, 42, 0.8);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
     border: 2px solid rgba(59, 130, 246, 0.2);
 }
 
-.input-wrapper:focus-within {
-    border-color: #2563eb;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 
-        0 8px 16px rgba(37, 99, 235, 0.15),
-        0 0 0 4px rgba(37, 99, 235, 0.1);
+.input-wrapper:hover {
+    border-color: #cbd5e1;
+    background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
     transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.input-wrapper:hover::before {
+    left: 100%;
+}
+
+.input-wrapper:focus-within {
+    border-color: #3b82f6;
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+    box-shadow: 
+        0 12px 32px rgba(59, 130, 246, 0.15),
+        0 0 0 4px rgba(59, 130, 246, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
 }
 
 [data-theme="dark"] .input-wrapper:focus-within {
@@ -5222,13 +5684,16 @@ input[type="date"]::-ms-calendar-picker-indicator {
 }
 
 .input-wrapper i {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 1.1rem;
-    transition: color 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
 }
 
 .input-wrapper:focus-within i {
-    color: #2563eb;
+    color: #3b82f6;
+    transform: scale(1.15);
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
 [data-theme="dark"] .input-wrapper:focus-within i {
@@ -5245,6 +5710,9 @@ input[type="date"]::-ms-calendar-picker-indicator {
     color: #1e293b;
     outline: none;
     font-weight: 500;
+    z-index: 2;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
 [data-theme="dark"] .input-wrapper input,
@@ -5255,6 +5723,12 @@ input[type="date"]::-ms-calendar-picker-indicator {
 .input-wrapper input::placeholder {
     color: #94a3b8;
     font-weight: 400;
+    transition: opacity 0.3s ease;
+}
+
+.input-wrapper input:focus::placeholder {
+    opacity: 0.7;
+    transform: translateX(4px);
 }
 
 [data-theme="dark"] .input-wrapper input::placeholder {
