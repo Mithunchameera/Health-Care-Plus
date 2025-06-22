@@ -13,9 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-$currentUser = checkUserAuth(['doctor']);
-if (!$currentUser) {
-    sendResponse(['error' => 'Authentication required'], 401);
+// Check if this is a public profile request
+$isPublicProfileRequest = isset($_GET['id']) && !isset($_GET['action']);
+
+if (!$isPublicProfileRequest) {
+    $currentUser = checkUserAuth(['doctor']);
+    if (!$currentUser) {
+        sendResponse(['error' => 'Authentication required'], 401);
+    }
+} else {
+    $currentUser = null; // Public access for profile viewing
 }
 
 class DoctorAPI {
@@ -30,6 +37,12 @@ class DoctorAPI {
     public function handleRequest() {
         $method = $_SERVER['REQUEST_METHOD'];
         $action = $_GET['action'] ?? $_POST['action'] ?? '';
+        
+        // Handle public doctor profile requests
+        if (isset($_GET['id']) && !$action) {
+            $this->getDoctorProfile($_GET['id']);
+            return;
+        }
         
         switch ($action) {
             case 'get_stats':
@@ -73,6 +86,48 @@ class DoctorAPI {
                 break;
             default:
                 sendResponse(['error' => 'Invalid action'], 400);
+        }
+    }
+    
+    public function getDoctorProfile($doctorId) {
+        try {
+            // Load doctors from the doctors.php file
+            $doctorsResponse = file_get_contents(__DIR__ . '/doctors.php');
+            if ($doctorsResponse === false) {
+                throw new Exception('Could not load doctors data');
+            }
+            
+            // Execute the PHP to get the doctors array
+            ob_start();
+            include(__DIR__ . '/doctors.php');
+            ob_end_clean();
+            
+            if (!isset($doctors) || !is_array($doctors)) {
+                throw new Exception('Invalid doctors data structure');
+            }
+            
+            // Find the doctor by ID
+            $doctor = null;
+            foreach ($doctors as $doc) {
+                if ($doc['id'] == $doctorId) {
+                    $doctor = $doc;
+                    break;
+                }
+            }
+            
+            if (!$doctor) {
+                sendResponse(['error' => 'Doctor not found'], 404);
+                return;
+            }
+            
+            // Return doctor profile data
+            sendResponse([
+                'success' => true,
+                'doctor' => $doctor
+            ]);
+            
+        } catch (Exception $e) {
+            sendResponse(['error' => 'Failed to load doctor profile: ' . $e->getMessage()], 500);
         }
     }
     

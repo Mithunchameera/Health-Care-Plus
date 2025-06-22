@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Gynecologists - eChannelling</title>
+    <meta name="description" content="Find and book appointments with top gynecologists in Sri Lanka through eChannelling">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/doctor-search.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="doctors-hero">
+        <div class="container">
+            <h1>Find Gynecologists</h1>
+            <p>Book appointments with leading women's health specialists in Sri Lanka</p>
+            <div class="specialty-info">
+                <div class="specialty-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">16+</span>
+                        <span class="stat-label">Gynecologists</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">Hospitals</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2-4 days</span>
+                        <span class="stat-label">Avg Wait</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-filters">
+                <div class="search-bar">
+                    <input type="text" id="doctor-search" placeholder="Search gynecologists by name..." class="search-input">
+                    <button class="search-btn">Search</button>
+                </div>
+                <div class="filters">
+                    <select id="hospital-filter" class="filter-select">
+                        <option value="">All Hospitals</option>
+                        <option value="Apollo Hospital">Apollo Hospital</option>
+                        <option value="Asiri Central">Asiri Central</option>
+                        <option value="Nawaloka Hospital">Nawaloka Hospital</option>
+                        <option value="Lanka Hospital">Lanka Hospital</option>
+                        <option value="National Hospital">National Hospital</option>
+                    </select>
+                    <select id="fee-filter" class="filter-select">
+                        <option value="">Any Fee Range</option>
+                        <option value="0-2500">Under Rs. 2,500</option>
+                        <option value="2500-3500">Rs. 2,500 - 3,500</option>
+                        <option value="3500-4500">Rs. 3,500 - 4,500</option>
+                        <option value="4500+">Above Rs. 4,500</option>
+                    </select>
+                    <select id="availability-filter" class="filter-select">
+                        <option value="">Any Day</option>
+                        <option value="today">Available Today</option>
+                        <option value="tomorrow">Available Tomorrow</option>
+                        <option value="week">This Week</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Doctors List -->
+    <section class="doctors-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Gynecologists</h2>
+                <div class="results-info">
+                    <span id="results-count">Loading gynecologists...</span>
+                </div>
+            </div>
+            <div id="doctors-grid" class="doctors-grid">
+                <!-- Doctors will be loaded here -->
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/placeholder-logo.svg" alt="eChannelling">
+                    </div>
+                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with top medical professionals.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="hospitals.html">Hospitals</a></li>
+                        <li><a href="specialities.html">Specialities</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li>📞 +94 11 123 4567</li>
+                        <li>✉️ info@echannelling.com</li>
+                        <li>📍 Colombo, Sri Lanka</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 eChannelling. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/echannelling-main.js"></script>
+    <script>
+        // Initialize specialty-specific doctor search
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set specialty filter to Obstetrics & Gynecology
+            const specialtyFilter = 'Obstetrics & Gynecology';
+            
+            // Load doctors with specialty filter
+            if (window.DoctorSearchManager) {
+                const searchManager = new DoctorSearchManager();
+                searchManager.filterBySpecialty(specialtyFilter);
+            }
+        });
+    </script>
+</body>
+</html>

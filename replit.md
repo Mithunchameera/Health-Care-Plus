@@ -102,7 +102,12 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
-- June 22, 2025: Successfully completed migration from Replit Agent to Replit environment with header consistency updates
+- June 22, 2025: Successfully completed migration from Replit Agent to Replit environment and created 9 specialty pages
+  - Created dedicated pages for each medical specialty: cardiologists, dermatologists, orthopedic surgeons, pediatricians, general physicians, surgeons, gynecologists, psychiatrists, and eye specialists
+  - Updated specialities.html to link to new specialty-specific pages instead of generic find-doctors page
+  - Enhanced user experience with specialty-focused doctor search functionality
+  - All specialty pages include proper filtering, search capabilities, and doctor listings
+  - Successfully completed migration from Replit Agent to Replit environment with header consistency updates
   - Updated all hospital pages (8 total) with consistent header design matching eChannelling brand
   - Applied unified navigation structure with logo, menu items, language selector, and login/register buttons
   - Ensured proper responsive design and mobile menu functionality across all hospital pages
