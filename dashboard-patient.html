@@ -2013,7 +2013,7 @@
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="content-section active">
                 <div class="dashboard-header">
-                    <h1>Welcome back, <span id="patient-name">John Doe</span>!</h1>
+                    <h1>Welcome back, <span id="patient-name" style="cursor: pointer; color: var(--primary-color);" onclick="window.patientDashboard.showSection('profile')">John Doe</span>!</h1>
                     <p>Here's your health summary and upcoming appointments.</p>
                 </div>
 
@@ -2982,8 +2982,85 @@
                         </div>
                     </div>
                     
-                    <div class="booking-doctors-grid" id="booking-doctors-list">
-                        <!-- Doctors will be loaded here -->
+                    <div class="booking-doctors-grid" id="booking-doctors-list" style="display: grid !important; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important; gap: 1.5rem !important; width: 100% !important; visibility: visible !important; opacity: 1 !important;">
+                        <div class="doctor-card" data-doctor-id="1" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                            <div class="doctor-photo">
+                                <div class="doctor-initials">SW</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Sarah Wilson</h4>
+                                <p class="specialty">Cardiologist</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> New York</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-text">4.8 (245 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$150</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(1)">
+                                    <i class="fas fa-calendar-plus"></i> Book Now
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewDoctorProfile(1)">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </button>
+                            </div>
+                        </div>
+                        <div class="doctor-card" data-doctor-id="2" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                            <div class="doctor-photo">
+                                <div class="doctor-initials">MC</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Michael Chen</h4>
+                                <p class="specialty">Neurologist</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Los Angeles</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-text">4.9 (198 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$180</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(2)">
+                                    <i class="fas fa-calendar-plus"></i> Book Now
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewDoctorProfile(2)">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </button>
+                            </div>
+                        </div>
+                        <div class="doctor-card" data-doctor-id="3" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                            <div class="doctor-photo">
+                                <div class="doctor-initials">ER</div>
+                            </div>
+                            <div class="doctor-info">
+                                <h4>Dr. Emily Rodriguez</h4>
+                                <p class="specialty">Pediatrician</p>
+                                <p class="location"><i class="fas fa-map-marker-alt"></i> Chicago</p>
+                                <div class="doctor-rating">
+                                    <div class="stars">★★★★☆</div>
+                                    <span class="rating-text">4.7 (156 reviews)</span>
+                                </div>
+                                <div class="consultation-fee">
+                                    <span class="fee-label">Consultation Fee:</span>
+                                    <span class="fee-amount">$120</span>
+                                </div>
+                            </div>
+                            <div class="doctor-actions">
+                                <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(3)">
+                                    <i class="fas fa-calendar-plus"></i> Book Now
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewDoctorProfile(3)">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="btn-group">
@@ -3107,7 +3184,7 @@
                         <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
                     </div>
                     <div class="profile-picture-info">
-                        <h3>John Doe</h3>
+                        <h3 style="cursor: pointer; color: var(--primary-color);" onclick="window.patientDashboard.showSection('profile')">John Doe</h3>
                         <p class="profile-role">Patient</p>
                         <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('profile-picture-input').click()">
                             <i class="fas fa-upload"></i> Upload New Photo

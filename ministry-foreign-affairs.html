@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministry of Foreign Affairs - HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/dashboard-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body data-theme="dark">
+    <div class="page-container">
+        <!-- Header -->
+        <header class="service-header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="btn-back" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                    <div class="service-title">
+                        <div class="service-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="service-info">
+                            <h1>Ministry of Foreign Affairs</h1>
+                            <p>International Medical Services & Documentation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="service-main">
+            <div class="container">
+                <div class="service-grid">
+                    <!-- Medical Certificate for Travel -->
+                    <div class="service-card">
+                        <div class="service-card-header">
+                            <i class="fas fa-certificate"></i>
+                            <h3>Medical Certificate for Travel</h3>
+                        </div>
+                        <div class="service-card-body">
+                            <p>Official medical certificates for international travel and visa applications.</p>
+                            <ul>
+                                <li>COVID-19 vaccination certificates</li>
+                                <li>Health clearance for travel</li>
+                                <li>Medical fitness certificates</li>
+                            </ul>
+                        </div>
+                        <div class="service-card-footer">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Request Certificate
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Embassy Health Services -->
+                    <div class="service-card">
+                        <div class="service-card-header">
+                            <i class="fas fa-building"></i>
+                            <h3>Embassy Health Services</h3>
+                        </div>
+                        <div class="service-card-body">
+                            <p>Health services coordination with foreign embassies.</p>
+                            <ul>
+                                <li>Medical emergency assistance</li>
+                                <li>Embassy doctor referrals</li>
+                                <li>International health insurance verification</li>
+                            </ul>
+                        </div>
+                        <div class="service-card-footer">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-phone"></i>
+                                Contact Embassy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- International Medical Records -->
+                    <div class="service-card">
+                        <div class="service-card-header">
+                            <i class="fas fa-file-medical"></i>
+                            <h3>International Medical Records</h3>
+                        </div>
+                        <div class="service-card-body">
+                            <p>Authenticated medical records for international use.</p>
+                            <ul>
+                                <li>Apostille medical documents</li>
+                                <li>Translated medical records</li>
+                                <li>International format reports</li>
+                            </ul>
+                        </div>
+                        <div class="service-card-footer">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-download"></i>
+                                Request Records
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Medical Visa Support -->
+                    <div class="service-card">
+                        <div class="service-card-header">
+                            <i class="fas fa-passport"></i>
+                            <h3>Medical Visa Support</h3>
+                        </div>
+                        <div class="service-card-body">
+                            <p>Documentation support for medical visa applications.</p>
+                            <ul>
+                                <li>Treatment verification letters</li>
+                                <li>Hospital appointment confirmations</li>
+                                <li>Medical necessity documentation</li>
+                            </ul>
+                        </div>
+                        <div class="service-card-footer">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Apply for Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="recent-applications">
+                    <h2>Recent Applications</h2>
+                    <div class="applications-list">
+                        <div class="application-item">
+                            <div class="application-info">
+                                <h4>Medical Certificate - Travel to UK</h4>
+                                <p>Application #MFA2025001</p>
+                                <span class="application-date">Submitted: June 15, 2025</span>
+                            </div>
+                            <div class="application-status">
+                                <span class="status-badge status-processing">Processing</span>
+                            </div>
+                        </div>
+                        <div class="application-item">
+                            <div class="application-info">
+                                <h4>Embassy Health Services - USA</h4>
+                                <p>Application #MFA2025002</p>
+                                <span class="application-date">Submitted: June 10, 2025</span>
+                            </div>
+                            <div class="application-status">
+                                <span class="status-badge status-completed">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-navigation">
+            <div class="container">
+                <button class="btn btn-back-bottom" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script>
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth animations
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in-up');
+            });
+        });
+    </script>
+
+    <style>
+        .bottom-navigation {
+            background: #1f2937;
+            border-top: 1px solid #374151;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .btn-back-bottom {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .btn-back-bottom:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .bottom-navigation {
+                padding: 1rem 0;
+            }
+            
+            .btn-back-bottom {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</body>
+</html>

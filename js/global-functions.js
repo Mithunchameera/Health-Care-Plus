@@ -128,12 +128,8 @@ function viewDoctorProfile(doctorId) {
 function bookAppointment(doctorId) {
     console.log(`Booking appointment with doctor ${doctorId}`);
     
-    // Navigate to booking page with doctor ID for pre-selection
-    if (doctorId) {
-        window.location.href = `booking.html?doctor=${doctorId}`;
-    } else {
-        window.location.href = 'booking.html';
-    }
+    // Navigate to booking page
+    window.location.href = 'booking.html';
 }
 
 // Select doctor (for booking page)

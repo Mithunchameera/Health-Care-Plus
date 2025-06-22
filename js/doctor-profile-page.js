@@ -405,11 +405,8 @@ function bookAppointment() {
     const urlParams = new URLSearchParams(window.location.search);
     const doctorId = urlParams.get('id');
     
-    if (doctorId) {
-        window.location.href = `booking.html?doctor=${doctorId}`;
-    } else {
-        window.location.href = 'booking.html';
-    }
+    // Navigate to booking page
+    window.location.href = 'booking.html';
 }
 
 function shareProfile() {

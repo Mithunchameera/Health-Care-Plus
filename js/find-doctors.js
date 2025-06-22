@@ -212,6 +212,7 @@ class FindDoctorsManager {
                     email: "r.kim@mentalhealth.com"
                 }
             ];
+            }
 
             this.filteredDoctors = [...this.doctors];
             this.displayDoctors(this.filteredDoctors);
@@ -556,13 +557,8 @@ class FindDoctorsManager {
     }
 
     bookAppointment(doctorId) {
-        // Store selected doctor in sessionStorage for cross-page functionality
-        const doctor = this.doctors.find(d => d.id === doctorId);
-        if (doctor) {
-            sessionStorage.setItem('selectedDoctor', JSON.stringify(doctor));
-        }
-        // Redirect to booking page with doctor pre-selected
-        window.location.href = `booking.html?doctor=${doctorId}`;
+        // Navigate to booking page
+        window.location.href = 'booking.html';
     }
 
     showError(message) {

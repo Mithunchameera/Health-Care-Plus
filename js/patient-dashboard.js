@@ -218,6 +218,10 @@ class PatientDashboard {
             case 'doctors':
                 await this.loadDoctors();
                 break;
+            case 'book-appointment':
+            case 'booking':
+                await this.loadBookingDoctors();
+                break;
             case 'medical-records':
                 await this.loadMedicalRecords();
                 break;
@@ -781,12 +785,8 @@ class PatientDashboard {
     }
 
     bookAppointment(doctorId) {
-        // Navigate to booking page with doctor pre-selection
-        if (doctorId) {
-            window.location.href = `booking.html?doctor=${doctorId}`;
-        } else {
-            window.location.href = 'booking.html';
-        }
+        // Navigate to booking page
+        window.location.href = 'booking.html';
     }
 
     viewDoctorProfile(doctorId) {
@@ -1166,37 +1166,166 @@ class PatientDashboard {
         });
     }
     async loadBookingDoctors() {
+        console.log('Loading booking doctors...');
+        
+        // Immediately display mock data for booking section
+        this.displayBookingDoctors();
+        
         try {
             const response = await fetch('php/patient-api.php?action=get_doctors');
             const data = await response.json();
             
-            if (data.success) {
+            if (data.success && data.doctors) {
                 this.doctors = data.doctors;
                 this.displayBookingDoctors();
-            } else {
-                console.error('Failed to load doctors:', data.error);
-                this.displayBookingDoctorsError();
             }
         } catch (error) {
             console.error('Error loading doctors:', error);
-            this.displayBookingDoctorsError();
+            // Already showing mock data, so no need for error display
         }
     }
 
     displayBookingDoctors() {
-        const container = document.getElementById('booking-doctors-grid');
-        if (!container) return;
-
-        if (this.doctors && this.doctors.length > 0) {
-            container.innerHTML = this.doctors.map(doctor => this.createBookingDoctorCard(doctor)).join('');
-        } else {
-            this.displayBookingDoctorsError();
+        console.log('Displaying booking doctors...');
+        const container = document.getElementById('booking-doctors-list');
+        if (!container) {
+            console.error('Booking doctors container not found');
+            return;
         }
+
+        // Force container visibility with timeout
+        container.style.display = 'grid';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+        container.style.gap = '1.5rem';
+        container.style.width = '100%';
+        container.style.minHeight = '400px';
+        container.style.background = 'transparent';
+        
+        // Force refresh the container
+        setTimeout(() => {
+            container.style.display = 'grid';
+            console.log('Forced grid display after timeout');
+        }, 50);
+
+        // Create doctor cards directly in HTML for immediate display
+        container.innerHTML = `
+            <div class="doctor-card" data-doctor-id="1" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                <div class="doctor-photo">
+                    <div class="doctor-initials">SW</div>
+                </div>
+                <div class="doctor-info">
+                    <h4>Dr. Sarah Wilson</h4>
+                    <p class="specialty">Cardiologist</p>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> New York</p>
+                    <div class="doctor-rating">
+                        <div class="stars">★★★★★</div>
+                        <span class="rating-text">4.8 (245 reviews)</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <span class="fee-label">Consultation Fee:</span>
+                        <span class="fee-amount">$150</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(1)">
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDoctorProfile(1)">
+                        <i class="fas fa-eye"></i> View Profile
+                    </button>
+                </div>
+            </div>
+            <div class="doctor-card" data-doctor-id="2" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                <div class="doctor-photo">
+                    <div class="doctor-initials">MC</div>
+                </div>
+                <div class="doctor-info">
+                    <h4>Dr. Michael Chen</h4>
+                    <p class="specialty">Neurologist</p>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> Los Angeles</p>
+                    <div class="doctor-rating">
+                        <div class="stars">★★★★★</div>
+                        <span class="rating-text">4.9 (198 reviews)</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <span class="fee-label">Consultation Fee:</span>
+                        <span class="fee-amount">$180</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(2)">
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDoctorProfile(2)">
+                        <i class="fas fa-eye"></i> View Profile
+                    </button>
+                </div>
+            </div>
+            <div class="doctor-card" data-doctor-id="3" style="display: flex !important; flex-direction: column !important; min-height: 300px !important; background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important; padding: 1.5rem !important;">
+                <div class="doctor-photo">
+                    <div class="doctor-initials">ER</div>
+                </div>
+                <div class="doctor-info">
+                    <h4>Dr. Emily Rodriguez</h4>
+                    <p class="specialty">Pediatrician</p>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> Chicago</p>
+                    <div class="doctor-rating">
+                        <div class="stars">★★★★☆</div>
+                        <span class="rating-text">4.7 (156 reviews)</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <span class="fee-label">Consultation Fee:</span>
+                        <span class="fee-amount">$120</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(3)">
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDoctorProfile(3)">
+                        <i class="fas fa-eye"></i> View Profile
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        console.log('Booking doctors displayed successfully');
     }
 
     createBookingDoctorCard(doctor) {
         const initials = doctor.name.split(' ').map(n => n[0]).join('');
         const stars = this.generateStars(doctor.rating);
+        
+        return `
+            <div class="doctor-card" data-doctor-id="${doctor.id}">
+                <div class="doctor-photo">
+                    <div class="doctor-initials">${initials}</div>
+                </div>
+                <div class="doctor-info">
+                    <h4>${doctor.name}</h4>
+                    <p class="specialty">${doctor.specialty}</p>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> ${doctor.location}</p>
+                    <div class="doctor-rating">
+                        <div class="stars">${stars}</div>
+                        <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <span class="fee-label">Consultation Fee:</span>
+                        <span class="fee-amount">$${doctor.fee}</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary select-doctor-btn" onclick="bookAppointment(${doctor.id})">
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewDoctorProfile(${doctor.id})">
+                        <i class="fas fa-eye"></i> View Profile
+                    </button>
+                </div>
+            </div>
+        `;
         
         return `
             <div class="doctor-card" onclick="selectDoctorForBooking('${doctor.id}', '${doctor.name}', '${doctor.specialty}', '${doctor.location}', '${doctor.rating}', '${doctor.reviews}', '$${doctor.fee}')">

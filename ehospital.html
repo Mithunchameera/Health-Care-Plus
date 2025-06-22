@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eHospital Services - HealthCare+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/dashboard-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body data-theme="dark">
+    <div class="page-container">
+        <!-- Header -->
+        <header class="service-header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="btn-back" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                    <div class="service-title">
+                        <div class="service-icon">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <div class="service-info">
+                            <h1>eHospital Services</h1>
+                            <p>Digital Hospital Management & Services</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="service-main">
+            <div class="container">
+                <!-- Quick Services -->
+                <div class="quick-services-grid">
+                    <div class="service-card emergency">
+                        <div class="service-icon">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                        <h3>Emergency Services</h3>
+                        <p>24/7 emergency care and ambulance services</p>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-phone"></i>
+                            Call Emergency
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <h3>Bed Availability</h3>
+                        <p>Real-time hospital bed availability check</p>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                            Check Availability
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Admission Booking</h3>
+                        <p>Schedule hospital admissions and procedures</p>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Book Admission
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h3>Medical Records</h3>
+                        <p>Access your complete hospital medical records</p>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-folder-open"></i>
+                            View Records
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hospital Network -->
+                <div class="hospital-network">
+                    <h2>Hospital Network</h2>
+                    <div class="hospitals-grid">
+                        <div class="hospital-card">
+                            <div class="hospital-info">
+                                <div class="hospital-image">
+                                    <i class="fas fa-hospital-alt"></i>
+                                </div>
+                                <div class="hospital-details">
+                                    <h4>Central General Hospital</h4>
+                                    <p class="hospital-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Downtown Medical District
+                                    </p>
+                                    <div class="hospital-specialties">
+                                        <span class="specialty-tag">Emergency</span>
+                                        <span class="specialty-tag">Surgery</span>
+                                        <span class="specialty-tag">ICU</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hospital-status">
+                                <div class="status-item">
+                                    <span class="status-label">Beds Available</span>
+                                    <span class="status-value available">23</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">ER Wait Time</span>
+                                    <span class="status-value">15 min</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="hospital-card">
+                            <div class="hospital-info">
+                                <div class="hospital-image">
+                                    <i class="fas fa-hospital-alt"></i>
+                                </div>
+                                <div class="hospital-details">
+                                    <h4>St. Mary's Medical Center</h4>
+                                    <p class="hospital-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        North Healthcare Campus
+                                    </p>
+                                    <div class="hospital-specialties">
+                                        <span class="specialty-tag">Cardiology</span>
+                                        <span class="specialty-tag">Neurology</span>
+                                        <span class="specialty-tag">Oncology</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hospital-status">
+                                <div class="status-item">
+                                    <span class="status-label">Beds Available</span>
+                                    <span class="status-value limited">8</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">ER Wait Time</span>
+                                    <span class="status-value">35 min</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="hospital-card">
+                            <div class="hospital-info">
+                                <div class="hospital-image">
+                                    <i class="fas fa-hospital-alt"></i>
+                                </div>
+                                <div class="hospital-details">
+                                    <h4>Children's Hospital</h4>
+                                    <p class="hospital-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Pediatric Care District
+                                    </p>
+                                    <div class="hospital-specialties">
+                                        <span class="specialty-tag">Pediatrics</span>
+                                        <span class="specialty-tag">NICU</span>
+                                        <span class="specialty-tag">Pediatric Surgery</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hospital-status">
+                                <div class="status-item">
+                                    <span class="status-label">Beds Available</span>
+                                    <span class="status-value available">12</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">ER Wait Time</span>
+                                    <span class="status-value">20 min</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Overview -->
+                <div class="services-overview">
+                    <h2>Hospital Services</h2>
+                    <div class="services-tabs">
+                        <button class="tab-btn active" data-tab="inpatient">Inpatient Care</button>
+                        <button class="tab-btn" data-tab="outpatient">Outpatient Services</button>
+                        <button class="tab-btn" data-tab="emergency">Emergency Care</button>
+                        <button class="tab-btn" data-tab="specialized">Specialized Units</button>
+                    </div>
+
+                    <div class="tab-content active" id="inpatient">
+                        <div class="services-grid">
+                            <div class="service-item">
+                                <i class="fas fa-bed"></i>
+                                <h4>General Ward</h4>
+                                <p>Comfortable patient rooms with modern amenities</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-heartbeat"></i>
+                                <h4>Intensive Care</h4>
+                                <p>24/7 critical care monitoring and support</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-procedures"></i>
+                                <h4>Surgical Services</h4>
+                                <p>Advanced surgical procedures and post-op care</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-baby"></i>
+                                <h4>Maternity Ward</h4>
+                                <p>Comprehensive maternal and newborn care</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="outpatient">
+                        <div class="services-grid">
+                            <div class="service-item">
+                                <i class="fas fa-stethoscope"></i>
+                                <h4>Consultations</h4>
+                                <p>Specialist doctor consultations and follow-ups</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-vial"></i>
+                                <h4>Laboratory</h4>
+                                <p>Comprehensive diagnostic testing services</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-x-ray"></i>
+                                <h4>Imaging</h4>
+                                <p>X-ray, CT, MRI, and ultrasound services</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-pills"></i>
+                                <h4>Pharmacy</h4>
+                                <p>On-site pharmacy with prescription services</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="emergency">
+                        <div class="services-grid">
+                            <div class="service-item">
+                                <i class="fas fa-ambulance"></i>
+                                <h4>Ambulance Service</h4>
+                                <p>24/7 emergency transport and paramedic care</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-user-md"></i>
+                                <h4>Emergency Room</h4>
+                                <p>Immediate medical attention for urgent cases</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-band-aid"></i>
+                                <h4>Trauma Center</h4>
+                                <p>Specialized care for serious injuries</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-phone"></i>
+                                <h4>Emergency Hotline</h4>
+                                <p>Direct access to emergency services</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="specialized">
+                        <div class="services-grid">
+                            <div class="service-item">
+                                <i class="fas fa-heart"></i>
+                                <h4>Cardiac Care</h4>
+                                <p>Advanced cardiovascular treatment center</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-brain"></i>
+                                <h4>Neurology</h4>
+                                <p>Comprehensive neurological care and surgery</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-ribbon"></i>
+                                <h4>Oncology</h4>
+                                <p>Cancer treatment and supportive care</p>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-bone"></i>
+                                <h4>Orthopedics</h4>
+                                <p>Bone and joint treatment specialists</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-navigation">
+            <div class="container">
+                <button class="btn btn-back-bottom" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme-manager.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animations
+            const cards = document.querySelectorAll('.service-card, .hospital-card, .service-item');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in-up');
+            });
+
+            // Tab functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-tab');
+                    
+                    // Remove active classes
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active classes
+                    btn.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .bottom-navigation {
+            background: #1f2937;
+            border-top: 1px solid #374151;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .btn-back-bottom {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .btn-back-bottom:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .bottom-navigation {
+                padding: 1rem 0;
+            }
+            
+            .btn-back-bottom {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+        .quick-services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: #1f2937;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #374151;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-card.emergency {
+            border-color: #dc2626;
+            background: linear-gradient(135deg, #1f2937, #7f1d1d);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .service-card.emergency .service-icon {
+            color: #ef4444;
+        }
+
+        .hospitals-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .hospital-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hospital-info {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .hospital-image {
+            font-size: 3rem;
+            color: #3b82f6;
+        }
+
+        .hospital-specialties {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .specialty-tag {
+            background: #374151;
+            color: #e5e7eb;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .hospital-status {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .status-value {
+            display: block;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-value.available {
+            color: #10b981;
+        }
+
+        .status-value.limited {
+            color: #f59e0b;
+        }
+
+        .services-tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: #374151;
+            color: #e5e7eb;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-item {
+            background: #111827;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .service-item i {
+            font-size: 2rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+    </style>
+</body>
+</html>
