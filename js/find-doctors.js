@@ -59,8 +59,7 @@ class DoctorSearchManager {
                     this.renderDoctors();
                     this.updateResultsInfo();
                     
-                    // Show hospital filter indicator
-                    this.showHospitalFilterIndicator(hospitalName);
+
                 }
             }
         } catch (error) {
@@ -79,7 +78,7 @@ class DoctorSearchManager {
         this.currentPage = 1;
         this.renderDoctors();
         this.updateResultsInfo();
-        this.showHospitalFilterIndicator(hospitalName);
+
     }
 
     updatePageTitleForHospital(hospitalName) {
@@ -92,27 +91,7 @@ class DoctorSearchManager {
         }
     }
 
-    showHospitalFilterIndicator(hospitalName) {
-        // Create and show hospital filter indicator
-        const resultsContainer = document.getElementById('search-results') || document.querySelector('.doctors-grid');
-        if (resultsContainer) {
-            // Remove existing indicator
-            const existingIndicator = document.querySelector('.hospital-filter-indicator');
-            if (existingIndicator) {
-                existingIndicator.remove();
-            }
-            
-            const indicator = document.createElement('div');
-            indicator.className = 'hospital-filter-indicator';
-            indicator.innerHTML = `
-                <div class="filter-chip">
-                    <span>📍 ${hospitalName}</span>
-                    <button class="clear-hospital-filter" onclick="doctorSearchManager.clearHospitalFilter()">×</button>
-                </div>
-            `;
-            resultsContainer.parentNode.insertBefore(indicator, resultsContainer);
-        }
-    }
+
 
     clearHospitalFilter() {
         // Remove hospital filter and show all doctors

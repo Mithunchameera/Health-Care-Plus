@@ -54,31 +54,36 @@
                     <form class="doctor-search-form" id="doctor-search-form">
                         <div class="search-row">
                             <div class="search-field">
-                                <select id="speciality-select" class="search-select">
+                                <select id="speciality-select" class="search-select" onchange="doctorSearchManager.performSearch()">
                                     <option value="">All Specialities</option>
                                     <option value="cardiology">Cardiology</option>
                                     <option value="dermatology">Dermatology</option>
-                                    <option value="orthopedic">Orthopedic Surgery</option>
+                                    <option value="orthopedic surgery">Orthopedic Surgery</option>
                                     <option value="pediatrics">Pediatrics</option>
-                                    <option value="general-medicine">General Medicine</option>
-                                    <option value="surgery">General Surgery</option>
-                                    <option value="gynecology">Gynecology</option>
+                                    <option value="internal medicine">Internal Medicine</option>
+                                    <option value="general surgery">General Surgery</option>
+                                    <option value="obstetrics & gynecology">Obstetrics & Gynecology</option>
                                     <option value="psychiatry">Psychiatry</option>
                                     <option value="ophthalmology">Ophthalmology</option>
+                                    <option value="gastroenterology">Gastroenterology</option>
+                                    <option value="neurology">Neurology</option>
+                                    <option value="urology">Urology</option>
+                                    <option value="emergency medicine">Emergency Medicine</option>
+                                    <option value="plastic surgery">Plastic Surgery</option>
                                 </select>
                             </div>
                             <div class="search-field">
-                                <select id="location-select" class="search-select">
+                                <select id="location-select" class="search-select" onchange="doctorSearchManager.performSearch()">
                                     <option value="">All Locations</option>
                                     <option value="colombo">Colombo</option>
                                     <option value="kandy">Kandy</option>
                                     <option value="galle">Galle</option>
                                     <option value="negombo">Negombo</option>
-                                    <option value="jaffna">Jaffna</option>
+                                    <option value="wattala">Wattala</option>
                                 </select>
                             </div>
                             <div class="search-field">
-                                <input type="text" id="doctor-name-input" class="search-input" placeholder="Doctor name or hospital">
+                                <input type="text" id="doctor-name-input" class="search-input" placeholder="Doctor name or hospital" oninput="doctorSearchManager.performSearch()">
                             </div>
                             <button type="submit" class="btn-search-doctors">🔍 Search Doctors</button>
                         </div>

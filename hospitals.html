@@ -56,20 +56,22 @@
         <div class="container">
             <div class="hospitals-filters">
                 <div class="filter-row">
-                    <select class="filter-select">
+                    <select class="filter-select" id="location-filter" onchange="filterHospitals()">
                         <option value="" data-translate="allLocations">All Locations</option>
                         <option value="colombo">Colombo</option>
                         <option value="kandy">Kandy</option>
                         <option value="galle">Galle</option>
                         <option value="negombo">Negombo</option>
+                        <option value="wattala">Wattala</option>
                     </select>
-                    <select class="filter-select">
+                    <select class="filter-select" id="type-filter" onchange="filterHospitals()">
                         <option value="" data-translate="allTypes">All Types</option>
                         <option value="general" data-translate="generalHospital">General Hospital</option>
                         <option value="specialized" data-translate="specializedCenter">Specialized Center</option>
                         <option value="private" data-translate="privateHospital">Private Hospital</option>
+                        <option value="teaching" data-translate="teachingHospital">Teaching Hospital</option>
                     </select>
-                    <input type="text" placeholder="Search hospitals..." class="search-input" data-translate="searchHospitals">
+                    <input type="text" placeholder="Search hospitals..." class="search-input" id="search-input" oninput="filterHospitals()" data-translate="searchHospitals">
                 </div>
             </div>
 
@@ -97,8 +99,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -126,8 +128,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('asiri')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('asiri')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -155,8 +157,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -184,8 +186,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -213,8 +215,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -242,8 +244,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -271,8 +273,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -300,8 +302,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -329,8 +331,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -358,8 +360,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -387,8 +389,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -416,8 +418,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" onclick="navigateToHospital('nawaloka')" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" onclick="navigateToHospital('nawaloka')" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -472,5 +474,63 @@
 
     <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
+    <script>
+        // Hospital filtering and navigation functionality
+        function filterHospitals() {
+            const locationFilter = document.getElementById('location-filter').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value.toLowerCase();
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const hospitalCards = document.querySelectorAll('.hospital-card');
+            
+            hospitalCards.forEach(card => {
+                const hospitalName = card.querySelector('h3').textContent.toLowerCase();
+                const hospitalLocation = card.querySelector('.hospital-location').textContent.toLowerCase();
+                
+                // Determine hospital type based on name
+                let hospitalType = '';
+                if (hospitalName.includes('teaching')) hospitalType = 'teaching';
+                else if (hospitalName.includes('base') || hospitalName.includes('national')) hospitalType = 'general';
+                else if (hospitalName.includes('asiri') || hospitalName.includes('apollo') || hospitalName.includes('lanka') || hospitalName.includes('nawaloka') || hospitalName.includes('durdans') || hospitalName.includes('hemas')) hospitalType = 'private';
+                else hospitalType = 'specialized';
+                
+                // Check filters
+                const matchesLocation = !locationFilter || hospitalLocation.includes(locationFilter);
+                const matchesType = !typeFilter || hospitalType === typeFilter;
+                const matchesSearch = !searchInput || hospitalName.includes(searchInput) || hospitalLocation.includes(searchInput);
+                
+                if (matchesLocation && matchesType && matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Hospital navigation function
+        function navigateToHospital(hospitalId) {
+            const hospitalPages = {
+                'apollo': 'hospital-apollo.html',
+                'asiri': 'hospital-asiri.html',
+                'nawaloka': 'hospital-nawaloka.html',
+                'durdans': 'hospital-durdans.html',
+                'lanka': 'hospital-lanka.html',
+                'national': 'hospital-national.html',
+                'asiri-central': 'hospital-asiri-central.html',
+                'teaching-kandy': 'hospital-teaching-kandy.html',
+                'karapitiya': 'hospital-karapitiya.html',
+                'hemas': 'hospital-hemas.html',
+                'negombo': 'hospital-negombo.html'
+            };
+            
+            const page = hospitalPages[hospitalId];
+            if (page) {
+                window.location.href = page;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hospital filtering and navigation functionality is already implemented above
+        });
+    </script>
 </body>
 </html>
