@@ -761,8 +761,8 @@ class DoctorSearchManager {
                 </div>
                 
                 <div class="doctor-actions">
-                    <button class="btn-book-appointment" onclick="bookAppointment(${doctor.id})">📅 Book Appointment</button>
-                    <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">👁️ View Profile</button>
+                    <button class="btn-book-appointment" onclick="bookAppointment('${doctor.id}')">📅 Book Appointment</button>
+                    <button class="btn-view-profile" onclick="viewDoctorProfile('${doctor.id}')">👁️ View Profile</button>
                 </div>
             </div>
         `;

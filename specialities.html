@@ -78,6 +78,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=cardiology'">Find Cardiologists</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('cardiology')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="dermatology">
@@ -98,6 +99,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=dermatology'">Find Dermatologists</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('dermatology')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="orthopedic">
@@ -118,6 +120,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=orthopedic'">Find Orthopedic Surgeons</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('orthopedic')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="pediatrics">
@@ -138,6 +141,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=pediatrics'">Find Pediatricians</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('pediatrics')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="general-medicine">
@@ -158,6 +162,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=general-medicine'">Find General Physicians</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('general-medicine')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="surgery">
@@ -178,6 +183,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=surgery'">Find Surgeons</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('surgery')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="gynecology">
@@ -198,6 +204,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=gynecology'">Find Gynecologists</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('gynecology')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="psychiatry">
@@ -218,6 +225,7 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=psychiatry'">Find Psychiatrists</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('psychiatry')">View Details</button>
                 </div>
 
                 <div class="speciality-card" data-speciality="ophthalmology">
@@ -238,10 +246,79 @@
                         </ul>
                     </div>
                     <button class="btn-find-doctors" onclick="window.location.href='find-doctors.html?speciality=ophthalmology'">Find Eye Specialists</button>
+                    <button class="btn-details" onclick="showSpecialityDetails('ophthalmology')">View Details</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Speciality Details Modal -->
+    <div id="specialityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close" onclick="closeSpecialityModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="specialty-detail-grid">
+                    <div class="detail-section">
+                        <div class="specialty-icon-large" id="modalIcon"></div>
+                        <div class="specialty-overview">
+                            <h3>Overview</h3>
+                            <p id="modalDescription"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number" id="modalDoctorCount"></span>
+                                <span class="stat-label">Available Doctors</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="modalHospitalCount"></span>
+                                <span class="stat-label">Partner Hospitals</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="modalAvgWait"></span>
+                                <span class="stat-label">Avg. Wait Time</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="modalAvgFee"></span>
+                                <span class="stat-label">Consultation Fee</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Common Conditions Treated</h3>
+                        <ul id="modalConditions" class="conditions-list"></ul>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>When to See a Specialist</h3>
+                        <ul id="modalSymptoms" class="symptoms-list"></ul>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>What to Expect</h3>
+                        <div id="modalExpectations" class="expectations-content"></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Top Hospitals</h3>
+                        <div id="modalHospitals" class="hospitals-list"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-primary" id="modalFindDoctors">Find Doctors</button>
+                    <button class="btn-secondary" onclick="closeSpecialityModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

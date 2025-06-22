@@ -3,207 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Profile - HealthCare+</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/dashboard-styles.css">
+    <title>Doctor Profile - eChannelling</title>
+    <meta name="description" content="View detailed doctor profile and book appointments">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/doctor-profile.css">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <a href="index.html">
-                    <i class="fas fa-heartbeat"></i>
-                    <span>HealthCare+</span>
-                </a>
-            </div>
-            
-            <div class="nav-menu">
-                <a href="index.html" class="nav-link">
-                    <i class="fas fa-home"></i> Home
-                </a>
-
-                <a href="find-doctors.html" class="nav-link">
-                    <i class="fas fa-calendar-plus"></i> Book Appointment
-                </a>
-                <a href="dashboard-patient.html" class="nav-link">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            </div>
-
-            <div class="nav-actions">
-                <button class="theme-toggle" id="theme-toggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Doctor Profile Section -->
-    <main class="doctor-profile-page">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <!-- Back Navigation -->
-            <div class="profile-navigation">
-                <button onclick="goBack()" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
-                </button>
-                <div class="breadcrumb">
-                    <a href="index.html">Home</a>
-                    <i class="fas fa-chevron-right"></i>
-
-                    <i class="fas fa-chevron-right"></i>
-                    <span>Doctor Profile</span>
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link" data-translate="home">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link" data-translate="findDoctors">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link" data-translate="hospitals">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link" data-translate="specialities">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link" data-translate="about">About</a></li>
+                        <li><a href="contact.html" class="nav-link" data-translate="contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'" data-translate="login">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'" data-translate="register">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
+        </div>
+    </header>
 
-            <!-- Doctor Profile Header -->
-            <div class="doctor-profile-header" id="doctor-header">
-                <!-- Doctor info will be loaded here -->
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Loading doctor profile...</p>
+        </div>
+    </div>
+
+    <!-- Doctor Profile Content -->
+    <div id="profile-content" class="profile-container" style="display: none;">
+        <!-- Breadcrumb -->
+        <section class="breadcrumb-section">
+            <div class="container">
+                <nav class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span class="separator">></span>
+                    <a href="find-doctors.html">Find Doctors</a>
+                    <span class="separator">></span>
+                    <span class="current" id="doctor-name-breadcrumb">Doctor Profile</span>
+                </nav>
             </div>
+        </section>
 
-            <!-- Doctor Profile Content -->
-            <div class="doctor-profile-content">
-                <div class="profile-grid">
+        <!-- Doctor Profile Header -->
+        <section class="doctor-profile-hero">
+            <div class="container">
+                <div class="profile-hero-content">
+                    <div class="doctor-avatar-large">
+                        <div class="avatar-placeholder" id="doctor-avatar">👨‍⚕️</div>
+                    </div>
+                    <div class="doctor-main-info">
+                        <h1 id="doctor-name">Loading...</h1>
+                        <div class="doctor-specialty-badge" id="doctor-specialty">Loading...</div>
+                        <div class="doctor-rating-large">
+                            <div class="rating-stars" id="doctor-rating-stars">⭐⭐⭐⭐⭐</div>
+                            <span class="rating-score" id="doctor-rating-score">4.8</span>
+                            <span class="rating-count" id="doctor-rating-count">(0 reviews)</span>
+                        </div>
+                        <div class="doctor-hospital" id="doctor-hospital">Loading...</div>
+                    </div>
+                    <div class="profile-quick-actions">
+                        <button class="btn-primary btn-book-now" id="book-appointment-btn">
+                            <i class="fas fa-calendar-alt"></i> Book Appointment
+                        </button>
+                        <button class="btn-secondary btn-save-doctor" id="save-doctor-btn">
+                            <i class="fas fa-heart"></i> Save Doctor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doctor Details -->
+        <section class="doctor-details-section">
+            <div class="container">
+                <div class="details-grid">
                     <!-- Left Column -->
-                    <div class="profile-main">
-                        <!-- Basic Information -->
-                        <div class="profile-section" id="basic-info">
-                            <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
-                            <div class="info-grid" id="basic-info-content">
-                                <!-- Content loaded by JavaScript -->
-                            </div>
-                        </div>
-
+                    <div class="details-main">
                         <!-- About Doctor -->
-                        <div class="profile-section" id="about-section">
-                            <h3><i class="fas fa-user"></i> About Doctor</h3>
-                            <div class="about-content" id="about-content">
-                                <!-- Content loaded by JavaScript -->
-                            </div>
-                        </div>
-
-                        <!-- Specializations -->
-                        <div class="profile-section" id="specializations">
-                            <h3><i class="fas fa-stethoscope"></i> Specializations</h3>
-                            <div class="specializations-content" id="specializations-content">
-                                <!-- Content loaded by JavaScript -->
+                        <div class="detail-card">
+                            <h3>About Dr. <span id="doctor-first-name">Doctor</span></h3>
+                            <div class="about-content" id="doctor-about">
+                                Loading doctor information...
                             </div>
                         </div>
 
                         <!-- Education & Qualifications -->
-                        <div class="profile-section" id="education">
-                            <h3><i class="fas fa-graduation-cap"></i> Education & Qualifications</h3>
-                            <div class="education-content" id="education-content">
-                                <!-- Content loaded by JavaScript -->
+                        <div class="detail-card">
+                            <h3>Education & Qualifications</h3>
+                            <div class="qualifications-list" id="doctor-qualifications">
+                                Loading qualifications...
+                            </div>
+                        </div>
+
+                        <!-- Specialties & Services -->
+                        <div class="detail-card">
+                            <h3>Specialties & Services</h3>
+                            <div class="services-grid" id="doctor-services">
+                                Loading services...
+                            </div>
+                        </div>
+
+                        <!-- Languages -->
+                        <div class="detail-card">
+                            <h3>Languages Spoken</h3>
+                            <div class="languages-list" id="doctor-languages">
+                                Loading languages...
                             </div>
                         </div>
                     </div>
 
                     <!-- Right Column -->
-                    <div class="profile-sidebar">
-                        <!-- Quick Actions -->
-                        <div class="profile-section quick-actions">
-                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary btn-block" onclick="bookAppointment()">
-                                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                    <div class="details-sidebar">
+                        <!-- Consultation Info -->
+                        <div class="sidebar-card">
+                            <h4>Consultation Information</h4>
+                            <div class="consultation-details">
+                                <div class="consultation-row">
+                                    <span class="label">Consultation Fee:</span>
+                                    <span class="value fee" id="consultation-fee">Loading...</span>
+                                </div>
+                                <div class="consultation-row">
+                                    <span class="label">Experience:</span>
+                                    <span class="value" id="doctor-experience">Loading...</span>
+                                </div>
+                                <div class="consultation-row">
+                                    <span class="label">Next Available:</span>
+                                    <span class="value available" id="next-available">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Booking -->
+                        <div class="sidebar-card">
+                            <h4>Quick Booking</h4>
+                            <div class="quick-booking-form">
+                                <div class="form-group">
+                                    <label>Preferred Date</label>
+                                    <input type="date" id="preferred-date" class="form-input" min="">
+                                </div>
+                                <div class="form-group">
+                                    <label>Time Preference</label>
+                                    <select id="time-preference" class="form-select">
+                                        <option value="">Select time</option>
+                                        <option value="morning">Morning (8AM - 12PM)</option>
+                                        <option value="afternoon">Afternoon (12PM - 5PM)</option>
+                                        <option value="evening">Evening (5PM - 8PM)</option>
+                                    </select>
+                                </div>
+                                <button class="btn-primary btn-full-width" onclick="quickBookAppointment()">
+                                    Check Availability
                                 </button>
-                                <button class="btn btn-secondary btn-block" onclick="shareProfile()">
-                                    <i class="fas fa-share"></i> Share Profile
-                                </button>
-                                <button class="btn btn-secondary btn-block" onclick="printProfile()">
-                                    <i class="fas fa-print"></i> Print Profile
-                                </button>
                             </div>
                         </div>
 
-                        <!-- Availability -->
-                        <div class="profile-section" id="availability">
-                            <h3><i class="fas fa-calendar-alt"></i> Availability</h3>
-                            <div class="availability-content" id="availability-content">
-                                <!-- Content loaded by JavaScript -->
-                            </div>
-                        </div>
-
-                        <!-- Contact Information -->
-                        <div class="profile-section" id="contact-info">
-                            <h3><i class="fas fa-envelope"></i> Contact Information</h3>
-                            <div class="contact-content" id="contact-content">
-                                <!-- Content loaded by JavaScript -->
-                            </div>
-                        </div>
-
-                        <!-- Languages -->
-                        <div class="profile-section" id="languages">
-                            <h3><i class="fas fa-globe"></i> Languages</h3>
-                            <div class="languages-content" id="languages-content">
-                                <!-- Content loaded by JavaScript -->
-                            </div>
-                        </div>
-
-                        <!-- Location -->
-                        <div class="profile-section" id="location">
-                            <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
-                            <div class="location-content" id="location-content">
-                                <!-- Content loaded by JavaScript -->
+                        <!-- Contact Hospital -->
+                        <div class="sidebar-card">
+                            <h4>Hospital Information</h4>
+                            <div class="hospital-contact" id="hospital-contact">
+                                <div class="hospital-name" id="hospital-name">Loading...</div>
+                                <div class="hospital-address" id="hospital-address">Loading...</div>
+                                <div class="hospital-phone" id="hospital-phone">Loading...</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Bottom Navigation -->
-            <div class="bottom-navigation">
-                <button onclick="goBack()" class="btn btn-secondary btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Doctors
-                </button>
-                <button onclick="bookAppointment()" class="btn btn-primary btn-book">
-                    <i class="fas fa-calendar-plus"></i> Book Appointment
-                </button>
+        <!-- Reviews Section -->
+        <section class="reviews-section">
+            <div class="container">
+                <div class="reviews-header">
+                    <h3>Patient Reviews</h3>
+                    <div class="reviews-summary">
+                        <div class="overall-rating">
+                            <span class="rating-large" id="overall-rating">4.8</span>
+                            <div class="rating-details">
+                                <div class="stars" id="overall-stars">⭐⭐⭐⭐⭐</div>
+                                <div class="total-reviews" id="total-reviews">Based on 0 reviews</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-list" id="reviews-list">
+                    <div class="reviews-loading">Loading reviews...</div>
+                </div>
             </div>
-        </div>
-    </main>
+        </section>
+    </div>
 
-    <!-- Footer -->
-    <footer class="main-footer">
+    <!-- Error State -->
+    <div id="error-state" class="error-container" style="display: none;">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-brand">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>HealthCare+</span>
-                    </div>
-                    <p>Providing quality healthcare services with modern technology.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-
-                        <li><a href="find-doctors.html">Book Appointment</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact</h4>
-                    <p><i class="fas fa-phone"></i> +94 11 123 4567</p>
-                    <p><i class="fas fa-envelope"></i> info@healthcareplus.lk</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
+            <div class="error-content">
+                <h2>Doctor Not Found</h2>
+                <p>The doctor profile you're looking for could not be found.</p>
+                <a href="find-doctors.html" class="btn-primary">Browse All Doctors</a>
             </div>
         </div>
-    </footer>
+    </div>
 
     <!-- Scripts -->
-    <script src="js/main.js"></script>
-    <script src="js/theme-manager.js"></script>
-    <script src="js/enhanced-animations.js"></script>
+    <script src="js/echannelling-main.js"></script>
     <script src="js/doctor-profile-page.js"></script>
 </body>
 </html>

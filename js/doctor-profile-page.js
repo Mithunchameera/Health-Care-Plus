@@ -1,9 +1,9 @@
 /**
- * Doctor Profile Page JavaScript
- * Handles individual doctor profile page functionality
+ * Doctor Profile Page Manager
+ * Handles individual doctor profile display and functionality
  */
 
-class DoctorProfilePage {
+class DoctorProfileManager {
     constructor() {
         this.doctorId = null;
         this.doctorData = null;
@@ -14,15 +14,20 @@ class DoctorProfilePage {
         this.doctorId = this.getDoctorIdFromURL();
         
         if (!this.doctorId) {
-            this.showError('Doctor not found');
+            this.showError();
             return;
         }
 
+        // Set minimum date for booking form
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('preferred-date');
+        if (dateInput) {
+            dateInput.min = today;
+            dateInput.value = today;
+        }
+
         // Load doctor data
-        await this.loadDoctorData();
-        
-        // Render profile
-        this.renderProfile();
+        await this.loadDoctorProfile();
         
         // Setup event listeners
         this.setupEventListeners();
@@ -33,402 +38,365 @@ class DoctorProfilePage {
         return urlParams.get('id');
     }
 
-    async loadDoctorData() {
+    async loadDoctorProfile() {
         try {
-            const response = await fetch(`php/patient-api.php?action=get_doctor_details&id=${this.doctorId}`);
-            const result = await response.json();
-            
-            if (result.success) {
-                this.doctorData = result.doctor;
-            } else {
-                // Fallback to mock data for demo
-                this.doctorData = this.getMockDoctorData(this.doctorId);
+            // Try to load from API first
+            const response = await fetch(`/php/doctor-api.php?id=${this.doctorId}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.doctor) {
+                    this.doctorData = data.doctor;
+                    this.displayDoctorProfile();
+                    return;
+                }
             }
         } catch (error) {
-            console.error('Error loading doctor data:', error);
-            // Use mock data as fallback
-            this.doctorData = this.getMockDoctorData(this.doctorId);
+            console.error('Error loading doctor from API:', error);
+        }
+
+        // Fallback to comprehensive mock data
+        this.loadMockDoctorData();
+    }
+
+    loadMockDoctorData() {
+        const mockDoctors = {
+            '1': {
+                id: '1',
+                name: 'Dr. Sarah Johnson',
+                firstName: 'Sarah',
+                specialty: 'Cardiology',
+                hospital: 'Apollo Hospital Colombo',
+                rating: 4.8,
+                reviewCount: 156,
+                consultationFee: 3500,
+                experience: '15 years',
+                nextAvailable: 'Today 2:00 PM',
+                about: 'Dr. Sarah Johnson is a renowned cardiologist with over 15 years of experience in treating complex heart conditions. She specializes in interventional cardiology and has performed over 2,000 successful cardiac procedures. Dr. Johnson is known for her compassionate patient care and innovative treatment approaches.',
+                qualifications: [
+                    'MBBS from University of Colombo (2008)',
+                    'MD in Cardiology from Postgraduate Institute of Medicine (2013)',
+                    'Fellowship in Interventional Cardiology from Harvard Medical School (2015)',
+                    'Board Certified Cardiologist'
+                ],
+                services: [
+                    'Cardiac Consultation',
+                    'Echocardiography',
+                    'Stress Testing',
+                    'Cardiac Catheterization',
+                    'Angioplasty',
+                    'Pacemaker Implantation'
+                ],
+                languages: ['English', 'Sinhala', 'Tamil'],
+                hospitalInfo: {
+                    name: 'Apollo Hospital Colombo',
+                    address: '578 Elvitigala Mawatha, Colombo 05',
+                    phone: '+94 11 243 0000'
+                }
+            },
+            '2': {
+                id: '2',
+                name: 'Dr. Michael Chen',
+                firstName: 'Michael',
+                specialty: 'Neurology',
+                hospital: 'Asiri Medical Hospital',
+                rating: 4.9,
+                reviewCount: 203,
+                consultationFee: 4000,
+                experience: '12 years',
+                nextAvailable: 'Tomorrow 10:00 AM',
+                about: 'Dr. Michael Chen is a leading neurologist specializing in stroke medicine and epilepsy treatment. He has extensive experience in neurological disorders and has published numerous research papers in international medical journals.',
+                qualifications: [
+                    'MBBS from University of Peradeniya (2011)',
+                    'MD in Neurology from University of Colombo (2016)',
+                    'Fellowship in Stroke Medicine from Johns Hopkins (2018)'
+                ],
+                services: [
+                    'Neurological Consultation',
+                    'EEG Testing',
+                    'Brain Imaging Interpretation',
+                    'Stroke Treatment',
+                    'Epilepsy Management',
+                    'Headache Treatment'
+                ],
+                languages: ['English', 'Mandarin', 'Sinhala'],
+                hospitalInfo: {
+                    name: 'Asiri Medical Hospital',
+                    address: '181 Kirula Road, Colombo 05',
+                    phone: '+94 11 466 5500'
+                }
+            },
+            'temp1': {
+                id: 'temp1',
+                name: 'Dr. Priya Mendis',
+                firstName: 'Priya',
+                specialty: 'Cardiology',
+                hospital: 'National Hospital',
+                rating: 4.8,
+                reviewCount: 124,
+                consultationFee: 3500,
+                experience: '15 years',
+                nextAvailable: 'Today 2:00 PM',
+                about: 'Dr. Priya Mendis is a distinguished cardiologist with expertise in preventive cardiology and heart disease management. She is passionate about patient education and lifestyle modifications for heart health.',
+                qualifications: [
+                    'MBBS from University of Sri Jayewardenepura (2008)',
+                    'MD in Cardiology (2014)',
+                    'Diploma in Preventive Cardiology'
+                ],
+                services: [
+                    'Cardiac Consultation',
+                    'Preventive Cardiology',
+                    'Heart Disease Management',
+                    'Lifestyle Counseling'
+                ],
+                languages: ['English', 'Sinhala'],
+                hospitalInfo: {
+                    name: 'National Hospital of Sri Lanka',
+                    address: 'Regent Street, Colombo 07',
+                    phone: '+94 11 269 1111'
+                }
+            },
+            'temp2': {
+                id: 'temp2',
+                name: 'Dr. Rajesh Silva',
+                firstName: 'Rajesh',
+                specialty: 'Orthopedics',
+                hospital: 'Lanka Hospital',
+                rating: 4.7,
+                reviewCount: 98,
+                consultationFee: 4000,
+                experience: '12 years',
+                nextAvailable: 'Tomorrow 10:00 AM',
+                about: 'Dr. Rajesh Silva is an experienced orthopedic surgeon specializing in joint replacement and sports medicine. He has performed hundreds of successful surgeries and is known for his minimally invasive techniques.',
+                qualifications: [
+                    'MBBS from University of Kelaniya (2011)',
+                    'MS in Orthopedic Surgery (2016)',
+                    'Fellowship in Joint Replacement Surgery'
+                ],
+                services: [
+                    'Joint Replacement Surgery',
+                    'Sports Medicine',
+                    'Arthroscopic Surgery',
+                    'Fracture Treatment'
+                ],
+                languages: ['English', 'Sinhala'],
+                hospitalInfo: {
+                    name: 'Lanka Hospital Corporation',
+                    address: '578 Elvitigala Mawatha, Narahenpita',
+                    phone: '+94 11 543 0000'
+                }
+            }
+        };
+
+        this.doctorData = mockDoctors[this.doctorId];
+        
+        if (this.doctorData) {
+            this.displayDoctorProfile();
+        } else {
+            this.showError();
         }
     }
 
-    getMockDoctorData(doctorId) {
-        const doctors = [
+    displayDoctorProfile() {
+        // Hide loading state and show content
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'block';
+
+        const doctor = this.doctorData;
+
+        // Update page title and breadcrumb
+        document.title = `${doctor.name} - eChannelling`;
+        document.getElementById('doctor-name-breadcrumb').textContent = doctor.name;
+
+        // Header information
+        document.getElementById('doctor-name').textContent = doctor.name;
+        document.getElementById('doctor-specialty').textContent = doctor.specialty;
+        document.getElementById('doctor-hospital').textContent = doctor.hospital;
+        document.getElementById('doctor-first-name').textContent = doctor.firstName || doctor.name.split(' ')[1] || 'Doctor';
+
+        // Rating
+        const stars = '⭐'.repeat(Math.floor(doctor.rating));
+        document.getElementById('doctor-rating-stars').textContent = stars;
+        document.getElementById('doctor-rating-score').textContent = doctor.rating;
+        document.getElementById('doctor-rating-count').textContent = `(${doctor.reviewCount} reviews)`;
+
+        // Consultation information
+        document.getElementById('consultation-fee').textContent = `Rs. ${doctor.consultationFee.toLocaleString()}`;
+        document.getElementById('doctor-experience').textContent = doctor.experience;
+        document.getElementById('next-available').textContent = doctor.nextAvailable;
+
+        // About section
+        document.getElementById('doctor-about').textContent = doctor.about;
+
+        // Qualifications
+        const qualificationsList = doctor.qualifications.map(qual => 
+            `<div class="qualification-item"><i class="fas fa-graduation-cap"></i> ${qual}</div>`
+        ).join('');
+        document.getElementById('doctor-qualifications').innerHTML = qualificationsList;
+
+        // Services
+        const servicesGrid = doctor.services.map(service => 
+            `<div class="service-item"><i class="fas fa-check-circle"></i> ${service}</div>`
+        ).join('');
+        document.getElementById('doctor-services').innerHTML = servicesGrid;
+
+        // Languages
+        const languagesList = doctor.languages.map(lang => 
+            `<span class="language-tag">${lang}</span>`
+        ).join('');
+        document.getElementById('doctor-languages').innerHTML = languagesList;
+
+        // Hospital information
+        document.getElementById('hospital-name').textContent = doctor.hospitalInfo.name;
+        document.getElementById('hospital-address').textContent = doctor.hospitalInfo.address;
+        document.getElementById('hospital-phone').textContent = doctor.hospitalInfo.phone;
+
+        // Reviews section
+        document.getElementById('overall-rating').textContent = doctor.rating;
+        document.getElementById('overall-stars').textContent = stars;
+        document.getElementById('total-reviews').textContent = `Based on ${doctor.reviewCount} reviews`;
+
+        // Load sample reviews
+        this.loadSampleReviews();
+    }
+
+    loadSampleReviews() {
+        const sampleReviews = [
             {
-                id: 1,
-                name: "Dr. Sarah Johnson",
-                specialty: "Cardiology",
-                qualification: "MBBS, MD Cardiology",
-                experience: "15+ years",
-                rating: 4.8,
-                reviews: 245,
-                consultation_fee: "5,000",
-                location: "Colombo General Hospital",
-                available_days: "Mon, Wed, Fri",
-                next_available: "2025-06-25",
-                phone: "+94 77 123 4567",
-                email: "sarah.johnson@healthcareplus.lk",
-                languages: ["English", "Sinhala"],
-                bio: "Dr. Sarah Johnson is a highly experienced cardiologist with over 15 years of expertise in interventional cardiology. She specializes in advanced cardiac procedures and has published numerous research papers in international cardiology journals.",
-                specializations: ["Interventional Cardiology", "Cardiac Catheterization", "Angioplasty", "Heart Disease Prevention"],
-                education: ["MBBS - University of Colombo (2008)", "MD Cardiology - Postgraduate Institute of Medicine (2012)", "Fellowship in Interventional Cardiology - Singapore General Hospital (2014)"],
-                working_hours: "9:00 AM - 5:00 PM",
-                hospital: "Colombo General Hospital",
-                address: "Regent Street, Colombo 08"
+                patientName: 'Anura Perera',
+                rating: 5,
+                date: '2 weeks ago',
+                comment: 'Excellent doctor! Very thorough examination and clear explanation of my condition. Highly recommended.'
             },
             {
-                id: 2,
-                name: "Dr. Michael Chen",
-                specialty: "Orthopedics",
-                qualification: "MBBS, MS Orthopedics",
-                experience: "12+ years",
-                rating: 4.7,
-                reviews: 189,
-                consultation_fee: "4,500",
-                location: "National Hospital",
-                available_days: "Tue, Thu, Sat",
-                next_available: "2025-06-24",
-                phone: "+94 77 234 5678",
-                email: "michael.chen@healthcareplus.lk",
-                languages: ["English", "Tamil"],
-                bio: "Dr. Michael Chen is a renowned orthopedic surgeon specializing in joint replacement and sports medicine. He has performed over 2000 successful surgeries and is known for his innovative surgical techniques.",
-                specializations: ["Joint Replacement", "Sports Medicine", "Arthroscopy", "Trauma Surgery"],
-                education: ["MBBS - University of Peradeniya (2010)", "MS Orthopedics - Postgraduate Institute of Medicine (2015)", "Fellowship in Joint Replacement - Johns Hopkins Hospital (2017)"],
-                working_hours: "8:00 AM - 4:00 PM",
-                hospital: "National Hospital of Sri Lanka",
-                address: "Regent Street, Colombo 10"
+                patientName: 'Malini Fernando',
+                rating: 5,
+                date: '1 month ago',
+                comment: 'Dr. is very professional and caring. The treatment was effective and the staff was helpful.'
             },
             {
-                id: 3,
-                name: "Dr. Priya Patel",
-                specialty: "Pediatrics",
-                qualification: "MBBS, MD Pediatrics",
-                experience: "10+ years",
-                rating: 4.9,
-                reviews: 312,
-                consultation_fee: "3,500",
-                location: "Lady Ridgeway Hospital",
-                available_days: "Mon, Tue, Thu, Fri",
-                next_available: "2025-06-23",
-                phone: "+94 77 345 6789",
-                email: "priya.patel@healthcareplus.lk",
-                languages: ["English", "Hindi", "Sinhala"],
-                bio: "Dr. Priya Patel is a dedicated pediatrician with extensive experience in child healthcare. She specializes in developmental pediatrics and has been instrumental in implementing child-friendly healthcare practices.",
-                specializations: ["Developmental Pediatrics", "Neonatal Care", "Child Nutrition", "Vaccination Programs"],
-                education: ["MBBS - University of Sri Jayewardenepura (2012)", "MD Pediatrics - Postgraduate Institute of Medicine (2017)", "Diploma in Child Health - Royal College of Pediatrics (2018)"],
-                working_hours: "9:00 AM - 6:00 PM",
-                hospital: "Lady Ridgeway Hospital for Children",
-                address: "Borella, Colombo 08"
-            },
-            {
-                id: 4,
-                name: "Dr. James Wilson",
-                specialty: "Neurology",
-                qualification: "MBBS, MD Neurology",
-                experience: "18+ years",
-                rating: 4.6,
-                reviews: 156,
-                consultation_fee: "6,000",
-                location: "Colombo South Teaching Hospital",
-                available_days: "Wed, Fri, Sat",
-                next_available: "2025-06-26",
-                phone: "+94 77 456 7890",
-                email: "james.wilson@healthcareplus.lk",
-                languages: ["English"],
-                bio: "Dr. James Wilson is a leading neurologist with expertise in treating complex neurological disorders. He has pioneered several treatment protocols and is actively involved in neurological research.",
-                specializations: ["Stroke Management", "Epilepsy Treatment", "Movement Disorders", "Headache Medicine"],
-                education: ["MBBS - University of Colombo (2005)", "MD Neurology - Postgraduate Institute of Medicine (2010)", "Fellowship in Stroke Medicine - Mayo Clinic (2012)"],
-                working_hours: "10:00 AM - 6:00 PM",
-                hospital: "Colombo South Teaching Hospital",
-                address: "Kalubowila, Dehiwala"
-            },
-            {
-                id: 5,
-                name: "Dr. Emily Rodriguez",
-                specialty: "Dermatology",
-                qualification: "MBBS, MD Dermatology",
-                experience: "8+ years",
-                rating: 4.7,
-                reviews: 198,
-                consultation_fee: "4,000",
-                location: "Skin & Beauty Clinic",
-                available_days: "Mon, Wed, Thu, Sat",
-                next_available: "2025-06-24",
-                phone: "+94 77 567 8901",
-                email: "emily.rodriguez@healthcareplus.lk",
-                languages: ["English", "Spanish", "Sinhala"],
-                bio: "Dr. Emily Rodriguez is a skilled dermatologist specializing in both medical and cosmetic dermatology. She stays updated with the latest treatments and technologies in skin care.",
-                specializations: ["Medical Dermatology", "Cosmetic Dermatology", "Laser Treatments", "Skin Cancer Screening"],
-                education: ["MBBS - University of Kelaniya (2014)", "MD Dermatology - Postgraduate Institute of Medicine (2019)", "Diploma in Aesthetic Medicine - American Academy of Aesthetic Medicine (2020)"],
-                working_hours: "9:00 AM - 5:00 PM",
-                hospital: "Skin & Beauty Clinic",
-                address: "Bambalapitiya, Colombo 04"
-            },
-            {
-                id: 6,
-                name: "Dr. David Kim",
-                specialty: "General Surgery",
-                qualification: "MBBS, MS General Surgery",
-                experience: "20+ years",
-                rating: 4.8,
-                reviews: 267,
-                consultation_fee: "5,500",
-                location: "Asiri Central Hospital",
-                available_days: "Tue, Wed, Fri, Sat",
-                next_available: "2025-06-25",
-                phone: "+94 77 678 9012",
-                email: "david.kim@healthcareplus.lk",
-                languages: ["English", "Korean"],
-                bio: "Dr. David Kim is a veteran general surgeon with two decades of experience in complex surgical procedures. He is known for his precision and has mentored many young surgeons.",
-                specializations: ["Laparoscopic Surgery", "Hepatobiliary Surgery", "Colorectal Surgery", "Trauma Surgery"],
-                education: ["MBBS - University of Colombo (2003)", "MS General Surgery - Postgraduate Institute of Medicine (2008)", "Fellowship in Laparoscopic Surgery - Seoul National University (2010)"],
-                working_hours: "8:00 AM - 4:00 PM",
-                hospital: "Asiri Central Hospital",
-                address: "Colombo 10"
+                patientName: 'Sunil Jayawardena',
+                rating: 4,
+                date: '2 months ago',
+                comment: 'Good experience overall. Doctor was knowledgeable and the appointment was on time.'
             }
         ];
 
-        return doctors.find(doctor => doctor.id == doctorId) || doctors[0];
-    }
-
-    renderProfile() {
-        if (!this.doctorData) {
-            this.showError('Doctor data not available');
-            return;
-        }
-
-        this.renderHeader();
-        this.renderBasicInfo();
-        this.renderAbout();
-        this.renderSpecializations();
-        this.renderEducation();
-        this.renderAvailability();
-        this.renderContact();
-        this.renderLanguages();
-        this.renderLocation();
-    }
-
-    renderHeader() {
-        const initials = this.doctorData.name.split(' ').map(n => n[0]).join('');
-        const stars = this.generateStarsHTML(this.doctorData.rating);
-        
-        const headerHTML = `
-            <div class="doctor-header-content">
-                <div class="doctor-avatar-large">${initials}</div>
-                <div class="doctor-info">
-                    <h1>${this.doctorData.name}</h1>
-                    <h2>${this.doctorData.specialty}</h2>
-                    <div class="doctor-rating">
-                        <span class="stars">${stars}</span>
-                        <span class="rating-text">${this.doctorData.rating} (${this.doctorData.reviews} reviews)</span>
+        const reviewsHTML = sampleReviews.map(review => `
+            <div class="review-item">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-name">${review.patientName}</div>
+                        <div class="review-date">${review.date}</div>
                     </div>
-                    <div class="doctor-meta">
-                        <span class="experience">
-                            <i class="fas fa-user-md"></i> ${this.doctorData.experience}
-                        </span>
-                        <span class="qualification">
-                            <i class="fas fa-graduation-cap"></i> ${this.doctorData.qualification}
-                        </span>
-                    </div>
+                    <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
                 </div>
+                <div class="review-comment">${review.comment}</div>
             </div>
-        `;
-        
-        document.getElementById('doctor-header').innerHTML = headerHTML;
-    }
+        `).join('');
 
-    renderBasicInfo() {
-        const infoHTML = `
-            <div class="info-item">
-                <label><i class="fas fa-stethoscope"></i> Specialty:</label>
-                <span>${this.doctorData.specialty}</span>
-            </div>
-            <div class="info-item">
-                <label><i class="fas fa-graduation-cap"></i> Qualification:</label>
-                <span>${this.doctorData.qualification}</span>
-            </div>
-            <div class="info-item">
-                <label><i class="fas fa-clock"></i> Experience:</label>
-                <span>${this.doctorData.experience}</span>
-            </div>
-            <div class="info-item">
-                <label><i class="fas fa-dollar-sign"></i> Consultation Fee:</label>
-                <span>LKR ${this.doctorData.consultation_fee}</span>
-            </div>
-            <div class="info-item">
-                <label><i class="fas fa-hospital"></i> Hospital:</label>
-                <span>${this.doctorData.hospital || this.doctorData.location}</span>
-            </div>
-            <div class="info-item">
-                <label><i class="fas fa-clock"></i> Working Hours:</label>
-                <span>${this.doctorData.working_hours || 'Contact for details'}</span>
-            </div>
-        `;
-        
-        document.getElementById('basic-info-content').innerHTML = infoHTML;
-    }
-
-    renderAbout() {
-        const aboutHTML = `
-            <p>${this.doctorData.bio}</p>
-        `;
-        
-        document.getElementById('about-content').innerHTML = aboutHTML;
-    }
-
-    renderSpecializations() {
-        const specializations = this.doctorData.specializations || [this.doctorData.specialty];
-        const specializationsHTML = specializations.map(spec => 
-            `<span class="specialization-tag">${spec}</span>`
-        ).join('');
-        
-        document.getElementById('specializations-content').innerHTML = specializationsHTML;
-    }
-
-    renderEducation() {
-        const education = this.doctorData.education || ['Information not available'];
-        const educationHTML = education.map(edu => 
-            `<div class="education-item"><i class="fas fa-graduation-cap"></i> ${edu}</div>`
-        ).join('');
-        
-        document.getElementById('education-content').innerHTML = educationHTML;
-    }
-
-    renderAvailability() {
-        const availabilityHTML = `
-            <div class="availability-item">
-                <label><i class="fas fa-calendar"></i> Available Days:</label>
-                <span>${this.doctorData.available_days}</span>
-            </div>
-            <div class="availability-item">
-                <label><i class="fas fa-clock"></i> Next Available:</label>
-                <span>${this.doctorData.next_available}</span>
-            </div>
-            <div class="availability-item">
-                <label><i class="fas fa-time"></i> Working Hours:</label>
-                <span>${this.doctorData.working_hours || 'Contact for details'}</span>
-            </div>
-        `;
-        
-        document.getElementById('availability-content').innerHTML = availabilityHTML;
-    }
-
-    renderContact() {
-        const contactHTML = `
-            <div class="contact-item">
-                <label><i class="fas fa-phone"></i> Phone:</label>
-                <span>${this.doctorData.phone}</span>
-            </div>
-            <div class="contact-item">
-                <label><i class="fas fa-envelope"></i> Email:</label>
-                <span>${this.doctorData.email}</span>
-            </div>
-        `;
-        
-        document.getElementById('contact-content').innerHTML = contactHTML;
-    }
-
-    renderLanguages() {
-        const languages = this.doctorData.languages || ['English'];
-        const languagesHTML = languages.map(lang => 
-            `<span class="language-tag">${lang}</span>`
-        ).join('');
-        
-        document.getElementById('languages-content').innerHTML = languagesHTML;
-    }
-
-    renderLocation() {
-        const locationHTML = `
-            <div class="location-item">
-                <label><i class="fas fa-hospital"></i> Hospital/Clinic:</label>
-                <span>${this.doctorData.hospital || this.doctorData.location}</span>
-            </div>
-            <div class="location-item">
-                <label><i class="fas fa-map-marker-alt"></i> Address:</label>
-                <span>${this.doctorData.address || this.doctorData.location}</span>
-            </div>
-        `;
-        
-        document.getElementById('location-content').innerHTML = locationHTML;
-    }
-
-    generateStarsHTML(rating) {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        
-        let stars = '';
-        for (let i = 0; i < fullStars; i++) {
-            stars += '<i class="fas fa-star"></i>';
-        }
-        if (hasHalfStar) {
-            stars += '<i class="fas fa-star-half-alt"></i>';
-        }
-        for (let i = 0; i < emptyStars; i++) {
-            stars += '<i class="far fa-star"></i>';
-        }
-        
-        return stars;
+        document.getElementById('reviews-list').innerHTML = reviewsHTML;
     }
 
     setupEventListeners() {
-        // Setup navigation and action buttons
-        this.setupActionButtons();
+        // Book appointment button
+        const bookBtn = document.getElementById('book-appointment-btn');
+        if (bookBtn) {
+            bookBtn.addEventListener('click', () => this.bookAppointment());
+        }
+
+        // Save doctor button
+        const saveBtn = document.getElementById('save-doctor-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => this.saveDoctor());
+        }
     }
 
-    setupActionButtons() {
-        // Book appointment button functionality will be handled by global functions
+    bookAppointment() {
+        // Navigate to booking page with doctor preselected
+        window.location.href = `booking.html?doctor=${this.doctorId}`;
     }
 
-    showError(message) {
-        const errorHTML = `
-            <div class="error-message">
-                <h2>Error</h2>
-                <p>${message}</p>
-                <a href="find-doctors.html" class="btn btn-primary">Find Doctors</a>
-            </div>
-        `;
+    saveDoctor() {
+        // Toggle save state
+        const saveBtn = document.getElementById('save-doctor-btn');
+        const icon = saveBtn.querySelector('i');
         
-        document.querySelector('.doctor-profile-page .container').innerHTML = errorHTML;
+        if (icon.classList.contains('fas')) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            saveBtn.innerHTML = '<i class="far fa-heart"></i> Save Doctor';
+            this.showNotification('Doctor removed from saved list', 'info');
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            saveBtn.innerHTML = '<i class="fas fa-heart"></i> Saved';
+            this.showNotification('Doctor saved to your list', 'success');
+        }
+    }
+
+    showError() {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'block';
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : '#3b82f6'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
 }
 
-// Global functions for profile page
-function goBack() {
-    if (document.referrer) {
-        window.history.back();
-    } else {
-        window.location.href = 'find-doctors.html';
-    }
-}
-
-function bookAppointment() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const doctorId = urlParams.get('id');
+// Quick booking function
+function quickBookAppointment() {
+    const date = document.getElementById('preferred-date').value;
+    const time = document.getElementById('time-preference').value;
     
-    // Navigate to booking page
-    window.location.href = 'find-doctors.html';
-}
-
-function shareProfile() {
-    if (navigator.share) {
-        navigator.share({
-            title: document.title,
-            url: window.location.href
-        });
-    } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            alert('Profile link copied to clipboard!');
-        });
+    if (!date) {
+        alert('Please select a preferred date');
+        return;
     }
+    
+    const doctorId = new URLSearchParams(window.location.search).get('id');
+    let bookingUrl = `booking.html?doctor=${doctorId}&date=${date}`;
+    
+    if (time) {
+        bookingUrl += `&time=${time}`;
+    }
+    
+    window.location.href = bookingUrl;
 }
 
-function printProfile() {
-    window.print();
-}
-
-// Initialize the profile page
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    const profilePage = new DoctorProfilePage();
-    profilePage.init();
+    window.doctorProfileManager = new DoctorProfileManager();
+    window.doctorProfileManager.init();
 });

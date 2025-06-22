@@ -77,11 +77,11 @@ class DoctorCardComponent {
                     </div>
                     
                     <div class="card-actions">
-                        <button class="btn-card btn-secondary" onclick="viewDoctorProfile(${doctor.id})">
+                        <button class="btn-card btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
                             <i class="fas fa-user"></i>
                             Profile
                         </button>
-                        <button class="btn-card btn-primary" onclick="bookAppointment(${doctor.id})" ${!doctor.available ? 'disabled' : ''}>
+                        <button class="btn-card btn-primary" onclick="bookAppointment('${doctor.id}')" ${!doctor.available ? 'disabled' : ''}>
                             <i class="fas fa-calendar-plus"></i>
                             Book Now
                         </button>

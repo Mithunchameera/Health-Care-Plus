@@ -147,10 +147,10 @@ if (typeof PatientDashboard !== 'undefined') {
                     </div>
                 </div>
                 <div class="doctor-list-actions">
-                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookAppointment(${doctor.id})">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookAppointment('${doctor.id}')">
                         <i class="fas fa-calendar-plus"></i> Book
                     </button>
-                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewDoctorProfile(${doctor.id})">
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewDoctorProfile('${doctor.id}')">
                         <i class="fas fa-eye"></i> Profile
                     </button>
                 </div>
