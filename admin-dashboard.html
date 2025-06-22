@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - eChannelling</title>
+    <meta name="description" content="Manage the entire eChannelling platform with comprehensive admin controls">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <div class="dashboard-nav">
+                    <span class="welcome-text">Admin Portal</span>
+                </div>
+                <div class="header-actions">
+                    <div class="notifications-dropdown">
+                        <button class="notification-btn">
+                            🔔
+                            <span class="notification-badge">7</span>
+                        </button>
+                    </div>
+                    <div class="user-dropdown">
+                        <button class="user-btn">
+                            <div class="user-avatar">👨‍💼</div>
+                            <span class="user-name">Admin User</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="admin-profile.html" class="dropdown-item">👤 My Profile</a>
+                            <a href="admin-settings.html" class="dropdown-item">⚙️ Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="authManager.logout()">🚪 Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a href="#overview" class="nav-link" data-section="overview">
+                            📊 Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#doctors" class="nav-link" data-section="doctors">
+                            👨‍⚕️ Doctors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#patients" class="nav-link" data-section="patients">
+                            👥 Patients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#hospitals" class="nav-link" data-section="hospitals">
+                            🏥 Hospitals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#appointments" class="nav-link" data-section="appointments">
+                            📅 Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#payments" class="nav-link" data-section="payments">
+                            💰 Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#analytics" class="nav-link" data-section="analytics">
+                            📈 Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#system" class="nav-link" data-section="system">
+                            ⚙️ System
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <div class="section-header">
+                    <h1>Platform Overview</h1>
+                    <p>Monitor the entire eChannelling platform performance and metrics</p>
+                </div>
+
+                <!-- System Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👨‍⚕️</div>
+                        <div class="stat-content">
+                            <h3>Total Doctors</h3>
+                            <div class="stat-number">524</div>
+                            <div class="stat-change positive">+12 this month</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <h3>Total Patients</h3>
+                            <div class="stat-number">45,892</div>
+                            <div class="stat-change positive">+1,247 this month</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <h3>Total Appointments</h3>
+                            <div class="stat-number">12,456</div>
+                            <div class="stat-change positive">+8.5% this month</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>Monthly Revenue</h3>
+                            <div class="stat-number">Rs. 12.4M</div>
+                            <div class="stat-change positive">+15.2% from last month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Recent Activity -->
+                <div class="dashboard-widgets">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn">
+                                <div class="quick-action-icon">👨‍⚕️</div>
+                                <span>Add Doctor</span>
+                            </button>
+                            <button class="quick-action-btn">
+                                <div class="quick-action-icon">🏥</div>
+                                <span>Add Hospital</span>
+                            </button>
+                            <button class="quick-action-btn">
+                                <div class="quick-action-icon">📊</div>
+                                <span>View Reports</span>
+                            </button>
+                            <button class="quick-action-btn">
+                                <div class="quick-action-icon">⚙️</div>
+                                <span>System Settings</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Recent Activity</h3>
+                            <button class="btn-widget-action">View All</button>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">👨‍⚕️</div>
+                                <div class="activity-content">
+                                    <p><strong>Dr. Michael Johnson</strong> joined the platform</p>
+                                    <span class="activity-time">10 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">💰</div>
+                                <div class="activity-content">
+                                    <p>Payment processed for <strong>John Fernando</strong></p>
+                                    <span class="activity-time">25 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">🏥</div>
+                                <div class="activity-content">
+                                    <p><strong>Lanka Hospital</strong> updated their services</p>
+                                    <span class="activity-time">1 hour ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Doctor Management</h1>
+                    <div class="section-actions">
+                        <button class="btn-primary">👨‍⚕️ Add Doctor</button>
+                        <button class="btn-secondary">📊 Export Data</button>
+                    </div>
+                </div>
+
+                <div class="doctors-filters">
+                    <div class="filter-row">
+                        <select class="filter-select">
+                            <option value="">All Specialities</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="dermatology">Dermatology</option>
+                            <option value="general">General Medicine</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">All Hospitals</option>
+                            <option value="apollo">Apollo Hospital</option>
+                            <option value="asiri">Asiri Hospital</option>
+                            <option value="nawaloka">Nawaloka Hospital</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending Approval</option>
+                        </select>
+                        <input type="text" placeholder="Search doctors..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="doctors-table-container">
+                    <table class="doctors-table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Speciality</th>
+                                <th>Hospital</th>
+                                <th>Patients</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="doctor-info">
+                                        <div class="doctor-avatar">👨‍⚕️</div>
+                                        <div class="doctor-details">
+                                            <div class="doctor-name">Dr. Kasun Perera</div>
+                                            <div class="doctor-email">kasun.perera@apollo.lk</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Cardiology</td>
+                                <td>Apollo Hospital</td>
+                                <td>245</td>
+                                <td>
+                                    <div class="rating-display">
+                                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                                        <span class="rating-score">4.8</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Profile">👁️</button>
+                                        <button class="btn-action" title="Edit">✏️</button>
+                                        <button class="btn-action" title="Suspend">⏸️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doctor-info">
+                                        <div class="doctor-avatar">👩‍⚕️</div>
+                                        <div class="doctor-details">
+                                            <div class="doctor-name">Dr. Sarah Wilson</div>
+                                            <div class="doctor-email">sarah.wilson@asiri.lk</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Dermatology</td>
+                                <td>Asiri Hospital</td>
+                                <td>189</td>
+                                <td>
+                                    <div class="rating-display">
+                                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                                        <span class="rating-score">4.9</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Profile">👁️</button>
+                                        <button class="btn-action" title="Edit">✏️</button>
+                                        <button class="btn-action" title="Suspend">⏸️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patients Section -->
+            <section id="patients" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Patient Management</h1>
+                    <div class="section-actions">
+                        <button class="btn-primary">👤 Add Patient</button>
+                        <button class="btn-secondary">📊 Export Data</button>
+                    </div>
+                </div>
+
+                <div class="patients-filters">
+                    <div class="filter-row">
+                        <input type="text" placeholder="Search patients..." class="search-input-large">
+                        <button class="btn-search">🔍 Search</button>
+                    </div>
+                </div>
+
+                <div class="patients-table-container">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Phone</th>
+                                <th>Registration Date</th>
+                                <th>Appointments</th>
+                                <th>Last Visit</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">👨</div>
+                                        <div class="patient-details">
+                                            <div class="patient-name">John Fernando</div>
+                                            <div class="patient-email">john.fernando@email.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>+94 77 123 4567</td>
+                                <td>Jan 15, 2024</td>
+                                <td>12</td>
+                                <td>June 20, 2025</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Profile">👁️</button>
+                                        <button class="btn-action" title="Edit">✏️</button>
+                                        <button class="btn-action" title="Block">🚫</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">👩</div>
+                                        <div class="patient-details">
+                                            <div class="patient-name">Maria Silva</div>
+                                            <div class="patient-email">maria.silva@email.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>+94 77 987 6543</td>
+                                <td>Mar 10, 2024</td>
+                                <td>8</td>
+                                <td>June 15, 2025</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Profile">👁️</button>
+                                        <button class="btn-action" title="Edit">✏️</button>
+                                        <button class="btn-action" title="Block">🚫</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Other sections would be implemented similarly -->
+            <section id="hospitals" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Hospital Management</h1>
+                    <p>Manage hospitals and medical centers in the network</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3>Coming Soon</h3>
+                    <p>Hospital management features are being developed</p>
+                </div>
+            </section>
+
+            <section id="appointments" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Appointment Management</h1>
+                    <p>Monitor all appointments across the platform</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3>Coming Soon</h3>
+                    <p>Appointment management features are being developed</p>
+                </div>
+            </section>
+
+            <section id="payments" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Payment Management</h1>
+                    <p>Monitor transactions and financial operations</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3>Coming Soon</h3>
+                    <p>Payment management features are being developed</p>
+                </div>
+            </section>
+
+            <section id="analytics" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Analytics & Reports</h1>
+                    <p>Comprehensive platform analytics and reporting</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3>Coming Soon</h3>
+                    <p>Analytics dashboard is being developed</p>
+                </div>
+            </section>
+
+            <section id="system" class="dashboard-section">
+                <div class="section-header">
+                    <h1>System Management</h1>
+                    <p>Platform configuration and system settings</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">🚧</div>
+                    <h3>Coming Soon</h3>
+                    <p>System management features are being developed</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

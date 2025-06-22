@@ -1,584 +1,560 @@
-/**
- * Find Doctors Page Manager
- * Handles doctor search, filtering, and display functionality
- */
+// Find Doctors Page JavaScript
 
-class FindDoctorsManager {
+class DoctorSearchManager {
     constructor() {
         this.doctors = [];
         this.filteredDoctors = [];
-        this.currentFilters = {
-            search: '',
-            specialty: '',
+        this.currentPage = 1;
+        this.doctorsPerPage = 12;
+        this.filters = {
+            speciality: '',
             location: '',
-            rating: '',
-            consultationType: ''
+            availability: [],
+            rating: [],
+            fee: []
         };
-        this.init();
+        this.sortBy = 'relevance';
+        this.initializeDoctorSearch();
     }
 
-    init() {
-        this.loadDoctors();
-        this.setupEventListeners();
-        this.setupVideoBackground();
+    initializeDoctorSearch() {
+        this.loadDoctorsData();
+        this.setupSearchForm();
+        this.setupFilters();
+        this.setupSorting();
+        this.setupPagination();
+        this.renderDoctors();
     }
 
-    setupVideoBackground() {
-        if (typeof ThreeVideoBackground !== 'undefined') {
-            new ThreeVideoBackground('find-doctors-video-background', {
-                colors: ['#2563eb', '#1e40af', '#1d4ed8'],
-                intensity: 0.3
-            });
-        }
-    }
-
-    async loadDoctors() {
-        try {
-            // Load doctors from API
-            const response = await fetch('php/patient-api.php?action=get_doctors');
-            const result = await response.json();
-            
-            if (result.success && result.doctors) {
-                this.doctors = result.doctors;
-            } else {
-                // Fallback to comprehensive doctor data
-                this.doctors = [
-                {
-                    id: 1,
-                    name: "Dr. Sarah Johnson",
-                    specialty: "Cardiologist",
-                    subspecialty: "Interventional Cardiology",
-                    experience: 15,
-                    rating: 4.9,
-                    reviews: 234,
-                    fee: 150,
-                    available: true,
-                    education: "MD - Harvard Medical School",
-                    hospital: "City General Hospital",
-                    location: "Downtown",
-                    languages: ["English", "Spanish"],
-                    about: "Dr. Johnson specializes in advanced cardiac procedures with over 15 years of experience treating complex heart conditions.",
-                    conditions: ["Heart Disease", "Hypertension", "Arrhythmia", "Heart Failure", "Coronary Artery Disease"],
-                    nextAvailable: "Today 2:00 PM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 101-2001",
-                    email: "s.johnson@cityhospital.com"
-                },
-                {
-                    id: 2,
-                    name: "Dr. Michael Chen",
-                    specialty: "Orthopedic Surgeon",
-                    subspecialty: "Sports Medicine",
-                    experience: 12,
-                    rating: 4.8,
-                    reviews: 189,
-                    fee: 180,
-                    available: true,
-                    education: "MD - Johns Hopkins University",
-                    hospital: "Sports Medicine Center",
-                    location: "Uptown",
-                    languages: ["English", "Mandarin"],
-                    about: "Dr. Chen focuses on sports-related injuries and advanced orthopedic procedures for athletes.",
-                    conditions: ["Sports Injuries", "Joint Pain", "Fractures", "Arthritis", "ACL Reconstruction"],
-                    nextAvailable: "Tomorrow 9:00 AM",
-                    consultationType: ["In-person"],
-                    phone: "+1 (555) 102-2002",
-                    email: "m.chen@sportsmedicine.com"
-                },
-                {
-                    id: 3,
-                    name: "Dr. Emily Rodriguez",
-                    specialty: "Pediatrician",
-                    subspecialty: "Developmental Pediatrics",
-                    experience: 8,
-                    rating: 4.7,
-                    reviews: 156,
-                    fee: 120,
-                    available: true,
-                    education: "MD - Stanford Medical School",
-                    hospital: "Children's Medical Center",
-                    location: "Westside",
-                    languages: ["English", "Spanish", "Portuguese"],
-                    about: "Dr. Rodriguez specializes in child development and comprehensive pediatric care.",
-                    conditions: ["Child Development", "Vaccines", "Common Childhood Illnesses", "Growth Disorders", "ADHD"],
-                    nextAvailable: "Today 4:00 PM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 103-2003",
-                    email: "e.rodriguez@childrenscenter.com"
-                },
-                {
-                    id: 4,
-                    name: "Dr. David Wilson",
-                    specialty: "Dermatologist",
-                    subspecialty: "Cosmetic Dermatology",
-                    experience: 10,
-                    rating: 4.6,
-                    reviews: 142,
-                    fee: 140,
-                    available: true,
-                    education: "MD - UCLA Medical School",
-                    hospital: "Skin Care Institute",
-                    location: "Downtown",
-                    languages: ["English"],
-                    about: "Dr. Wilson combines medical and cosmetic dermatology for comprehensive skin care.",
-                    conditions: ["Acne", "Skin Cancer", "Eczema", "Cosmetic Procedures", "Psoriasis"],
-                    nextAvailable: "Monday 10:00 AM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 104-2004",
-                    email: "d.wilson@skincare.com"
-                },
-                {
-                    id: 5,
-                    name: "Dr. Lisa Anderson",
-                    specialty: "Neurologist",
-                    subspecialty: "Movement Disorders",
-                    experience: 14,
-                    rating: 4.9,
-                    reviews: 198,
-                    fee: 170,
-                    available: true,
-                    education: "MD - Mayo Clinic Medical School",
-                    hospital: "Neurological Institute",
-                    location: "Eastside",
-                    languages: ["English", "French"],
-                    about: "Dr. Anderson specializes in complex neurological disorders and brain health.",
-                    conditions: ["Parkinson's Disease", "Epilepsy", "Migraines", "Multiple Sclerosis", "Stroke"],
-                    nextAvailable: "Today 1:00 PM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 105-2005",
-                    email: "l.anderson@neuroinstitute.com"
-                },
-                {
-                    id: 6,
-                    name: "Dr. James Thompson",
-                    specialty: "General Surgeon",
-                    subspecialty: "Minimally Invasive Surgery",
-                    experience: 18,
-                    rating: 4.8,
-                    reviews: 267,
-                    fee: 200,
-                    available: true,
-                    education: "MD - Cleveland Clinic Medical School",
-                    hospital: "Metropolitan Surgical Center",
-                    location: "Downtown",
-                    languages: ["English"],
-                    about: "Dr. Thompson specializes in minimally invasive surgical techniques.",
-                    conditions: ["Gallbladder Surgery", "Hernia Repair", "Appendectomy", "Colon Surgery", "Laparoscopic Surgery"],
-                    nextAvailable: "Tuesday 8:00 AM",
-                    consultationType: ["In-person"],
-                    phone: "+1 (555) 106-2006",
-                    email: "j.thompson@metrosurgical.com"
-                },
-                {
-                    id: 7,
-                    name: "Dr. Maria Garcia",
-                    specialty: "Gynecologist",
-                    subspecialty: "Women's Health",
-                    experience: 11,
-                    rating: 4.7,
-                    reviews: 178,
-                    fee: 160,
-                    available: true,
-                    education: "MD - University of California",
-                    hospital: "Women's Health Center",
-                    location: "Uptown",
-                    languages: ["English", "Spanish"],
-                    about: "Dr. Garcia provides comprehensive women's healthcare services.",
-                    conditions: ["Reproductive Health", "Pregnancy Care", "Menopause", "PCOS", "Gynecological Surgery"],
-                    nextAvailable: "Today 3:00 PM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 107-2007",
-                    email: "m.garcia@womenshealth.com"
-                },
-                {
-                    id: 8,
-                    name: "Dr. Robert Kim",
-                    specialty: "Psychiatrist",
-                    subspecialty: "Adult Psychiatry",
-                    experience: 9,
-                    rating: 4.6,
-                    reviews: 134,
-                    fee: 130,
-                    available: true,
-                    education: "MD - Yale Medical School",
-                    hospital: "Mental Health Institute",
-                    location: "Westside",
-                    languages: ["English", "Korean"],
-                    about: "Dr. Kim specializes in adult mental health and psychological wellness.",
-                    conditions: ["Depression", "Anxiety", "ADHD", "Bipolar Disorder", "PTSD"],
-                    nextAvailable: "Tomorrow 11:00 AM",
-                    consultationType: ["In-person", "Video Call"],
-                    phone: "+1 (555) 108-2008",
-                    email: "r.kim@mentalhealth.com"
-                }
-            ];
+    loadDoctorsData() {
+        // Mock doctors data
+        this.doctors = [
+            {
+                id: 1,
+                name: 'Dr. Kasun Perera',
+                speciality: 'Cardiology',
+                hospital: 'Apollo Hospital',
+                location: 'Colombo',
+                rating: 4.8,
+                reviewCount: 156,
+                consultationFee: 3500,
+                availability: 'Available Today',
+                experience: '15 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 2,
+                name: 'Dr. Sarah Wilson',
+                speciality: 'Dermatology',
+                hospital: 'Asiri Hospital',
+                location: 'Colombo',
+                rating: 4.9,
+                reviewCount: 203,
+                consultationFee: 4000,
+                availability: 'Available Tomorrow',
+                experience: '12 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 3,
+                name: 'Dr. Michael Silva',
+                speciality: 'Orthopedic Surgery',
+                hospital: 'Nawaloka Hospital',
+                location: 'Colombo',
+                rating: 4.7,
+                reviewCount: 189,
+                consultationFee: 5500,
+                availability: 'Available Today',
+                experience: '18 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 4,
+                name: 'Dr. Priya Jayawardena',
+                speciality: 'Pediatrics',
+                hospital: 'Lanka Hospital',
+                location: 'Colombo',
+                rating: 4.9,
+                reviewCount: 267,
+                consultationFee: 3000,
+                availability: 'Available This Week',
+                experience: '10 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 5,
+                name: 'Dr. Rajesh Fernando',
+                speciality: 'General Medicine',
+                hospital: 'Durdans Hospital',
+                location: 'Colombo',
+                rating: 4.6,
+                reviewCount: 145,
+                consultationFee: 2500,
+                availability: 'Available Today',
+                experience: '20 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 6,
+                name: 'Dr. Amani Perera',
+                speciality: 'Gynecology',
+                hospital: 'Asiri Hospital',
+                location: 'Kandy',
+                rating: 4.8,
+                reviewCount: 178,
+                consultationFee: 4500,
+                availability: 'Available Tomorrow',
+                experience: '14 years',
+                avatar: '👩‍⚕️'
             }
+        ];
 
-            this.filteredDoctors = [...this.doctors];
-            this.displayDoctors(this.filteredDoctors);
-            this.updateResultsCount();
+        this.filteredDoctors = [...this.doctors];
+    }
 
-        } catch (error) {
-            console.error('Failed to load doctors:', error);
-            this.showError('Failed to load doctors list');
+    setupSearchForm() {
+        const searchForm = document.getElementById('doctor-search-form');
+        const specialitySelect = document.getElementById('speciality-select');
+        const locationSelect = document.getElementById('location-select');
+        const doctorNameInput = document.getElementById('doctor-name-input');
+
+        if (searchForm) {
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.performSearch();
+            });
+        }
+
+        // Real-time search on input changes
+        [specialitySelect, locationSelect, doctorNameInput].forEach(element => {
+            if (element) {
+                element.addEventListener('change', () => this.performSearch());
+                if (element.type === 'text') {
+                    element.addEventListener('input', this.debounce(() => this.performSearch(), 300));
+                }
+            }
+        });
+    }
+
+    setupFilters() {
+        const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+        filterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => this.applyFilters());
+        });
+
+        const clearFiltersBtn = document.querySelector('.btn-clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
         }
     }
 
-    setupEventListeners() {
-        // Search input
-        const searchInput = document.getElementById('doctor-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.currentFilters.search = e.target.value;
-                this.applyFilters();
+    setupSorting() {
+        const sortSelect = document.getElementById('sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                this.sortBy = e.target.value;
+                this.sortDoctors();
+                this.renderDoctors();
+            });
+        }
+    }
+
+    setupPagination() {
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.renderDoctors();
+                    this.updatePagination();
+                }
             });
         }
 
-        // Filter selects
-        const specialtyFilter = document.getElementById('specialty-filter');
-        const locationFilter = document.getElementById('location-filter');
-        const ratingFilter = document.getElementById('rating-filter');
-        const consultationTypeFilter = document.getElementById('consultation-type-filter');
-
-        if (specialtyFilter) {
-            specialtyFilter.addEventListener('change', (e) => {
-                this.currentFilters.specialty = e.target.value;
-                this.applyFilters();
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(this.filteredDoctors.length / this.doctorsPerPage);
+                if (this.currentPage < totalPages) {
+                    this.currentPage++;
+                    this.renderDoctors();
+                    this.updatePagination();
+                }
             });
         }
+    }
 
-        if (locationFilter) {
-            locationFilter.addEventListener('change', (e) => {
-                this.currentFilters.location = e.target.value;
-                this.applyFilters();
-            });
-        }
+    performSearch() {
+        const speciality = document.getElementById('speciality-select')?.value || '';
+        const location = document.getElementById('location-select')?.value || '';
+        const doctorName = document.getElementById('doctor-name-input')?.value || '';
 
-        if (ratingFilter) {
-            ratingFilter.addEventListener('change', (e) => {
-                this.currentFilters.rating = e.target.value;
-                this.applyFilters();
-            });
-        }
+        this.filters.speciality = speciality;
+        this.filters.location = location;
 
-        if (consultationTypeFilter) {
-            consultationTypeFilter.addEventListener('change', (e) => {
-                this.currentFilters.consultationType = e.target.value;
-                this.applyFilters();
-            });
-        }
+        this.filteredDoctors = this.doctors.filter(doctor => {
+            const matchesSpeciality = !speciality || 
+                doctor.speciality.toLowerCase().includes(speciality.toLowerCase());
+            const matchesLocation = !location || 
+                doctor.location.toLowerCase().includes(location.toLowerCase());
+            const matchesName = !doctorName || 
+                doctor.name.toLowerCase().includes(doctorName.toLowerCase()) ||
+                doctor.hospital.toLowerCase().includes(doctorName.toLowerCase());
 
-        // Search button
-        const searchBtn = document.querySelector('.search-btn');
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
-                this.applyFilters();
-            });
-        }
+            return matchesSpeciality && matchesLocation && matchesName;
+        });
+
+        this.applyFilters();
+        this.currentPage = 1;
+        this.renderDoctors();
+        this.updateResultsInfo();
     }
 
     applyFilters() {
-        let filtered = [...this.doctors];
+        const availabilityFilters = Array.from(document.querySelectorAll('.filter-checkbox[value="today"], .filter-checkbox[value="tomorrow"], .filter-checkbox[value="week"]'))
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
 
-        // Search filter
-        if (this.currentFilters.search) {
-            const searchTerm = this.currentFilters.search.toLowerCase();
-            filtered = filtered.filter(doctor => 
-                doctor.name.toLowerCase().includes(searchTerm) ||
-                doctor.specialty.toLowerCase().includes(searchTerm) ||
-                doctor.subspecialty?.toLowerCase().includes(searchTerm) ||
-                doctor.conditions.some(condition => condition.toLowerCase().includes(searchTerm)) ||
-                doctor.hospital.toLowerCase().includes(searchTerm)
-            );
+        const ratingFilters = Array.from(document.querySelectorAll('.filter-checkbox[value="5"], .filter-checkbox[value="4"], .filter-checkbox[value="3"]'))
+            .filter(cb => cb.checked)
+            .map(cb => parseInt(cb.value));
+
+        const feeFilters = Array.from(document.querySelectorAll('.filter-checkbox[value="low"], .filter-checkbox[value="medium"], .filter-checkbox[value="high"]'))
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        let filtered = [...this.filteredDoctors];
+
+        // Apply availability filter
+        if (availabilityFilters.length > 0) {
+            filtered = filtered.filter(doctor => {
+                return availabilityFilters.some(filter => {
+                    switch (filter) {
+                        case 'today':
+                            return doctor.availability.includes('Today');
+                        case 'tomorrow':
+                            return doctor.availability.includes('Tomorrow');
+                        case 'week':
+                            return doctor.availability.includes('Week');
+                        default:
+                            return true;
+                    }
+                });
+            });
         }
 
-        // Specialty filter
-        if (this.currentFilters.specialty) {
-            filtered = filtered.filter(doctor => doctor.specialty === this.currentFilters.specialty);
-        }
-
-        // Location filter
-        if (this.currentFilters.location) {
-            filtered = filtered.filter(doctor => doctor.location === this.currentFilters.location);
-        }
-
-        // Rating filter
-        if (this.currentFilters.rating) {
-            const minRating = parseFloat(this.currentFilters.rating);
+        // Apply rating filter
+        if (ratingFilters.length > 0) {
+            const minRating = Math.min(...ratingFilters);
             filtered = filtered.filter(doctor => doctor.rating >= minRating);
         }
 
-        // Consultation type filter
-        if (this.currentFilters.consultationType) {
-            filtered = filtered.filter(doctor => 
-                doctor.consultationType.includes(this.currentFilters.consultationType)
-            );
+        // Apply fee filter
+        if (feeFilters.length > 0) {
+            filtered = filtered.filter(doctor => {
+                return feeFilters.some(filter => {
+                    switch (filter) {
+                        case 'low':
+                            return doctor.consultationFee < 2000;
+                        case 'medium':
+                            return doctor.consultationFee >= 2000 && doctor.consultationFee <= 5000;
+                        case 'high':
+                            return doctor.consultationFee > 5000;
+                        default:
+                            return true;
+                    }
+                });
+            });
         }
 
         this.filteredDoctors = filtered;
-        this.displayDoctors(this.filteredDoctors);
-        this.updateResultsCount();
+        this.currentPage = 1;
+        this.renderDoctors();
+        this.updateResultsInfo();
     }
 
-    displayDoctors(doctors) {
+    clearAllFilters() {
+        // Clear all checkboxes
+        document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        // Clear search form
+        document.getElementById('speciality-select').value = '';
+        document.getElementById('location-select').value = '';
+        document.getElementById('doctor-name-input').value = '';
+
+        // Reset filters
+        this.filters = {
+            speciality: '',
+            location: '',
+            availability: [],
+            rating: [],
+            fee: []
+        };
+
+        // Reset data
+        this.filteredDoctors = [...this.doctors];
+        this.currentPage = 1;
+        this.renderDoctors();
+        this.updateResultsInfo();
+    }
+
+    sortDoctors() {
+        switch (this.sortBy) {
+            case 'rating':
+                this.filteredDoctors.sort((a, b) => b.rating - a.rating);
+                break;
+            case 'fee-low':
+                this.filteredDoctors.sort((a, b) => a.consultationFee - b.consultationFee);
+                break;
+            case 'fee-high':
+                this.filteredDoctors.sort((a, b) => b.consultationFee - a.consultationFee);
+                break;
+            case 'availability':
+                this.filteredDoctors.sort((a, b) => {
+                    const order = ['Available Today', 'Available Tomorrow', 'Available This Week'];
+                    return order.indexOf(a.availability) - order.indexOf(b.availability);
+                });
+                break;
+            case 'relevance':
+            default:
+                // Keep original order for relevance
+                break;
+        }
+    }
+
+    renderDoctors() {
         const doctorsGrid = document.getElementById('doctors-grid');
         if (!doctorsGrid) return;
 
-        if (doctors.length === 0) {
+        // Calculate pagination
+        const startIndex = (this.currentPage - 1) * this.doctorsPerPage;
+        const endIndex = startIndex + this.doctorsPerPage;
+        const doctorsToShow = this.filteredDoctors.slice(startIndex, endIndex);
+
+        if (doctorsToShow.length === 0) {
             doctorsGrid.innerHTML = `
                 <div class="no-results">
-                    <div class="no-results-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
+                    <div class="no-results-icon">🔍</div>
                     <h3>No doctors found</h3>
                     <p>Try adjusting your search criteria or filters</p>
+                    <button class="btn-clear-filters" onclick="doctorSearchManager.clearAllFilters()">Clear All Filters</button>
                 </div>
             `;
             return;
         }
 
-        doctorsGrid.innerHTML = doctors.map(doctor => `
-            <div class="doctor-card-enhanced" data-doctor-id="${doctor.id}">
-                <div class="availability-indicator ${doctor.available ? 'available' : 'busy'}">
-                    <i class="fas fa-circle"></i>
-                    ${doctor.available ? 'Available' : 'Busy'}
-                </div>
-                
+        doctorsGrid.innerHTML = doctorsToShow.map(doctor => this.createDoctorCard(doctor)).join('');
+        this.updatePagination();
+    }
+
+    createDoctorCard(doctor) {
+        const stars = '⭐'.repeat(Math.floor(doctor.rating));
+        
+        return `
+            <div class="doctor-card" data-doctor-id="${doctor.id}">
                 <div class="doctor-header">
-                    <div class="doctor-avatar">
-                        ${doctor.name.split(' ').map(n => n[0]).join('')}
-                    </div>
+                    <div class="doctor-avatar">${doctor.avatar}</div>
                     <div class="doctor-info">
                         <h3>${doctor.name}</h3>
-                        <p class="specialty">${doctor.specialty}</p>
-                        <p class="subspecialty">${doctor.subspecialty || ''}</p>
+                        <div class="doctor-speciality">${doctor.speciality}</div>
+                        <div class="doctor-hospital">${doctor.hospital}</div>
                         <div class="doctor-rating">
-                            <div class="rating-stars">
-                                ${this.generateStars(doctor.rating)}
-                            </div>
-                            <span class="rating-text">${doctor.rating} (${doctor.reviews} reviews)</span>
+                            <span class="rating-stars">${stars}</span>
+                            <span class="rating-score">${doctor.rating}</span>
+                            <span class="rating-count">(${doctor.reviewCount} reviews)</span>
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="doctor-details">
-                    <div class="detail-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>${doctor.experience} years experience</span>
+                    <div class="detail-row">
+                        <span class="detail-label">Experience:</span>
+                        <span class="detail-value">${doctor.experience}</span>
                     </div>
-                    <div class="detail-item">
-                        <i class="fas fa-hospital"></i>
-                        <span>${doctor.hospital}</span>
+                    <div class="detail-row">
+                        <span class="detail-label">Consultation Fee:</span>
+                        <span class="detail-value consultation-fee">Rs. ${doctor.consultationFee.toLocaleString()}</span>
                     </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${doctor.location}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>$${doctor.consultation_fee || doctor.fee} consultation</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-clock"></i>
-                        <span>Next: ${doctor.nextAvailable}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-language"></i>
-                        <span>${doctor.languages.join(', ')}</span>
+                    <div class="detail-row">
+                        <span class="detail-label">Availability:</span>
+                        <span class="detail-value availability">${doctor.availability}</span>
                     </div>
                 </div>
-
-                <div class="doctor-specialties">
-                    <h4><i class="fas fa-stethoscope"></i> Conditions Treated</h4>
-                    <div class="conditions-tags">
-                        ${doctor.conditions.slice(0, 5).map(condition => 
-                            `<span class="condition-tag">${condition}</span>`
-                        ).join('')}
-                        ${doctor.conditions.length > 5 ? 
-                            `<span class="condition-tag" style="background: var(--primary-color); color: white;">+${doctor.conditions.length - 5} more</span>` : ''}
-                    </div>
-                </div>
-
+                
                 <div class="doctor-actions">
-                    <button class="btn btn-outline view-profile-btn" data-doctor-id="${doctor.id}">
-                        <i class="fas fa-eye"></i>
-                        View Profile
-                    </button>
-                    <button class="btn btn-primary book-appointment-btn" data-doctor-id="${doctor.id}">
-                        <i class="fas fa-calendar-plus"></i>
-                        Book Now
-                    </button>
+                    <button class="btn-book-appointment" onclick="bookAppointment(${doctor.id})">📅 Book Appointment</button>
+                    <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">👁️ View Profile</button>
                 </div>
             </div>
-        `).join('');
+        `;
     }
 
-    updateResultsCount() {
+    updateResultsInfo() {
         const resultsCount = document.getElementById('results-count');
+        const resultsDescription = document.getElementById('results-description');
+
         if (resultsCount) {
             const count = this.filteredDoctors.length;
             resultsCount.textContent = `Showing ${count} doctor${count !== 1 ? 's' : ''}`;
         }
+
+        if (resultsDescription) {
+            if (this.filteredDoctors.length === 0) {
+                resultsDescription.textContent = 'No doctors match your search criteria';
+            } else {
+                resultsDescription.textContent = 'Find the right doctor for your needs';
+            }
+        }
     }
 
-    generateStars(rating) {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        
-        let stars = '';
-        
-        // Full stars
-        for (let i = 0; i < fullStars; i++) {
-            stars += '<i class="fas fa-star"></i>';
+    updatePagination() {
+        const totalPages = Math.ceil(this.filteredDoctors.length / this.doctorsPerPage);
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+
+        if (prevBtn) {
+            prevBtn.disabled = this.currentPage <= 1;
         }
-        
-        // Half star
-        if (hasHalfStar) {
-            stars += '<i class="fas fa-star-half-alt"></i>';
+
+        if (nextBtn) {
+            nextBtn.disabled = this.currentPage >= totalPages;
         }
-        
-        // Empty stars
-        for (let i = 0; i < emptyStars; i++) {
-            stars += '<i class="far fa-star"></i>';
+
+        // Update page numbers
+        const pageNumbers = document.querySelector('.pagination-numbers');
+        if (pageNumbers) {
+            pageNumbers.innerHTML = this.generatePageNumbers(totalPages);
         }
-        
-        return stars;
     }
 
-    viewDoctorProfile(doctorId) {
-        const doctor = this.doctors.find(d => d.id === doctorId);
-        if (!doctor) return;
-
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay doctor-profile-modal';
-        modal.innerHTML = `
-            <div class="modal-content large-modal">
-                <div class="modal-header">
-                    <h3><i class="fas fa-user-md"></i> Doctor Profile - ${doctor.name}</h3>
-                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="doctor-profile-detailed">
-                        <div class="profile-header">
-                            <div class="doctor-avatar-large">
-                                ${doctor.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div class="doctor-details">
-                                <h2>${doctor.name}</h2>
-                                <p class="title">${doctor.specialty} - ${doctor.subspecialty}</p>
-                                <div class="credentials">
-                                    <div class="credential">
-                                        <i class="fas fa-graduation-cap"></i>
-                                        <span>${doctor.education}</span>
-                                    </div>
-                                    <div class="credential">
-                                        <i class="fas fa-hospital"></i>
-                                        <span>${doctor.hospital}</span>
-                                    </div>
-                                    <div class="credential">
-                                        <i class="fas fa-calendar"></i>
-                                        <span>${doctor.experience} years experience</span>
-                                    </div>
-                                </div>
-                                <div class="rating-section">
-                                    <div class="stars">${this.generateStars(doctor.rating)}</div>
-                                    <span>${doctor.rating} (${doctor.reviews} reviews)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="profile-content">
-                            <div class="section">
-                                <h4>About</h4>
-                                <p>${doctor.about}</p>
-                            </div>
-
-                            <div class="section">
-                                <h4>Conditions Treated</h4>
-                                <div class="conditions-grid">
-                                    ${doctor.conditions.map(condition => 
-                                        `<span class="condition-pill">${condition}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-
-                            <div class="section">
-                                <h4>Languages</h4>
-                                <div class="languages">
-                                    ${doctor.languages.map(lang => 
-                                        `<span class="language-pill">${lang}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-
-                            <div class="section">
-                                <h4>Consultation Options</h4>
-                                <div class="consultation-options">
-                                    ${doctor.consultationType.map(type => 
-                                        `<div class="consultation-option">
-                                            <i class="fas fa-${type === 'Video Call' ? 'video' : 'user-md'}"></i>
-                                            <span>${type}</span>
-                                        </div>`
-                                    ).join('')}
-                                </div>
-                            </div>
-
-                            <div class="section">
-                                <h4>Contact Information</h4>
-                                <div class="contact-details">
-                                    <div class="contact-item">
-                                        <i class="fas fa-phone"></i>
-                                        <span>${doctor.phone}</span>
-                                    </div>
-                                    <div class="contact-item">
-                                        <i class="fas fa-envelope"></i>
-                                        <span>${doctor.email}</span>
-                                    </div>
-                                    <div class="contact-item">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>${doctor.hospital}, ${doctor.location}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Close</button>
-                    <button class="btn btn-primary" onclick="findDoctorsManager.bookAppointment(${doctor.id}); this.closest('.modal-overlay').remove();">
-                        <i class="fas fa-calendar-plus"></i> Book Appointment
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-    }
-
-    bookAppointment(doctorId) {
-        // Navigate to booking page
-        window.location.href = 'find-doctors.html';
-    }
-
-    showError(message) {
-        const doctorsGrid = document.getElementById('doctors-grid');
-        if (doctorsGrid) {
-            doctorsGrid.innerHTML = `
-                <div class="error-message">
-                    <div class="error-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3>Error Loading Doctors</h3>
-                    <p>${message}</p>
-                </div>
-            `;
+    generatePageNumbers(totalPages) {
+        let html = '';
+        const current = this.currentPage;
+        
+        // Always show first page
+        html += `<span class="page-number ${current === 1 ? 'active' : ''}" onclick="doctorSearchManager.goToPage(1)">1</span>`;
+        
+        if (totalPages <= 7) {
+            // Show all pages
+            for (let i = 2; i <= totalPages; i++) {
+                html += `<span class="page-number ${current === i ? 'active' : ''}" onclick="doctorSearchManager.goToPage(${i})">${i}</span>`;
+            }
+        } else {
+            // Show condensed pagination
+            if (current > 3) {
+                html += '<span class="pagination-dots">...</span>';
+            }
+            
+            const start = Math.max(2, current - 1);
+            const end = Math.min(totalPages - 1, current + 1);
+            
+            for (let i = start; i <= end; i++) {
+                html += `<span class="page-number ${current === i ? 'active' : ''}" onclick="doctorSearchManager.goToPage(${i})">${i}</span>`;
+            }
+            
+            if (current < totalPages - 2) {
+                html += '<span class="pagination-dots">...</span>';
+            }
+            
+            // Always show last page
+            if (totalPages > 1) {
+                html += `<span class="page-number ${current === totalPages ? 'active' : ''}" onclick="doctorSearchManager.goToPage(${totalPages})">${totalPages}</span>`;
+            }
         }
+        
+        return html;
+    }
+
+    goToPage(page) {
+        const totalPages = Math.ceil(this.filteredDoctors.length / this.doctorsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            this.currentPage = page;
+            this.renderDoctors();
+            this.updatePagination();
+            
+            // Scroll to top of results
+            document.querySelector('.doctors-main').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 }
 
-// Initialize the Find Doctors Manager
-let findDoctorsManager;
+// Global functions for button actions
+function bookAppointment(doctorId) {
+    console.log('Booking appointment with doctor ID:', doctorId);
+    // In a real implementation, this would open a booking modal or redirect to booking page
+    alert('Booking system will be implemented. Doctor ID: ' + doctorId);
+}
+
+function viewDoctorProfile(doctorId) {
+    console.log('Viewing profile for doctor ID:', doctorId);
+    // In a real implementation, this would open a profile modal or redirect to profile page
+    window.location.href = `doctor-profile.html?id=${doctorId}`;
+}
+
+// Initialize doctor search manager
+let doctorSearchManager;
+
 document.addEventListener('DOMContentLoaded', () => {
-    findDoctorsManager = new FindDoctorsManager();
+    doctorSearchManager = new DoctorSearchManager();
 });
+
+// Add CSS for no results
+const doctorSearchStyles = `
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--spacing-2xl);
+    background: var(--light-gray);
+    border-radius: var(--radius-xl);
+}
+
+.no-results-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.no-results h3 {
+    font-size: var(--font-size-xl);
+    color: var(--primary-blue-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.no-results p {
+    color: var(--text-gray);
+    margin-bottom: var(--spacing-lg);
+}
+
+.no-results .btn-clear-filters {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.no-results .btn-clear-filters:hover {
+    background-color: var(--primary-blue-light);
+}
+`;
+
+// Inject styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = doctorSearchStyles;
+document.head.appendChild(styleSheet);

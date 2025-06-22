@@ -3,696 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard | HealthCare+</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --dashboard-bg: #f8fafc;
-            --sidebar-width: 280px;
-            --header-height: 70px;
-        }
-
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-            background: var(--dashboard-bg);
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--card-background);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-header .logo {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--text-color);
-        }
-
-        .sidebar-nav {
-            padding: 20px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 20px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-left-color: var(--primary-color);
-        }
-
-        .nav-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            border-left-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dashboard-header {
-            background: var(--card-background);
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .header-title h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--text-color);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .dashboard-content {
-            padding: 30px;
-            flex: 1;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--card-background);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .stat-icon.appointments {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-
-        .stat-icon.doctors {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .stat-icon.records {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .stat-icon.messages {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .stat-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 2rem;
-            color: var(--text-color);
-        }
-
-        .stat-info p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-        }
-
-        .card {
-            background: var(--card-background);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        .card-content {
-            padding: 25px;
-        }
-
-        .appointment-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .appointment-item:last-child {
-            border-bottom: none;
-        }
-
-        .appointment-date {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .appointment-date .day {
-            font-size: 1.2rem;
-        }
-
-        .appointment-date .month {
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-
-        .appointment-info h4 {
-            margin: 0 0 5px 0;
-            color: var(--text-color);
-        }
-
-        .appointment-info p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .appointment-status {
-            margin-left: auto;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-confirmed {
-            background: rgba(16, 185, 129, 0.1);
-            color: #059669;
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: #d97706;
-        }
-
-        .quick-actions {
-            display: grid;
-            gap: 15px;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            background: var(--light-bg);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-color);
-        }
-
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .notification-item {
-            display: flex;
-            align-items: start;
-            gap: 12px;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .notification-icon.info {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-        }
-
-        .notification-icon.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: #059669;
-        }
-
-        .notification-content h5 {
-            margin: 0 0 5px 0;
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        .notification-content p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .notification-time {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <title>Patient Dashboard - eChannelling</title>
+    <meta name="description" content="Manage your appointments, view medical records, and access healthcare services">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body data-theme="light">
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-heartbeat logo"></i>
-                <h2>HealthCare+</h2>
+<body>
+    <!-- Header -->
+    <header class="header dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <div class="dashboard-nav">
+                    <span class="welcome-text">Welcome, John Fernando</span>
+                </div>
+                <div class="header-actions">
+                    <div class="notifications-dropdown">
+                        <button class="notification-btn">
+                            🔔
+                            <span class="notification-badge">2</span>
+                        </button>
+                    </div>
+                    <div class="user-dropdown">
+                        <button class="user-btn">
+                            <div class="user-avatar">👨</div>
+                            <span class="user-name">John Fernando</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="patient-profile.html" class="dropdown-item">👤 My Profile</a>
+                            <a href="patient-settings.html" class="dropdown-item">⚙️ Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="index.html" class="dropdown-item">🚪 Logout</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
             <nav class="sidebar-nav">
-                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#appointments" class="nav-item" onclick="showSection('appointments')">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>My Appointments</span>
-                </a>
-                <a href="#doctors" class="nav-item" onclick="showSection('doctors')">
-                    <i class="fas fa-user-md"></i>
-                    <span>My Doctors</span>
-                </a>
-                <a href="#records" class="nav-item" onclick="showSection('records')">
-                    <i class="fas fa-file-medical"></i>
-                    <span>Medical Records</span>
-                </a>
-                <a href="#messages" class="nav-item" onclick="showSection('messages')">
-                    <i class="fas fa-comments"></i>
-                    <span>Messages</span>
-                </a>
-                <a href="#profile" class="nav-item" onclick="showSection('profile')">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Profile Settings</span>
-                </a>
-                <a href="booking-new.html" class="nav-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Book Appointment</span>
-                </a>
-                <a href="index.html" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a href="#overview" class="nav-link" data-section="overview">
+                            📊 Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#appointments" class="nav-link" data-section="appointments">
+                            📅 My Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#book-appointment" class="nav-link" data-section="book-appointment">
+                            ➕ Book Appointment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#medical-records" class="nav-link" data-section="medical-records">
+                            📋 Medical Records
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#doctors" class="nav-link" data-section="doctors">
+                            👨‍⚕️ My Doctors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#payments" class="nav-link" data-section="payments">
+                            💳 Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#messages" class="nav-link" data-section="messages">
+                            💬 Messages
+                        </a>
+                    </li>
+                </ul>
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="dashboard-header">
-                <div class="header-title">
-                    <h1 id="page-title">Dashboard</h1>
+        <main class="dashboard-main">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back, John. Here's your health summary.</p>
                 </div>
-                <div class="user-profile">
-                    <div class="user-avatar">JD</div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-color);">John Doe</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Patient ID: P12345</div>
-                    </div>
-                </div>
-            </header>
 
-            <!-- Dashboard Content -->
-            <div class="dashboard-content">
-                <!-- Dashboard Section -->
-                <div id="dashboard-section" class="section active">
-                    <!-- Stats Grid -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon appointments">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>3</h3>
-                                <p>Upcoming Appointments</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon doctors">
-                                <i class="fas fa-user-md"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>2</h3>
-                                <p>Doctors</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon records">
-                                <i class="fas fa-file-medical"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>8</h3>
-                                <p>Medical Records</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon messages">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>2</h3>
-                                <p>Unread Messages</p>
-                            </div>
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <h3>Upcoming Appointments</h3>
+                            <div class="stat-number">3</div>
+                            <div class="stat-change neutral">Next: Tomorrow 2:00 PM</div>
                         </div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👨‍⚕️</div>
+                        <div class="stat-content">
+                            <h3>Favorite Doctors</h3>
+                            <div class="stat-number">5</div>
+                            <div class="stat-change positive">Active consultations</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <h3>Medical Records</h3>
+                            <div class="stat-number">12</div>
+                            <div class="stat-change neutral">Reports available</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>This Month's Spending</h3>
+                            <div class="stat-number">Rs. 8,500</div>
+                            <div class="stat-change positive">3 appointments</div>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Content Grid -->
-                    <div class="content-grid">
-                        <!-- Upcoming Appointments -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    Upcoming Appointments
-                                </h3>
-                                <a href="#appointments" onclick="showSection('appointments')" style="color: var(--primary-color); text-decoration: none;">
-                                    View All
-                                </a>
-                            </div>
-                            <div class="card-content">
-                                <div class="appointment-item">
-                                    <div class="appointment-date">
-                                        <div class="day">25</div>
-                                        <div class="month">JUN</div>
-                                    </div>
-                                    <div class="appointment-info">
-                                        <h4>Dr. Sarah Johnson</h4>
-                                        <p>Cardiology Consultation</p>
-                                        <p>10:00 AM - Downtown Clinic</p>
-                                    </div>
-                                    <div class="appointment-status status-confirmed">Confirmed</div>
+                <!-- Quick Actions & Recent Activity -->
+                <div class="dashboard-widgets">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" onclick="showSection('book-appointment')">
+                                <div class="quick-action-icon">📅</div>
+                                <span>Book Appointment</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="window.location.href='find-doctors.html'">
+                                <div class="quick-action-icon">👨‍⚕️</div>
+                                <span>Find Doctors</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="showSection('medical-records')">
+                                <div class="quick-action-icon">📋</div>
+                                <span>View Records</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="showSection('payments')">
+                                <div class="quick-action-icon">💳</div>
+                                <span>Payment History</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Upcoming Appointments</h3>
+                            <button class="btn-widget-action" onclick="showSection('appointments')">View All</button>
+                        </div>
+                        <div class="schedule-timeline">
+                            <div class="schedule-item">
+                                <div class="schedule-time">Tomorrow 2:00 PM</div>
+                                <div class="schedule-content">
+                                    <h4>Dr. Kasun Perera</h4>
+                                    <p>Cardiology Consultation</p>
+                                    <span class="schedule-status confirmed">Confirmed</span>
                                 </div>
-                                <div class="appointment-item">
-                                    <div class="appointment-date">
-                                        <div class="day">28</div>
-                                        <div class="month">JUN</div>
-                                    </div>
-                                    <div class="appointment-info">
-                                        <h4>Dr. Michael Chen</h4>
-                                        <p>Follow-up Consultation</p>
-                                        <p>2:30 PM - Uptown Clinic</p>
-                                    </div>
-                                    <div class="appointment-status status-pending">Pending</div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">Jun 25, 10:00 AM</div>
+                                <div class="schedule-content">
+                                    <h4>Dr. Sarah Wilson</h4>
+                                    <p>Follow-up Checkup</p>
+                                    <span class="schedule-status confirmed">Confirmed</span>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">Jun 28, 3:30 PM</div>
+                                <div class="schedule-content">
+                                    <h4>Dr. Michael Silva</h4>
+                                    <p>Lab Results Review</p>
+                                    <span class="schedule-status pending">Pending</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
 
-                        <!-- Quick Actions & Notifications -->
-                        <div>
-                            <!-- Quick Actions -->
-                            <div class="card" style="margin-bottom: 20px;">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <i class="fas fa-bolt"></i>
-                                        Quick Actions
-                                    </h3>
-                                </div>
-                                <div class="card-content">
-                                    <div class="quick-actions">
-                                        <a href="booking-new.html" class="action-btn">
-                                            <i class="fas fa-plus"></i>
-                                            <span>Book New Appointment</span>
-                                        </a>
-                                        <button class="action-btn" onclick="showSection('messages')">
-                                            <i class="fas fa-comment-medical"></i>
-                                            <span>Message Doctor</span>
-                                        </button>
-                                        <button class="action-btn" onclick="showSection('records')">
-                                            <i class="fas fa-download"></i>
-                                            <span>Download Records</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Appointments Section -->
+            <section id="appointments" class="dashboard-section">
+                <div class="section-header">
+                    <h1>My Appointments</h1>
+                    <div class="section-actions">
+                        <button class="btn-primary" onclick="showSection('book-appointment')">📅 Book New Appointment</button>
+                        <button class="btn-secondary">📊 Export History</button>
+                    </div>
+                </div>
 
-                            <!-- Recent Notifications -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <i class="fas fa-bell"></i>
-                                        Recent Notifications
-                                    </h3>
-                                </div>
-                                <div class="card-content">
-                                    <div class="notification-item">
-                                        <div class="notification-icon success">
-                                            <i class="fas fa-check"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <h5>Appointment Confirmed</h5>
-                                            <p>Your appointment with Dr. Sarah Johnson has been confirmed</p>
-                                            <div class="notification-time">2 hours ago</div>
-                                        </div>
+                <div class="appointments-filters">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="upcoming">Upcoming</button>
+                        <button class="filter-tab" data-filter="past">Past</button>
+                        <button class="filter-tab" data-filter="cancelled">Cancelled</button>
+                    </div>
+                    <div class="search-filter">
+                        <input type="text" placeholder="Search appointments..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="appointments-table-container">
+                    <table class="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Doctor</th>
+                                <th>Speciality</th>
+                                <th>Hospital</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="appointment-datetime">
+                                        <div class="date">June 23, 2025</div>
+                                        <div class="time">2:00 PM</div>
                                     </div>
-                                    <div class="notification-item">
-                                        <div class="notification-icon info">
-                                            <i class="fas fa-info"></i>
-                                        </div>
-                                        <div class="notification-content">
-                                            <h5>Test Results Available</h5>
-                                            <p>Your blood test results are now available in your records</p>
-                                            <div class="notification-time">1 day ago</div>
+                                </td>
+                                <td>
+                                    <div class="doctor-info">
+                                        <div class="doctor-avatar">👨‍⚕️</div>
+                                        <div class="doctor-details">
+                                            <div class="doctor-name">Dr. Kasun Perera</div>
+                                            <div class="doctor-email">Cardiologist</div>
                                         </div>
                                     </div>
+                                </td>
+                                <td>Cardiology</td>
+                                <td>Apollo Hospital</td>
+                                <td><span class="status-badge confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Details">👁️</button>
+                                        <button class="btn-action" title="Reschedule">📅</button>
+                                        <button class="btn-action" title="Cancel">❌</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="appointment-datetime">
+                                        <div class="date">June 25, 2025</div>
+                                        <div class="time">10:00 AM</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-info">
+                                        <div class="doctor-avatar">👩‍⚕️</div>
+                                        <div class="doctor-details">
+                                            <div class="doctor-name">Dr. Sarah Wilson</div>
+                                            <div class="doctor-email">Dermatologist</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Dermatology</td>
+                                <td>Asiri Hospital</td>
+                                <td><span class="status-badge confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action" title="View Details">👁️</button>
+                                        <button class="btn-action" title="Reschedule">📅</button>
+                                        <button class="btn-action" title="Cancel">❌</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Book Appointment Section -->
+            <section id="book-appointment" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Book New Appointment</h1>
+                    <p>Find and book appointments with qualified doctors</p>
+                </div>
+                
+                <div class="book-appointment-container">
+                    <div class="book-appointment-options">
+                        <button class="book-option-btn" onclick="window.location.href='find-doctors.html'">
+                            <div class="book-option-icon">🔍</div>
+                            <div class="book-option-content">
+                                <h3>Search Doctors</h3>
+                                <p>Find doctors by speciality, location, or name</p>
+                            </div>
+                        </button>
+                        
+                        <button class="book-option-btn" onclick="window.location.href='specialities.html'">
+                            <div class="book-option-icon">🏥</div>
+                            <div class="book-option-content">
+                                <h3>Browse Specialities</h3>
+                                <p>View doctors by medical specializations</p>
+                            </div>
+                        </button>
+                        
+                        <button class="book-option-btn" onclick="window.location.href='hospitals.html'">
+                            <div class="book-option-icon">🏥</div>
+                            <div class="book-option-content">
+                                <h3>Find by Hospital</h3>
+                                <p>Browse doctors by hospital or medical center</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Favorite Doctors -->
+                    <div class="favorite-doctors">
+                        <h3>Your Favorite Doctors</h3>
+                        <div class="favorite-doctors-grid">
+                            <div class="favorite-doctor-card">
+                                <div class="doctor-avatar">👨‍⚕️</div>
+                                <div class="doctor-info">
+                                    <h4>Dr. Kasun Perera</h4>
+                                    <p>Cardiology - Apollo Hospital</p>
+                                    <div class="doctor-rating">⭐⭐⭐⭐⭐ 4.8</div>
                                 </div>
+                                <button class="btn-book-favorite">Book Now</button>
+                            </div>
+                            
+                            <div class="favorite-doctor-card">
+                                <div class="doctor-avatar">👩‍⚕️</div>
+                                <div class="doctor-info">
+                                    <h4>Dr. Sarah Wilson</h4>
+                                    <p>Dermatology - Asiri Hospital</p>
+                                    <div class="doctor-rating">⭐⭐⭐⭐⭐ 4.9</div>
+                                </div>
+                                <button class="btn-book-favorite">Book Now</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Other sections would be implemented here -->
-                <div id="appointments-section" class="section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-calendar-check"></i>
-                                My Appointments
-                            </h3>
-                            <a href="booking-new.html" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Book New
-                            </a>
-                        </div>
-                        <div class="card-content">
-                            <p>Appointments management interface would be implemented here.</p>
-                        </div>
-                    </div>
+            <!-- Other sections would be implemented similarly -->
+            <section id="medical-records" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Medical Records</h1>
+                    <p>Access your medical history, test results, and prescriptions</p>
                 </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">📋</div>
+                    <h3>Medical Records</h3>
+                    <p>Your medical records and test results will be available here</p>
+                </div>
+            </section>
 
-                <div id="doctors-section" class="section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-user-md"></i>
-                                My Doctors
-                            </h3>
-                        </div>
-                        <div class="card-content">
-                            <p>Doctor management interface would be implemented here.</p>
-                        </div>
-                    </div>
+            <section id="doctors" class="dashboard-section">
+                <div class="section-header">
+                    <h1>My Doctors</h1>
+                    <p>Manage your preferred doctors and consultation history</p>
                 </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">👨‍⚕️</div>
+                    <h3>Doctor Management</h3>
+                    <p>Your doctor preferences and consultation history will be shown here</p>
+                </div>
+            </section>
 
-                <div id="records-section" class="section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-file-medical"></i>
-                                Medical Records
-                            </h3>
-                        </div>
-                        <div class="card-content">
-                            <p>Medical records interface would be implemented here.</p>
-                        </div>
-                    </div>
+            <section id="payments" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Payment History</h1>
+                    <p>View your payment history and manage payment methods</p>
                 </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">💳</div>
+                    <h3>Payment Management</h3>
+                    <p>Your payment history and billing information will be available here</p>
+                </div>
+            </section>
 
-                <div id="messages-section" class="section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-comments"></i>
-                                Messages
-                            </h3>
-                        </div>
-                        <div class="card-content">
-                            <p>Messaging interface would be implemented here.</p>
-                        </div>
-                    </div>
+            <section id="messages" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Messages</h1>
+                    <p>Communicate with your doctors and medical staff</p>
                 </div>
-
-                <div id="profile-section" class="section" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-user-cog"></i>
-                                Profile Settings
-                            </h3>
-                        </div>
-                        <div class="card-content">
-                            <p>Profile settings interface would be implemented here.</p>
-                        </div>
-                    </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">💬</div>
+                    <h3>Messaging System</h3>
+                    <p>Secure messaging with healthcare providers will be available here</p>
                 </div>
-            </div>
+            </section>
         </main>
     </div>
 
-    <script src="js/theme-manager.js"></script>
-    <script>
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionName + '-section').style.display = 'block';
-            
-            // Add active class to clicked nav item
-            document.querySelector(`[onclick="showSection('${sectionName}')"]`).classList.add('active');
-            
-            // Update page title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'appointments': 'My Appointments',
-                'doctors': 'My Doctors',
-                'records': 'Medical Records',
-                'messages': 'Messages',
-                'profile': 'Profile Settings'
-            };
-            document.getElementById('page-title').textContent = titles[sectionName] || 'Dashboard';
-        }
-    </script>
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/patient-dashboard.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

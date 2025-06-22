@@ -3,168 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthCare+ | Modern E-Channelling Platform</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <title>eChannelling | Find a Doctor Sri Lanka</title>
+    <meta name="description" content="Discover unparalleled convenience in healthcare with eChannelling, Sri Lanka's largest Doctor Channeling Network. Seamlessly schedule appointments with top doctors, ensuring swift access to quality healthcare. Experience the future of medical consultations with eChannelling">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body data-theme="dark">
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <i class="fas fa-heartbeat"></i>
-                <span>HealthCare+</span>
-            </div>
-            <div class="nav-menu">
-                <a href="index.html" class="nav-link active" data-translate="home">Home</a>
-                <a href="about.html" class="nav-link" data-translate="about_us">About Us</a>
-                <a href="contact.html" class="nav-link" data-translate="contact_us">Contact Us</a>
-                <a href="login.html" class="nav-link" data-translate="login">Login</a>
-                <div class="language-selector">
-                    <button id="language-toggle" class="language-toggle" aria-label="Change language">
-                        <i class="fas fa-globe"></i>
-                        <span id="current-language">EN</span>
-                    </button>
-                    <div id="language-dropdown" class="language-dropdown">
-                        <a href="#" class="language-option" data-lang="en">English</a>
-                        <a href="#" class="language-option" data-lang="si">සිංහල</a>
-                    </div>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img">
                 </div>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-            <div class="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="#home" class="nav-link active">Home</a></li>
+                        <li><a href="#find-doctors" class="nav-link">Find Doctors</a></li>
+                        <li><a href="#hospitals" class="nav-link">Hospitals</a></li>
+                        <li><a href="#specialities" class="nav-link">Specialities</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login">Login</button>
+                    <button class="btn-register">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div id="video-background"></div>
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 data-translate="hero_title">Your Health, Our Priority</h1>
-                <p data-translate="hero_subtitle">Book appointments with trusted healthcare professionals instantly. Experience modern healthcare management with our intuitive e-channelling platform.</p>
-                <div class="hero-buttons">
-                    <a href="about.html" class="btn btn-primary" data-translate="learn_more">Learn More</a>
-                    <a href="contact.html" class="btn btn-secondary" data-translate="contact_us_btn">Contact Us</a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <svg width="400" height="300" viewBox="0 0 400 300" class="hero-svg">
-                    <defs>
-                        <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:var(--primary-color);stop-opacity:0.8" />
-                            <stop offset="100%" style="stop-color:var(--secondary-color);stop-opacity:0.6" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="200" cy="150" r="120" fill="url(#heroGradient)" opacity="0.3"/>
-                    <rect x="150" y="100" width="100" height="80" rx="10" fill="var(--primary-color)" opacity="0.7"/>
-                    <circle cx="200" cy="140" r="25" fill="white"/>
-                    <path d="M190 140 L195 145 L210 130" stroke="var(--primary-color)" stroke-width="3" fill="none" stroke-linecap="round"/>
-                </svg>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
         <div class="container">
-            <h2 data-translate="why_choose">Why Choose HealthCare+?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <h3 data-translate="easy_booking">Easy Booking</h3>
-                    <p data-translate="easy_booking_desc">Schedule appointments with your preferred doctors in just a few clicks. Real-time availability updates.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <h3 data-translate="qualified_doctors">Qualified Doctors</h3>
-                    <p data-translate="qualified_doctors_desc">Access to a network of certified healthcare professionals across various specializations.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3 data-translate="access_247">24/7 Access</h3>
-                    <p data-translate="access_247_desc">Book appointments anytime, anywhere. Our platform is available round the clock for your convenience.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 data-translate="secure_private">Secure & Private</h3>
-                    <p data-translate="secure_private_desc">Your health data is protected with enterprise-grade security and privacy measures.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Statistics Section -->
-    <section class="statistics">
-        <div class="container">
-            <div class="statistics-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="1200">0</h3>
-                        <p class="stat-label">Qualified Doctors</p>
-                        <span class="stat-description">Certified medical professionals</span>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Find a Doctor<br>Book Appointment<br>Online</h1>
+                    <p class="hero-subtitle">Sri Lanka's largest Doctor Channeling Network. Seamlessly schedule appointments with top doctors, ensuring swift access to quality healthcare.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Doctors</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Hospitals</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100K+</span>
+                            <span class="stat-label">Patients</span>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-hospital"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="150">0</h3>
-                        <p class="stat-label">HealthCare+ Partners</p>
-                        <span class="stat-description">Trusted medical institutions</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="25000">0</h3>
-                        <p class="stat-label">Appointments Managed</p>
-                        <span class="stat-description">Successfully completed bookings</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-target="18500">0</h3>
-                        <p class="stat-label">Happy Patients</p>
-                        <span class="stat-description">Satisfied healthcare users</span>
+                <div class="hero-search">
+                    <div class="search-card">
+                        <h3>Book Your Appointment</h3>
+                        <form class="search-form">
+                            <div class="form-group">
+                                <label>Select Speciality</label>
+                                <select class="form-select" id="speciality">
+                                    <option value="">Choose Speciality</option>
+                                    <option value="cardiology">Cardiology</option>
+                                    <option value="dermatology">Dermatology</option>
+                                    <option value="general-medicine">General Medicine</option>
+                                    <option value="orthopedic">Orthopedic Surgery</option>
+                                    <option value="pediatrics">Pediatrics</option>
+                                    <option value="psychiatry">Psychiatry</option>
+                                    <option value="surgery">General Surgery</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Doctor</label>
+                                <select class="form-select" id="doctor">
+                                    <option value="">Choose Doctor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Hospital</label>
+                                <select class="form-select" id="hospital">
+                                    <option value="">Choose Hospital</option>
+                                    <option value="apollo">Apollo Hospital</option>
+                                    <option value="asiri">Asiri Hospital</option>
+                                    <option value="nawaloka">Nawaloka Hospital</option>
+                                    <option value="durdans">Durdans Hospital</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Date</label>
+                                <input type="date" class="form-input" id="appointment-date">
+                            </div>
+                            <button type="submit" class="btn-search">Search Doctors</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
+    <!-- Services Section -->
+    <section class="services">
         <div class="container">
-            <div class="cta-content">
-                <h2>Ready to Take Control of Your Health?</h2>
-                <p>Join thousands of patients who trust HealthCare+ for their medical appointments.</p>
-                <a href="register.html" class="btn btn-primary">Get Started Today</a>
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        🔍
+                    </div>
+                    <h3>Find Doctors</h3>
+                    <p>Search and find qualified doctors by speciality, location, and availability</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+📅
+                    </div>
+                    <h3>Book Appointments</h3>
+                    <p>Schedule appointments online with your preferred doctors at convenient times</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+🏥
+                    </div>
+                    <h3>Hospital Network</h3>
+                    <p>Access top hospitals and medical centers across Sri Lanka</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+💳
+                    </div>
+                    <h3>Secure Payments</h3>
+                    <p>Safe and secure online payment processing for all appointments</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Specialities -->
+    <section class="specialities">
+        <div class="container">
+            <h2 class="section-title">Popular Specialities</h2>
+            <div class="specialities-grid">
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">❤️</div>
+                    <h3>Cardiology</h3>
+                    <p>Heart and cardiovascular specialists</p>
+                    <span class="doctor-count">25+ Doctors</span>
+                </div>
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🧴</div>
+                    <h3>Dermatology</h3>
+                    <p>Skin, hair and nail specialists</p>
+                    <span class="doctor-count">18+ Doctors</span>
+                </div>
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🦴</div>
+                    <h3>Orthopedic Surgery</h3>
+                    <p>Bone, joint and muscle specialists</p>
+                    <span class="doctor-count">30+ Doctors</span>
+                </div>
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">👶</div>
+                    <h3>Pediatrics</h3>
+                    <p>Children's health specialists</p>
+                    <span class="doctor-count">22+ Doctors</span>
+                </div>
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🩺</div>
+                    <h3>General Medicine</h3>
+                    <p>General health and wellness</p>
+                    <span class="doctor-count">45+ Doctors</span>
+                </div>
+                <div class="speciality-card">
+                    <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🔬</div>
+                    <h3>General Surgery</h3>
+                    <p>Surgical procedures and care</p>
+                    <span class="doctor-count">20+ Doctors</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-choose-us">
+        <div class="container">
+            <div class="why-choose-content">
+                <div class="why-choose-text">
+                    <h2>Why Choose eChannelling?</h2>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h4>Largest Doctor Network</h4>
+                                <p>Access to over 500 qualified doctors across Sri Lanka</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h4>Easy Online Booking</h4>
+                                <p>Book appointments 24/7 from anywhere, anytime</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h4>Secure Payment</h4>
+                                <p>Safe and encrypted payment processing</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h4>Real-time Updates</h4>
+                                <p>Get instant notifications about your appointments</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="why-choose-image">
+                    <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #0057a4, #007aff); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 72px;">👨‍⚕️</div>
+                </div>
             </div>
         </div>
     </section>
@@ -174,59 +240,68 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <div class="footer-brand">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>HealthCare+</span>
+                    <div class="footer-logo">
+                        <img src="images/placeholder-logo.svg" alt="eChannelling">
                     </div>
-                    <p>Modern healthcare management platform connecting patients with qualified medical professionals.</p>
+                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with qualified doctors.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link">💼</a>
+                        <a href="#" class="social-link">📷</a>
+                    </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="find-doctors.html">Find Doctors</a></li>
-                        <li><a href="find-doctors.html">Book Appointment</a></li>
-                        <li><a href="register.html">Register</a></li>
-                        <li><a href="login.html">Login</a></li>
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#find-doctors">Find Doctors</a></li>
+                        <li><a href="#hospitals">Hospitals</a></li>
+                        <li><a href="#specialities">Specialities</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Contact Info</h3>
+                    <h4>For Patients</h4>
+                    <ul class="footer-links">
+                        <li><a href="#register">Register</a></li>
+                        <li><a href="#login">Login</a></li>
+                        <li><a href="#my-appointments">My Appointments</a></li>
+                        <li><a href="#medical-records">Medical Records</a></li>
+                        <li><a href="#help">Help Center</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Doctors</h4>
+                    <ul class="footer-links">
+                        <li><a href="#doctor-registration">Doctor Registration</a></li>
+                        <li><a href="#doctor-login">Doctor Portal</a></li>
+                        <li><a href="#manage-schedule">Manage Schedule</a></li>
+                        <li><a href="#patient-records">Patient Records</a></li>
+                        <li><a href="#support">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
                     <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                        <p><i class="fas fa-envelope"></i> info@healthcareplus.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Medical Center Dr.</p>
+                        <p><strong>Phone:</strong> +94 11 234 5678</p>
+                        <p><strong>Email:</strong> info@echannelling.com</p>
+                        <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 HealthCare+. All rights reserved.</p>
+                <p>&copy; 2025 eChannelling. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#cookies">Cookie Policy</a>
+                </div>
             </div>
         </div>
     </footer>
 
-    <script src="js/theme-manager.js"></script>
-    <script src="js/enhanced-animations.js"></script>
-    <script src="js/three-video-background.js"></script>
-    <script src="js/auto-scroll-manager.js"></script>
-    <script src="js/language-manager.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-        // Allow users to stay on home page without automatic redirects
-        document.addEventListener('DOMContentLoaded', async function() {
-            
-            // Initialize back to top button
-            if (typeof initializeBackToTop === 'function') {
-                initializeBackToTop();
-            }
-            
-            // Initialize Three.js video background
-            if (typeof THREE !== 'undefined' && typeof HealthcareVideoBackground !== 'undefined') {
-                const videoContainer = document.getElementById('video-background');
-                if (videoContainer) {
-                    new HealthcareVideoBackground(videoContainer);
-                }
-            }
-        });
-    </script>
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/doctor-search.js"></script>
 </body>
 </html>
