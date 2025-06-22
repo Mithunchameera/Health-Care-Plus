@@ -21,18 +21,18 @@
                 </div>
                 <nav class="main-nav">
                     <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="nav-link active">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
-                        <li><a href="about.html" class="nav-link">About</a></li>
-                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                        <li><a href="index.html" class="nav-link" data-translate="home">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link" data-translate="findDoctors">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link active" data-translate="hospitals">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link" data-translate="specialities">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link" data-translate="about">About</a></li>
+                        <li><a href="contact.html" class="nav-link" data-translate="contact">Contact</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
                     <button class="btn-language">EN | සිං</button>
-                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
-                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'" data-translate="login">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'" data-translate="register">Register</button>
                 </div>
                 <div class="mobile-menu-toggle">
                     <span></span>
@@ -46,8 +46,8 @@
     <!-- Hero Section -->
     <section class="hospitals-hero">
         <div class="container">
-            <h1>Hospital Network</h1>
-            <p>Discover Sri Lanka's leading hospitals and medical centers in our network</p>
+            <h1 data-translate="hospitalsTitle">Hospital Network</h1>
+            <p data-translate="hospitalsSubtitle">Discover Sri Lanka's leading hospitals and medical centers in our network</p>
         </div>
     </section>
 
@@ -57,19 +57,19 @@
             <div class="hospitals-filters">
                 <div class="filter-row">
                     <select class="filter-select">
-                        <option value="">All Locations</option>
+                        <option value="" data-translate="allLocations">All Locations</option>
                         <option value="colombo">Colombo</option>
                         <option value="kandy">Kandy</option>
                         <option value="galle">Galle</option>
                         <option value="negombo">Negombo</option>
                     </select>
                     <select class="filter-select">
-                        <option value="">All Types</option>
-                        <option value="general">General Hospital</option>
-                        <option value="specialized">Specialized Center</option>
-                        <option value="private">Private Hospital</option>
+                        <option value="" data-translate="allTypes">All Types</option>
+                        <option value="general" data-translate="generalHospital">General Hospital</option>
+                        <option value="specialized" data-translate="specializedCenter">Specialized Center</option>
+                        <option value="private" data-translate="privateHospital">Private Hospital</option>
                     </select>
-                    <input type="text" placeholder="Search hospitals..." class="search-input">
+                    <input type="text" placeholder="Search hospitals..." class="search-input" data-translate="searchHospitals">
                 </div>
             </div>
 
@@ -97,8 +97,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -126,8 +126,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -155,8 +155,8 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -184,8 +184,240 @@
                             </div>
                         </div>
                         <div class="hospital-actions">
-                            <button class="btn-view-doctors">👨‍⚕️ View Doctors</button>
-                            <button class="btn-hospital-info">ℹ️ More Info</button>
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Lanka Hospital</h3>
+                        <p class="hospital-location">📍 Colombo 05</p>
+                        <p class="hospital-description">Modern healthcare facility with advanced medical technology and expert care</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">60+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">18</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>National Hospital of Sri Lanka</h3>
+                        <p class="hospital-location">📍 Colombo 10</p>
+                        <p class="hospital-description">Premier government hospital providing comprehensive healthcare services nationwide</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">200+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">25</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Asiri Central Hospital</h3>
+                        <p class="hospital-location">📍 Colombo 01</p>
+                        <p class="hospital-description">Leading private hospital with state-of-the-art facilities and international standards</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">75+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">20</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Teaching Hospital Kandy</h3>
+                        <p class="hospital-location">📍 Kandy</p>
+                        <p class="hospital-description">Major teaching hospital serving Central Province with excellent medical education programs</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">120+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">22</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Karapitiya Teaching Hospital</h3>
+                        <p class="hospital-location">📍 Galle</p>
+                        <p class="hospital-description">Premier medical institution in Southern Province with comprehensive healthcare services</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">95+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">19</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Hemas Hospital Wattala</h3>
+                        <p class="hospital-location">📍 Wattala</p>
+                        <p class="hospital-description">Quality healthcare with modern facilities and personalized patient care services</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">45+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">12</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Base Hospital Negombo</h3>
+                        <p class="hospital-location">📍 Negombo</p>
+                        <p class="hospital-description">Strategic healthcare facility serving Western Province coastal region with quality medical care</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">55+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">14</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hospital-card">
+                    <div class="hospital-image">
+                        <div style="height: 200px; background: linear-gradient(135deg, #0057a4, #007aff); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏥</div>
+                    </div>
+                    <div class="hospital-content">
+                        <h3>Asiri Surgical Hospital</h3>
+                        <p class="hospital-location">📍 Colombo 06</p>
+                        <p class="hospital-description">Specialized surgical hospital with cutting-edge technology and expert surgical teams</p>
+                        <div class="hospital-stats">
+                            <div class="stat">
+                                <span class="stat-number">65+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">16</span>
+                                <span class="stat-label">Specialities</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">Emergency</span>
+                            </div>
+                        </div>
+                        <div class="hospital-actions">
+                            <button class="btn-view-doctors" data-translate="viewDoctors">👨‍⚕️ View Doctors</button>
+                            <button class="btn-hospital-info" data-translate="moreInfo">ℹ️ More Info</button>
                         </div>
                     </div>
                 </div>
@@ -238,6 +470,7 @@
         </div>
     </footer>
 
+    <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
 </body>
 </html>

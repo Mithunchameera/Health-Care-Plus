@@ -21,18 +21,18 @@
                 </div>
                 <nav class="main-nav">
                     <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
-                        <li><a href="about.html" class="nav-link">About</a></li>
-                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                        <li><a href="index.html" class="nav-link" data-translate="home">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link active" data-translate="findDoctors">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link" data-translate="hospitals">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link" data-translate="specialities">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link" data-translate="about">About</a></li>
+                        <li><a href="contact.html" class="nav-link" data-translate="contact">Contact</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
                     <button class="btn-language">EN | සිං</button>
-                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
-                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'" data-translate="login">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'" data-translate="register">Register</button>
                 </div>
                 <div class="mobile-menu-toggle">
                     <span></span>
@@ -47,8 +47,8 @@
     <section class="search-hero">
         <div class="container">
             <div class="search-hero-content">
-                <h1>Find Your Doctor</h1>
-                <p>Search and book appointments with qualified doctors across Sri Lanka</p>
+                <h1 data-translate="findDoctorsTitle">Find Your Doctor</h1>
+                <p data-translate="findDoctorsSubtitle">Search and book appointments with qualified doctors across Sri Lanka</p>
                 
                 <div class="search-form-container">
                     <form class="doctor-search-form" id="doctor-search-form">
@@ -238,6 +238,7 @@
         </div>
     </footer>
 
+    <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
     <script src="js/find-doctors.js"></script>
     <script>

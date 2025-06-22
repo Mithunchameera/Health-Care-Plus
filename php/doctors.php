@@ -34,9 +34,15 @@ class DoctorsHandler {
     
     private function handleGetRequest() {
         $doctorId = $_GET['id'] ?? null;
+        $hospital = $_GET['hospital'] ?? null;
+        $specialty = $_GET['specialty'] ?? null;
         
         if ($doctorId) {
             $this->getDoctorProfile($doctorId);
+        } elseif ($hospital) {
+            $this->getDoctorsByHospital($hospital);
+        } elseif ($specialty) {
+            $this->getDoctorsBySpecialty($specialty);
         } else {
             $this->getDoctorsList();
         }
@@ -338,9 +344,17 @@ class DoctorsHandler {
         $doctor['patients_treated'] = (int)$doctor['patients_treated'];
         $doctor['available'] = (bool)$doctor['available'];
         
+        // Map fields to match frontend expectations
+        $doctor['speciality'] = $doctor['specialty']; // Frontend expects 'speciality'
+        $doctor['consultationFee'] = $doctor['fee']; // Frontend expects 'consultationFee'
+        $doctor['reviewCount'] = $doctor['reviews']; // Frontend expects 'reviewCount'
+        $doctor['hospital'] = $doctor['location']; // Frontend expects 'hospital'
+        $doctor['avatar'] = $doctor['available'] ? '👩‍⚕️' : '👨‍⚕️'; // Add avatar
+        $doctor['availability'] = $doctor['available'] ? 'Available Today' : 'Not Available'; // Frontend format
+        
         // Add computed fields
         $doctor['fullName'] = 'Dr. ' . $doctor['name'];
-        $doctor['experienceText'] = $doctor['experience'] . ' years experience';
+        $doctor['experienceText'] = $doctor['experience'] . ' years';
         $doctor['feeFormatted'] = '$' . number_format($doctor['fee'], 2);
         $doctor['ratingFormatted'] = number_format($doctor['rating'], 1);
         
@@ -353,6 +367,30 @@ class DoctorsHandler {
         return $doctor;
     }
     
+    public function getDoctorsByHospital($hospitalName) {
+        try {
+            $doctors = $this->mockStorage->getDoctors();
+            $filteredDoctors = array_filter($doctors, function($doctor) use ($hospitalName) {
+                $doctorLocation = isset($doctor['location']) ? $doctor['location'] : '';
+                $doctorHospital = isset($doctor['hospital']) ? $doctor['hospital'] : '';
+                
+                return stripos($doctorLocation, $hospitalName) !== false || 
+                       stripos($doctorHospital, $hospitalName) !== false;
+            });
+            
+            $processedDoctors = array_map([$this, 'processDoctorData'], array_values($filteredDoctors));
+            
+            sendResponse([
+                'success' => true,
+                'doctors' => $processedDoctors,
+                'count' => count($processedDoctors),
+                'hospital' => $hospitalName
+            ]);
+        } catch (Exception $e) {
+            sendResponse(['error' => 'Failed to fetch doctors by hospital'], 500);
+        }
+    }
+
     public function getSpecialties() {
         $doctors = $this->mockStorage->getDoctors();
         $specialties = array_unique(array_column($doctors, 'specialty'));

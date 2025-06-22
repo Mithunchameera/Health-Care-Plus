@@ -5,6 +5,7 @@ class EChannellingApp {
         this.initializeApp();
         this.setupEventListeners();
         this.loadDoctorData();
+        // Hospital doctor viewing is handled globally
     }
 
     initializeApp() {

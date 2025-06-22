@@ -102,6 +102,37 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 22, 2025: Implemented hospital-specific doctor filtering functionality
+  - Added backend API endpoint to filter doctors by hospital name
+  - Updated "View Doctors" buttons to navigate to filtered doctor listings
+  - Created hospital filter indicator with clear functionality on find doctors page
+  - Enhanced URL parameters and localStorage integration for seamless navigation
+  - Hospital-specific doctor listings now show only doctors practicing at selected hospital
+
+- June 22, 2025: Implemented comprehensive language switching system across entire platform
+  - Created comprehensive translation system supporting English and Sinhala languages
+  - Added translations.js with complete translation database for all UI elements
+  - Implemented dynamic language switching with localStorage persistence
+  - Updated navigation, hero sections, buttons, and content across all pages
+  - Language button now switches entire interface between EN and සිං instantly
+  - Covers index.html, find-doctors.html, hospitals.html with full translation support
+
+- June 22, 2025: Enhanced hospitals page with comprehensive hospital network listings
+  - Added 8 additional hospitals to reach total of 11 hospitals
+  - Includes major institutions: Lanka Hospital, National Hospital, Asiri Central, Teaching Hospital Kandy
+  - Added regional hospitals: Karapitiya Teaching Hospital (Galle), Hemas Wattala, Base Hospital Negombo
+  - Each hospital displays detailed information: doctor count, specialties, emergency services
+  - Comprehensive coverage across Colombo, Kandy, Galle, Wattala, and Negombo regions
+
+- June 22, 2025: Successfully migrated eChannelling project from Replit Agent to standard Replit environment
+  - Added PostgreSQL database with environment variables for production compatibility
+  - Enhanced find doctors page with 24 comprehensive doctor profiles
+  - Implemented pagination showing 6 doctors per page (4 pages total)
+  - Added scroll to top functionality for Previous/Next navigation buttons
+  - Fixed data structure mapping between backend API and frontend display
+  - All doctor cards now display properly with ratings, fees, availability, and specialties
+  - Migration completed with secure database setup and robust pagination system
+
 - June 22, 2025: Completed comprehensive eChannelling platform with all pages and dashboards
   - Created exact replica of eChannelling.com sign-in page using Tailwind CSS with authentic styling
   - Built complete patient dashboard with appointment management, booking system, and navigation

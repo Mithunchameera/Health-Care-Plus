@@ -5,7 +5,7 @@ class DoctorSearchManager {
         this.doctors = [];
         this.filteredDoctors = [];
         this.currentPage = 1;
-        this.doctorsPerPage = 12;
+        this.doctorsPerPage = 6;
         this.filters = {
             speciality: '',
             location: '',
@@ -20,11 +20,126 @@ class DoctorSearchManager {
     async initializeDoctorSearch() {
         console.log('Initializing doctor search...');
         await this.loadDoctorsData();
+        this.checkForHospitalFilter();
         this.setupSearchForm();
         this.setupFilters();
         this.setupSorting();
         this.setupPagination();
         console.log('Doctor search initialization complete');
+    }
+
+    checkForHospitalFilter() {
+        // Check URL parameters for hospital filter
+        const urlParams = new URLSearchParams(window.location.search);
+        const hospitalParam = urlParams.get('hospital');
+        
+        // Check localStorage for selected hospital
+        const selectedHospital = localStorage.getItem('selectedHospital');
+        
+        if (hospitalParam || selectedHospital) {
+            const hospitalName = hospitalParam || selectedHospital;
+            this.filterByHospital(hospitalName);
+            
+            // Update page title to show hospital filter
+            this.updatePageTitleForHospital(hospitalName);
+            
+            // Clear localStorage after use
+            localStorage.removeItem('selectedHospital');
+        }
+    }
+
+    async filterByHospital(hospitalName) {
+        try {
+            const response = await fetch(`/php/doctors.php?hospital=${encodeURIComponent(hospitalName)}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.doctors) {
+                    this.filteredDoctors = data.doctors;
+                    this.currentPage = 1;
+                    this.renderDoctors();
+                    this.updateResultsInfo();
+                    
+                    // Show hospital filter indicator
+                    this.showHospitalFilterIndicator(hospitalName);
+                }
+            }
+        } catch (error) {
+            console.error('Error filtering by hospital:', error);
+            // Fallback to filtering existing doctors
+            this.fallbackFilterByHospital(hospitalName);
+        }
+    }
+
+    fallbackFilterByHospital(hospitalName) {
+        // Filter existing doctors by hospital name
+        this.filteredDoctors = this.doctors.filter(doctor => 
+            doctor.location && doctor.location.toLowerCase().includes(hospitalName.toLowerCase()) ||
+            doctor.hospital && doctor.hospital.toLowerCase().includes(hospitalName.toLowerCase())
+        );
+        this.currentPage = 1;
+        this.renderDoctors();
+        this.updateResultsInfo();
+        this.showHospitalFilterIndicator(hospitalName);
+    }
+
+    updatePageTitleForHospital(hospitalName) {
+        const heroTitle = document.querySelector('.search-hero h1');
+        const heroSubtitle = document.querySelector('.search-hero p');
+        
+        if (heroTitle && heroSubtitle) {
+            heroTitle.textContent = `Doctors at ${hospitalName}`;
+            heroSubtitle.textContent = `Browse qualified doctors practicing at ${hospitalName}`;
+        }
+    }
+
+    showHospitalFilterIndicator(hospitalName) {
+        // Create and show hospital filter indicator
+        const resultsContainer = document.getElementById('search-results') || document.querySelector('.doctors-grid');
+        if (resultsContainer) {
+            // Remove existing indicator
+            const existingIndicator = document.querySelector('.hospital-filter-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'hospital-filter-indicator';
+            indicator.innerHTML = `
+                <div class="filter-chip">
+                    <span>📍 ${hospitalName}</span>
+                    <button class="clear-hospital-filter" onclick="doctorSearchManager.clearHospitalFilter()">×</button>
+                </div>
+            `;
+            resultsContainer.parentNode.insertBefore(indicator, resultsContainer);
+        }
+    }
+
+    clearHospitalFilter() {
+        // Remove hospital filter and show all doctors
+        const indicator = document.querySelector('.hospital-filter-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+        
+        // Reset to all doctors
+        this.filteredDoctors = [...this.doctors];
+        this.currentPage = 1;
+        this.renderDoctors();
+        this.updateResultsInfo();
+        
+        // Reset page title
+        const heroTitle = document.querySelector('.search-hero h1');
+        const heroSubtitle = document.querySelector('.search-hero p');
+        
+        if (heroTitle && heroSubtitle) {
+            heroTitle.textContent = 'Find Your Doctor';
+            heroSubtitle.textContent = 'Search and book appointments with qualified doctors across Sri Lanka';
+        }
+        
+        // Update URL to remove hospital parameter
+        const url = new URL(window.location);
+        url.searchParams.delete('hospital');
+        window.history.replaceState({}, '', url);
     }
 
     async loadDoctorsData() {
@@ -37,7 +152,9 @@ class DoctorSearchManager {
                     this.doctors = data.doctors;
                     this.filteredDoctors = [...this.doctors];
                     console.log('API data loaded:', this.doctors.length, 'doctors');
+                    this.currentPage = 1; // Reset to first page
                     this.renderDoctors();
+                    this.updateResultsInfo();
                     return;
                 }
             }
@@ -49,314 +166,314 @@ class DoctorSearchManager {
         this.doctors = [
             {
                 id: 1,
-                name: 'Dr. Kasun Perera',
+                name: 'Dr. Sarah Johnson',
                 speciality: 'Cardiology',
-                hospital: 'Apollo Hospital',
-                location: 'Colombo',
+                hospital: 'Medical Center',
+                location: 'Downtown',
                 rating: 4.8,
                 reviewCount: 156,
                 consultationFee: 3500,
                 availability: 'Available Today',
                 experience: '15 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 2,
-                name: 'Dr. Sarah Wilson',
-                speciality: 'Dermatology',
-                hospital: 'Asiri Hospital',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 203,
-                consultationFee: 4000,
-                availability: 'Available Tomorrow',
-                experience: '12 years',
                 avatar: '👩‍⚕️'
             },
             {
-                id: 3,
-                name: 'Dr. Michael Silva',
-                speciality: 'Orthopedic Surgery',
-                hospital: 'Nawaloka Hospital',
-                location: 'Colombo',
-                rating: 4.7,
-                reviewCount: 189,
-                consultationFee: 5500,
+                id: 2,
+                name: 'Dr. Michael Chen',
+                speciality: 'Neurology',
+                hospital: 'Neurological Institute',
+                location: 'Uptown',
+                rating: 4.9,
+                reviewCount: 203,
+                consultationFee: 4200,
                 availability: 'Available Today',
-                experience: '18 years',
+                experience: '12 years',
                 avatar: '👨‍⚕️'
             },
             {
-                id: 4,
-                name: 'Dr. Priya Jayawardena',
+                id: 3,
+                name: 'Dr. Emily Rodriguez',
                 speciality: 'Pediatrics',
-                hospital: 'Lanka Hospital',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 267,
-                consultationFee: 3000,
+                hospital: 'Children\'s Hospital',
+                location: 'Westside',
+                rating: 4.7,
+                reviewCount: 89,
+                consultationFee: 2800,
+                availability: 'Available Tomorrow',
+                experience: '8 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 4,
+                name: 'Dr. David Thompson',
+                speciality: 'Orthopedics',
+                hospital: 'Orthopedic Center',
+                location: 'Central',
+                rating: 4.6,
+                reviewCount: 134,
+                consultationFee: 3800,
                 availability: 'Available This Week',
+                experience: '20 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 5,
+                name: 'Dr. Lisa Park',
+                speciality: 'Dermatology',
+                hospital: 'Dermatology Clinic',
+                location: 'Eastside',
+                rating: 4.5,
+                reviewCount: 76,
+                consultationFee: 3200,
+                availability: 'Available Today',
                 experience: '10 years',
                 avatar: '👩‍⚕️'
             },
             {
-                id: 5,
-                name: 'Dr. Rajesh Fernando',
-                speciality: 'General Medicine',
-                hospital: 'Durdans Hospital',
-                location: 'Colombo',
-                rating: 4.6,
-                reviewCount: 145,
-                consultationFee: 2500,
-                availability: 'Available Today',
-                experience: '20 years',
-                avatar: '👨‍⚕️'
-            },
-            {
                 id: 6,
-                name: 'Dr. Amani Perera',
-                speciality: 'Gynecology',
-                hospital: 'Asiri Hospital',
-                location: 'Kandy',
-                rating: 4.8,
-                reviewCount: 178,
-                consultationFee: 4500,
-                availability: 'Available Tomorrow',
-                experience: '14 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 7,
-                name: 'Dr. Michael Johnson',
-                speciality: 'Neurology',
-                hospital: 'National Hospital',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 312,
-                consultationFee: 6000,
-                availability: 'Available Today',
-                experience: '22 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 8,
-                name: 'Dr. Lakshmi Dias',
-                speciality: 'Ophthalmology',
-                hospital: 'Eye Hospital',
-                location: 'Colombo',
-                rating: 4.8,
-                reviewCount: 198,
-                consultationFee: 3800,
-                availability: 'Available Today',
-                experience: '16 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 9,
-                name: 'Dr. Rohan Wickramasinghe',
-                speciality: 'ENT',
-                hospital: 'Asiri Hospital',
-                location: 'Galle',
+                name: 'Dr. Robert Williams',
+                speciality: 'Internal Medicine',
+                hospital: 'Primary Care Center',
+                location: 'Midtown',
                 rating: 4.7,
-                reviewCount: 134,
-                consultationFee: 3200,
-                availability: 'Available Tomorrow',
-                experience: '13 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 10,
-                name: 'Dr. Kavitha Rathnayake',
-                speciality: 'Psychiatry',
-                hospital: 'Lanka Hospital',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 245,
-                consultationFee: 4200,
-                availability: 'Available Today',
-                experience: '17 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 11,
-                name: 'Dr. Saman Gunawardena',
-                speciality: 'Urology',
-                hospital: 'Apollo Hospital',
-                location: 'Colombo',
-                rating: 4.6,
-                reviewCount: 167,
-                consultationFee: 4800,
-                availability: 'Available Tomorrow',
-                experience: '19 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 12,
-                name: 'Dr. Nimesha Jayawardena',
-                speciality: 'Radiology',
-                hospital: 'Durdans Hospital',
-                location: 'Colombo',
-                rating: 4.7,
-                reviewCount: 156,
-                consultationFee: 3600,
-                availability: 'Available Today',
-                experience: '11 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 13,
-                name: 'Dr. Chaminda Mendis',
-                speciality: 'Gastroenterology',
-                hospital: 'Nawaloka Hospital',
-                location: 'Kandy',
-                rating: 4.8,
-                reviewCount: 189,
-                consultationFee: 5200,
-                availability: 'Available Today',
-                experience: '21 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 14,
-                name: 'Dr. Anura Samaranayake',
-                speciality: 'Pulmonology',
-                hospital: 'Teaching Hospital',
-                location: 'Kandy',
-                rating: 4.7,
-                reviewCount: 112,
-                consultationFee: 3400,
-                availability: 'Available Tomorrow',
-                experience: '14 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 15,
-                name: 'Dr. Niluka Perera',
-                speciality: 'Endocrinology',
-                hospital: 'Lanka Hospital',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 223,
-                consultationFee: 4600,
-                availability: 'Available Today',
-                experience: '16 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 16,
-                name: 'Dr. Ruwan Amarasinghe',
-                speciality: 'Oncology',
-                hospital: 'Cancer Institute',
-                location: 'Colombo',
-                rating: 4.9,
-                reviewCount: 278,
-                consultationFee: 7000,
-                availability: 'Available Tomorrow',
-                experience: '25 years',
-                avatar: '👨‍⚕️'
-            },
-            {
-                id: 17,
-                name: 'Dr. Ishara Wickramage',
-                speciality: 'Rheumatology',
-                hospital: 'Asiri Hospital',
-                location: 'Colombo',
-                rating: 4.6,
-                reviewCount: 145,
-                consultationFee: 3900,
-                availability: 'Available Today',
-                experience: '12 years',
-                avatar: '👩‍⚕️'
-            },
-            {
-                id: 18,
-                name: 'Dr. Mahesh Kumarasinghe',
-                speciality: 'Plastic Surgery',
-                hospital: 'Apollo Hospital',
-                location: 'Colombo',
-                rating: 4.8,
-                reviewCount: 167,
-                consultationFee: 8000,
+                reviewCount: 242,
+                consultationFee: 2900,
                 availability: 'Available Tomorrow',
                 experience: '18 years',
                 avatar: '👨‍⚕️'
             },
             {
-                id: 19,
-                name: 'Dr. Sanduni Rajapakse',
-                speciality: 'Anesthesiology',
-                hospital: 'National Hospital',
-                location: 'Colombo',
+                id: 7,
+                name: 'Dr. Amanda Foster',
+                speciality: 'Obstetrics & Gynecology',
+                hospital: 'Women\'s Health Center',
+                location: 'Northside',
+                rating: 4.9,
+                reviewCount: 187,
+                consultationFee: 4100,
+                availability: 'Available Today',
+                experience: '14 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 8,
+                name: 'Dr. James Martinez',
+                speciality: 'Psychiatry',
+                hospital: 'Mental Health Center',
+                location: 'Downtown',
+                rating: 4.8,
+                reviewCount: 156,
+                consultationFee: 4800,
+                availability: 'Available This Week',
+                experience: '11 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 9,
+                name: 'Dr. Helen Chang',
+                speciality: 'Ophthalmology',
+                hospital: 'Eye Care Center',
+                location: 'Westside',
+                rating: 4.6,
+                reviewCount: 198,
+                consultationFee: 4500,
+                availability: 'Available Tomorrow',
+                experience: '16 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 10,
+                name: 'Dr. Thomas Anderson',
+                speciality: 'Gastroenterology',
+                hospital: 'Digestive Health Center',
+                location: 'Central',
                 rating: 4.7,
                 reviewCount: 134,
-                consultationFee: 3300,
+                consultationFee: 4000,
+                availability: 'Available Today',
+                experience: '13 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 11,
+                name: 'Dr. Maria Gonzalez',
+                speciality: 'Endocrinology',
+                hospital: 'Hormone Health Clinic',
+                location: 'Southside',
+                rating: 4.8,
+                reviewCount: 112,
+                consultationFee: 3600,
+                availability: 'Available Today',
+                experience: '9 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 12,
+                name: 'Dr. Kevin Lee',
+                speciality: 'Urology',
+                hospital: 'Urology Associates',
+                location: 'Eastside',
+                rating: 4.5,
+                reviewCount: 167,
+                consultationFee: 4300,
+                availability: 'Available This Week',
+                experience: '17 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 13,
+                name: 'Dr. Rachel Kim',
+                speciality: 'Oncology',
+                hospital: 'Cancer Treatment Center',
+                location: 'Downtown',
+                rating: 4.9,
+                reviewCount: 245,
+                consultationFee: 5200,
+                availability: 'Available Tomorrow',
+                experience: '19 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 14,
+                name: 'Dr. Steven Clark',
+                speciality: 'Emergency Medicine',
+                hospital: 'Emergency Medical Center',
+                location: 'Central',
+                rating: 4.6,
+                reviewCount: 178,
+                consultationFee: 3700,
+                availability: 'Available Today',
+                experience: '12 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 15,
+                name: 'Dr. Jessica Wright',
+                speciality: 'Rheumatology',
+                hospital: 'Arthritis & Rheumatism Center',
+                location: 'Northside',
+                rating: 4.7,
+                reviewCount: 129,
+                consultationFee: 3900,
+                availability: 'Available This Week',
+                experience: '14 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 16,
+                name: 'Dr. Mark Davis',
+                speciality: 'Pulmonology',
+                hospital: 'Respiratory Health Institute',
+                location: 'Westside',
+                rating: 4.8,
+                reviewCount: 165,
+                consultationFee: 4100,
+                availability: 'Available Tomorrow',
+                experience: '16 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 17,
+                name: 'Dr. Nina Patel',
+                speciality: 'Nephrology',
+                hospital: 'Kidney Care Center',
+                location: 'Eastside',
+                rating: 4.6,
+                reviewCount: 143,
+                consultationFee: 3800,
                 availability: 'Available Today',
                 experience: '13 years',
                 avatar: '👩‍⚕️'
             },
             {
-                id: 20,
-                name: 'Dr. Upul Dissanayake',
-                speciality: 'Emergency Medicine',
-                hospital: 'General Hospital',
-                location: 'Galle',
-                rating: 4.8,
-                reviewCount: 189,
-                consultationFee: 2800,
-                availability: 'Available Today',
+                id: 18,
+                name: 'Dr. Christopher Wilson',
+                speciality: 'Infectious Disease',
+                hospital: 'Infectious Disease Institute',
+                location: 'Midtown',
+                rating: 4.7,
+                reviewCount: 156,
+                consultationFee: 4400,
+                availability: 'Available This Week',
                 experience: '15 years',
                 avatar: '👨‍⚕️'
             },
             {
-                id: 21,
-                name: 'Dr. Dilani Wijesinghe',
-                speciality: 'Pathology',
-                hospital: 'Medical Research Institute',
-                location: 'Colombo',
-                rating: 4.6,
-                reviewCount: 98,
-                consultationFee: 3100,
+                id: 19,
+                name: 'Dr. Samantha Brown',
+                speciality: 'Plastic Surgery',
+                hospital: 'Aesthetic Surgery Center',
+                location: 'Downtown',
+                rating: 4.9,
+                reviewCount: 234,
+                consultationFee: 5500,
                 availability: 'Available Tomorrow',
-                experience: '14 years',
+                experience: '18 years',
                 avatar: '👩‍⚕️'
             },
             {
-                id: 22,
-                name: 'Dr. Arjuna Herath',
-                speciality: 'Sports Medicine',
-                hospital: 'Sports Medicine Center',
-                location: 'Colombo',
-                rating: 4.7,
-                reviewCount: 156,
-                consultationFee: 4400,
+                id: 20,
+                name: 'Dr. Daniel Taylor',
+                speciality: 'Anesthesiology',
+                hospital: 'Surgical Care Center',
+                location: 'Central',
+                rating: 4.5,
+                reviewCount: 98,
+                consultationFee: 3500,
                 availability: 'Available Today',
                 experience: '11 years',
                 avatar: '👨‍⚕️'
             },
             {
-                id: 23,
-                name: 'Dr. Chandima Jayasuriya',
-                speciality: 'Geriatrics',
-                hospital: 'Elder Care Hospital',
-                location: 'Kandy',
+                id: 21,
+                name: 'Dr. Catherine Miller',
+                speciality: 'Pathology',
+                hospital: 'Diagnostic Laboratory',
+                location: 'Northside',
                 rating: 4.8,
-                reviewCount: 167,
-                consultationFee: 3700,
+                reviewCount: 187,
+                consultationFee: 3300,
+                availability: 'Available This Week',
+                experience: '17 years',
+                avatar: '👩‍⚕️'
+            },
+            {
+                id: 22,
+                name: 'Dr. Anthony Garcia',
+                speciality: 'Radiology',
+                hospital: 'Imaging Center',
+                location: 'Southside',
+                rating: 4.6,
+                reviewCount: 145,
+                consultationFee: 3600,
                 availability: 'Available Tomorrow',
-                experience: '20 years',
+                experience: '14 years',
+                avatar: '👨‍⚕️'
+            },
+            {
+                id: 23,
+                name: 'Dr. Laura White',
+                speciality: 'Sports Medicine',
+                hospital: 'Sports Medicine Institute',
+                location: 'Westside',
+                rating: 4.7,
+                reviewCount: 176,
+                consultationFee: 4200,
+                availability: 'Available Today',
+                experience: '12 years',
                 avatar: '👩‍⚕️'
             },
             {
                 id: 24,
-                name: 'Dr. Nalin Wickremaratne',
+                name: 'Dr. Richard Moore',
                 speciality: 'Family Medicine',
-                hospital: 'Community Health Center',
-                location: 'Galle',
-                rating: 4.5,
-                reviewCount: 123,
-                consultationFee: 2200,
+                hospital: 'Family Health Center',
+                location: 'Eastside',
+                rating: 4.8,
+                reviewCount: 298,
+                consultationFee: 2700,
                 availability: 'Available Today',
-                experience: '16 years',
+                experience: '20 years',
                 avatar: '👨‍⚕️'
             }
         ];
@@ -424,6 +541,8 @@ class DoctorSearchManager {
                     this.currentPage--;
                     this.renderDoctors();
                     this.updatePagination();
+                    // Scroll to top of doctor list when Previous is clicked
+                    this.scrollToTopOfList();
                 }
             });
         }
@@ -435,7 +554,19 @@ class DoctorSearchManager {
                     this.currentPage++;
                     this.renderDoctors();
                     this.updatePagination();
+                    // Scroll to top of doctor list when Next is clicked
+                    this.scrollToTopOfList();
                 }
+            });
+        }
+    }
+
+    scrollToTopOfList() {
+        const doctorsGrid = document.getElementById('doctors-grid');
+        if (doctorsGrid) {
+            doctorsGrid.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
             });
         }
     }
@@ -587,12 +718,14 @@ class DoctorSearchManager {
             return;
         }
         
-        console.log('Rendering', this.filteredDoctors.length, 'doctors');
+        console.log('Rendering', this.filteredDoctors.length, 'total doctors, page', this.currentPage);
 
         // Calculate pagination
         const startIndex = (this.currentPage - 1) * this.doctorsPerPage;
         const endIndex = startIndex + this.doctorsPerPage;
         const doctorsToShow = this.filteredDoctors.slice(startIndex, endIndex);
+        
+        console.log('Showing doctors', startIndex + 1, 'to', Math.min(endIndex, this.filteredDoctors.length), 'of', this.filteredDoctors.length);
 
         if (doctorsToShow.length === 0) {
             doctorsGrid.innerHTML = `
@@ -603,12 +736,13 @@ class DoctorSearchManager {
                     <button class="btn-clear-filters" onclick="doctorSearchManager.clearAllFilters()">Clear All Filters</button>
                 </div>
             `;
+            this.updatePagination();
             return;
         }
 
         const doctorCards = doctorsToShow.map(doctor => this.createDoctorCard(doctor)).join('');
         doctorsGrid.innerHTML = doctorCards;
-        console.log('Rendered', doctorsToShow.length, 'doctor cards');
+        console.log('Rendered', doctorsToShow.length, 'doctor cards on page', this.currentPage);
         this.updatePagination();
         this.updateResultsInfo();
     }
@@ -738,8 +872,8 @@ class DoctorSearchManager {
             this.renderDoctors();
             this.updatePagination();
             
-            // Scroll to top of results
-            document.querySelector('.doctors-main').scrollIntoView({ behavior: 'smooth' });
+            // Scroll to top of doctor list
+            this.scrollToTopOfList();
         }
     }
 
