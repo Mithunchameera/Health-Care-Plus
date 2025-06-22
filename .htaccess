@@ -1,0 +1,23 @@
+RewriteEngine On
+
+# Enable CORS for all origins (adjust as needed for production)
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+# Handle static files
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+
+# Route PHP API calls
+RewriteRule ^api/(.*)$ php/$1.php [QSA,L]
+
+# Handle SPA routing for missing HTML files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} \.(html)$
+RewriteRule ^(.*)$ index.html [QSA,L]
+
+# Default index file
+DirectoryIndex index.html index.php

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Appointment Status - Test</title>
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        body { background: #f8fafc; padding: 20px; }
+        .test-container { max-width: 1200px; margin: 0 auto; }
+        .test-header { text-align: center; margin-bottom: 30px; }
+        .demo-controls { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .demo-controls h3 { margin-top: 0; }
+        .control-group { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Real-time Appointment Status Indicators</h1>
+            <p>Test the real-time appointment status management system</p>
+        </div>
+
+        <div class="demo-controls">
+            <h3>Demo Controls</h3>
+            <div class="control-group">
+                <label>User Role:</label>
+                <select id="user-role">
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button class="btn btn-primary" onclick="switchRole()">Switch Role</button>
+            </div>
+            <div class="control-group">
+                <button class="btn btn-success" onclick="simulateStatusChange()">Simulate Status Change</button>
+                <button class="btn btn-warning" onclick="refreshAppointments()">Refresh Appointments</button>
+                <button class="btn btn-danger" onclick="clearData()">Clear Display</button>
+            </div>
+        </div>
+
+        <!-- Appointments will be dynamically loaded here -->
+        <div id="appointments-container"></div>
+    </div>
+
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/realtime-updates.js"></script>
+    <script src="js/appointment-status-manager.js"></script>
+    
+    <script>
+        // Demo functions for testing
+        function switchRole() {
+            const role = document.getElementById('user-role').value;
+            const userData = { id: 1, role: role, name: 'Demo User' };
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            
+            // Reinitialize the status manager
+            if (window.appointmentStatusManager) {
+                window.appointmentStatusManager.destroy();
+            }
+            window.appointmentStatusManager = new AppointmentStatusManager();
+            
+            alert(`Switched to ${role} view`);
+        }
+
+        function simulateStatusChange() {
+            // Simulate a real-time status change
+            const testUpdate = {
+                type: 'appointment_status_change',
+                data: {
+                    appointment_id: 1,
+                    old_status: 'scheduled',
+                    new_status: 'confirmed',
+                    appointment: {
+                        id: 1,
+                        status: 'confirmed',
+                        patient_name: 'John',
+                        patient_surname: 'Doe',
+                        doctor_name: 'Sarah',
+                        doctor_surname: 'Smith',
+                        specialty: 'Cardiology'
+                    },
+                    timestamp: Date.now()
+                }
+            };
+            
+            if (window.appointmentStatusManager) {
+                window.appointmentStatusManager.handleRealTimeUpdates([testUpdate]);
+            }
+        }
+
+        function refreshAppointments() {
+            if (window.appointmentStatusManager) {
+                window.appointmentStatusManager.loadAppointments();
+            }
+        }
+
+        function clearData() {
+            const container = document.getElementById('appointments-container');
+            if (container) {
+                container.innerHTML = '<p>Data cleared. Click "Refresh Appointments" to reload.</p>';
+            }
+        }
+
+        // Initialize with patient role by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = { id: 1, role: 'patient', name: 'Demo Patient' };
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+        });
+    </script>
+</body>
+</html>
