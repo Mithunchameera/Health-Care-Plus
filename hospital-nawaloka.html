@@ -11,37 +11,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="nav-brand">
-                <img src="images/placeholder-logo.svg" alt="eChannelling" class="nav-logo">
-                <span class="brand-text">eChannelling</span>
-            </a>
-            <div class="nav-menu">
-                <a href="index.html" class="nav-link" data-translate="home">Home</a>
-                <a href="find-doctors.html" class="nav-link" data-translate="findDoctors">Find Doctors</a>
-                <a href="hospitals.html" class="nav-link active" data-translate="hospitals">Hospitals</a>
-                <a href="about.html" class="nav-link" data-translate="about">About</a>
-                <a href="contact.html" class="nav-link" data-translate="contact">Contact</a>
-                <a href="login.html" class="nav-link btn-nav-login" data-translate="signIn">Sign In</a>
-            </div>
-            <div class="nav-mobile">
-                <span class="nav-toggle">☰</span>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img">
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link" data-translate="home">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link" data-translate="findDoctors">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link active" data-translate="hospitals">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link" data-translate="specialities">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link" data-translate="about">About</a></li>
+                        <li><a href="contact.html" class="nav-link" data-translate="contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'" data-translate="login">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'" data-translate="register">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Breadcrumb -->
     <section class="breadcrumb-section">
         <div class="container">
-            <nav class="breadcrumb">
-                <a href="index.html">Home</a>
-                <span class="breadcrumb-separator">›</span>
-                <a href="hospitals.html">Hospitals</a>
-                <span class="breadcrumb-separator">›</span>
-                <span class="breadcrumb-current">Nawaloka Hospital</span>
-            </nav>
+            <div class="breadcrumb-wrapper">
+                <button class="back-button" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <nav class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <a href="hospitals.html">Hospitals</a>
+                    <span class="breadcrumb-separator">›</span>
+                    <span class="breadcrumb-current">Nawaloka Hospital</span>
+                </nav>
+            </div>
         </div>
     </section>
 
@@ -253,8 +269,32 @@
         </div>
     </footer>
 
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
     <script src="js/hospital-page.js"></script>
+    
+    <script>
+        // Scroll to top functionality
+        window.addEventListener('scroll', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.style.display = 'flex';
+            } else {
+                scrollToTopBtn.style.display = 'none';
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html>

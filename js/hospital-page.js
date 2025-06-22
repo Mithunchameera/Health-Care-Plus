@@ -48,6 +48,105 @@ class HospitalPageManager {
             console.error('Error loading hospital doctors:', error);
             this.loadMockDoctors();
         }
+        
+        // Always load temporary doctors for all hospitals
+        this.loadTemporaryDoctors();
+    }
+
+    loadTemporaryDoctors() {
+        // Temporary doctors data for all hospitals
+        const tempDoctors = [
+            {
+                id: 'temp1',
+                name: 'Dr. Priya Mendis',
+                specialty: 'Cardiology',
+                experience: 15,
+                fee: 3500,
+                rating: 4.8,
+                reviews: 124,
+                available: true,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, MD (Cardiology)',
+                nextAvailable: 'Today 2:00 PM'
+            },
+            {
+                id: 'temp2',
+                name: 'Dr. Rajesh Silva',
+                specialty: 'Orthopedics',
+                experience: 12,
+                fee: 4000,
+                rating: 4.7,
+                reviews: 98,
+                available: true,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, MS (Orthopedics)',
+                nextAvailable: 'Tomorrow 10:00 AM'
+            },
+            {
+                id: 'temp3',
+                name: 'Dr. Kushani Fernando',
+                specialty: 'Pediatrics',
+                experience: 10,
+                fee: 3000,
+                rating: 4.9,
+                reviews: 156,
+                available: true,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, DCH, MD (Pediatrics)',
+                nextAvailable: 'Today 4:30 PM'
+            },
+            {
+                id: 'temp4',
+                name: 'Dr. Amila Perera',
+                specialty: 'Neurology',
+                experience: 18,
+                fee: 5000,
+                rating: 4.6,
+                reviews: 87,
+                available: false,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, MD (Neurology)',
+                nextAvailable: 'Next Week'
+            },
+            {
+                id: 'temp5',
+                name: 'Dr. Sanduni Jayasekara',
+                specialty: 'Dermatology',
+                experience: 8,
+                fee: 3500,
+                rating: 4.8,
+                reviews: 112,
+                available: true,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, MD (Dermatology)',
+                nextAvailable: 'Today 6:00 PM'
+            },
+            {
+                id: 'temp6',
+                name: 'Dr. Kamal Bandara',
+                specialty: 'General Medicine',
+                experience: 14,
+                fee: 2500,
+                rating: 4.5,
+                reviews: 203,
+                available: true,
+                hospital: this.hospitalName,
+                languages: ['English', 'Sinhala'],
+                qualifications: 'MBBS, MD (Internal Medicine)',
+                nextAvailable: 'Today 1:00 PM'
+            }
+        ];
+
+        // Add temporary doctors to the list
+        this.doctors = [...this.doctors, ...tempDoctors];
+        this.filteredDoctors = [...this.doctors];
+        this.renderDoctors();
+        this.updatePagination();
     }
 
     isHospitalMatch(doctor, hospitalName) {
