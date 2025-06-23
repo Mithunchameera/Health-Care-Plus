@@ -313,7 +313,7 @@ class DoctorProfileManager {
 
     bookAppointment() {
         // Navigate to booking page with doctor preselected
-        window.location.href = `booking.html?doctor=${this.doctorId}`;
+        window.location.href = `book-appointment.html?doctor=${this.doctorId}`;
     }
 
     saveDoctor() {

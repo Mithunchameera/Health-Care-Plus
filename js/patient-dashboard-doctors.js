@@ -278,8 +278,11 @@ function toggleView(view) {
 }
 
 function bookAppointment(doctorId) {
-    // Navigate to booking page
-    window.location.href = 'find-doctors.html';
+    if (doctorId) {
+        window.location.href = `book-appointment.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'book-appointment.html';
+    }
 }
 
 function viewDoctorProfile(doctorId) {

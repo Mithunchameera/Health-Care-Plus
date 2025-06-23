@@ -616,7 +616,11 @@ class SpecialtyDoctorSearch {
 
 // Global functions for booking and viewing profiles
 function bookAppointment(doctorId) {
-    window.location.href = `booking-new.html?doctor=${doctorId}`;
+    if (doctorId) {
+        window.location.href = `book-appointment.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'book-appointment.html';
+    }
 }
 
 function viewDoctorProfile(doctorId) {

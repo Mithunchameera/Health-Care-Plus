@@ -12,10 +12,11 @@ function viewDoctorProfile(doctorId) {
 
 // Book appointment with doctor
 function bookAppointment(doctorId) {
-    console.log(`Booking appointment with doctor ${doctorId}`);
-    
-    // Navigate to booking page
-    window.location.href = 'find-doctors.html';
+    if (doctorId) {
+        window.location.href = `book-appointment.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'book-appointment.html';
+    }
 }
 
 // Select doctor (for booking page)

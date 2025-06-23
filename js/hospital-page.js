@@ -774,8 +774,11 @@ function changePage(direction) {
 
 // Global functions for booking and viewing profiles
 function bookAppointment(doctorId) {
-    // Navigate to booking page with doctor preselected
-    window.location.href = `find-doctors.html?doctor=${doctorId}&action=book`;
+    if (doctorId) {
+        window.location.href = `book-appointment.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'book-appointment.html';
+    }
 }
 
 function viewDoctorProfile(doctorId) {

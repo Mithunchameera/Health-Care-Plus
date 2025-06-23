@@ -5,6 +5,7 @@
  */
 
 require_once 'config.php';
+require_once 'database.php';
 
 setCORSHeaders();
 
@@ -15,9 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 class DoctorsHandler {
     private $mockStorage;
+    private $database;
     
     public function __construct() {
         $this->mockStorage = MockDataStorage::getInstance();
+        try {
+            $this->database = Database::getInstance();
+        } catch (Exception $e) {
+            error_log("Database connection failed in DoctorsHandler: " . $e->getMessage());
+            $this->database = null;
+        }
     }
     
     public function handleRequest() {
@@ -52,87 +60,76 @@ class DoctorsHandler {
     
     private function getDoctorsList() {
         try {
-            require_once 'database.php';
-            $db = Database::getInstance();
-            $conn = $db->getConnection();
-            
             $specialty = $_GET['specialty'] ?? '';
             $search = $_GET['search'] ?? '';
             $hospital = $_GET['hospital'] ?? '';
             
-            // Base query to get doctors with user information
-            $query = "SELECT d.*, u.first_name, u.last_name, u.email, u.phone, u.profile_picture 
-                      FROM doctors d 
-                      JOIN users u ON d.user_id = u.id 
-                      WHERE u.is_active = true";
-            
-            $params = [];
-            
-            // Add filters
-            if (!empty($specialty)) {
-                $query .= " AND d.specialty ILIKE ?";
-                $params[] = "%$specialty%";
+            if ($this->database) {
+                // Base query to get doctors with user information
+                $query = "SELECT d.*, u.first_name, u.last_name, u.email, u.phone, u.profile_picture 
+                          FROM doctors d 
+                          JOIN users u ON d.user_id = u.id 
+                          WHERE u.is_active = true";
+                
+                $params = [];
+                
+                // Add filters
+                if (!empty($specialty)) {
+                    $query .= " AND d.specialty ILIKE ?";
+                    $params[] = "%$specialty%";
+                }
+                
+                if (!empty($search)) {
+                    $query .= " AND (u.first_name ILIKE ? OR u.last_name ILIKE ? OR d.specialty ILIKE ?)";
+                    $params[] = "%$search%";
+                    $params[] = "%$search%";
+                    $params[] = "%$search%";
+                }
+                
+                if (!empty($hospital)) {
+                    $query .= " AND ? = ANY(d.hospital_affiliations)";
+                    $params[] = $hospital;
+                }
+                
+                $query .= " ORDER BY d.rating DESC, d.total_reviews DESC";
+                
+                $doctors = $this->database->fetchAll($query, $params);
+                
+                // Format the response to match frontend expectations
+                $formattedDoctors = array_map(function($doctor) {
+                    return [
+                        'id' => $doctor['user_id'],
+                        'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
+                        'specialty' => $doctor['specialty'],
+                        'subspecialties' => [],
+                        'education' => $doctor['education'] ?? 'Medical Degree',
+                        'experience' => $doctor['experience_years'] ?? 10,
+                        'location' => 'Various Hospitals',
+                        'phone' => $doctor['phone'],
+                        'email' => $doctor['email'],
+                        'fee' => floatval($doctor['consultation_fee']),
+                        'rating' => floatval($doctor['rating']),
+                        'reviews' => intval($doctor['total_reviews']),
+                        'about' => $doctor['bio'],
+                        'services' => ['Board Certified'],
+                        'certifications' => ['Board Certified'],
+                        'languages' => ['English'],
+                        'available' => $doctor['is_available'] ?? true,
+                        'patients_treated' => $doctor['total_reviews'] * 10
+                    ];
+                }, $doctors);
+                
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'doctors' => $formattedDoctors]);
+            } else {
+                // Fall back to mock data
+                $this->getMockDoctors($specialty, $hospital);
             }
-            
-            if (!empty($search)) {
-                $query .= " AND (u.first_name ILIKE ? OR u.last_name ILIKE ? OR d.specialty ILIKE ?)";
-                $params[] = "%$search%";
-                $params[] = "%$search%";
-                $params[] = "%$search%";
-            }
-            
-            if (!empty($hospital)) {
-                $query .= " AND ? = ANY(d.hospital_affiliations)";
-                $params[] = $hospital;
-            }
-            
-            $query .= " ORDER BY d.rating DESC, d.total_reviews DESC";
-            
-            $stmt = $conn->prepare($query);
-            $stmt->execute($params);
-            $doctors = $stmt->fetchAll();
-            
-            // Format the response to match frontend expectations
-            $formattedDoctors = array_map(function($doctor) {
-                return [
-                    'id' => $doctor['id'],
-                    'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
-                    'specialty' => $doctor['specialty'],
-                    'subspecialities' => is_array($doctor['subspecialties']) ? $doctor['subspecialties'] : (is_string($doctor['subspecialties']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['subspecialties'])) : []),
-                    'education' => $doctor['education'] ?? 'Medical Degree',
-                    'experience' => $doctor['experience_years'] ?? 10,
-                    'location' => is_array($doctor['hospital_affiliations']) ? implode(', ', $doctor['hospital_affiliations']) : (is_string($doctor['hospital_affiliations']) ? str_replace(['{', '}', '"'], '', $doctor['hospital_affiliations']) : 'Various Hospitals'),
-                    'phone' => $doctor['phone'],
-                    'email' => $doctor['email'],
-                    'fee' => floatval($doctor['consultation_fee']),
-                    'rating' => floatval($doctor['rating']),
-                    'reviews' => intval($doctor['total_reviews']),
-                    'about' => $doctor['bio'],
-                    'services' => is_array($doctor['certifications']) ? $doctor['certifications'] : (is_string($doctor['certifications']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['certifications'])) : []),
-                    'certifications' => is_array($doctor['certifications']) ? $doctor['certifications'] : (is_string($doctor['certifications']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['certifications'])) : []),
-                    'languages' => is_array($doctor['languages']) ? $doctor['languages'] : (is_string($doctor['languages']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['languages'])) : ['English']),
-                    'available' => $doctor['is_available'] ?? true,
-                    'patients_treated' => $doctor['total_reviews'] * 10
-                ];
-            }, $doctors);
-            
-            header('Content-Type: application/json');
-            echo json_encode($formattedDoctors);
             
         } catch (Exception $e) {
             error_log("Database error in getDoctorsList: " . $e->getMessage());
             // Fallback to mock data
-            $doctors = $this->mockStorage->getDoctors();
-            
-            if (!empty($specialty)) {
-                $doctors = array_filter($doctors, function($doctor) use ($specialty) {
-                    return stripos($doctor['specialty'], $specialty) !== false;
-                });
-            }
-            
-            $doctors = array_values($doctors);
-            header('Content-Type: application/json');
-            echo json_encode($doctors);
+            $this->getMockDoctors($specialty, $hospital);
         }
     }
     

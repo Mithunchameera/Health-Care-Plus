@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - eChannelling</title>
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/universal-navigation.css">
+    <link rel="stylesheet" href="css/booking.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Booking Header -->
+    <section class="booking-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a> 
+                <i class="fas fa-chevron-right"></i>
+                <a href="find-doctors.html">Find Doctors</a> 
+                <i class="fas fa-chevron-right"></i>
+                <span>Book Appointment</span>
+            </div>
+            <div class="booking-header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-calendar-plus"></i> Book Your Appointment</h1>
+                    <p>Schedule your consultation with our expert doctors in just a few simple steps</p>
+                    <div class="header-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>Quick & Easy</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Mobile Friendly</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-illustration">
+                    <i class="fas fa-user-md"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form -->
+    <section class="booking-form-section">
+        <div class="container">
+            <div class="booking-container">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Select Doctor</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Choose Date & Time</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Patient Details</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Payment</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Doctor -->
+                <div class="form-step active" id="step-1">
+                    <div class="step-content">
+                        <h2>Select a Doctor</h2>
+                        <div class="doctor-selection">
+                            <div class="selected-doctor" id="selected-doctor" style="display: none;">
+                                <div class="doctor-card selected">
+                                    <img id="selected-doctor-image" src="images/doctor-placeholder.svg" alt="Doctor">
+                                    <div class="doctor-info">
+                                        <h3 id="selected-doctor-name">Dr. Name</h3>
+                                        <p id="selected-doctor-specialty">Specialty</p>
+                                        <p id="selected-doctor-fee">Fee: $0</p>
+                                        <div class="rating">
+                                            <span id="selected-doctor-rating">0.0</span>
+                                            <div class="stars" id="selected-doctor-stars"></div>
+                                        </div>
+                                    </div>
+                                    <button class="change-doctor-btn" onclick="showDoctorSearch()">Change Doctor</button>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-search" id="doctor-search">
+                                <div class="search-filters">
+                                    <input type="text" id="doctor-search-input" placeholder="Search by doctor name or specialty...">
+                                    <select id="specialty-filter">
+                                        <option value="">All Specialties</option>
+                                        <option value="Cardiology">Cardiology</option>
+                                        <option value="Dermatology">Dermatology</option>
+                                        <option value="Neurology">Neurology</option>
+                                        <option value="Orthopedics">Orthopedics</option>
+                                        <option value="Pediatrics">Pediatrics</option>
+                                        <option value="Internal Medicine">Internal Medicine</option>
+                                        <option value="Obstetrics & Gynecology">Obstetrics & Gynecology</option>
+                                        <option value="Psychiatry">Psychiatry</option>
+                                        <option value="Ophthalmology">Ophthalmology</option>
+                                    </select>
+                                </div>
+                                <div class="doctors-grid" id="doctors-grid">
+                                    <!-- Doctors will be loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn-next" onclick="nextStep()" disabled id="step1-next">Next: Choose Date & Time</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Choose Date & Time -->
+                <div class="form-step" id="step-2">
+                    <div class="step-content">
+                        <h2>Choose Date & Time</h2>
+                        <div class="datetime-selection">
+                            <div class="date-picker">
+                                <h3>Select Date</h3>
+                                <div class="calendar-container">
+                                    <div class="calendar-header">
+                                        <button class="prev-month" onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
+                                        <h4 id="current-month"></h4>
+                                        <button class="next-month" onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                    <div class="calendar-grid" id="calendar-grid">
+                                        <!-- Calendar will be generated -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-picker">
+                                <h3>Available Times</h3>
+                                <div class="time-slots" id="time-slots">
+                                    <p class="no-date-selected">Please select a date first</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button class="btn-back" onclick="prevStep()">Back</button>
+                            <button class="btn-next" onclick="nextStep()" disabled id="step2-next">Next: Patient Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Patient Details -->
+                <div class="form-step" id="step-3">
+                    <div class="step-content">
+                        <h2>Patient Details</h2>
+                        <form class="patient-form" id="patient-form">
+                            <div class="form-group">
+                                <label for="patient-name">Full Name *</label>
+                                <input type="text" id="patient-name" name="patient-name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="patient-email">Email *</label>
+                                    <input type="email" id="patient-email" name="patient-email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patient-phone">Phone Number *</label>
+                                    <input type="tel" id="patient-phone" name="patient-phone" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="patient-age">Age *</label>
+                                    <input type="number" id="patient-age" name="patient-age" min="1" max="120" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patient-gender">Gender *</label>
+                                    <select id="patient-gender" name="patient-gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reason-visit">Reason for Visit</label>
+                                <textarea id="reason-visit" name="reason-visit" placeholder="Brief description of your symptoms or reason for consultation..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="medical-history">Medical History</label>
+                                <textarea id="medical-history" name="medical-history" placeholder="Any relevant medical history, allergies, or current medications..."></textarea>
+                            </div>
+                        </form>
+                        <div class="step-actions">
+                            <button class="btn-back" onclick="prevStep()">Back</button>
+                            <button class="btn-next" onclick="nextStep()" id="step3-next">Next: Payment</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment -->
+                <div class="form-step" id="step-4">
+                    <div class="step-content">
+                        <h2>Payment & Confirmation</h2>
+                        <div class="booking-summary">
+                            <h3>Booking Summary</h3>
+                            <div class="summary-card">
+                                <div class="summary-item">
+                                    <label>Doctor:</label>
+                                    <span id="summary-doctor">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <label>Specialty:</label>
+                                    <span id="summary-specialty">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <label>Date:</label>
+                                    <span id="summary-date">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <label>Time:</label>
+                                    <span id="summary-time">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <label>Patient:</label>
+                                    <span id="summary-patient">-</span>
+                                </div>
+                                <div class="summary-item total">
+                                    <label>Consultation Fee:</label>
+                                    <span id="summary-fee">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-options">
+                            <h3>Payment Method</h3>
+                            <div class="payment-methods">
+                                <div class="payment-method">
+                                    <input type="radio" id="card-payment" name="payment-method" value="card" checked>
+                                    <label for="card-payment">
+                                        <i class="fas fa-credit-card"></i>
+                                        Credit/Debit Card
+                                    </label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" id="paypal-payment" name="payment-method" value="paypal">
+                                    <label for="paypal-payment">
+                                        <i class="fab fa-paypal"></i>
+                                        PayPal
+                                    </label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" id="cash-payment" name="payment-method" value="cash">
+                                    <label for="cash-payment">
+                                        <i class="fas fa-money-bill"></i>
+                                        Pay at Hospital
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="terms-conditions">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="terms-checkbox" required>
+                                <span class="checkmark"></span>
+                                I agree to the <a href="#" onclick="showTerms()">Terms and Conditions</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="step-actions">
+                            <button class="btn-back" onclick="prevStep()">Back</button>
+                            <button class="btn-confirm" onclick="confirmBooking()" id="confirm-booking">Confirm Booking</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-check-circle"></i> Booking Confirmed!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Your appointment has been successfully booked.</p>
+                <div class="booking-reference">
+                    <label>Booking Reference:</label>
+                    <span id="booking-reference">HCP2025001</span>
+                </div>
+                <p>You will receive a confirmation email shortly with all the details.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="goToDashboard()">Go to Dashboard</button>
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/translations.js"></script>
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/universal-navigation.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>

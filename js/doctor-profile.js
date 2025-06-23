@@ -501,9 +501,9 @@ function showTab(tabName) {
 function bookAppointment(doctorId = null) {
     const id = doctorId || new URLSearchParams(window.location.search).get('id');
     if (id) {
-        window.location.href = `booking-new.html?doctor=${id}`;
+        window.location.href = `book-appointment.html?doctor=${id}`;
     } else {
-        alert('Please select a doctor to book an appointment.');
+        window.location.href = 'book-appointment.html';
     }
 }
 

@@ -871,9 +871,11 @@ class DoctorSearchManager {
 
 // Global functions for button actions
 function bookAppointment(doctorId) {
-    console.log('Booking appointment with doctor ID:', doctorId);
-    // In a real implementation, this would open a booking modal or redirect to booking page
-    alert('Booking system will be implemented. Doctor ID: ' + doctorId);
+    if (doctorId) {
+        window.location.href = `book-appointment.html?doctor=${doctorId}`;
+    } else {
+        window.location.href = 'book-appointment.html';
+    }
 }
 
 function viewDoctorProfile(doctorId) {

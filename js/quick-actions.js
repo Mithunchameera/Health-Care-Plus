@@ -161,9 +161,7 @@ class QuickActions {
 
     // Action implementations
     bookAppointment() {
-        if (window.patientDashboard) {
-            window.patientDashboard.showSection('booking');
-        }
+        window.location.href = 'book-appointment.html';
     }
 
     emergencyCall() {
