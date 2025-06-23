@@ -350,7 +350,7 @@ class DoctorSearchManager {
                             <span class="fee-amount">Rs. ${doctor.consultationFee.toLocaleString()}</span>
                         </div>
                         <div class="action-buttons">
-                            <button class="btn-view-profile" data-doctor-id="${doctor.id}">View Profile</button>
+                            <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">View Profile</button>
                             <button class="btn-book-appointment" data-doctor-id="${doctor.id}">Book Appointment</button>
                         </div>
                     </div>
@@ -418,15 +418,8 @@ class DoctorSearchManager {
     }
 
     showDoctorProfile(doctorId) {
-        const doctor = this.doctors.find(d => d.id == doctorId);
-        if (!doctor) return;
-
-        // Create modal for doctor profile
-        const modal = this.createDoctorProfileModal(doctor);
-        document.body.appendChild(modal);
-        
-        // Show modal
-        setTimeout(() => modal.classList.add('show'), 10);
+        // Navigate to individual doctor profile page
+        window.location.href = `doctor-profile.html?id=${doctorId}`;
     }
 
     createDoctorProfileModal(doctor) {

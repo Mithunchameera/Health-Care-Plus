@@ -12,29 +12,36 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <div class="navbar-brand">
-                <img src="images/placeholder-logo.svg" alt="eChannelling" class="logo">
-                <span>eChannelling</span>
-            </div>
-            <ul class="navbar-nav">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="find-doctors.html">Find Doctors</a></li>
-                <li><a href="hospitals.html">Hospitals</a></li>
-                <li><a href="specialities.html">Specialities</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-            <div class="navbar-actions">
-                <button class="language-toggle" onclick="toggleLanguage()">
-                    <span id="current-language">EN</span>
-                </button>
-                <a href="login.html" class="btn-login">Login</a>
-                <a href="register.html" class="btn-register">Register</a>
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
+                        <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
+                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
+                        <li><a href="about.html" class="nav-link">About</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn-language">EN | සිං</button>
+                    <button class="btn-login" onclick="window.location.href='login.html'">Login</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'">Register</button>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Doctor Profile Header -->
     <section class="profile-header">

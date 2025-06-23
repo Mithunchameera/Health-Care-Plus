@@ -102,6 +102,55 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 23, 2025: Successfully completed comprehensive doctor database with 54 doctors (6 per specialty)
+  - Fixed database foreign key relationships and API response formatting
+  - All 9 specialty pages now display exactly 6 doctors each with complete profiles
+  - Added Sri Lankan doctor names with local medical school credentials from UoC, Peradeniya, Kelaniya
+  - Enhanced database with subspecialties, experience levels, consultation fees, and hospital affiliations
+  - Each doctor has unique license numbers, ratings, and comprehensive bio information
+  - Individual doctor profiles fully functional via doctor-profile.html?id=[doctor_id]
+  - Fixed API subspecialties field mapping and added proper fallback values
+  - Specialty pages: Cardiology, Dermatology, Orthopedic Surgery, Pediatrics, General Medicine, Surgery, Gynecology, Psychiatry, Ophthalmology
+
+- June 23, 2025: Added 100+ specialist doctors across all medical specialties
+  - Enhanced database with comprehensive doctor profiles across 10+ specialties
+  - Added Cardiologists, Dermatologists, Orthopedic Surgeons, Pediatricians, General Physicians
+  - Included Surgeons, Gynecologists, Psychiatrists, Ophthalmologists, ENT Specialists
+  - Added Urologists, Neurologists, and Endocrinologists with subspecialties
+  - Each doctor has detailed profiles with experience, ratings, hospital affiliations
+  - Specialty pages now display relevant doctors with proper filtering
+  - Enhanced search functionality with specialty-specific mappings
+
+- June 23, 2025: Implemented dynamic welcome modal for first-time users
+  - Created comprehensive welcome modal with step-by-step introduction
+  - Added modern gradient design with smooth animations and transitions
+  - Implemented smart detection for first-time visitors using localStorage
+  - Included guided tour highlighting key platform features (doctors, hospitals, booking)
+  - Added "Don't show again" option for user preference management
+  - Built responsive design optimized for both desktop and mobile devices
+  - Integrated keyboard accessibility and proper focus management
+  - Modal appears only on main pages (homepage, find-doctors, hospitals, specialities)
+  - Includes event tracking for analytics and user behavior insights
+
+- June 23, 2025: Added enhanced scroll-to-top functionality
+  - Implemented floating scroll-to-top button with smooth animations
+  - Added bilingual tooltip support (English and Sinhala)
+  - Enhanced button with modern gradient design and hover effects
+  - Optimized scroll detection with throttling for better performance
+  - Added keyboard accessibility support for better user experience
+  - Button appears after scrolling 400px down and smoothly animates to top
+  - Mobile-responsive design with appropriate sizing for different devices
+
+## Previous Changes
+
+- June 23, 2025: Successfully completed migration and enhanced individual doctor profile navigation
+  - Updated all "View Profile" buttons across the entire system to navigate to individual doctor profile pages
+  - Fixed navigation inconsistencies in find-doctors.js, doctor-search.js, specialty-doctor-search.js, and patient dashboard
+  - Ensured every doctor (15+ doctors) has their own dedicated profile page accessible via doctor-profile.html?id=[doctor_id]
+  - Verified PostgreSQL database connection and proper data loading for all doctor profiles
+  - All specialty pages, hospital pages, and dashboard components now correctly navigate to individual doctor pages
+  - Migration from Replit Agent to Replit environment completed successfully with full functionality
+
 - June 23, 2025: Created comprehensive individual doctor profile system
   - Built complete doctor-profile.html with tabbed interface for overview, experience, services, schedule, and reviews
   - Developed doctor-profile.js with dynamic content loading based on URL parameters  

@@ -281,5 +281,16 @@
     <script src="js/echannelling-main.js"></script>
     <script src="js/specialty-doctor-search.js"></script>
     <script src="js/universal-navigation.js"></script>
+    <script>
+        // Global function for individual doctor profile navigation
+        function viewDoctorProfile(doctorId) {
+            window.location.href = `doctor-profile.html?id=${doctorId}`;
+        }
+        
+        // Initialize specialty search for dermatologists
+        window.addEventListener('DOMContentLoaded', () => {
+            window.specialtySearch = new SpecialtyDoctorSearch('Dermatology');
+        });
+    </script>
 </body>
 </html>

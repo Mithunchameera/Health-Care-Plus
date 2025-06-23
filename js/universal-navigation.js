@@ -47,24 +47,19 @@ class UniversalNavigation {
     }
 
     createScrollToTopButton() {
-        // Check if scroll to top button already exists
-        if (document.getElementById('scroll-to-top-btn')) return;
+        // Remove existing scroll button if present
+        const existingBtn = document.querySelector('.scroll-to-top-btn');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
 
         const scrollButton = document.createElement('button');
-        scrollButton.id = 'scroll-to-top-btn';
         scrollButton.className = 'scroll-to-top-btn';
-        scrollButton.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 15l-6-6-6 6"/>
-            </svg>
-        `;
-        scrollButton.title = 'Scroll to top';
+        scrollButton.innerHTML = '⬆️';
+        scrollButton.title = 'Scroll to top | උඩටම යන්න';
         scrollButton.setAttribute('aria-label', 'Scroll to top');
         
         document.body.appendChild(scrollButton);
-        
-        // Initially hidden
-        scrollButton.style.display = 'none';
     }
 
     setupEventListeners() {
@@ -75,13 +70,30 @@ class UniversalNavigation {
         }
 
         // Scroll to top functionality
-        const scrollButton = document.getElementById('scroll-to-top-btn');
+        const scrollButton = document.querySelector('.scroll-to-top-btn');
         if (scrollButton) {
             scrollButton.addEventListener('click', this.scrollToTop.bind(this));
+            
+            // Keyboard accessibility
+            scrollButton.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.scrollToTop();
+                }
+            });
         }
 
-        // Show/hide scroll button based on scroll position
-        window.addEventListener('scroll', this.handleScroll.bind(this));
+        // Show/hide scroll button based on scroll position with throttling
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    this.handleScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
         
         // Handle browser back/forward buttons
         window.addEventListener('popstate', this.handlePopState.bind(this));
@@ -101,30 +113,42 @@ class UniversalNavigation {
     }
 
     handleScroll() {
-        const scrollButton = document.getElementById('scroll-to-top-btn');
+        const scrollButton = document.querySelector('.scroll-to-top-btn');
         if (!scrollButton) return;
 
         const scrolled = window.pageYOffset || document.documentElement.scrollTop;
         
-        if (scrolled > this.scrollThreshold) {
-            scrollButton.style.display = 'flex';
-            scrollButton.style.opacity = '1';
+        if (scrolled > 400) {
+            scrollButton.classList.add('show');
         } else {
-            scrollButton.style.opacity = '0';
-            setTimeout(() => {
-                if (scrollButton.style.opacity === '0') {
-                    scrollButton.style.display = 'none';
-                }
-            }, 300);
+            scrollButton.classList.remove('show');
         }
     }
 
     scrollToTop() {
+        const scrollButton = document.querySelector('.scroll-to-top-btn');
+        
+        // Add click animation
+        if (scrollButton) {
+            scrollButton.style.transform = 'translateY(-2px) scale(0.9)';
+            setTimeout(() => {
+                scrollButton.style.transform = '';
+            }, 150);
+        }
+        
         // Smooth scroll to top
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
+        
+        // Focus management for accessibility
+        setTimeout(() => {
+            const header = document.querySelector('header, .header');
+            if (header) {
+                header.focus();
+            }
+        }, 500);
     }
 
     handlePopState() {

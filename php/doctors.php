@@ -98,9 +98,9 @@ class DoctorsHandler {
                     'id' => $doctor['id'],
                     'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
                     'specialty' => $doctor['specialty'],
-                    'subspecialities' => is_array($doctor['certifications']) ? $doctor['certifications'] : (is_string($doctor['certifications']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['certifications'])) : []),
+                    'subspecialities' => is_array($doctor['subspecialties']) ? $doctor['subspecialties'] : (is_string($doctor['subspecialties']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['subspecialties'])) : []),
                     'education' => $doctor['education'] ?? 'Medical Degree',
-                    'experience' => $doctor['experience_years'],
+                    'experience' => $doctor['experience_years'] ?? 10,
                     'location' => is_array($doctor['hospital_affiliations']) ? implode(', ', $doctor['hospital_affiliations']) : (is_string($doctor['hospital_affiliations']) ? str_replace(['{', '}', '"'], '', $doctor['hospital_affiliations']) : 'Various Hospitals'),
                     'phone' => $doctor['phone'],
                     'email' => $doctor['email'],
@@ -111,7 +111,7 @@ class DoctorsHandler {
                     'services' => is_array($doctor['certifications']) ? $doctor['certifications'] : (is_string($doctor['certifications']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['certifications'])) : []),
                     'certifications' => is_array($doctor['certifications']) ? $doctor['certifications'] : (is_string($doctor['certifications']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['certifications'])) : []),
                     'languages' => is_array($doctor['languages']) ? $doctor['languages'] : (is_string($doctor['languages']) ? explode(',', str_replace(['{', '}', '"'], '', $doctor['languages'])) : ['English']),
-                    'available' => $doctor['is_available'],
+                    'available' => $doctor['is_available'] ?? true,
                     'patients_treated' => $doctor['total_reviews'] * 10
                 ];
             }, $doctors);

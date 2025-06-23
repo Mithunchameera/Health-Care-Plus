@@ -23,9 +23,11 @@ class SpecialtyDoctorSearch {
 
     async loadDoctors() {
         try {
-            const response = await fetch('php/doctors.php');
+            const specialtyParam = this.specialty ? `?specialty=${encodeURIComponent(this.specialty)}` : '';
+            const response = await fetch(`php/doctors.php${specialtyParam}`);
             if (response.ok) {
                 this.doctors = await response.json();
+                console.log(`Loaded ${this.doctors.length} doctors for specialty: ${this.specialty}`);
             } else {
                 throw new Error('Failed to load doctors');
             }
@@ -36,17 +38,71 @@ class SpecialtyDoctorSearch {
     }
 
     filterBySpecialty() {
-        this.filteredDoctors = this.doctors.filter(doctor => 
-            doctor.specialty.toLowerCase().includes(this.specialty.toLowerCase()) ||
-            (doctor.subspecialties && doctor.subspecialties.some(sub => 
-                sub.toLowerCase().includes(this.specialty.toLowerCase())
-            ))
-        );
+        if (!this.specialty) {
+            this.filteredDoctors = this.doctors;
+            return;
+        }
+        
+        const specialtyLower = this.specialty.toLowerCase();
+        this.filteredDoctors = this.doctors.filter(doctor => {
+            // Check main specialty
+            if (doctor.specialty && doctor.specialty.toLowerCase().includes(specialtyLower)) {
+                return true;
+            }
+            
+            // Check subspecialties
+            if (doctor.subspecialties && Array.isArray(doctor.subspecialties)) {
+                return doctor.subspecialties.some(sub => 
+                    sub.toLowerCase().includes(specialtyLower)
+                );
+            }
+            
+            // Additional specialty mapping for common search terms
+            const specialtyMappings = {
+                'cardiology': ['cardiology', 'heart', 'cardiac'],
+                'dermatology': ['dermatology', 'skin', 'dermatologist'],
+                'orthopedic': ['orthopedic', 'bone', 'joint', 'surgery'],
+                'pediatrics': ['pediatrics', 'children', 'child', 'pediatric'],
+                'general': ['general medicine', 'internal medicine', 'physician'],
+                'surgery': ['surgery', 'surgeon', 'surgical', 'general surgery'],
+                'gynecology': ['gynecology', 'obstetrics', 'women', 'pregnancy', 'obstetrics and gynecology'],
+                'psychiatry': ['psychiatry', 'mental health', 'psychology'],
+                'ophthalmology': ['ophthalmology', 'eye', 'vision'],
+                'ent': ['ent', 'ear', 'nose', 'throat']
+            };
+            
+            for (const [key, terms] of Object.entries(specialtyMappings)) {
+                if (specialtyLower.includes(key) || terms.some(term => specialtyLower.includes(term))) {
+                    return doctor.specialty && terms.some(term => 
+                        doctor.specialty.toLowerCase().includes(term)
+                    );
+                }
+            }
+            
+            return false;
+        });
+        
+        console.log(`Filtered to ${this.filteredDoctors.length} doctors for specialty: ${this.specialty}`);
     }
 
     renderDoctors() {
         const doctorsGrid = document.getElementById('doctors-grid');
-        if (!doctorsGrid) return;
+        if (!doctorsGrid) {
+            console.error('Doctors grid element not found');
+            return;
+        }
+        
+        if (this.filteredDoctors.length === 0) {
+            doctorsGrid.innerHTML = `
+                <div class="no-doctors-found">
+                    <div class="no-doctors-icon">👨‍⚕️</div>
+                    <h3>No ${this.specialty} specialists found</h3>
+                    <p>We're working to add more specialists in this field. Please check our <a href="find-doctors.html">general doctors page</a> or try another specialty.</p>
+                    <button class="btn-primary" onclick="window.location.href='find-doctors.html'">Browse All Doctors</button>
+                </div>
+            `;
+            return;
+        }
 
         const startIndex = (this.currentPage - 1) * this.doctorsPerPage;
         const endIndex = startIndex + this.doctorsPerPage;
