@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Cardiologists - eChannelling</title>
-    <meta name="description" content="Find and book appointments with top cardiologists in Sri Lanka through eChannelling">
+    <title>Find Cardiologists in Sri Lanka - Heart Specialists | eChannelling</title>
+    <meta name="description" content="Book appointments with leading cardiologists and heart specialists in Sri Lanka. Expert care for heart conditions, cardiac surgery, and preventive cardiology.">
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/doctor-search.css">
+    <link rel="stylesheet" href="css/specialty-pages.css">
+    <link rel="stylesheet" href="css/universal-navigation.css">
 </head>
 <body>
     <!-- Header -->
@@ -44,24 +46,77 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="doctors-hero">
+    <section class="specialty-hero">
         <div class="container">
-            <h1>Find Cardiologists</h1>
-            <p>Book appointments with leading heart specialists in Sri Lanka</p>
-            <div class="specialty-info">
+            <div class="hero-content">
+                <div class="specialty-badge">
+                    <span class="specialty-icon">❤️</span>
+                    <span>Cardiology</span>
+                </div>
+                <h1>Find Leading Cardiologists in Sri Lanka</h1>
+                <p class="hero-description">Expert heart care from Sri Lanka's top cardiologists. From preventive cardiology to complex cardiac procedures, find the right specialist for your heart health needs.</p>
                 <div class="specialty-stats">
                     <div class="stat-item">
-                        <span class="stat-number">25+</span>
-                        <span class="stat-label">Cardiologists</span>
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Expert Cardiologists</div>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">8</span>
-                        <span class="stat-label">Hospitals</span>
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Major Hospitals</div>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">2-3 days</span>
-                        <span class="stat-label">Avg Wait</span>
+                        <div class="stat-number">1-2</div>
+                        <div class="stat-label">Days Avg Wait</div>
                     </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="medical-illustration">
+                    <svg width="300" height="200" viewBox="0 0 300 200" fill="none">
+                        <circle cx="150" cy="100" r="80" fill="#ff6b6b" opacity="0.1"/>
+                        <path d="M150 60 C170 80, 190 100, 150 140 C110 100, 130 80, 150 60 Z" fill="#ff6b6b"/>
+                        <circle cx="120" cy="90" r="3" fill="#fff"/>
+                        <circle cx="180" cy="90" r="3" fill="#fff"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="services-overview">
+        <div class="container">
+            <h2>Cardiology Services We Cover</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🫀</div>
+                    <h3>General Cardiology</h3>
+                    <p>Comprehensive heart health assessments, diagnosis, and treatment of common cardiac conditions.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔬</div>
+                    <h3>Interventional Cardiology</h3>
+                    <p>Minimally invasive procedures including angioplasty, stenting, and cardiac catheterization.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Electrophysiology</h3>
+                    <p>Specialized care for heart rhythm disorders, arrhythmias, and pacemaker management.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏥</div>
+                    <h3>Cardiac Surgery</h3>
+                    <p>Advanced surgical procedures including bypass surgery, valve repair, and heart transplants.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🩺</div>
+                    <h3>Preventive Cardiology</h3>
+                    <p>Risk assessment, lifestyle counseling, and prevention strategies for heart disease.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👶</div>
+                    <h3>Pediatric Cardiology</h3>
+                    <p>Specialized heart care for infants, children, and adolescents with congenital heart conditions.</p>
                 </div>
             </div>
         </div>
@@ -70,26 +125,40 @@
     <!-- Search and Filters -->
     <section class="search-section">
         <div class="container">
+            <h2>Find Your Cardiologist</h2>
             <div class="search-filters">
                 <div class="search-bar">
-                    <input type="text" id="doctor-search" placeholder="Search cardiologists by name..." class="search-input">
-                    <button class="search-btn">Search</button>
+                    <input type="text" id="doctor-search" placeholder="Search cardiologists by name, hospital, or subspecialty..." class="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="filters">
+                <div class="filters-row">
+                    <select id="subspecialty-filter" class="filter-select">
+                        <option value="">All Subspecialties</option>
+                        <option value="interventional">Interventional Cardiology</option>
+                        <option value="electrophysiology">Electrophysiology</option>
+                        <option value="pediatric">Pediatric Cardiology</option>
+                        <option value="cardiac-surgery">Cardiac Surgery</option>
+                        <option value="preventive">Preventive Cardiology</option>
+                    </select>
                     <select id="hospital-filter" class="filter-select">
                         <option value="">All Hospitals</option>
                         <option value="Apollo Hospital">Apollo Hospital</option>
-                        <option value="Asiri Central">Asiri Central</option>
+                        <option value="Asiri Central">Asiri Central Hospital</option>
                         <option value="Nawaloka Hospital">Nawaloka Hospital</option>
                         <option value="Lanka Hospital">Lanka Hospital</option>
                         <option value="National Hospital">National Hospital</option>
                     </select>
                     <select id="fee-filter" class="filter-select">
                         <option value="">Any Fee Range</option>
-                        <option value="0-2000">Under Rs. 2,000</option>
-                        <option value="2000-3000">Rs. 2,000 - 3,000</option>
-                        <option value="3000-4000">Rs. 3,000 - 4,000</option>
-                        <option value="4000+">Above Rs. 4,000</option>
+                        <option value="0-3000">Under Rs. 3,000</option>
+                        <option value="3000-5000">Rs. 3,000 - 5,000</option>
+                        <option value="5000-7000">Rs. 5,000 - 7,000</option>
+                        <option value="7000+">Above Rs. 7,000</option>
                     </select>
                     <select id="availability-filter" class="filter-select">
                         <option value="">Any Day</option>
@@ -106,9 +175,17 @@
     <section class="doctors-section">
         <div class="container">
             <div class="section-header">
-                <h2>Cardiologists</h2>
                 <div class="results-info">
-                    <span id="results-count">Loading cardiologists...</span>
+                    <span id="results-info">Loading cardiologists...</span>
+                </div>
+                <div class="sort-options">
+                    <select id="sort-doctors" class="sort-select">
+                        <option value="">Sort By</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="experience">Most Experienced</option>
+                        <option value="fee">Lowest Fee</option>
+                    </select>
                 </div>
             </div>
             <div id="doctors-grid" class="doctors-grid">
@@ -116,6 +193,39 @@
             </div>
             <div class="pagination" id="pagination">
                 <!-- Pagination will be added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Common Conditions -->
+    <section class="conditions-section">
+        <div class="container">
+            <h2>Common Heart Conditions We Treat</h2>
+            <div class="conditions-grid">
+                <div class="condition-card">
+                    <h3>Coronary Artery Disease</h3>
+                    <p>Blocked or narrowed coronary arteries that supply blood to the heart muscle.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Heart Failure</h3>
+                    <p>Condition where the heart cannot pump blood effectively to meet the body's needs.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Arrhythmias</h3>
+                    <p>Irregular heartbeats that can be too fast, too slow, or irregular in rhythm.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Heart Valve Disease</h3>
+                    <p>Problems with the heart valves that control blood flow through the heart chambers.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Hypertension</h3>
+                    <p>High blood pressure that increases the risk of heart disease and stroke.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Congenital Heart Disease</h3>
+                    <p>Heart defects present from birth that affect the heart's structure and function.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -128,7 +238,12 @@
                     <div class="footer-logo">
                         <img src="images/placeholder-logo.svg" alt="eChannelling">
                     </div>
-                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with top medical professionals.</p>
+                    <p>Sri Lanka's leading healthcare platform connecting patients with top medical specialists.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                    </div>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -140,42 +255,35 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Contact Info</h4>
+                    <h4>Medical Specialties</h4>
                     <ul>
-                        <li>📞 +94 11 123 4567</li>
-                        <li>✉️ info@echannelling.com</li>
-                        <li>📍 Colombo, Sri Lanka</li>
+                        <li><a href="find-cardiologists.html">Cardiology</a></li>
+                        <li><a href="find-dermatologists.html">Dermatology</a></li>
+                        <li><a href="find-orthopedic-surgeons.html">Orthopedics</a></li>
+                        <li><a href="find-pediatricians.html">Pediatrics</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Follow Us</h4>
-                    <div class="social-links">
-                        <a href="#" class="social-link">Facebook</a>
-                        <a href="#" class="social-link">Twitter</a>
-                        <a href="#" class="social-link">LinkedIn</a>
-                    </div>
+                    <h4>Contact Info</h4>
+                    <p><strong>Phone:</strong> +94 11 123 4567</p>
+                    <p><strong>Email:</strong> info@echannelling.com</p>
+                    <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 eChannelling. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#cookies">Cookie Policy</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
-    <script>
-        // Initialize specialty-specific doctor search
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set specialty filter to Cardiology
-            const specialtyFilter = 'Cardiology';
-            
-            // Load doctors with specialty filter
-            if (window.DoctorSearchManager) {
-                const searchManager = new DoctorSearchManager();
-                searchManager.filterBySpecialty(specialtyFilter);
-            }
-        });
-    </script>
+    <script src="js/specialty-doctor-search.js"></script>
+    <script src="js/universal-navigation.js"></script>
 </body>
 </html>

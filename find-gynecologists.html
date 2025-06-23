@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Gynecologists - eChannelling</title>
-    <meta name="description" content="Find and book appointments with top gynecologists in Sri Lanka through eChannelling">
+    <title>Find Gynecologists in Sri Lanka - Women's Health Specialists | eChannelling</title>
+    <meta name="description" content="Comprehensive women's healthcare from leading gynecologists. Expert care for reproductive health, pregnancy, and women's wellness throughout all life stages.">
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/doctor-search.css">
+    <link rel="stylesheet" href="css/specialty-pages.css">
+    <link rel="stylesheet" href="css/universal-navigation.css">
 </head>
 <body>
     <!-- Header -->
@@ -44,24 +46,67 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="doctors-hero">
+    <section class="specialty-hero" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);">
         <div class="container">
-            <h1>Find Gynecologists</h1>
-            <p>Book appointments with leading women's health specialists in Sri Lanka</p>
-            <div class="specialty-info">
+            <div class="hero-content">
+                <div class="specialty-badge">
+                    <span class="specialty-icon">👩</span>
+                    <span>Gynecology</span>
+                </div>
+                <h1>Find Expert Gynecology Specialists in Sri Lanka</h1>
+                <p class="hero-description">Comprehensive women's healthcare from leading gynecologists. Expert care for reproductive health, pregnancy, and women's wellness throughout all life stages.</p>
                 <div class="specialty-stats">
                     <div class="stat-item">
-                        <span class="stat-number">16+</span>
-                        <span class="stat-label">Gynecologists</span>
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Gynecologists</div>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">7</span>
-                        <span class="stat-label">Hospitals</span>
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Hospitals</div>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">2-4 days</span>
-                        <span class="stat-label">Avg Wait</span>
+                        <div class="stat-number">1-2</div>
+                        <div class="stat-label">Days Wait</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="services-overview">
+        <div class="container">
+            <h2>Gynecology Services We Cover</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🤱</div>
+                    <h3>Obstetrics</h3>
+                    <p>Comprehensive prenatal care, delivery, and postpartum support.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👩</div>
+                    <h3>Gynecological Care</h3>
+                    <p>Routine gynecological exams, screenings, and preventive care.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🍼</div>
+                    <h3>Fertility Treatment</h3>
+                    <p>Fertility assessment, treatment, and assisted reproductive technologies.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔬</div>
+                    <h3>Minimally Invasive Surgery</h3>
+                    <p>Laparoscopic procedures for gynecological conditions.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🩺</div>
+                    <h3>Menopause Management</h3>
+                    <p>Hormone therapy and menopause symptom management.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👶</div>
+                    <h3>High-Risk Pregnancy</h3>
+                    <p>Specialized care for complicated pregnancies and maternal-fetal medicine.</p>
                 </div>
             </div>
         </div>
@@ -70,26 +115,32 @@
     <!-- Search and Filters -->
     <section class="search-section">
         <div class="container">
+            <h2>Find Your Gynecology Specialist</h2>
             <div class="search-filters">
                 <div class="search-bar">
-                    <input type="text" id="doctor-search" placeholder="Search gynecologists by name..." class="search-input">
-                    <button class="search-btn">Search</button>
+                    <input type="text" id="doctor-search" placeholder="Search specialists by name, hospital, or treatment..." class="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="filters">
+                <div class="filters-row">
                     <select id="hospital-filter" class="filter-select">
                         <option value="">All Hospitals</option>
                         <option value="Apollo Hospital">Apollo Hospital</option>
-                        <option value="Asiri Central">Asiri Central</option>
+                        <option value="Asiri Central">Asiri Central Hospital</option>
                         <option value="Nawaloka Hospital">Nawaloka Hospital</option>
                         <option value="Lanka Hospital">Lanka Hospital</option>
                         <option value="National Hospital">National Hospital</option>
                     </select>
                     <select id="fee-filter" class="filter-select">
                         <option value="">Any Fee Range</option>
-                        <option value="0-2500">Under Rs. 2,500</option>
-                        <option value="2500-3500">Rs. 2,500 - 3,500</option>
-                        <option value="3500-4500">Rs. 3,500 - 4,500</option>
-                        <option value="4500+">Above Rs. 4,500</option>
+                        <option value="0-2000">Under Rs. 2,000</option>
+                        <option value="2000-4000">Rs. 2,000 - 4,000</option>
+                        <option value="4000-6000">Rs. 4,000 - 6,000</option>
+                        <option value="6000+">Above Rs. 6,000</option>
                     </select>
                     <select id="availability-filter" class="filter-select">
                         <option value="">Any Day</option>
@@ -106,9 +157,17 @@
     <section class="doctors-section">
         <div class="container">
             <div class="section-header">
-                <h2>Gynecologists</h2>
                 <div class="results-info">
-                    <span id="results-count">Loading gynecologists...</span>
+                    <span id="results-info">Loading specialists...</span>
+                </div>
+                <div class="sort-options">
+                    <select id="sort-doctors" class="sort-select">
+                        <option value="">Sort By</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="experience">Most Experienced</option>
+                        <option value="fee">Lowest Fee</option>
+                    </select>
                 </div>
             </div>
             <div id="doctors-grid" class="doctors-grid">
@@ -116,6 +175,39 @@
             </div>
             <div class="pagination" id="pagination">
                 <!-- Pagination will be added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Common Conditions -->
+    <section class="conditions-section">
+        <div class="container">
+            <h2>Common Conditions We Treat</h2>
+            <div class="conditions-grid">
+                <div class="condition-card">
+                    <h3>Pregnancy Care</h3>
+                    <p>Comprehensive prenatal care, delivery, and postpartum support services.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Menstrual Disorders</h3>
+                    <p>Treatment of irregular periods, heavy bleeding, and menstrual pain.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>PCOS</h3>
+                    <p>Management of polycystic ovary syndrome and hormonal imbalances.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Endometriosis</h3>
+                    <p>Diagnosis and treatment of endometriosis and pelvic pain.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Cervical Cancer Screening</h3>
+                    <p>Regular Pap smears and HPV testing for early detection.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Fertility Issues</h3>
+                    <p>Comprehensive fertility evaluation and treatment options.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -128,7 +220,7 @@
                     <div class="footer-logo">
                         <img src="images/placeholder-logo.svg" alt="eChannelling">
                     </div>
-                    <p>Sri Lanka's leading healthcare appointment booking platform connecting patients with top medical professionals.</p>
+                    <p>Sri Lanka's leading healthcare platform connecting patients with top medical specialists.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -140,42 +232,35 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Contact Info</h4>
+                    <h4>Medical Specialties</h4>
                     <ul>
-                        <li>📞 +94 11 123 4567</li>
-                        <li>✉️ info@echannelling.com</li>
-                        <li>📍 Colombo, Sri Lanka</li>
+                        <li><a href="find-cardiologists.html">Cardiology</a></li>
+                        <li><a href="find-dermatologists.html">Dermatology</a></li>
+                        <li><a href="find-orthopedic-surgeons.html">Orthopedics</a></li>
+                        <li><a href="find-pediatricians.html">Pediatrics</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Follow Us</h4>
-                    <div class="social-links">
-                        <a href="#" class="social-link">Facebook</a>
-                        <a href="#" class="social-link">Twitter</a>
-                        <a href="#" class="social-link">LinkedIn</a>
-                    </div>
+                    <h4>Contact Info</h4>
+                    <p><strong>Phone:</strong> +94 11 123 4567</p>
+                    <p><strong>Email:</strong> info@echannelling.com</p>
+                    <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 eChannelling. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#cookies">Cookie Policy</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
-    <script>
-        // Initialize specialty-specific doctor search
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set specialty filter to Obstetrics & Gynecology
-            const specialtyFilter = 'Obstetrics & Gynecology';
-            
-            // Load doctors with specialty filter
-            if (window.DoctorSearchManager) {
-                const searchManager = new DoctorSearchManager();
-                searchManager.filterBySpecialty(specialtyFilter);
-            }
-        });
-    </script>
+    <script src="js/specialty-doctor-search.js"></script>
+    <script src="js/universal-navigation.js"></script>
 </body>
 </html>
