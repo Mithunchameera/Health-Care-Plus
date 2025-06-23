@@ -878,7 +878,6 @@ function bookAppointment(doctorId) {
 
 function viewDoctorProfile(doctorId) {
     console.log('Viewing profile for doctor ID:', doctorId);
-    // In a real implementation, this would open a profile modal or redirect to profile page
     window.location.href = `doctor-profile.html?id=${doctorId}`;
 }
 

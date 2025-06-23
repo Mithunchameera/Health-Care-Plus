@@ -12,7 +12,7 @@ if (!ob_get_level()) {
 // Set performance headers
 function setPerformanceHeaders() {
     // Cache control for static assets
-    $request_uri = $_SERVER['REQUEST_URI'];
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
     
     if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/i', $request_uri)) {
         // Cache static assets for 1 year

@@ -4,231 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Profile - eChannelling</title>
-    <meta name="description" content="View detailed doctor profile and book appointments">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/doctor-profile.css">
     <link rel="stylesheet" href="css/universal-navigation.css">
+    <link rel="stylesheet" href="css/doctor-profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="index.html"><img src="images/placeholder-logo.svg" alt="eChannelling" class="logo-img"></a>
+            <div class="navbar-brand">
+                <img src="images/placeholder-logo.svg" alt="eChannelling" class="logo">
+                <span>eChannelling</span>
+            </div>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="find-doctors.html">Find Doctors</a></li>
+                <li><a href="hospitals.html">Hospitals</a></li>
+                <li><a href="specialities.html">Specialities</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="language-toggle" onclick="toggleLanguage()">
+                    <span id="current-language">EN</span>
+                </button>
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="register.html" class="btn-register">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Doctor Profile Header -->
+    <section class="profile-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> > 
+                <a href="find-doctors.html">Find Doctors</a> > 
+                <span id="doctor-name-breadcrumb">Doctor Profile</span>
+            </div>
+            <div class="profile-hero">
+                <div class="doctor-image">
+                    <img id="doctor-photo" src="images/doctor-placeholder.svg" alt="Doctor Photo">
+                    <div class="availability-badge" id="availability-badge">
+                        <i class="fas fa-circle"></i>
+                        <span>Available Today</span>
+                    </div>
                 </div>
-                <nav class="main-nav">
-                    <ul class="nav-menu">
-                        <li><a href="index.html" class="nav-link" data-translate="home">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link" data-translate="findDoctors">Find Doctors</a></li>
-                        <li><a href="hospitals.html" class="nav-link" data-translate="hospitals">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link" data-translate="specialities">Specialities</a></li>
-                        <li><a href="about.html" class="nav-link" data-translate="about">About</a></li>
-                        <li><a href="contact.html" class="nav-link" data-translate="contact">Contact</a></li>
+                <div class="doctor-info">
+                    <h1 id="doctor-name">Dr. Loading...</h1>
+                    <div class="specialty-info">
+                        <span id="doctor-specialty">Specialty</span>
+                        <span class="separator">•</span>
+                        <span id="doctor-experience">0 years experience</span>
+                    </div>
+                    <div class="rating-info">
+                        <div class="stars" id="doctor-rating-stars"></div>
+                        <span id="doctor-rating">0.0</span>
+                        <span class="reviews">(<span id="doctor-reviews">0</span> reviews)</span>
+                    </div>
+                    <div class="location-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="doctor-location">Location</span>
+                    </div>
+                    <div class="consultation-fee">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>Consultation Fee: $<span id="doctor-fee">0</span></span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-primary book-appointment" onclick="bookAppointment()">
+                        <i class="fas fa-calendar-plus"></i>
+                        Book Appointment
+                    </button>
+                    <button class="btn-secondary contact-doctor" onclick="contactDoctor()">
+                        <i class="fas fa-phone"></i>
+                        Contact
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Doctor Details -->
+    <section class="profile-content">
+        <div class="container">
+            <div class="profile-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+                    <button class="tab-btn" onclick="showTab('experience')">Experience</button>
+                    <button class="tab-btn" onclick="showTab('services')">Services</button>
+                    <button class="tab-btn" onclick="showTab('schedule')">Schedule</button>
+                    <button class="tab-btn" onclick="showTab('reviews')">Reviews</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-content active" id="overview-tab">
+                    <div class="profile-grid">
+                        <div class="main-content">
+                            <div class="section">
+                                <h3>About Dr. <span id="doctor-name-about">Doctor</span></h3>
+                                <p id="doctor-bio">Doctor biography will be loaded here...</p>
+                            </div>
+                            
+                            <div class="section">
+                                <h3>Specializations</h3>
+                                <div class="specializations" id="doctor-specializations">
+                                    <!-- Specializations will be loaded here -->
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <h3>Languages Spoken</h3>
+                                <div class="languages" id="doctor-languages">
+                                    <!-- Languages will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-content">
+                            <div class="quick-info-card">
+                                <h4>Quick Information</h4>
+                                <div class="info-item">
+                                    <span class="label">License Number:</span>
+                                    <span class="value" id="license-number">Loading...</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Years of Experience:</span>
+                                    <span class="value" id="experience-years">0</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Patients Treated:</span>
+                                    <span class="value" id="patients-treated">0</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Education:</span>
+                                    <span class="value" id="doctor-education">Medical Degree</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-card">
+                                <h4>Contact Information</h4>
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span id="doctor-phone">Phone</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span id="doctor-email">Email</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience Tab -->
+                <div class="tab-content" id="experience-tab">
+                    <div class="section">
+                        <h3>Professional Experience</h3>
+                        <div class="experience-timeline" id="experience-timeline">
+                            <!-- Experience timeline will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>Certifications & Awards</h3>
+                        <div class="certifications" id="doctor-certifications">
+                            <!-- Certifications will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div class="tab-content" id="services-tab">
+                    <div class="section">
+                        <h3>Medical Services Offered</h3>
+                        <div class="services-grid" id="doctor-services">
+                            <!-- Services will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Tab -->
+                <div class="tab-content" id="schedule-tab">
+                    <div class="section">
+                        <h3>Available Time Slots</h3>
+                        <div class="schedule-calendar" id="schedule-calendar">
+                            <!-- Schedule will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div class="tab-content" id="reviews-tab">
+                    <div class="section">
+                        <div class="reviews-summary">
+                            <div class="rating-overview">
+                                <div class="average-rating">
+                                    <span class="rating-number" id="avg-rating">4.8</span>
+                                    <div class="rating-stars" id="avg-rating-stars"></div>
+                                    <span class="total-reviews">Based on <span id="total-reviews">0</span> reviews</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="reviews-list" id="reviews-list">
+                            <!-- Reviews will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Doctors -->
+    <section class="related-doctors">
+        <div class="container">
+            <h2>Other Specialists in <span id="related-specialty">Specialty</span></h2>
+            <div class="doctors-slider" id="related-doctors">
+                <!-- Related doctors will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>eChannelling</h3>
+                    <p>Your trusted partner for healthcare appointments and medical consultations.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="hospitals.html">Hospitals</a></li>
+                        <li><a href="specialities.html">Specialities</a></li>
                     </ul>
-                </nav>
-                <div class="header-actions">
-                    <button class="btn-language">EN | සිං</button>
-                    <button class="btn-login" onclick="window.location.href='login.html'" data-translate="login">Login</button>
-                    <button class="btn-register" onclick="window.location.href='register.html'" data-translate="register">Register</button>
                 </div>
-                <div class="mobile-menu-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
                 </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 eChannelling. All rights reserved.</p>
             </div>
         </div>
-    </header>
+    </footer>
 
-    <!-- Loading State -->
-    <div id="loading-state" class="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p>Loading doctor profile...</p>
-        </div>
-    </div>
-
-    <!-- Doctor Profile Content -->
-    <div id="profile-content" class="profile-container" style="display: none;">
-        <!-- Breadcrumb -->
-        <section class="breadcrumb-section">
-            <div class="container">
-                <nav class="breadcrumb">
-                    <a href="index.html">Home</a>
-                    <span class="separator">></span>
-                    <a href="find-doctors.html">Find Doctors</a>
-                    <span class="separator">></span>
-                    <span class="current" id="doctor-name-breadcrumb">Doctor Profile</span>
-                </nav>
-            </div>
-        </section>
-
-        <!-- Doctor Profile Header -->
-        <section class="doctor-profile-hero">
-            <div class="container">
-                <div class="profile-hero-content">
-                    <div class="doctor-avatar-large">
-                        <div class="avatar-placeholder" id="doctor-avatar">👨‍⚕️</div>
-                    </div>
-                    <div class="doctor-main-info">
-                        <h1 id="doctor-name">Loading...</h1>
-                        <div class="doctor-specialty-badge" id="doctor-specialty">Loading...</div>
-                        <div class="doctor-rating-large">
-                            <div class="rating-stars" id="doctor-rating-stars">⭐⭐⭐⭐⭐</div>
-                            <span class="rating-score" id="doctor-rating-score">4.8</span>
-                            <span class="rating-count" id="doctor-rating-count">(0 reviews)</span>
-                        </div>
-                        <div class="doctor-hospital" id="doctor-hospital">Loading...</div>
-                    </div>
-                    <div class="profile-quick-actions">
-                        <button class="btn-primary btn-book-now" id="book-appointment-btn">
-                            <i class="fas fa-calendar-alt"></i> Book Appointment
-                        </button>
-                        <button class="btn-secondary btn-save-doctor" id="save-doctor-btn">
-                            <i class="fas fa-heart"></i> Save Doctor
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Doctor Details -->
-        <section class="doctor-details-section">
-            <div class="container">
-                <div class="details-grid">
-                    <!-- Left Column -->
-                    <div class="details-main">
-                        <!-- About Doctor -->
-                        <div class="detail-card">
-                            <h3>About Dr. <span id="doctor-first-name">Doctor</span></h3>
-                            <div class="about-content" id="doctor-about">
-                                Loading doctor information...
-                            </div>
-                        </div>
-
-                        <!-- Education & Qualifications -->
-                        <div class="detail-card">
-                            <h3>Education & Qualifications</h3>
-                            <div class="qualifications-list" id="doctor-qualifications">
-                                Loading qualifications...
-                            </div>
-                        </div>
-
-                        <!-- Specialties & Services -->
-                        <div class="detail-card">
-                            <h3>Specialties & Services</h3>
-                            <div class="services-grid" id="doctor-services">
-                                Loading services...
-                            </div>
-                        </div>
-
-                        <!-- Languages -->
-                        <div class="detail-card">
-                            <h3>Languages Spoken</h3>
-                            <div class="languages-list" id="doctor-languages">
-                                Loading languages...
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="details-sidebar">
-                        <!-- Consultation Info -->
-                        <div class="sidebar-card">
-                            <h4>Consultation Information</h4>
-                            <div class="consultation-details">
-                                <div class="consultation-row">
-                                    <span class="label">Consultation Fee:</span>
-                                    <span class="value fee" id="consultation-fee">Loading...</span>
-                                </div>
-                                <div class="consultation-row">
-                                    <span class="label">Experience:</span>
-                                    <span class="value" id="doctor-experience">Loading...</span>
-                                </div>
-                                <div class="consultation-row">
-                                    <span class="label">Next Available:</span>
-                                    <span class="value available" id="next-available">Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Booking -->
-                        <div class="sidebar-card">
-                            <h4>Quick Booking</h4>
-                            <div class="quick-booking-form">
-                                <div class="form-group">
-                                    <label>Preferred Date</label>
-                                    <input type="date" id="preferred-date" class="form-input" min="">
-                                </div>
-                                <div class="form-group">
-                                    <label>Time Preference</label>
-                                    <select id="time-preference" class="form-select">
-                                        <option value="">Select time</option>
-                                        <option value="morning">Morning (8AM - 12PM)</option>
-                                        <option value="afternoon">Afternoon (12PM - 5PM)</option>
-                                        <option value="evening">Evening (5PM - 8PM)</option>
-                                    </select>
-                                </div>
-                                <button class="btn-primary btn-full-width" onclick="quickBookAppointment()">
-                                    Check Availability
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Contact Hospital -->
-                        <div class="sidebar-card">
-                            <h4>Hospital Information</h4>
-                            <div class="hospital-contact" id="hospital-contact">
-                                <div class="hospital-name" id="hospital-name">Loading...</div>
-                                <div class="hospital-address" id="hospital-address">Loading...</div>
-                                <div class="hospital-phone" id="hospital-phone">Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Reviews Section -->
-        <section class="reviews-section">
-            <div class="container">
-                <div class="reviews-header">
-                    <h3>Patient Reviews</h3>
-                    <div class="reviews-summary">
-                        <div class="overall-rating">
-                            <span class="rating-large" id="overall-rating">4.8</span>
-                            <div class="rating-details">
-                                <div class="stars" id="overall-stars">⭐⭐⭐⭐⭐</div>
-                                <div class="total-reviews" id="total-reviews">Based on 0 reviews</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="reviews-list" id="reviews-list">
-                    <div class="reviews-loading">Loading reviews...</div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Error State -->
-    <div id="error-state" class="error-container" style="display: none;">
-        <div class="container">
-            <div class="error-content">
-                <h2>Doctor Not Found</h2>
-                <p>The doctor profile you're looking for could not be found.</p>
-                <a href="find-doctors.html" class="btn-primary">Browse All Doctors</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <script src="js/translations.js"></script>
     <script src="js/echannelling-main.js"></script>
-    <script src="js/doctor-profile-page.js"></script>
     <script src="js/universal-navigation.js"></script>
+    <script src="js/doctor-profile.js"></script>
 </body>
 </html>

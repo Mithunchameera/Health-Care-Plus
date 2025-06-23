@@ -43,7 +43,7 @@ class Database {
             $user = $url_parts['user'];
             $password = $url_parts['pass'];
             
-            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require";
+            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
             
             $this->connection = new PDO($dsn, $user, $password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

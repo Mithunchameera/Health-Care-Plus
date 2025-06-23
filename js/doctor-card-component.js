@@ -77,7 +77,7 @@ class DoctorCardComponent {
                     </div>
                     
                     <div class="card-actions">
-                        <button class="btn-card btn-secondary" onclick="viewDoctorProfile('${doctor.id}')">
+                        <button class="btn-card btn-secondary" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'"
                             <i class="fas fa-user"></i>
                             Profile
                         </button>

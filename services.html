@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - eChannelling</title>
+    <link rel="stylesheet" href="css/echannelling-styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/universal-navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <img src="images/placeholder-logo.svg" alt="eChannelling" class="logo">
+                <span>eChannelling</span>
+            </div>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="find-doctors.html">Find Doctors</a></li>
+                <li><a href="hospitals.html">Hospitals</a></li>
+                <li><a href="specialities.html">Specialities</a></li>
+                <li><a href="services.html" class="active">Services</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="language-toggle" onclick="toggleLanguage()">
+                    <span id="current-language">EN</span>
+                </button>
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="register.html" class="btn-register">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Our Healthcare Services</h1>
+                <p>Comprehensive healthcare solutions designed to meet all your medical needs through our advanced digital platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Services -->
+    <section class="services-section">
+        <div class="container">
+            <h2>Core Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Online Appointment Booking</h3>
+                    <p>Book appointments with certified doctors across multiple specialties. Easy scheduling with real-time availability.</p>
+                    <ul class="service-features">
+                        <li>Real-time appointment availability</li>
+                        <li>Instant confirmation</li>
+                        <li>Appointment reminders</li>
+                        <li>Rescheduling options</li>
+                    </ul>
+                    <a href="find-doctors.html" class="btn-service">Book Now</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Telemedicine Consultations</h3>
+                    <p>Connect with doctors remotely through secure video consultations from the comfort of your home.</p>
+                    <ul class="service-features">
+                        <li>HD video consultations</li>
+                        <li>Secure platform</li>
+                        <li>Digital prescriptions</li>
+                        <li>24/7 availability</li>
+                    </ul>
+                    <a href="telemedicine.html" class="btn-service">Start Consultation</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>Specialist Referrals</h3>
+                    <p>Get connected to specialized healthcare professionals based on your specific medical needs.</p>
+                    <ul class="service-features">
+                        <li>40+ medical specialties</li>
+                        <li>Expert specialists</li>
+                        <li>Referral management</li>
+                        <li>Care coordination</li>
+                    </ul>
+                    <a href="specialities.html" class="btn-service">Find Specialists</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3>Digital Health Records</h3>
+                    <p>Secure digital storage and management of your complete medical history and health records.</p>
+                    <ul class="service-features">
+                        <li>Secure cloud storage</li>
+                        <li>Complete medical history</li>
+                        <li>Lab results integration</li>
+                        <li>Easy sharing with doctors</li>
+                    </ul>
+                    <a href="health-records.html" class="btn-service">Access Records</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h3>Prescription Management</h3>
+                    <p>Digital prescription services with pharmacy integration for convenient medication management.</p>
+                    <ul class="service-features">
+                        <li>Digital prescriptions</li>
+                        <li>Pharmacy integration</li>
+                        <li>Medication reminders</li>
+                        <li>Refill notifications</li>
+                    </ul>
+                    <a href="pharmacy.html" class="btn-service">Manage Prescriptions</a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Health Monitoring</h3>
+                    <p>Continuous health monitoring and wellness tracking with personalized health insights.</p>
+                    <ul class="service-features">
+                        <li>Vital signs tracking</li>
+                        <li>Health analytics</li>
+                        <li>Wellness reports</li>
+                        <li>Preventive care alerts</li>
+                    </ul>
+                    <a href="health-monitoring.html" class="btn-service">Start Monitoring</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Services -->
+    <section class="emergency-section">
+        <div class="container">
+            <h2>Emergency & Urgent Care</h2>
+            <div class="emergency-grid">
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <h3>Emergency Services</h3>
+                    <p>24/7 emergency medical assistance and ambulance services.</p>
+                    <div class="emergency-contact">
+                        <span class="emergency-number">1990</span>
+                        <span class="emergency-label">Emergency Hotline</span>
+                    </div>
+                </div>
+
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Urgent Care</h3>
+                    <p>Fast-track appointments for urgent but non-emergency medical needs.</p>
+                    <a href="urgent-care.html" class="btn-emergency">Book Urgent Care</a>
+                </div>
+
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Medical Helpline</h3>
+                    <p>24/7 medical advice and guidance from qualified healthcare professionals.</p>
+                    <div class="emergency-contact">
+                        <span class="emergency-number">1212</span>
+                        <span class="emergency-label">Medical Helpline</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specialized Services -->
+    <section class="specialized-services">
+        <div class="container">
+            <h2>Specialized Healthcare Services</h2>
+            <div class="specialized-grid">
+                <div class="specialized-item">
+                    <i class="fas fa-baby"></i>
+                    <h4>Maternal & Child Health</h4>
+                    <p>Comprehensive care for mothers and children including prenatal, delivery, and pediatric services.</p>
+                </div>
+                <div class="specialized-item">
+                    <i class="fas fa-brain"></i>
+                    <h4>Mental Health Services</h4>
+                    <p>Professional mental health support including counseling, therapy, and psychiatric care.</p>
+                </div>
+                <div class="specialized-item">
+                    <i class="fas fa-dna"></i>
+                    <h4>Genetic Counseling</h4>
+                    <p>Expert genetic testing and counseling services for hereditary health conditions.</p>
+                </div>
+                <div class="specialized-item">
+                    <i class="fas fa-wheelchair"></i>
+                    <h4>Rehabilitation Services</h4>
+                    <p>Physical therapy and rehabilitation programs for injury recovery and disability support.</p>
+                </div>
+                <div class="specialized-item">
+                    <i class="fas fa-leaf"></i>
+                    <h4>Preventive Care</h4>
+                    <p>Comprehensive preventive healthcare programs including screenings and wellness checkups.</p>
+                </div>
+                <div class="specialized-item">
+                    <i class="fas fa-microscope"></i>
+                    <h4>Laboratory Services</h4>
+                    <p>Advanced diagnostic laboratory testing with quick results and expert analysis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Features -->
+    <section class="features-section">
+        <div class="container">
+            <h2>Why Choose Our Services</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Your health data is protected with bank-level security and strict privacy protocols.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>24/7 Availability</h3>
+                    <p>Round-the-clock access to healthcare services and emergency support.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Quality Assured</h3>
+                    <p>All healthcare providers are certified and undergo regular quality assessments.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access all services from any device with our responsive web platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>eChannelling</h3>
+                    <p>Your trusted partner for comprehensive healthcare services and medical consultations.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="hospitals.html">Hospitals</a></li>
+                        <li><a href="specialities.html">Specialities</a></li>
+                        <li><a href="services.html">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="help.html">Help Center</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 eChannelling. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/echannelling-main.js"></script>
+    <script src="js/universal-navigation.js"></script>
+</body>
+</html>

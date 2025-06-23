@@ -27,8 +27,7 @@ class SpecialtyDoctorSearch {
             if (response.ok) {
                 this.doctors = await response.json();
             } else {
-                // Fallback to mock data if API fails
-                this.doctors = this.getMockDoctors();
+                throw new Error('Failed to load doctors');
             }
         } catch (error) {
             console.error('Error loading doctors:', error);
@@ -205,7 +204,7 @@ class SpecialtyDoctorSearch {
         const searchInput = document.getElementById('doctor-search');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
-                this.searchDoctors(e.target.value);
+                this.applyFilters();
             });
         }
 
@@ -216,26 +215,213 @@ class SpecialtyDoctorSearch {
                 this.sortDoctors(e.target.value);
             });
         }
+
+        // Subspecialty filter
+        const subspecialtyFilter = document.getElementById('subspecialty-filter');
+        if (subspecialtyFilter) {
+            subspecialtyFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Hospital filter
+        const hospitalFilter = document.getElementById('hospital-filter');
+        if (hospitalFilter) {
+            hospitalFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Experience filter
+        const experienceFilter = document.getElementById('experience-filter');
+        if (experienceFilter) {
+            experienceFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Rating filter
+        const ratingFilter = document.getElementById('rating-filter');
+        if (ratingFilter) {
+            ratingFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Fee range filter
+        const feeFilter = document.getElementById('fee-filter');
+        if (feeFilter) {
+            feeFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Language filter
+        const languageFilter = document.getElementById('language-filter');
+        if (languageFilter) {
+            languageFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Availability filter
+        const availabilityFilter = document.getElementById('availability-filter');
+        if (availabilityFilter) {
+            availabilityFilter.addEventListener('change', (e) => {
+                this.applyFilters();
+            });
+        }
+
+        // Clear filters button
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', (e) => {
+                this.clearAllFilters();
+            });
+        }
     }
 
-    searchDoctors(query) {
-        if (!query.trim()) {
-            this.filterBySpecialty();
-        } else {
-            const searchTerm = query.toLowerCase();
-            this.filteredDoctors = this.doctors.filter(doctor => 
-                (doctor.specialty.toLowerCase().includes(this.specialty.toLowerCase()) ||
-                (doctor.subspecialties && doctor.subspecialties.some(sub => 
+    applyFilters() {
+        const searchInput = document.getElementById('doctor-search');
+        const subspecialtyFilter = document.getElementById('subspecialty-filter');
+        const hospitalFilter = document.getElementById('hospital-filter');
+        const experienceFilter = document.getElementById('experience-filter');
+        const ratingFilter = document.getElementById('rating-filter');
+        const feeFilter = document.getElementById('fee-filter');
+        const languageFilter = document.getElementById('language-filter');
+        const availabilityFilter = document.getElementById('availability-filter');
+
+        const searchTerm = searchInput?.value.toLowerCase() || '';
+        const selectedSubspecialty = subspecialtyFilter?.value || '';
+        const selectedHospital = hospitalFilter?.value || '';
+        const selectedExperience = experienceFilter?.value || '';
+        const selectedRating = ratingFilter?.value || '';
+        const selectedFeeRange = feeFilter?.value || '';
+        const selectedLanguage = languageFilter?.value || '';
+        const selectedAvailability = availabilityFilter?.value || '';
+
+        this.filteredDoctors = this.doctors.filter(doctor => {
+            // Base specialty filter (always applied)
+            const matchesSpecialty = doctor.specialty.toLowerCase().includes(this.specialty.toLowerCase()) ||
+                (doctor.subspecialities && doctor.subspecialities.some(sub => 
                     sub.toLowerCase().includes(this.specialty.toLowerCase())
-                ))) &&
-                (doctor.name.toLowerCase().includes(searchTerm) ||
+                ));
+
+            if (!matchesSpecialty) return false;
+
+            // Search term filter
+            const matchesSearch = !searchTerm || 
+                doctor.name.toLowerCase().includes(searchTerm) ||
                 doctor.specialty.toLowerCase().includes(searchTerm) ||
-                doctor.location.toLowerCase().includes(searchTerm))
-            );
-        }
-        
+                doctor.location.toLowerCase().includes(searchTerm) ||
+                (doctor.subspecialities && doctor.subspecialities.some(sub => 
+                    sub.toLowerCase().includes(searchTerm)
+                ));
+
+            // Subspecialty filter
+            const matchesSubspecialty = !selectedSubspecialty ||
+                (doctor.subspecialities && doctor.subspecialities.some(sub => 
+                    sub.toLowerCase().includes(selectedSubspecialty.toLowerCase())
+                ));
+
+            // Hospital filter
+            const matchesHospital = !selectedHospital ||
+                doctor.location.toLowerCase().includes(selectedHospital.toLowerCase());
+
+            // Experience filter
+            const matchesExperience = !selectedExperience ||
+                this.checkExperienceRange(doctor.experience, selectedExperience);
+
+            // Rating filter
+            const matchesRating = !selectedRating ||
+                doctor.rating >= parseFloat(selectedRating);
+
+            // Fee range filter
+            const matchesFeeRange = !selectedFeeRange ||
+                this.checkFeeRange(doctor.fee, selectedFeeRange);
+
+            // Language filter
+            const matchesLanguage = !selectedLanguage ||
+                (doctor.languages && doctor.languages.some(lang => 
+                    lang.toLowerCase().includes(selectedLanguage.toLowerCase())
+                ));
+
+            // Availability filter
+            const matchesAvailability = !selectedAvailability ||
+                (selectedAvailability === 'available' && doctor.available) ||
+                (selectedAvailability === 'all');
+
+            return matchesSearch && matchesSubspecialty && matchesHospital && 
+                   matchesExperience && matchesRating && matchesFeeRange && 
+                   matchesLanguage && matchesAvailability;
+        });
+
         this.currentPage = 1;
         this.renderDoctors();
+        this.updateFilterResults();
+    }
+
+    checkExperienceRange(experience, range) {
+        const exp = parseInt(experience) || 0;
+        switch (range) {
+            case '0-5': return exp >= 0 && exp <= 5;
+            case '6-10': return exp >= 6 && exp <= 10;
+            case '11-15': return exp >= 11 && exp <= 15;
+            case '16-20': return exp >= 16 && exp <= 20;
+            case '20+': return exp > 20;
+            default: return true;
+        }
+    }
+
+    checkFeeRange(fee, range) {
+        const feeAmount = parseFloat(fee) || 0;
+        switch (range) {
+            case '0-200': return feeAmount >= 0 && feeAmount <= 200;
+            case '201-300': return feeAmount >= 201 && feeAmount <= 300;
+            case '301-400': return feeAmount >= 301 && feeAmount <= 400;
+            case '401-500': return feeAmount >= 401 && feeAmount <= 500;
+            case '500+': return feeAmount > 500;
+            default: return true;
+        }
+    }
+
+    updateFilterResults() {
+        const resultsCount = document.getElementById('results-count');
+        if (resultsCount) {
+            const total = this.filteredDoctors.length;
+            const start = (this.currentPage - 1) * this.doctorsPerPage + 1;
+            const end = Math.min(this.currentPage * this.doctorsPerPage, total);
+            
+            if (total === 0) {
+                resultsCount.textContent = `No specialists found`;
+            } else {
+                resultsCount.textContent = `Showing ${start}-${end} of ${total} specialists`;
+            }
+        }
+    }
+
+    clearAllFilters() {
+        // Clear all filter inputs
+        const filterElements = [
+            'doctor-search',
+            'subspecialty-filter',
+            'hospital-filter', 
+            'experience-filter',
+            'rating-filter',
+            'fee-filter',
+            'language-filter',
+            'availability-filter'
+        ];
+
+        filterElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+
+        // Reset to show all doctors for this specialty
+        this.filterBySpecialty();
     }
 
     sortDoctors(sortBy) {
