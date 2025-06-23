@@ -7,6 +7,7 @@
     <meta name="description" content="Manage your appointments, view medical records, and access healthcare services">
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/performance.css">
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/dashboard.css">
@@ -24,10 +25,70 @@
                 </div>
                 <div class="header-actions">
                     <div class="notifications-dropdown">
-                        <button class="notification-btn">
+                        <button class="notification-btn" onclick="toggleNotifications()">
                             🔔
-                            <span class="notification-badge">2</span>
+                            <span class="notification-badge">3</span>
                         </button>
+                        <div class="notifications-panel" id="notifications-panel">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read" onclick="markAllAsRead()">Mark all as read</button>
+                            </div>
+                            <div class="notifications-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">📅</div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Appointment Reminder</div>
+                                        <div class="notification-message">Your appointment with Dr. Kasun Perera is tomorrow at 2:00 PM</div>
+                                        <div class="notification-time">2 hours ago</div>
+                                    </div>
+                                    <div class="notification-actions">
+                                        <button class="notification-action-btn" onclick="viewAppointment(1)">View</button>
+                                    </div>
+                                </div>
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">🧾</div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Test Results Available</div>
+                                        <div class="notification-message">Your blood test results from June 20 are now available</div>
+                                        <div class="notification-time">1 day ago</div>
+                                    </div>
+                                    <div class="notification-actions">
+                                        <button class="notification-action-btn" onclick="viewResults()">View Results</button>
+                                    </div>
+                                </div>
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">💰</div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Payment Successful</div>
+                                        <div class="notification-message">Payment of Rs. 2,500 for Dr. Sarah Wilson consultation has been processed</div>
+                                        <div class="notification-time">2 days ago</div>
+                                    </div>
+                                    <div class="notification-actions">
+                                        <button class="notification-action-btn" onclick="viewReceipt()">View Receipt</button>
+                                    </div>
+                                </div>
+                                <div class="notification-item read">
+                                    <div class="notification-icon">🏥</div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Appointment Confirmed</div>
+                                        <div class="notification-message">Your appointment with Dr. Michael Silva has been confirmed for June 28</div>
+                                        <div class="notification-time">3 days ago</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item read">
+                                    <div class="notification-icon">📞</div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Telemedicine Available</div>
+                                        <div class="notification-message">Dr. Kasun Perera now offers video consultations</div>
+                                        <div class="notification-time">1 week ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifications-footer">
+                                <button class="view-all-notifications" onclick="showSection('messages')">View All Notifications</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="user-dropdown">
                         <button class="user-btn">
@@ -404,10 +465,8 @@
         </main>
     </div>
 
+    <script src="js/performance-optimization.js"></script>
     <script src="js/echannelling-main.js"></script>
-    <script src="js/patient-dashboard.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/realtime-updates.js"></script>
-    <script src="js/appointment-status-manager.js"></script>
+    <script src="js/dashboard-fix.js"></script>
 </body>
 </html>

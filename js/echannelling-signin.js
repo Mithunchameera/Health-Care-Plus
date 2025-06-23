@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add mobile number functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const mobileBtn = document.querySelector('button:contains("Mobile number")');
+    const mobileBtn = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes('Mobile number'));
     if (mobileBtn) {
         mobileBtn.addEventListener('click', () => {
             alert('Mobile number sign-in option will be implemented in the next version.');

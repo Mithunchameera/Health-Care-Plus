@@ -4,6 +4,9 @@
  * HealthCare+ E-Channelling System
  */
 
+// Include performance optimizations
+require_once __DIR__ . '/performance-headers.php';
+
 // Error reporting for development (disable in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

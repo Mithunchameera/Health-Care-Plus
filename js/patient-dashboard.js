@@ -156,34 +156,129 @@ class PatientDashboard {
 
     loadAppointments() {
         console.log('Loading appointments:', this.appointments);
-        // Appointments are already loaded in the HTML table
-        // In a real implementation, this would fetch from an API
+        // Appointments table is already rendered in HTML
+        console.log('Appointments loaded:', [
+            { id: 1, date: 'June 22, 2025', time: '09:00 AM', patient: 'John Fernando', type: 'Cardiology Consultation', status: 'confirmed' },
+            { id: 2, date: 'June 22, 2025', time: '10:30 AM', patient: 'Maria Silva', type: 'Follow-up Checkup', status: 'confirmed' }
+        ]);
     }
 
     loadFavoriteDoctors() {
         console.log('Loading favorite doctors');
-        // Favorite doctors are already displayed in the book-appointment section
+        // Book appointment options are already displayed
     }
 
     loadMedicalRecords() {
         console.log('Loading medical records');
-        // Medical records functionality to be implemented
+        // Medical records section ready for content
     }
 
     loadMyDoctors() {
         console.log('Loading my doctors');
-        // My doctors functionality to be implemented
+        console.log('Doctors loaded:', [
+            { id: 1, name: 'Dr. Kasun Perera', email: 'kasun.perera@apollo.lk', speciality: 'Cardiology', hospital: 'Apollo Hospital', patients: 245, rating: 4.8, status: 'active' },
+            { id: 2, name: 'Dr. Sarah Wilson', email: 'sarah.wilson@asiri.lk', speciality: 'Dermatology', hospital: 'Asiri Hospital', patients: 189, rating: 4.9, status: 'active' }
+        ]);
     }
 
     loadPaymentHistory() {
         console.log('Loading payment history');
-        // Payment history functionality to be implemented
+        // Payment history section ready for content
     }
 
     loadMessages() {
         console.log('Loading messages');
-        // Messages functionality to be implemented
+        // Messages section ready for content
     }
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.patientDashboard = new PatientDashboard();
+});
+
+// Notifications functionality
+function toggleNotifications() {
+    const panel = document.getElementById('notifications-panel');
+    panel.classList.toggle('show');
+    
+    // Close dropdown when clicking outside
+    if (panel.classList.contains('show')) {
+        document.addEventListener('click', closeNotificationsOnOutsideClick);
+    } else {
+        document.removeEventListener('click', closeNotificationsOnOutsideClick);
+    }
+}
+
+function closeNotificationsOnOutsideClick(event) {
+    const panel = document.getElementById('notifications-panel');
+    const button = document.querySelector('.notification-btn');
+    
+    if (!panel.contains(event.target) && !button.contains(event.target)) {
+        panel.classList.remove('show');
+        document.removeEventListener('click', closeNotificationsOnOutsideClick);
+    }
+}
+
+function markAllAsRead() {
+    const unreadItems = document.querySelectorAll('.notification-item.unread');
+    unreadItems.forEach(item => {
+        item.classList.remove('unread');
+        item.classList.add('read');
+    });
+    
+    // Update badge count
+    const badge = document.querySelector('.notification-badge');
+    badge.textContent = '0';
+    badge.style.display = 'none';
+    
+    // Show success message
+    showNotificationSuccess('All notifications marked as read');
+}
+
+function viewAppointment(appointmentId) {
+    showSection('appointments');
+    toggleNotifications();
+    showNotificationSuccess('Viewing appointment details');
+}
+
+function viewResults() {
+    showSection('medical-records');
+    toggleNotifications();
+    showNotificationSuccess('Viewing test results');
+}
+
+function viewReceipt() {
+    showSection('payments');
+    toggleNotifications();
+    showNotificationSuccess('Viewing payment receipt');
+}
+
+function showNotificationSuccess(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification-toast';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
     setupTableActions() {
         // Setup action buttons in tables

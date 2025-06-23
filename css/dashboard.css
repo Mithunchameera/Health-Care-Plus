@@ -52,6 +52,178 @@
     text-align: center;
 }
 
+/* Notifications Panel */
+.notifications-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    width: 400px;
+    max-height: 500px;
+    overflow: hidden;
+    z-index: 1000;
+    display: none;
+    border: 1px solid var(--light-gray);
+}
+
+.notifications-panel.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notifications-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--background-light);
+}
+
+.notifications-header h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--primary-blue-dark);
+}
+
+.mark-all-read {
+    background: none;
+    border: none;
+    color: var(--primary-blue);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.mark-all-read:hover {
+    background-color: var(--primary-blue-light);
+}
+
+.notifications-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--background-light);
+    display: flex;
+    gap: var(--spacing-sm);
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.notification-item:hover {
+    background-color: var(--background-light);
+}
+
+.notification-item.unread {
+    background-color: rgba(0, 122, 255, 0.05);
+}
+
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--primary-blue);
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--background-light);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: var(--primary-blue-dark);
+    margin-bottom: 4px;
+    font-size: var(--font-size-sm);
+}
+
+.notification-message {
+    color: var(--text-gray);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.notification-time {
+    color: var(--text-light);
+    font-size: var(--font-size-xs);
+}
+
+.notification-actions {
+    display: flex;
+    align-items: flex-start;
+}
+
+.notification-action-btn {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-action-btn:hover {
+    background: var(--primary-blue-dark);
+}
+
+.notifications-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--light-gray);
+    background: var(--background-light);
+}
+
+.view-all-notifications {
+    width: 100%;
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-all-notifications:hover {
+    background: var(--primary-blue-dark);
+}
+
 /* User Dropdown */
 .user-dropdown {
     position: relative;
@@ -205,6 +377,12 @@
 
 .dashboard-section.active {
     display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .section-header {
