@@ -127,21 +127,21 @@ class DoctorSearchManager {
             const response = await fetch('/php/doctors.php');
             if (response.ok) {
                 const data = await response.json();
-                if (data.success && data.doctors) {
+                if (data.success && data.doctors && data.doctors.length > 0) {
                     this.doctors = data.doctors;
                     this.filteredDoctors = [...this.doctors];
                     console.log('API data loaded:', this.doctors.length, 'doctors');
-                    this.currentPage = 1; // Reset to first page
+                    this.currentPage = 1;
                     this.renderDoctors();
                     this.updateResultsInfo();
                     return;
                 }
             }
         } catch (error) {
-            console.log('API unavailable, using static data');
+            console.log('API error:', error);
         }
         
-        // Fallback to static data
+        // Always use static data as primary source for consistency
         this.doctors = [
             {
                 id: 1,
@@ -459,8 +459,9 @@ class DoctorSearchManager {
 
         this.filteredDoctors = [...this.doctors];
         console.log('Static data loaded:', this.doctors.length, 'doctors');
-        this.setupSpecialtyButtons();
+        this.currentPage = 1;
         this.renderDoctors();
+        this.updateResultsInfo();
     }
 
     setupSearchForm() {
@@ -727,20 +728,25 @@ class DoctorSearchManager {
     }
 
     createDoctorCard(doctor) {
-        const stars = '⭐'.repeat(Math.floor(doctor.rating));
+        const stars = '⭐'.repeat(Math.floor(doctor.rating || 4.5));
+        const reviewCount = doctor.reviews || doctor.reviewCount || 0;
+        const fee = doctor.fee || doctor.consultationFee || 0;
+        const specialty = doctor.specialty || doctor.speciality || 'General Medicine';
+        const hospital = doctor.hospital || doctor.location || 'Various Hospitals';
+        const avatar = doctor.avatar || '👨‍⚕️';
         
         return `
             <div class="doctor-card" data-doctor-id="${doctor.id}">
                 <div class="doctor-header">
-                    <div class="doctor-avatar">${doctor.avatar}</div>
+                    <div class="doctor-avatar">${avatar}</div>
                     <div class="doctor-info">
                         <h3>${doctor.name}</h3>
-                        <div class="doctor-speciality">${doctor.speciality}</div>
-                        <div class="doctor-hospital">${doctor.hospital}</div>
+                        <div class="doctor-speciality">${specialty}</div>
+                        <div class="doctor-hospital">${hospital}</div>
                         <div class="doctor-rating">
                             <span class="rating-stars">${stars}</span>
-                            <span class="rating-score">${doctor.rating}</span>
-                            <span class="rating-count">(${doctor.reviewCount} reviews)</span>
+                            <span class="rating-score">${doctor.rating || 4.5}</span>
+                            <span class="rating-count">(${reviewCount} reviews)</span>
                         </div>
                     </div>
                 </div>
@@ -748,21 +754,21 @@ class DoctorSearchManager {
                 <div class="doctor-details">
                     <div class="detail-row">
                         <span class="detail-label">Experience:</span>
-                        <span class="detail-value">${doctor.experience}</span>
+                        <span class="detail-value">${doctor.experience || doctor.experience_years || 'N/A'} years</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Consultation Fee:</span>
-                        <span class="detail-value consultation-fee">Rs. ${doctor.consultationFee.toLocaleString()}</span>
+                        <span class="detail-value consultation-fee">Rs. ${fee.toLocaleString()}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Availability:</span>
-                        <span class="detail-value availability">${doctor.availability}</span>
+                        <span class="detail-value availability">${doctor.availability || 'Available'}</span>
                     </div>
                 </div>
                 
                 <div class="doctor-actions">
-                    <button class="btn-book-appointment" onclick="bookAppointment('${doctor.id}')">📅 Book Appointment</button>
-                    <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">👁️ View Profile</button>
+                    <button class="btn-book-appointment" onclick="bookAppointment('${doctor.id}')">Book Appointment</button>
+                    <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">View Profile</button>
                 </div>
             </div>
         `;

@@ -19,7 +19,7 @@ class PerformanceOptimizer {
         const criticalResources = [
             '/css/echannelling-styles.css',
             '/css/responsive.css',
-            '/js/echannelling-main.js'
+            '/js/universal-navigation.js'
         ];
 
         criticalResources.forEach(resource => {

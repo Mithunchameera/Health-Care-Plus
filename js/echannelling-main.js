@@ -1,6 +1,6 @@
 // eChannelling Main JavaScript
 
-class EChannellingApp {
+class EChannellingMainApp {
     constructor() {
         this.initializeApp();
         this.setupEventListeners();
@@ -367,10 +367,167 @@ class LanguageManager {
     }
 }
 
+// Simple navigation functionality
+function initializeNavigation() {
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    const mainNav = document.querySelector('.main-nav');
+
+    if (mobileToggle && mainNav) {
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('active');
+            mainNav.classList.toggle('mobile-open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileToggle.contains(e.target) && !mainNav.contains(e.target)) {
+                mobileToggle.classList.remove('active');
+                mainNav.classList.remove('mobile-open');
+            }
+        });
+    }
+}
+
+// Healthcare Slideshow functionality
+class HealthcareSlideshow {
+    constructor() {
+        this.currentSlide = 1;
+        this.totalSlides = 7;
+        this.autoSlideInterval = null;
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.startAutoSlide();
+    }
+
+    setupEventListeners() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                const slideNumber = parseInt(e.target.getAttribute('data-slide'));
+                this.goToSlide(slideNumber);
+                this.resetAutoSlide();
+            });
+        });
+
+        // Pause on hover
+        const container = document.querySelector('.healthcare-slideshow-container');
+        if (container) {
+            container.addEventListener('mouseenter', () => this.pauseAutoSlide());
+            container.addEventListener('mouseleave', () => this.startAutoSlide());
+        }
+    }
+
+    goToSlide(slideNumber) {
+        // Remove active class from current slide and dot
+        document.querySelector('.slide.active').classList.remove('active');
+        document.querySelector('.dot.active').classList.remove('active');
+        document.querySelector('.slide-info.active').classList.remove('active');
+
+        // Add active class to new slide and dot
+        document.querySelector(`[data-slide="${slideNumber}"].slide`).classList.add('active');
+        document.querySelector(`[data-slide="${slideNumber}"].dot`).classList.add('active');
+        document.querySelector(`[data-slide="${slideNumber}"].slide-info`).classList.add('active');
+
+        this.currentSlide = slideNumber;
+    }
+
+    nextSlide() {
+        const nextSlide = this.currentSlide === this.totalSlides ? 1 : this.currentSlide + 1;
+        this.goToSlide(nextSlide);
+    }
+
+    startAutoSlide() {
+        this.autoSlideInterval = setInterval(() => {
+            this.nextSlide();
+        }, 5000); // Change slide every 5 seconds
+    }
+
+    pauseAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+        }
+    }
+
+    resetAutoSlide() {
+        this.pauseAutoSlide();
+        this.startAutoSlide();
+    }
+}
+
+// Healthcare Video Manager
+function initializeHealthcareVideo() {
+    const videoContainer = document.querySelector('.healthcare-video-container');
+    const video = document.querySelector('.healthcare-video');
+    const fallback = document.querySelector('.video-fallback-overlay');
+    
+    if (!video || !fallback) return;
+    
+    // Show fallback initially while video loads
+    fallback.style.display = 'flex';
+    video.style.display = 'none';
+    
+    // Set a timeout to show fallback if video takes too long
+    const loadTimeout = setTimeout(() => {
+        fallback.style.display = 'flex';
+        video.style.display = 'none';
+        console.log('Video loading timeout, showing fallback');
+    }, 5000);
+    
+    // Video loaded successfully
+    video.addEventListener('canplay', () => {
+        clearTimeout(loadTimeout);
+        fallback.style.display = 'none';
+        video.style.display = 'block';
+        console.log('Healthcare video loaded and ready to play');
+    });
+    
+    // Video failed to load
+    video.addEventListener('error', (e) => {
+        clearTimeout(loadTimeout);
+        fallback.style.display = 'flex';
+        video.style.display = 'none';
+        console.log('Video failed to load:', e);
+    });
+    
+    // Intersection Observer for performance
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (video.style.display !== 'none') {
+                        video.play().catch(() => {
+                            fallback.style.display = 'flex';
+                            video.style.display = 'none';
+                        });
+                    }
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(videoContainer);
+    }
+    
+    // Force load the video
+    video.load();
+}
+
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new EChannellingApp();
+    new EChannellingMainApp();
     new LanguageManager();
+    initializeNavigation();
+    
+    // Initialize slideshow if it exists on the page
+    if (document.querySelector('.healthcare-slideshow-container')) {
+        new HealthcareSlideshow();
+    }
+    
+    // Initialize healthcare video functionality
+    initializeHealthcareVideo();
     
     // Set minimum date for appointment date input
     const appointmentDateInput = document.getElementById('appointment-date');

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/universal-navigation.css">
-    <link rel="stylesheet" href="css/welcome-modal.css">
+
 </head>
 <body>
     <!-- Header -->
@@ -67,45 +67,90 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-search">
-                    <div class="search-card">
-                        <h3>Book Your Appointment</h3>
-                        <form class="search-form">
-                            <div class="form-group">
-                                <label>Select Speciality</label>
-                                <select class="form-select" id="speciality">
-                                    <option value="">Choose Speciality</option>
-                                    <option value="cardiology">Cardiology</option>
-                                    <option value="dermatology">Dermatology</option>
-                                    <option value="general-medicine">General Medicine</option>
-                                    <option value="orthopedic">Orthopedic Surgery</option>
-                                    <option value="pediatrics">Pediatrics</option>
-                                    <option value="psychiatry">Psychiatry</option>
-                                    <option value="surgery">General Surgery</option>
-                                </select>
+                <div class="hero-video">
+                    <div class="healthcare-slideshow-container">
+                        <div class="slideshow-wrapper">
+                            <div class="slide active" data-slide="1">
+                                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Doctor Patient Consultation - eChannelling Healthcare" 
+                                     class="slide-image">
                             </div>
-                            <div class="form-group">
-                                <label>Select Doctor</label>
-                                <select class="form-select" id="doctor">
-                                    <option value="">Choose Doctor</option>
-                                </select>
+                            <div class="slide" data-slide="2">
+                                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Medical Team Meeting - Healthcare Collaboration" 
+                                     class="slide-image">
                             </div>
-                            <div class="form-group">
-                                <label>Select Hospital</label>
-                                <select class="form-select" id="hospital">
-                                    <option value="">Choose Hospital</option>
-                                    <option value="apollo">Apollo Hospital</option>
-                                    <option value="asiri">Asiri Hospital</option>
-                                    <option value="nawaloka">Nawaloka Hospital</option>
-                                    <option value="durdans">Durdans Hospital</option>
-                                </select>
+                            <div class="slide" data-slide="3">
+                                <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Digital Health Technology - Online Appointments" 
+                                     class="slide-image">
                             </div>
-                            <div class="form-group">
-                                <label>Select Date</label>
-                                <input type="date" class="form-input" id="appointment-date">
+                            <div class="slide" data-slide="4">
+                                <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Healthcare Professional with Stethoscope" 
+                                     class="slide-image">
                             </div>
-                            <button type="submit" class="btn-search">Search Doctors</button>
-                        </form>
+                            <div class="slide" data-slide="5">
+                                <img src="https://images.unsplash.com/photo-1576602976047-174e57a47881?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Hospital Interior - Modern Healthcare Facility" 
+                                     class="slide-image">
+                            </div>
+                            <div class="slide" data-slide="6">
+                                <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Medical Professionals Discussing Patient Care" 
+                                     class="slide-image">
+                            </div>
+                            <div class="slide" data-slide="7">
+                                <img src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=85" 
+                                     alt="Healthcare Technology and Digital Health Records" 
+                                     class="slide-image">
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation dots -->
+                        <div class="slideshow-dots">
+                            <span class="dot active" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
+                            <span class="dot" data-slide="4"></span>
+                            <span class="dot" data-slide="5"></span>
+                            <span class="dot" data-slide="6"></span>
+                            <span class="dot" data-slide="7"></span>
+                        </div>
+                        
+                        <!-- Slide indicators with text -->
+                        <div class="slide-indicators">
+                            <div class="slide-info active" data-slide="1">
+                                <h4>Expert Doctor Consultation</h4>
+                                <p>Book appointments with qualified healthcare professionals</p>
+                            </div>
+                            <div class="slide-info" data-slide="2">
+                                <h4>Medical Team Collaboration</h4>
+                                <p>Comprehensive care from multidisciplinary healthcare teams</p>
+                            </div>
+                            <div class="slide-info" data-slide="3">
+                                <h4>Digital Health Platform</h4>
+                                <p>Easy online appointment booking and health management</p>
+                            </div>
+                            <div class="slide-info" data-slide="4">
+                                <h4>Professional Healthcare</h4>
+                                <p>Trusted medical professionals with years of experience</p>
+                            </div>
+                            <div class="slide-info" data-slide="5">
+                                <h4>Modern Medical Facilities</h4>
+                                <p>State-of-the-art hospitals and healthcare infrastructure</p>
+                            </div>
+                            <div class="slide-info" data-slide="6">
+                                <h4>Patient-Centered Care</h4>
+                                <p>Compassionate medical professionals focused on your health</p>
+                            </div>
+                            <div class="slide-info" data-slide="7">
+                                <h4>Healthcare Technology</h4>
+                                <p>Advanced medical technology and digital health records</p>
+                            </div>
+                        </div>
+                        
+
                     </div>
                 </div>
             </div>
@@ -232,7 +277,29 @@
                     </div>
                 </div>
                 <div class="why-choose-image">
-                    <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #0057a4, #007aff); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 72px;">👨‍⚕️</div>
+                    <div class="healthcare-video-container">
+                        <video autoplay muted loop playsinline class="healthcare-video" preload="metadata">
+                            <source src="https://videos.pexels.com/video-files/4269788/4269788-hd_1920_1080_25fps.mp4" type="video/mp4">
+                            <source src="https://videos.pexels.com/video-files/3255289/3255289-hd_1920_1080_30fps.mp4" type="video/mp4">
+                            <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-fallback-overlay">
+                            <div class="animated-healthcare-visual">
+                                <div class="pulse-circle">
+                                    <div class="medical-icon-large">🏥</div>
+                                </div>
+                                <div class="healthcare-text">
+                                    <h3>eChannelling Healthcare</h3>
+                                    <p>Connecting Patients with Expert Doctors</p>
+                                    <div class="feature-highlights">
+                                        <span class="highlight-item">📱 Easy Booking</span>
+                                        <span class="highlight-item">⚡ Real-time Updates</span>
+                                        <span class="highlight-item">🔒 Secure Platform</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -304,7 +371,6 @@
         </div>
     </footer>
 
-    <script src="js/performance-loader.js"></script>
-    <script src="js/universal-navigation.js"></script>
+    <script src="js/echannelling-main.js"></script>
 </body>
 </html>

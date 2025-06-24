@@ -9,7 +9,6 @@ class PerformanceLoader {
     // Preload critical scripts immediately
     preloadCritical() {
         const criticalScripts = [
-            'js/echannelling-main.js',
             'js/realtime-updates.js'
         ];
         
@@ -124,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Load critical scripts first
     const criticalScripts = [
-        { src: 'js/echannelling-main.js', priority: 'high' }
+        { src: 'js/universal-navigation.js', priority: 'high' }
     ];
     
     // Load feature-specific scripts based on page

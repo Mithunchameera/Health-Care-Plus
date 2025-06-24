@@ -3,7 +3,7 @@
  * Provides back button and scroll-to-top functionality for all pages
  */
 
-class UniversalNavigation {
+class UniversalNavigationHandler {
     constructor() {
         this.scrollThreshold = 300;
         this.init();
@@ -199,18 +199,18 @@ class UniversalNavigation {
 
 // Auto-initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    window.universalNavigation = new UniversalNavigation();
+    window.universalNavigation = new UniversalNavigationHandler();
 });
 
 // Also initialize if script loads after DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
         if (!window.universalNavigation) {
-            window.universalNavigation = new UniversalNavigation();
+            window.universalNavigation = new UniversalNavigationHandler();
         }
     });
 } else {
     if (!window.universalNavigation) {
-        window.universalNavigation = new UniversalNavigation();
+        window.universalNavigation = new UniversalNavigationHandler();
     }
 }
