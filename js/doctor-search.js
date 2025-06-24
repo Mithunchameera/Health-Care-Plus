@@ -350,7 +350,7 @@ class DoctorSearchManager {
                             <span class="fee-amount">Rs. ${doctor.consultationFee.toLocaleString()}</span>
                         </div>
                         <div class="action-buttons">
-                            <button class="btn-view-profile" onclick="viewDoctorProfile(${doctor.id})">View Profile</button>
+                            <button class="btn-view-profile" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'">View Profile</button>
                             <button class="btn-book-appointment" data-doctor-id="${doctor.id}">Book Appointment</button>
                         </div>
                     </div>

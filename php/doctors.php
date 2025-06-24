@@ -65,57 +65,53 @@ class DoctorsHandler {
             $hospital = $_GET['hospital'] ?? '';
             
             if ($this->database) {
-                // Base query to get doctors with user information
-                $query = "SELECT d.*, u.first_name, u.last_name, u.email, u.phone, u.profile_picture 
-                          FROM doctors d 
-                          JOIN users u ON d.user_id = u.id 
-                          WHERE u.is_active = true";
+                // Simple query to get doctors directly from doctors table
+                $query = "SELECT * FROM doctors WHERE 1=1";
                 
                 $params = [];
                 
                 // Add filters
                 if (!empty($specialty)) {
-                    $query .= " AND d.specialty ILIKE ?";
+                    $query .= " AND specialty ILIKE ?";
                     $params[] = "%$specialty%";
                 }
                 
                 if (!empty($search)) {
-                    $query .= " AND (u.first_name ILIKE ? OR u.last_name ILIKE ? OR d.specialty ILIKE ?)";
-                    $params[] = "%$search%";
+                    $query .= " AND (name ILIKE ? OR specialty ILIKE ?)";
                     $params[] = "%$search%";
                     $params[] = "%$search%";
                 }
                 
                 if (!empty($hospital)) {
-                    $query .= " AND ? = ANY(d.hospital_affiliations)";
-                    $params[] = $hospital;
+                    $query .= " AND location ILIKE ?";
+                    $params[] = "%$hospital%";
                 }
                 
-                $query .= " ORDER BY d.rating DESC, d.total_reviews DESC";
+                $query .= " ORDER BY rating DESC, reviews DESC";
                 
                 $doctors = $this->database->fetchAll($query, $params);
                 
                 // Format the response to match frontend expectations
                 $formattedDoctors = array_map(function($doctor) {
                     return [
-                        'id' => $doctor['user_id'],
-                        'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
+                        'id' => $doctor['id'],
+                        'name' => $doctor['name'],
                         'specialty' => $doctor['specialty'],
-                        'subspecialties' => [],
+                        'subspecialties' => isset($doctor['subspecialties']) ? json_decode($doctor['subspecialties'], true) : [],
                         'education' => $doctor['education'] ?? 'Medical Degree',
-                        'experience' => $doctor['experience_years'] ?? 10,
-                        'location' => 'Various Hospitals',
+                        'experience' => $doctor['experience'] ?? 10,
+                        'location' => $doctor['location'] ?? 'Various Hospitals',
                         'phone' => $doctor['phone'],
                         'email' => $doctor['email'],
-                        'fee' => floatval($doctor['consultation_fee']),
+                        'fee' => floatval($doctor['fee']),
                         'rating' => floatval($doctor['rating']),
-                        'reviews' => intval($doctor['total_reviews']),
-                        'about' => $doctor['bio'],
-                        'services' => ['Board Certified'],
-                        'certifications' => ['Board Certified'],
-                        'languages' => ['English'],
-                        'available' => $doctor['is_available'] ?? true,
-                        'patients_treated' => $doctor['total_reviews'] * 10
+                        'reviews' => intval($doctor['reviews']),
+                        'about' => $doctor['about'],
+                        'services' => isset($doctor['services']) ? json_decode($doctor['services'], true) : [],
+                        'certifications' => isset($doctor['certifications']) ? json_decode($doctor['certifications'], true) : [],
+                        'languages' => isset($doctor['languages']) ? json_decode($doctor['languages'], true) : [],
+                        'available' => $doctor['available'] ?? true,
+                        'patients_treated' => $doctor['patients_treated'] ?? 0
                     ];
                 }, $doctors);
                 
@@ -123,13 +119,13 @@ class DoctorsHandler {
                 echo json_encode(['success' => true, 'doctors' => $formattedDoctors]);
             } else {
                 // Fall back to mock data
-                $this->getMockDoctors($specialty, $hospital);
+                $this->returnMockDoctors($specialty, $hospital);
             }
             
         } catch (Exception $e) {
             error_log("Database error in getDoctorsList: " . $e->getMessage());
             // Fallback to mock data
-            $this->getMockDoctors($specialty, $hospital);
+            $this->returnMockDoctors($specialty, $hospital);
         }
     }
     
@@ -143,6 +139,43 @@ class DoctorsHandler {
                 return;
             }
             
+            // First try to get from database
+            if ($this->database) {
+                $doctor = $this->database->fetchOne(
+                    "SELECT * FROM doctors WHERE id = ?",
+                    [$doctorId]
+                );
+                
+                if ($doctor) {
+                    // Format the response to match frontend expectations
+                    $formattedDoctor = [
+                        'id' => $doctor['id'],
+                        'name' => $doctor['name'],
+                        'specialty' => $doctor['specialty'],
+                        'subspecialties' => isset($doctor['subspecialties']) ? json_decode($doctor['subspecialties'], true) : [],
+                        'education' => $doctor['education'] ?? 'Medical Degree',
+                        'experience' => $doctor['experience'] ?? 10,
+                        'location' => $doctor['location'] ?? 'Various Hospitals',
+                        'phone' => $doctor['phone'],
+                        'email' => $doctor['email'],
+                        'fee' => floatval($doctor['fee']),
+                        'rating' => floatval($doctor['rating']),
+                        'reviews' => intval($doctor['reviews']),
+                        'about' => $doctor['about'],
+                        'services' => isset($doctor['services']) ? json_decode($doctor['services'], true) : [],
+                        'certifications' => isset($doctor['certifications']) ? json_decode($doctor['certifications'], true) : [],
+                        'languages' => isset($doctor['languages']) ? json_decode($doctor['languages'], true) : [],
+                        'available' => $doctor['available'] ?? true,
+                        'patients_treated' => $doctor['patients_treated'] ?? 0
+                    ];
+                    
+                    header('Content-Type: application/json');
+                    echo json_encode($formattedDoctor);
+                    return;
+                }
+            }
+            
+            // Fallback to mock data if database fails or doctor not found
             $doctor = $this->mockStorage->getDoctorById($doctorId);
             
             if (!$doctor) {
@@ -159,6 +192,30 @@ class DoctorsHandler {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Failed to load doctor profile']);
         }
+    }
+    
+    private function returnMockDoctors($specialty = null, $hospital = null) {
+        $mockDoctors = $this->mockStorage->getDoctors();
+        
+        // Filter by specialty if provided
+        if ($specialty && $specialty !== 'all') {
+            $mockDoctors = array_filter($mockDoctors, function($doctor) use ($specialty) {
+                return strcasecmp($doctor['specialty'], $specialty) === 0;
+            });
+        }
+        
+        // Filter by hospital if provided
+        if ($hospital && $hospital !== 'all') {
+            $mockDoctors = array_filter($mockDoctors, function($doctor) use ($hospital) {
+                return isset($doctor['hospital']) && strcasecmp($doctor['hospital'], $hospital) === 0;
+            });
+        }
+        
+        // Reindex array
+        $mockDoctors = array_values($mockDoctors);
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'doctors' => $mockDoctors]);
     }
 }
 

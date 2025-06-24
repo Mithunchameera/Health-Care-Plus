@@ -102,6 +102,16 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 24, 2025: Successfully completed migration from Replit Agent to Replit environment with comprehensive specialist database
+  - Created PostgreSQL database with complete schema (doctors, users tables)
+  - Added 54+ specialist doctors across 9 medical specialties (6+ doctors per specialty)
+  - Fixed all database connection issues and API errors
+  - Removed missing welcome-modal file references that were causing 404 errors
+  - All specialty pages now display relevant specialists with complete profiles
+  - Database includes: Cardiology, Dermatology, Pediatrics, Surgery, Orthopedic Surgery, Gynecology, Psychiatry, Ophthalmology, General Medicine
+  - Each doctor has Sri Lankan credentials, hospital affiliations, and detailed subspecialties
+  - System running stable on port 5000 with full database functionality
+
 - June 24, 2025: Enhanced homepage and expanded doctor database with comprehensive medical specialists
   - Removed welcome modal popup for cleaner user experience
   - Created interactive photo slideshow with 7 healthcare images showcasing different medical scenarios

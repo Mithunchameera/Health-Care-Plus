@@ -26,7 +26,8 @@ class SpecialtyDoctorSearch {
             const specialtyParam = this.specialty ? `?specialty=${encodeURIComponent(this.specialty)}` : '';
             const response = await fetch(`php/doctors.php${specialtyParam}`);
             if (response.ok) {
-                this.doctors = await response.json();
+                const data = await response.json();
+                this.doctors = data.success ? data.doctors : [];
                 console.log(`Loaded ${this.doctors.length} doctors for specialty: ${this.specialty}`);
             } else {
                 throw new Error('Failed to load doctors');
@@ -108,6 +109,9 @@ class SpecialtyDoctorSearch {
         const endIndex = startIndex + this.doctorsPerPage;
         const doctorsToShow = this.filteredDoctors.slice(startIndex, endIndex);
 
+        console.log(`Rendering ${this.filteredDoctors.length} doctors, page ${this.currentPage}`);
+        console.log(`Showing doctors ${startIndex + 1} to ${Math.min(endIndex, this.filteredDoctors.length)} of ${this.filteredDoctors.length}`);
+
         if (doctorsToShow.length === 0) {
             doctorsGrid.innerHTML = `
                 <div class="no-doctors-found">
@@ -125,7 +129,11 @@ class SpecialtyDoctorSearch {
             return;
         }
 
-        doctorsGrid.innerHTML = doctorsToShow.map(doctor => this.createDoctorCard(doctor)).join('');
+        const doctorsHTML = doctorsToShow.map(doctor => this.createDoctorCard(doctor)).join('');
+        doctorsGrid.innerHTML = doctorsHTML;
+        
+        console.log(`Rendered ${doctorsToShow.length} doctor cards on page ${this.currentPage}`);
+        
         this.updatePagination();
         this.updateResultsInfo();
     }
@@ -163,7 +171,7 @@ class SpecialtyDoctorSearch {
                         <button class="btn-primary btn-book" onclick="bookAppointment(${doctor.id})">
                             Book Appointment
                         </button>
-                        <button class="btn-secondary btn-view" onclick="viewDoctorProfile(${doctor.id})">
+                        <button class="btn-secondary btn-view" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'">
                             View Profile
                         </button>
                     </div>
@@ -252,7 +260,11 @@ class SpecialtyDoctorSearch {
     changePage(page) {
         this.currentPage = page;
         this.renderDoctors();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll to top of doctors section
+        const doctorsSection = document.getElementById('doctors-grid');
+        if (doctorsSection) {
+            doctorsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     setupEventListeners() {

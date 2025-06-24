@@ -684,7 +684,7 @@ class HospitalPageManager {
                     <button class="btn-book-appointment" onclick="bookAppointment('${doctor.id}')">
                         <i class="fas fa-calendar-alt"></i> Book Appointment
                     </button>
-                    <button class="btn-view-profile" onclick="viewDoctorProfile('${doctor.id}')">
+                    <button class="btn-view-profile" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'"
                         <i class="fas fa-user"></i> View Profile
                     </button>
                 </div>

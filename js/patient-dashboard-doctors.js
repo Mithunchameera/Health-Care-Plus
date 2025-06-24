@@ -69,7 +69,7 @@ if (typeof PatientDashboard !== 'undefined') {
         const availabilityText = doctor.available ? 'Available' : 'Unavailable';
         
         return `
-            <div class="doctor-card" onclick="viewDoctorProfile(${doctor.id})">
+            <div class="doctor-card" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'"
                 <div class="doctor-header">
                     <div class="doctor-avatar">${initials}</div>
                     <div class="doctor-info">
@@ -114,7 +114,7 @@ if (typeof PatientDashboard !== 'undefined') {
                     <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookAppointment(${doctor.id})">
                         <i class="fas fa-calendar-plus"></i> Book Now
                     </button>
-                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewDoctorProfile(${doctor.id})">
+                    <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); window.location.href='doctor-profile.html?id=${doctor.id}'"
                         <i class="fas fa-eye"></i> View Profile
                     </button>
                 </div>
