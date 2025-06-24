@@ -87,10 +87,24 @@ class SpecialtyDoctorSearch {
     }
 
     renderDoctors() {
-        const doctorsGrid = document.getElementById('doctors-grid');
+        const doctorsGrid = document.getElementById('doctors-container') || document.querySelector('.doctors-grid');
+        const loading = document.getElementById('loading');
+        
         if (!doctorsGrid) {
             console.error('Doctors grid element not found');
+            console.log('Looking for elements:', document.querySelectorAll('[id*="doctor"], [class*="doctor"]'));
             return;
+        }
+        
+        // Hide loading spinner
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        // Remove any existing loading message
+        const loadingMessage = doctorsGrid.querySelector('.loading-message');
+        if (loadingMessage) {
+            loadingMessage.remove();
         }
         
         if (this.filteredDoctors.length === 0) {
@@ -104,6 +118,9 @@ class SpecialtyDoctorSearch {
             `;
             return;
         }
+        
+        console.log(`About to render ${this.filteredDoctors.length} doctors to grid`);
+        console.log('Grid element:', doctorsGrid);
 
         const startIndex = (this.currentPage - 1) * this.doctorsPerPage;
         const endIndex = startIndex + this.doctorsPerPage;
@@ -130,9 +147,12 @@ class SpecialtyDoctorSearch {
         }
 
         const doctorsHTML = doctorsToShow.map(doctor => this.createDoctorCard(doctor)).join('');
+        console.log('Generated HTML:', doctorsHTML.length, 'characters');
+        
         doctorsGrid.innerHTML = doctorsHTML;
         
         console.log(`Rendered ${doctorsToShow.length} doctor cards on page ${this.currentPage}`);
+        console.log('Grid innerHTML after render:', doctorsGrid.innerHTML.length, 'characters');
         
         this.updatePagination();
         this.updateResultsInfo();
@@ -168,10 +188,12 @@ class SpecialtyDoctorSearch {
                         <span class="fee-amount">Rs. ${typeof fee === 'number' ? fee.toFixed(2) : fee}</span>
                     </div>
                     <div class="doctor-actions">
-                        <button class="btn-primary btn-book" onclick="bookAppointment(${doctor.id})">
+                        <button class="btn-primary btn-book" onclick="window.location.href='book-appointment.html?doctor=${doctor.id}'">
+                            <i class="fas fa-calendar-plus"></i>
                             Book Appointment
                         </button>
                         <button class="btn-secondary btn-view" onclick="window.location.href='doctor-profile.html?id=${doctor.id}'">
+                            <i class="fas fa-user"></i>
                             View Profile
                         </button>
                     </div>

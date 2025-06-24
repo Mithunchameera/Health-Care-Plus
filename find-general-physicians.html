@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find General Physicians in Sri Lanka - Family Medicine | eChannelling</title>
-    <meta name="description" content="Primary healthcare from experienced general physicians. Comprehensive family medicine, preventive care, and management of common medical conditions.">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Find General Physicians - eChannelling</title>
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/doctor-search.css">
-    <link rel="stylesheet" href="css/specialty-pages.css">
     <link rel="stylesheet" href="css/universal-navigation.css">
+    <link rel="stylesheet" href="css/specialty-pages.css">
+    <link rel="stylesheet" href="css/doctor-search.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
@@ -24,9 +22,9 @@
                 <nav class="main-nav">
                     <ul class="nav-menu">
                         <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
+                        <li><a href="find-doctors.html" class="nav-link">Find Doctors</a></li>
                         <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
+                        <li><a href="specialities.html" class="nav-link active">Specialities</a></li>
                         <li><a href="about.html" class="nav-link">About</a></li>
                         <li><a href="contact.html" class="nav-link">Contact</a></li>
                     </ul>
@@ -46,231 +44,125 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="specialty-hero" style="background: linear-gradient(135deg, #00b894 0%, #00a085 100%);">
+    <section class="specialty-hero">
         <div class="container">
-            <div class="hero-content">
-                <div class="specialty-badge">
-                    <span class="specialty-icon">🩺</span>
-                    <span>General Medicine</span>
-                </div>
-                <h1>Find Expert General Medicine Specialists in Sri Lanka</h1>
-                <p class="hero-description">Primary healthcare from experienced general physicians. Comprehensive family medicine, preventive care, and management of common medical conditions.</p>
-                <div class="specialty-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">35+</div>
-                        <div class="stat-label">General Physicians</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">20</div>
-                        <div class="stat-label">Clinics</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">Walk-in</div>
-                        <div class="stat-label">Available</div>
-                    </div>
-                </div>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> > 
+                <a href="specialities.html">Specialities</a> > 
+                <span>General Physicians</span>
             </div>
-        </div>
-    </section>
-
-    <!-- Services Overview -->
-    <section class="services-overview">
-        <div class="container">
-            <h2>General Medicine Services We Cover</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🩺</div>
-                    <h3>Primary Care</h3>
-                    <p>Comprehensive health assessments, routine check-ups, and preventive care.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💊</div>
-                    <h3>Chronic Disease Management</h3>
-                    <p>Long-term care for diabetes, hypertension, and heart disease.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🔬</div>
-                    <h3>Health Screenings</h3>
-                    <p>Regular health screenings for early detection of diseases.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💉</div>
-                    <h3>Vaccinations</h3>
-                    <p>Adult immunizations including flu shots and travel vaccines.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">👨‍👩‍👧‍👦</div>
-                    <h3>Family Medicine</h3>
-                    <p>Healthcare for entire families from infants to elderly patients.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🏃</div>
-                    <h3>Lifestyle Medicine</h3>
-                    <p>Guidance on nutrition, exercise, and healthy lifestyle choices.</p>
+            <div class="hero-content">
+                <h1>Find General Physicians</h1>
+                <p>Comprehensive primary care doctors providing complete medical care for adults and families across all health conditions</p>
+                <div class="specialty-stats">
+                    <div class="stat">
+                        <span class="number" id="doctor-count">6</span>
+                        <span class="label">Specialists Available</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">24/7</span>
+                        <span class="label">Emergency Care</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">14+</span>
+                        <span class="label">Years Experience</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Search and Filters -->
-    <section class="search-section">
+    <section class="search-filters">
         <div class="container">
-            <h2>Find Your General Medicine Specialist</h2>
-            <div class="search-filters">
-                <div class="search-bar">
-                    <input type="text" id="doctor-search" placeholder="Search specialists by name, hospital, or treatment..." class="search-input">
-                    <button class="search-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="M21 21l-4.35-4.35"/>
-                        </svg>
-                    </button>
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="doctor-search" placeholder="Search general physicians by name or subspecialty...">
                 </div>
-                <div class="filters-row">
-                    <select id="hospital-filter" class="filter-select">
-                        <option value="">All Hospitals</option>
-                        <option value="Apollo Hospital">Apollo Hospital</option>
-                        <option value="Asiri Central">Asiri Central Hospital</option>
-                        <option value="Nawaloka Hospital">Nawaloka Hospital</option>
-                        <option value="Lanka Hospital">Lanka Hospital</option>
-                        <option value="National Hospital">National Hospital</option>
+                <div class="filter-options">
+                    <select id="location-filter">
+                        <option value="">All Locations</option>
+                        <option value="Colombo">Colombo</option>
+                        <option value="Kandy">Kandy</option>
+                        <option value="Galle">Galle</option>
+                        <option value="Negombo">Negombo</option>
+                        <option value="Matara">Matara</option>
                     </select>
-                    <select id="fee-filter" class="filter-select">
-                        <option value="">Any Fee Range</option>
-                        <option value="0-2000">Under Rs. 2,000</option>
-                        <option value="2000-4000">Rs. 2,000 - 4,000</option>
-                        <option value="4000-6000">Rs. 4,000 - 6,000</option>
-                        <option value="6000+">Above Rs. 6,000</option>
+                    <select id="experience-filter">
+                        <option value="">Experience</option>
+                        <option value="10-15">10-15 Years</option>
+                        <option value="15-20">15-20 Years</option>
+                        <option value="20+">20+ Years</option>
                     </select>
-                    <select id="availability-filter" class="filter-select">
-                        <option value="">Any Day</option>
-                        <option value="today">Available Today</option>
-                        <option value="tomorrow">Available Tomorrow</option>
-                        <option value="week">This Week</option>
+                    <select id="fee-filter">
+                        <option value="">Consultation Fee</option>
+                        <option value="0-4500">Under Rs. 4,500</option>
+                        <option value="4500-5000">Rs. 4,500 - 5,000</option>
+                        <option value="5000+">Above Rs. 5,000</option>
                     </select>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Doctors List -->
+    <!-- Doctors Grid -->
     <section class="doctors-section">
         <div class="container">
             <div class="section-header">
-                <div class="results-info">
-                    <span id="results-info">Loading specialists...</span>
-                </div>
-                <div class="sort-options">
-                    <select id="sort-doctors" class="sort-select">
-                        <option value="">Sort By</option>
-                        <option value="name">Name A-Z</option>
-                        <option value="rating">Highest Rated</option>
-                        <option value="experience">Most Experienced</option>
-                        <option value="fee">Lowest Fee</option>
-                    </select>
+                <h2>General Medicine Specialists</h2>
+                <div class="view-controls">
+                    <button class="view-btn active" id="grid-view"><i class="fas fa-th"></i></button>
+                    <button class="view-btn" id="list-view"><i class="fas fa-list"></i></button>
                 </div>
             </div>
-            <div id="doctors-grid" class="doctors-grid">
+            <div class="doctors-grid" id="doctors-container">
                 <!-- Doctors will be loaded here -->
+                <div class="loading-message">Loading general physicians...</div>
             </div>
-            <div class="pagination" id="pagination">
-                <!-- Pagination will be added here -->
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading general physicians...</span>
             </div>
         </div>
     </section>
 
-    <!-- Common Conditions -->
-    <section class="conditions-section">
+    <!-- About General Medicine -->
+    <section class="specialty-info">
         <div class="container">
-            <h2>Common Conditions We Treat</h2>
-            <div class="conditions-grid">
-                <div class="condition-card">
-                    <h3>Diabetes Management</h3>
-                    <p>Comprehensive care for type 1 and type 2 diabetes with lifestyle counseling.</p>
+            <div class="info-grid">
+                <div class="info-content">
+                    <h2>About General Medicine</h2>
+                    <p>General medicine focuses on the comprehensive medical care of adults, covering the prevention, diagnosis, and treatment of a wide range of diseases and health conditions affecting multiple organ systems.</p>
+                    
+                    <h3>Services We Offer</h3>
+                    <ul class="services-list">
+                        <li><i class="fas fa-check"></i> Preventive health screenings</li>
+                        <li><i class="fas fa-check"></i> Chronic disease management</li>
+                        <li><i class="fas fa-check"></i> Diabetes and hypertension care</li>
+                        <li><i class="fas fa-check"></i> Infectious disease treatment</li>
+                        <li><i class="fas fa-check"></i> Geriatric care</li>
+                        <li><i class="fas fa-check"></i> Health counseling and lifestyle advice</li>
+                    </ul>
                 </div>
-                <div class="condition-card">
-                    <h3>Hypertension</h3>
-                    <p>Blood pressure monitoring and management with medication and lifestyle changes.</p>
-                </div>
-                <div class="condition-card">
-                    <h3>Respiratory Infections</h3>
-                    <p>Treatment of common colds, flu, bronchitis, and respiratory conditions.</p>
-                </div>
-                <div class="condition-card">
-                    <h3>Digestive Issues</h3>
-                    <p>Management of acid reflux, IBS, and other gastrointestinal conditions.</p>
-                </div>
-                <div class="condition-card">
-                    <h3>Mental Health</h3>
-                    <p>Initial assessment and treatment of anxiety, depression, and stress-related disorders.</p>
-                </div>
-                <div class="condition-card">
-                    <h3>Preventive Care</h3>
-                    <p>Annual physicals, health screenings, and vaccination programs.</p>
+                <div class="info-image">
+                    <img src="images/general-medicine.jpg" alt="General Medicine" onerror="this.src='images/doctor-placeholder.svg'">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/placeholder-logo.svg" alt="eChannelling">
-                    </div>
-                    <p>Sri Lanka's leading healthcare platform connecting patients with top medical specialists.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="find-doctors.html">Find Doctors</a></li>
-                        <li><a href="hospitals.html">Hospitals</a></li>
-                        <li><a href="specialities.html">Specialities</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Medical Specialties</h4>
-                    <ul>
-                        <li><a href="find-cardiologists.html">Cardiology</a></li>
-                        <li><a href="find-dermatologists.html">Dermatology</a></li>
-                        <li><a href="find-orthopedic-surgeons.html">Orthopedics</a></li>
-                        <li><a href="find-pediatricians.html">Pediatrics</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact Info</h4>
-                    <p><strong>Phone:</strong> +94 11 123 4567</p>
-                    <p><strong>Email:</strong> info@echannelling.com</p>
-                    <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 eChannelling. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#cookies">Cookie Policy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/translations.js"></script>
-    <script src="js/echannelling-main.js"></script>
-    <script src="js/specialty-doctor-search.js"></script>
     <script src="js/universal-navigation.js"></script>
+    <script src="js/specialty-doctor-search.js"></script>
     <script>
-        // Global function for individual doctor profile navigation
-        function viewDoctorProfile(doctorId) {
-            window.location.href = `doctor-profile.html?id=${doctorId}`;
-        }
-        
         // Initialize specialty search for general physicians
-        window.addEventListener('DOMContentLoaded', () => {
-            window.specialtySearch = new SpecialtyDoctorSearch('Internal Medicine');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing General Medicine specialty search...');
+            console.log('DOM elements check:', {
+                container: document.getElementById('doctors-container'),
+                loading: document.getElementById('loading')
+            });
+            window.specialtySearch = new SpecialtyDoctorSearch('General Medicine');
         });
     </script>
 </body>

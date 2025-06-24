@@ -5,6 +5,7 @@
  */
 
 require_once 'config.php';
+require_once 'database.php';
 
 setCORSHeaders();
 
@@ -91,39 +92,82 @@ class DoctorAPI {
     
     public function getDoctorProfile($doctorId) {
         try {
-            // Load doctors from the doctors.php file
-            $doctorsResponse = file_get_contents(__DIR__ . '/doctors.php');
-            if ($doctorsResponse === false) {
-                throw new Exception('Could not load doctors data');
-            }
+            $db = Database::getInstance();
+            $pdo = $db->getConnection();
             
-            // Execute the PHP to get the doctors array
-            ob_start();
-            include(__DIR__ . '/doctors.php');
-            ob_end_clean();
+            // Get doctor profile from database with user information
+            $stmt = $pdo->prepare("
+                SELECT 
+                    d.id,
+                    u.first_name,
+                    u.last_name,
+                    u.email,
+                    u.phone,
+                    u.city,
+                    u.country,
+                    d.specialty,
+                    d.subspecialties,
+                    d.license_number,
+                    d.experience_years,
+                    d.consultation_fee,
+                    d.rating,
+                    d.total_reviews,
+                    d.bio,
+                    d.languages,
+                    d.hospital_affiliations,
+                    d.is_available
+                FROM doctors d
+                JOIN users u ON d.user_id = u.id
+                WHERE d.id = ?
+            ");
             
-            if (!isset($doctors) || !is_array($doctors)) {
-                throw new Exception('Invalid doctors data structure');
-            }
-            
-            // Find the doctor by ID
-            $doctor = null;
-            foreach ($doctors as $doc) {
-                if ($doc['id'] == $doctorId) {
-                    $doctor = $doc;
-                    break;
-                }
-            }
+            $stmt->execute([$doctorId]);
+            $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$doctor) {
                 sendResponse(['error' => 'Doctor not found'], 404);
                 return;
             }
             
-            // Return doctor profile data
+            // Format the response
+            $doctorProfile = [
+                'id' => $doctor['id'],
+                'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
+                'first_name' => $doctor['first_name'],
+                'last_name' => $doctor['last_name'],
+                'email' => $doctor['email'],
+                'phone' => $doctor['phone'],
+                'location' => $doctor['city'] . ', ' . $doctor['country'],
+                'city' => $doctor['city'],
+                'country' => $doctor['country'],
+                'specialty' => $doctor['specialty'],
+                'subspecialties' => $doctor['subspecialties'] ?: '',
+                'license_number' => $doctor['license_number'],
+                'experience_years' => $doctor['experience_years'],
+                'consultation_fee' => number_format($doctor['consultation_fee'], 2),
+                'rating' => floatval($doctor['rating']),
+                'total_reviews' => intval($doctor['total_reviews']),
+                'bio' => $doctor['bio'],
+                'languages' => is_array($doctor['languages']) ? $doctor['languages'] : json_decode($doctor['languages'] ?: '[]', true),
+                'hospital_affiliations' => is_array($doctor['hospital_affiliations']) ? $doctor['hospital_affiliations'] : json_decode($doctor['hospital_affiliations'] ?: '[]', true),
+                'is_available' => (bool)$doctor['is_available']
+            ];
+            
+            // Get doctor availability schedule
+            $availabilityStmt = $pdo->prepare("
+                SELECT day_of_week, start_time, end_time, is_available
+                FROM doctor_availability 
+                WHERE doctor_id = ? 
+                ORDER BY day_of_week
+            ");
+            $availabilityStmt->execute([$doctorId]);
+            $availability = $availabilityStmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $doctorProfile['availability'] = $availability;
+            
             sendResponse([
                 'success' => true,
-                'doctor' => $doctor
+                'doctor' => $doctorProfile
             ]);
             
         } catch (Exception $e) {

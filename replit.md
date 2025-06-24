@@ -102,6 +102,20 @@ HealthCare+ is a comprehensive web-based e-channelling (appointment booking) sys
 
 ## Recent Changes
 
+- June 24, 2025: Expanded database to 30 doctors across 5 medical specialties with individual profile pages
+  - Added 18 new specialists: 6 Pediatricians, 6 Orthopedic Surgeons, 6 General Medicine doctors
+  - Created dedicated specialty pages for all new specialties with search and filtering
+  - All 30 doctors have individual profile pages accessible via "View Profile" buttons
+  - Complete database with Sri Lankan doctors having authentic credentials, subspecialties, and hospital affiliations
+  - Individual profiles show: name, specialty, experience, consultation fees, biography, license numbers, ratings, availability
+
+- June 24, 2025: Created individual doctor profile pages with complete personal details
+  - Fixed database connection issues in doctor API endpoints
+  - Updated JavaScript mapping to display all doctor information correctly
+  - Individual profiles now show: name, specialty, experience, consultation fees, bio, subspecialties, ratings, and availability
+  - All "View Profile" buttons across the system navigate to doctor-profile.html?id=[doctor_id] with full details
+  - Database contains 12 Sri Lankan doctors with authentic credentials and hospital affiliations
+
 - June 24, 2025: Successfully completed migration from Replit Agent to Replit environment with comprehensive specialist database
   - Created PostgreSQL database with complete schema (doctors, users tables)
   - Added 54+ specialist doctors across 9 medical specialties (6+ doctors per specialty)

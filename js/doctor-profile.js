@@ -43,17 +43,22 @@ class DoctorProfile {
 
     async loadDoctorData() {
         try {
-            const response = await fetch(`php/doctors.php?id=${this.doctorId}`);
+            const response = await fetch(`php/doctor-api.php?id=${this.doctorId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch doctor data');
             }
             
-            this.doctorData = await response.json();
+            const data = await response.json();
             
-            if (this.doctorData.error) {
-                throw new Error(this.doctorData.error);
+            if (data.error) {
+                throw new Error(data.error);
             }
             
+            if (!data.success || !data.doctor) {
+                throw new Error('Invalid doctor data received');
+            }
+            
+            this.doctorData = data.doctor;
             console.log('Doctor data loaded:', this.doctorData);
         } catch (error) {
             console.error('Error loading doctor data:', error);
@@ -62,9 +67,13 @@ class DoctorProfile {
     }
 
     populateProfile() {
-        if (!this.doctorData) return;
+        if (!this.doctorData) {
+            console.error('No doctor data available for profile population');
+            return;
+        }
 
         const doctor = this.doctorData;
+        console.log('Populating profile with doctor data:', doctor);
 
         // Update page title
         document.title = `Dr. ${doctor.name} - ${doctor.specialty} - eChannelling`;
@@ -74,27 +83,28 @@ class DoctorProfile {
         this.updateElement('doctor-name', `Dr. ${doctor.name}`);
         this.updateElement('doctor-name-about', doctor.name);
         this.updateElement('doctor-specialty', doctor.specialty);
-        this.updateElement('doctor-experience', `${doctor.experience} years experience`);
+        this.updateElement('doctor-experience', `${doctor.experience_years || doctor.experience} years experience`);
         this.updateElement('doctor-location', doctor.location);
-        this.updateElement('doctor-fee', doctor.fee);
+        this.updateElement('doctor-fee', doctor.consultation_fee || doctor.fee || '0');
         this.updateElement('doctor-phone', doctor.phone);
         this.updateElement('doctor-email', doctor.email);
-        this.updateElement('doctor-bio', doctor.about || 'Professional medical practitioner dedicated to providing excellent healthcare services.');
+        this.updateElement('doctor-bio', doctor.bio || doctor.about || 'Professional medical practitioner dedicated to providing excellent healthcare services.');
 
         // Update rating and reviews
-        this.updateRating(doctor.rating, doctor.reviews);
+        this.updateRating(doctor.rating, doctor.total_reviews || doctor.reviews);
         
         // Update availability
-        this.updateAvailability(doctor.available);
+        this.updateAvailability(doctor.is_available || doctor.available);
 
         // Populate quick info
         this.updateElement('license-number', doctor.license_number || 'Licensed Practitioner');
-        this.updateElement('experience-years', doctor.experience);
-        this.updateElement('patients-treated', doctor.patients_treated || doctor.reviews * 10);
+        this.updateElement('experience-years', doctor.experience_years || doctor.experience);
+        this.updateElement('patients-treated', doctor.patients_treated || (doctor.total_reviews || doctor.reviews) * 10);
         this.updateElement('doctor-education', doctor.education || 'Medical Degree');
 
         // Populate specializations
-        this.populateSpecializations(doctor.subspecialities || doctor.certifications || []);
+        const subspecialties = doctor.subspecialties ? doctor.subspecialties.split(', ') : (doctor.subspecialities || doctor.certifications || []);
+        this.populateSpecializations(subspecialties);
         
         // Populate languages
         this.populateLanguages(doctor.languages || ['English']);
@@ -113,6 +123,9 @@ class DoctorProfile {
         const element = document.getElementById(id);
         if (element) {
             element.textContent = value;
+            console.log(`Updated element ${id} with value: ${value}`);
+        } else {
+            console.warn(`Element with id '${id}' not found`);
         }
     }
 
