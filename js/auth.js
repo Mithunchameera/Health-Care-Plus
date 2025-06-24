@@ -248,7 +248,41 @@ class AuthManager {
         
         if (storedUser) {
             this.currentUser = JSON.parse(storedUser);
+            // Don't auto-redirect if user is already on their correct dashboard
+            const currentPage = window.location.pathname.split('/').pop();
+            const expectedPage = this.getExpectedDashboard(this.currentUser.role);
+            
+            // Only redirect if on wrong dashboard, not if already on correct one
+            if (currentPage !== expectedPage && this.shouldRedirect(currentPage)) {
+                this.redirectAfterLogin(this.currentUser.role);
+            }
         }
+    }
+
+    getExpectedDashboard(role) {
+        switch (role) {
+            case 'doctor':
+                return 'doctor-dashboard.html';
+            case 'admin':
+                return 'admin-dashboard.html';
+            case 'patient':
+            default:
+                return 'patient-dashboard.html';
+        }
+    }
+
+    shouldRedirect(currentPage) {
+        // Don't redirect if already on a dashboard page or login/register pages
+        const noRedirectPages = [
+            'doctor-dashboard.html',
+            'admin-dashboard.html', 
+            'patient-dashboard.html',
+            'login.html',
+            'register.html',
+            'index.html',
+            ''
+        ];
+        return !noRedirectPages.includes(currentPage);
     }
 
     logout() {
