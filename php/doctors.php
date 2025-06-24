@@ -65,36 +65,29 @@ class DoctorsHandler {
             $hospital = $_GET['hospital'] ?? '';
             
             if ($this->database) {
-                // JOIN query to get complete doctor information
-                $query = "SELECT d.id, d.specialty, d.subspecialties, d.license_number, d.experience_years, 
-                         d.consultation_fee, d.rating, d.total_reviews, d.bio, d.languages, 
-                         d.hospital_affiliations, d.is_available,
-                         u.first_name, u.last_name, u.phone, u.email, u.city, u.country 
-                         FROM doctors d 
-                         JOIN users u ON d.user_id = u.id 
-                         WHERE 1=1";
+                // Simple query to get doctors directly from doctors table
+                $query = "SELECT * FROM doctors WHERE 1=1";
                 
                 $params = [];
                 
                 // Add filters
                 if (!empty($specialty)) {
-                    $query .= " AND d.specialty ILIKE ?";
+                    $query .= " AND specialty ILIKE ?";
                     $params[] = "%$specialty%";
                 }
                 
                 if (!empty($search)) {
-                    $query .= " AND (u.first_name ILIKE ? OR u.last_name ILIKE ? OR d.specialty ILIKE ?)";
-                    $params[] = "%$search%";
+                    $query .= " AND (name ILIKE ? OR specialty ILIKE ?)";
                     $params[] = "%$search%";
                     $params[] = "%$search%";
                 }
                 
                 if (!empty($hospital)) {
-                    $query .= " AND u.city ILIKE ?";
+                    $query .= " AND location ILIKE ?";
                     $params[] = "%$hospital%";
                 }
                 
-                $query .= " ORDER BY d.rating DESC, d.total_reviews DESC";
+                $query .= " ORDER BY rating DESC, reviews DESC";
                 
                 $doctors = $this->database->fetchAll($query, $params);
                 
@@ -102,23 +95,23 @@ class DoctorsHandler {
                 $formattedDoctors = array_map(function($doctor) {
                     return [
                         'id' => $doctor['id'],
-                        'name' => $doctor['first_name'] . ' ' . $doctor['last_name'],
+                        'name' => $doctor['name'],
                         'specialty' => $doctor['specialty'],
-                        'subspecialties' => $doctor['subspecialties'] ? explode(', ', $doctor['subspecialties']) : [],
-                        'education' => 'Medical Degree',
-                        'experience' => $doctor['experience_years'],
-                        'location' => $doctor['city'] . ', ' . $doctor['country'],
+                        'subspecialties' => isset($doctor['subspecialties']) ? json_decode($doctor['subspecialties'], true) : [],
+                        'education' => $doctor['education'] ?? 'Medical Degree',
+                        'experience' => $doctor['experience'] ?? 10,
+                        'location' => $doctor['location'] ?? 'Various Hospitals',
                         'phone' => $doctor['phone'],
                         'email' => $doctor['email'],
-                        'fee' => floatval($doctor['consultation_fee']),
+                        'fee' => floatval($doctor['fee']),
                         'rating' => floatval($doctor['rating']),
-                        'reviews' => intval($doctor['total_reviews']),
-                        'about' => $doctor['bio'],
-                        'services' => [],
-                        'certifications' => [],
-                        'languages' => $doctor['languages'] ? json_decode($doctor['languages'], true) : ['English', 'Sinhala'],
-                        'available' => $doctor['is_available'] == 1,
-                        'patients_treated' => intval($doctor['total_reviews']) * 10
+                        'reviews' => intval($doctor['reviews']),
+                        'about' => $doctor['about'],
+                        'services' => isset($doctor['services']) ? json_decode($doctor['services'], true) : [],
+                        'certifications' => isset($doctor['certifications']) ? json_decode($doctor['certifications'], true) : [],
+                        'languages' => isset($doctor['languages']) ? json_decode($doctor['languages'], true) : [],
+                        'available' => $doctor['available'] ?? true,
+                        'patients_treated' => $doctor['patients_treated'] ?? 0
                     ];
                 }, $doctors);
                 

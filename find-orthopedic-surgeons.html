@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Orthopedic Surgeons - eChannelling</title>
+    <title>Find Orthopedic Surgeons in Sri Lanka - Bone & Joint Specialists | eChannelling</title>
+    <meta name="description" content="Expert orthopedic care from Sri Lanka's leading bone and joint specialists. From sports injuries to joint replacement, get comprehensive musculoskeletal treatment.">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/echannelling-styles.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/universal-navigation.css">
-    <link rel="stylesheet" href="css/specialty-pages.css">
     <link rel="stylesheet" href="css/doctor-search.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/specialty-pages.css">
+    <link rel="stylesheet" href="css/universal-navigation.css">
 </head>
 <body>
     <!-- Header -->
@@ -22,9 +24,9 @@
                 <nav class="main-nav">
                     <ul class="nav-menu">
                         <li><a href="index.html" class="nav-link">Home</a></li>
-                        <li><a href="find-doctors.html" class="nav-link">Find Doctors</a></li>
+                        <li><a href="find-doctors.html" class="nav-link active">Find Doctors</a></li>
                         <li><a href="hospitals.html" class="nav-link">Hospitals</a></li>
-                        <li><a href="specialities.html" class="nav-link active">Specialities</a></li>
+                        <li><a href="specialities.html" class="nav-link">Specialities</a></li>
                         <li><a href="about.html" class="nav-link">About</a></li>
                         <li><a href="contact.html" class="nav-link">Contact</a></li>
                     </ul>
@@ -44,125 +46,231 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="specialty-hero">
+    <section class="specialty-hero" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);">
         <div class="container">
-            <div class="breadcrumb">
-                <a href="index.html">Home</a> > 
-                <a href="specialities.html">Specialities</a> > 
-                <span>Orthopedic Surgeons</span>
-            </div>
             <div class="hero-content">
-                <h1>Find Orthopedic Surgeons</h1>
-                <p>Expert bone, joint, and musculoskeletal specialists providing comprehensive orthopedic care and surgical treatments</p>
+                <div class="specialty-badge">
+                    <span class="specialty-icon">🦴</span>
+                    <span>Orthopedic Surgery</span>
+                </div>
+                <h1>Find Expert Orthopedic Surgery Specialists in Sri Lanka</h1>
+                <p class="hero-description">Expert orthopedic care from Sri Lanka's leading bone and joint specialists. From sports injuries to joint replacement, get comprehensive musculoskeletal treatment.</p>
                 <div class="specialty-stats">
-                    <div class="stat">
-                        <span class="number" id="doctor-count">6</span>
-                        <span class="label">Specialists Available</span>
+                    <div class="stat-item">
+                        <div class="stat-number">30+</div>
+                        <div class="stat-label">Orthopedic Surgeons</div>
                     </div>
-                    <div class="stat">
-                        <span class="number">24/7</span>
-                        <span class="label">Emergency Care</span>
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Hospitals</div>
                     </div>
-                    <div class="stat">
-                        <span class="number">18+</span>
-                        <span class="label">Years Experience</span>
+                    <div class="stat-item">
+                        <div class="stat-number">2-3</div>
+                        <div class="stat-label">Days Wait</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="services-overview">
+        <div class="container">
+            <h2>Orthopedic Surgery Services We Cover</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🏃</div>
+                    <h3>Sports Medicine</h3>
+                    <p>Treatment of sports-related injuries, rehabilitation, and performance optimization.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🦴</div>
+                    <h3>Joint Replacement</h3>
+                    <p>Advanced hip, knee, and shoulder replacement surgeries with latest techniques.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔨</div>
+                    <h3>Trauma Surgery</h3>
+                    <p>Emergency orthopedic care for fractures, dislocations, and severe injuries.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🧘</div>
+                    <h3>Spine Surgery</h3>
+                    <p>Comprehensive spine care including minimally invasive spinal procedures.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👶</div>
+                    <h3>Pediatric Orthopedics</h3>
+                    <p>Specialized bone and joint care for children and adolescents.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>Arthroscopy</h3>
+                    <p>Minimally invasive joint surgery using advanced arthroscopic techniques.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Search and Filters -->
-    <section class="search-filters">
+    <section class="search-section">
         <div class="container">
-            <div class="filter-bar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="doctor-search" placeholder="Search orthopedic surgeons by name or subspecialty...">
+            <h2>Find Your Orthopedic Surgery Specialist</h2>
+            <div class="search-filters">
+                <div class="search-bar">
+                    <input type="text" id="doctor-search" placeholder="Search specialists by name, hospital, or treatment..." class="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="filter-options">
-                    <select id="location-filter">
-                        <option value="">All Locations</option>
-                        <option value="Colombo">Colombo</option>
-                        <option value="Kandy">Kandy</option>
-                        <option value="Kurunegala">Kurunegala</option>
-                        <option value="Anuradhapura">Anuradhapura</option>
-                        <option value="Gampaha">Gampaha</option>
+                <div class="filters-row">
+                    <select id="hospital-filter" class="filter-select">
+                        <option value="">All Hospitals</option>
+                        <option value="Apollo Hospital">Apollo Hospital</option>
+                        <option value="Asiri Central">Asiri Central Hospital</option>
+                        <option value="Nawaloka Hospital">Nawaloka Hospital</option>
+                        <option value="Lanka Hospital">Lanka Hospital</option>
+                        <option value="National Hospital">National Hospital</option>
                     </select>
-                    <select id="experience-filter">
-                        <option value="">Experience</option>
-                        <option value="10-15">10-15 Years</option>
-                        <option value="15-20">15-20 Years</option>
-                        <option value="20+">20+ Years</option>
+                    <select id="fee-filter" class="filter-select">
+                        <option value="">Any Fee Range</option>
+                        <option value="0-2000">Under Rs. 2,000</option>
+                        <option value="2000-4000">Rs. 2,000 - 4,000</option>
+                        <option value="4000-6000">Rs. 4,000 - 6,000</option>
+                        <option value="6000+">Above Rs. 6,000</option>
                     </select>
-                    <select id="fee-filter">
-                        <option value="">Consultation Fee</option>
-                        <option value="8000-10000">Rs. 8,000 - 10,000</option>
-                        <option value="10000-12000">Rs. 10,000 - 12,000</option>
-                        <option value="12000+">Above Rs. 12,000</option>
+                    <select id="availability-filter" class="filter-select">
+                        <option value="">Any Day</option>
+                        <option value="today">Available Today</option>
+                        <option value="tomorrow">Available Tomorrow</option>
+                        <option value="week">This Week</option>
                     </select>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Doctors Grid -->
+    <!-- Doctors List -->
     <section class="doctors-section">
         <div class="container">
             <div class="section-header">
-                <h2>Orthopedic Surgery Specialists</h2>
-                <div class="view-controls">
-                    <button class="view-btn active" id="grid-view"><i class="fas fa-th"></i></button>
-                    <button class="view-btn" id="list-view"><i class="fas fa-list"></i></button>
+                <div class="results-info">
+                    <span id="results-info">Loading specialists...</span>
+                </div>
+                <div class="sort-options">
+                    <select id="sort-doctors" class="sort-select">
+                        <option value="">Sort By</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="experience">Most Experienced</option>
+                        <option value="fee">Lowest Fee</option>
+                    </select>
                 </div>
             </div>
-            <div class="doctors-grid" id="doctors-container">
+            <div id="doctors-grid" class="doctors-grid">
                 <!-- Doctors will be loaded here -->
-                <div class="loading-message">Loading orthopedic surgeons...</div>
             </div>
-            <div class="loading" id="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <span>Loading orthopedic surgeons...</span>
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be added here -->
             </div>
         </div>
     </section>
 
-    <!-- About Orthopedic Surgery -->
-    <section class="specialty-info">
+    <!-- Common Conditions -->
+    <section class="conditions-section">
         <div class="container">
-            <div class="info-grid">
-                <div class="info-content">
-                    <h2>About Orthopedic Surgery</h2>
-                    <p>Orthopedic surgery is a specialty focused on the diagnosis, treatment, and rehabilitation of disorders of the musculoskeletal system, including bones, joints, ligaments, tendons, muscles, and nerves.</p>
-                    
-                    <h3>Services We Offer</h3>
-                    <ul class="services-list">
-                        <li><i class="fas fa-check"></i> Joint replacement surgery (hip, knee, shoulder)</li>
-                        <li><i class="fas fa-check"></i> Spine surgery and treatment</li>
-                        <li><i class="fas fa-check"></i> Sports injury treatment</li>
-                        <li><i class="fas fa-check"></i> Fracture repair and trauma care</li>
-                        <li><i class="fas fa-check"></i> Arthroscopic procedures</li>
-                        <li><i class="fas fa-check"></i> Pediatric orthopedic care</li>
+            <h2>Common Conditions We Treat</h2>
+            <div class="conditions-grid">
+                <div class="condition-card">
+                    <h3>Fractures & Broken Bones</h3>
+                    <p>Emergency treatment and surgical repair of bone fractures and breaks.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Arthritis & Joint Pain</h3>
+                    <p>Management of osteoarthritis, rheumatoid arthritis, and joint degeneration.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Sports Injuries</h3>
+                    <p>Treatment of ACL tears, meniscus injuries, and other athletic injuries.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Back & Neck Pain</h3>
+                    <p>Comprehensive spine care for chronic pain and spinal disorders.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Joint Replacement</h3>
+                    <p>Hip, knee, and shoulder replacement surgery for severe joint damage.</p>
+                </div>
+                <div class="condition-card">
+                    <h3>Osteoporosis</h3>
+                    <p>Treatment and prevention of bone density loss and fracture risk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/placeholder-logo.svg" alt="eChannelling">
+                    </div>
+                    <p>Sri Lanka's leading healthcare platform connecting patients with top medical specialists.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="find-doctors.html">Find Doctors</a></li>
+                        <li><a href="hospitals.html">Hospitals</a></li>
+                        <li><a href="specialities.html">Specialities</a></li>
+                        <li><a href="about.html">About Us</a></li>
                     </ul>
                 </div>
-                <div class="info-image">
-                    <img src="images/orthopedic-surgery.jpg" alt="Orthopedic Surgery" onerror="this.src='images/doctor-placeholder.svg'">
+                <div class="footer-section">
+                    <h4>Medical Specialties</h4>
+                    <ul>
+                        <li><a href="find-cardiologists.html">Cardiology</a></li>
+                        <li><a href="find-dermatologists.html">Dermatology</a></li>
+                        <li><a href="find-orthopedic-surgeons.html">Orthopedics</a></li>
+                        <li><a href="find-pediatricians.html">Pediatrics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><strong>Phone:</strong> +94 11 123 4567</p>
+                    <p><strong>Email:</strong> info@echannelling.com</p>
+                    <p><strong>Address:</strong> No. 123, Main Street<br>Colombo 07, Sri Lanka</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 eChannelling. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#cookies">Cookie Policy</a>
                 </div>
             </div>
         </div>
-    </section>
+    </footer>
 
-    <script src="js/universal-navigation.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/echannelling-main.js"></script>
     <script src="js/specialty-doctor-search.js"></script>
+    <script src="js/universal-navigation.js"></script>
     <script>
+        // Global function for individual doctor profile navigation
+        function viewDoctorProfile(doctorId) {
+            window.location.href = `doctor-profile.html?id=${doctorId}`;
+        }
+        
         // Initialize specialty search for orthopedic surgeons
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing Orthopedic Surgery specialty search...');
-            console.log('DOM elements check:', {
-                container: document.getElementById('doctors-container'),
-                loading: document.getElementById('loading')
-            });
-            window.specialtySearch = new SpecialtyDoctorSearch('Orthopedic Surgery');
+        window.addEventListener('DOMContentLoaded', () => {
+            window.specialtySearch = new SpecialtyDoctorSearch('Orthopedics');
         });
     </script>
 </body>
