@@ -172,18 +172,6 @@
     <div class="dashboard-layout">
         <!-- Sidebar -->
         <aside class="dashboard-sidebar" style="background: white; width: 250px; height: 100vh; border-right: 1px solid #e5e7eb; position: fixed; left: 0; top: 70px; z-index: 100; overflow-y: auto;">
-            <!-- Big Profile and Logout Buttons at Top -->
-            <div style="padding: 20px; border-bottom: 2px solid #e5e7eb;">
-                <a href="patient-profile.html" style="display: block; width: 100%; padding: 16px; margin-bottom: 12px; background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; text-decoration: none; border-radius: 10px; text-align: center; font-weight: 700; font-size: 16px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; border: none;">
-                    <i class="fas fa-user-circle" style="margin-right: 10px; font-size: 20px;"></i>
-                    PROFILE PAGE
-                </a>
-                
-                <button onclick="if(confirm('Are you sure you want to logout?')){localStorage.clear(); sessionStorage.clear(); window.location.href='index.html';}" style="display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 10px; text-align: center; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); transition: all 0.3s ease;">
-                    <i class="fas fa-sign-out-alt" style="margin-right: 10px; font-size: 20px;"></i>
-                    LOG OUT NOW
-                </button>
-            </div>
             
             <nav class="sidebar-nav">
                 <ul class="nav-list">
@@ -227,37 +215,7 @@
                             <i class="fas fa-comments"></i> Messages
                         </a>
                     </li>
-                    <li class="nav-item nav-divider">
-                        <div style="height: 1px; background-color: #e5e7eb; margin: 16px 12px;"></div>
-                    </li>
-                    <li class="nav-item" style="margin: 8px 0;">
-                        <a href="patient-profile.html" style="display: flex !important; align-items: center !important; gap: 10px !important; padding: 14px 20px !important; text-decoration: none !important; color: #1e40af !important; border-radius: 10px !important; transition: all 0.3s ease !important; font-size: 15px !important; font-weight: 500 !important; background: #f0f9ff !important; border: 2px solid #3b82f6 !important;" onmouseover="this.style.backgroundColor='#dbeafe'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='#f0f9ff'; this.style.transform='translateX(0)'">
-                            <i class="fas fa-user-circle" style="font-size: 18px !important;"></i> 
-                            <span>Profile Page</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" style="margin: 8px 0;">
-                        <button onclick="if(confirm('Are you sure you want to logout?')){window.location.href='login.html';}" style="width: 100% !important; text-align: left !important; border: 2px solid #ef4444 !important; background: #fef2f2 !important; color: #ef4444 !important; cursor: pointer !important; padding: 14px 20px !important; border-radius: 10px !important; transition: all 0.3s ease !important; display: flex !important; align-items: center !important; gap: 10px !important; font-size: 15px !important; font-weight: 500 !important;" onmouseover="this.style.backgroundColor='#fee2e2'; this.style.transform='translateX(4px)'" onmouseout="this.style.backgroundColor='#fef2f2'; this.style.transform='translateX(0)'">
-                            <i class="fas fa-sign-out-alt" style="font-size: 18px !important;"></i> 
-                            <span>Log Out</span>
-                        </button>
-                    </li>
                 </ul>
-                
-                <!-- Additional Navigation Items -->
-                <div style="margin-top: 20px; padding: 0 16px;">
-                    <div style="height: 2px; background: linear-gradient(90deg, #3b82f6, #1e40af); margin: 16px 0; border-radius: 2px;"></div>
-                    
-                    <a href="patient-profile.html" style="display: block; margin: 12px 0; padding: 16px; background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; text-decoration: none; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'">
-                        <i class="fas fa-user-circle" style="margin-right: 8px; font-size: 18px;"></i>
-                        PROFILE PAGE
-                    </a>
-                    
-                    <button onclick="if(confirm('Are you sure you want to logout?')){window.location.href='login.html';}" style="display: block; width: 100%; margin: 12px 0; padding: 16px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(239, 68, 68, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.3)'">
-                        <i class="fas fa-sign-out-alt" style="margin-right: 8px; font-size: 18px;"></i>
-                        LOG OUT
-                    </button>
-                </div>
             </nav>
         </aside>
 
